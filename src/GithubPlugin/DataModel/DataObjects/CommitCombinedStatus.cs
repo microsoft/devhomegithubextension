@@ -1,0 +1,136 @@
+﻿// Copyright (c) Microsoft Corporation and Contributors
+// Licensed under the MIT license.
+
+using Dapper;
+using Dapper.Contrib.Extensions;
+
+namespace GitHubPlugin.DataModel;
+
+[Table("CommitCombinedStatus")]
+public class CommitCombinedStatus
+{
+    [Key]
+    public long Id { get; set; } = DataStore.NoForeignKey;
+
+    public long StateId { get; set; } = DataStore.NoForeignKey;
+
+    public string HeadSha { get; set; } = string.Empty;
+
+    [Write(false)]
+    [Computed]
+    public CommitState State => (CommitState)StateId;
+
+    public static CommitCombinedStatus Create(Octokit.CombinedCommitStatus octoStatus)
+    {
+        return new CommitCombinedStatus
+        {
+            HeadSha = octoStatus.Sha,
+            StateId = (long)(octoStatus.TotalCount == 0 ? CommitState.None : GetCommitState(octoStatus.State)),
+        };
+    }
+
+    public static CommitCombinedStatus AddOrUpdate(DataStore dataStore, CommitCombinedStatus status)
+    {
+        // Check for existing entry.
+        var existing = GetByHeadSha(dataStore, status.HeadSha);
+        if (existing is not null)
+        {
+            // CheckRuns are not heavily updated data, and a simple check against
+            // the StatusId and Result will tell us if it needs to be updated.
+            // If either state changes, we must update the CheckRun.
+            if (existing.StateId != status.StateId)
+            {
+                existing.StateId = status.StateId;
+                dataStore.Connection!.Update(existing);
+                Log.Logger()?.ReportDebug($"Updating CommitCombinedStatus, Id = {existing.Id}");
+                return existing;
+            }
+            else
+            {
+                Log.Logger()?.ReportDebug($"No change to CommitCombinedStatus, Id = {existing.Id}");
+                return existing;
+            }
+        }
+
+        // No existing combined commit status, add it.
+        status.Id = dataStore.Connection!.Insert(status);
+        Log.Logger()?.ReportDebug($"Inserted CommitCombinedStatus, Id = {status.Id}");
+        return status;
+    }
+
+    public static CommitCombinedStatus GetOrCreate(DataStore dataStore, Octokit.CombinedCommitStatus status)
+    {
+        var newStatus = Create(status);
+        return AddOrUpdate(dataStore, newStatus);
+    }
+
+    private static CommitState GetCommitState(Octokit.StringEnum<Octokit.CommitState> octoComitState)
+    {
+        CommitState state;
+        try
+        {
+            state = Enum.Parse<CommitState>(octoComitState.Value.ToString());
+        }
+        catch (Exception)
+        {
+            // This error means a programming error or Octokit added to or changed their enum.
+            Log.Logger()?.ReportError($"Found Unknown CheckStatus value: {octoComitState.Value}");
+            return CommitState.Unknown;
+        }
+
+        return state;
+    }
+
+    public static CommitCombinedStatus? GetByHeadSha(DataStore dataStore, string headSha)
+    {
+        var sql = @"SELECT * FROM CommitCombinedStatus WHERE HeadSha = @HeadSha;";
+        var param = new
+        {
+            HeadSha = headSha,
+        };
+
+        Log.Logger()?.ReportDebug(DataStore.GetSqlLogMessage(sql, param));
+        return dataStore.Connection!.QueryFirstOrDefault<CommitCombinedStatus>(sql, param, null);
+    }
+
+    public static CommitState GetCommitState(DataStore dataStore, PullRequest pullRequest)
+    {
+        var sql = @"SELECT * FROM CommitCombinedStatus WHERE HeadSha = @HeadSha;";
+        var param = new
+        {
+            pullRequest.HeadSha,
+        };
+
+        Log.Logger()?.ReportDebug(DataStore.GetSqlLogMessage(sql, param));
+        var status = dataStore.Connection!.QueryFirstOrDefault<CommitCombinedStatus>(sql, param, null);
+        if (status == null)
+        {
+            return CommitState.Unknown;
+        }
+
+        return status.State;
+    }
+
+    public static void DeleteUnreferenced(DataStore dataStore)
+    {
+        // Delete any checkruns that have no matching HeadSha in the PullRequest table.
+        var sql = @"DELETE FROM CommitCombinedStatus WHERE HeadSha NOT IN (SELECT HeadSha FROM PullRequest)";
+        var command = dataStore.Connection!.CreateCommand();
+        command.CommandText = sql;
+        Log.Logger()?.ReportDebug(DataStore.GetCommandLogMessage(sql, command));
+        var rowsDeleted = command.ExecuteNonQuery();
+        Log.Logger()?.ReportDebug(DataStore.GetDeletedLogMessage(rowsDeleted));
+    }
+
+    public static void DeleteForPullRequest(DataStore dataStore, PullRequest pullRequest)
+    {
+        // Delete all checkruns associated with this pull request.
+        var sql = @"DELETE FROM CommitCombinedStatus WHERE HeadSha = $HeadSha";
+        var command = dataStore.Connection!.CreateCommand();
+        command.CommandText = sql;
+        command.Parameters.AddWithValue("$HeadSha", pullRequest.HeadSha);
+        Log.Logger()?.ReportDebug(DataStore.GetCommandLogMessage(sql, command));
+        var rowsDeleted = command.ExecuteNonQuery();
+        Log.Logger()?.ReportDebug(DataStore.GetDeletedLogMessage(rowsDeleted));
+    }
+}

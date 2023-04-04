@@ -1,0 +1,51 @@
+﻿// Copyright (c) Microsoft Corporation and Contributors
+// Licensed under the MIT license.
+
+using System.Globalization;
+
+namespace GitHubPlugin.Helpers;
+public static class DateTimeExtensions
+{
+    // Data store stores time as integers, which is just the Ticks so we dont lose precision.
+    // This extension provides converters for storing the values as either TEXT or INTEGER,
+    // Although SQLite types are suggestions, it may be internally represented differently.
+    public static long ToDataStoreInteger(this DateTime value)
+    {
+        return value.Ticks;
+    }
+
+    public static long ToDataStoreInteger(this TimeSpan value)
+    {
+        return value.Ticks;
+    }
+
+    public static DateTime ToDateTime(this long value)
+    {
+        return new DateTime(value);
+    }
+
+    public static TimeSpan ToTimeSpan(this long value)
+    {
+        return new TimeSpan(value);
+    }
+
+    public static string ToDataStoreString(this DateTime value)
+    {
+        return value.ToDataStoreInteger().ToStringInvariant();
+    }
+
+    public static string ToDataStoreString(this TimeSpan value)
+    {
+        return value.ToDataStoreInteger().ToStringInvariant();
+    }
+
+    public static DateTime ToDateTime(this string value)
+    {
+        return long.Parse(value, CultureInfo.InvariantCulture).ToDateTime();
+    }
+
+    public static TimeSpan ToTimeSpan(this string value)
+    {
+        return long.Parse(value, CultureInfo.InvariantCulture).ToTimeSpan();
+    }
+}

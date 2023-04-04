@@ -1,33 +1,34 @@
-# Project
+# Introduction 
+This project contains tools for simplifiying use of common GIT-based services like ADO and GitHub by providing Windows shell extensions such as widgets and notifications. 
 
-> This repo has been populated by an initial template to help get you started. Please
-> make sure to update the content to build a great experience for community-building.
+# Getting Started
+TODO: Guide users through getting your code up and running on their own system. In this section you can talk about:
+1.	Installation process
+2.	Software dependencies
+3.	Latest releases
+4.	API references
 
-As the maintainer of this project, please make a few updates:
+# Build and Test
+Open the GITServices.sln in Visual Studio 2022 or later, and build from the IDE, or run build.ps1 from a Visual Studio command prompt.
 
-- Improving this README.MD file to provide a great experience
-- Updating SUPPORT.MD with content about this project's support experience
-- Understanding the security reporting process in SECURITY.MD
-- Remove this section from the README
+### OAuth App
+Since secrets cannot be checked in to the repository, developers must create their own test OAuth app for local tests.
 
-## Contributing
+Follow this link https://docs.github.com/en/developers/apps/building-oauth-apps/creating-an-oauth-app
+to creare a Git Oauth app (with RedirectUri = "devhome://oauth_redirect_uri/").
 
-This project welcomes contributions and suggestions.  Most contributions require you to agree to a
-Contributor License Agreement (CLA) declaring that you have the right to, and actually do, grant us
-the rights to use your contribution. For details, visit https://cla.opensource.microsoft.com.
+The OAuth App ClientId and ClientSecret can be added as environment variables using the following instructions:
 
-When you submit a pull request, a CLA bot will automatically determine whether you need to provide
-a CLA and decorate the PR appropriately (e.g., status check, comment). Simply follow the instructions
-provided by the bot. You will only need to do this once across all repos using our CLA.
+How to set the environment variables:
 
-This project has adopted the [Microsoft Open Source Code of Conduct](https://opensource.microsoft.com/codeofconduct/).
-For more information see the [Code of Conduct FAQ](https://opensource.microsoft.com/codeofconduct/faq/) or
-contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additional questions or comments.
+    On an elevated cmd window:
+        setx GITHUB_CLIENT_ID "Your OAuth App's ClientId" /m
+        setx GITHUB_CLIENT_SECRET "Your OAuth App's ClientSecret" /m
 
-## Trademarks
+# Contribute
+TODO: Explain how other users and developers can contribute to make your code better. 
 
-This project may contain trademarks or logos for projects, products, or services. Authorized use of Microsoft 
-trademarks or logos is subject to and must follow 
-[Microsoft's Trademark & Brand Guidelines](https://www.microsoft.com/en-us/legal/intellectualproperty/trademarks/usage/general).
-Use of Microsoft trademarks or logos in modified versions of this project must not cause confusion or imply Microsoft sponsorship.
-Any use of third-party trademarks or logos are subject to those third-party's policies.
+If you want to learn more about creating good readme files then refer the following [guidelines](https://docs.microsoft.com/en-us/azure/devops/repos/git/create-a-readme?view=azure-devops). You can also seek inspiration from the below readme files:
+- [ASP.NET Core](https://github.com/aspnet/Home)
+- [Visual Studio Code](https://github.com/Microsoft/vscode)
+- [Chakra Core](https://github.com/Microsoft/ChakraCore)

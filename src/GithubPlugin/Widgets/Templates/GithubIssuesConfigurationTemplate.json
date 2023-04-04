@@ -1,0 +1,132 @@
+{
+  "type": "AdaptiveCard",
+  "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+  "version": "1.5",
+  "body": [
+    {
+      "type": "Container",
+      "items": [
+        {
+          "type": "TextBlock",
+          "text": "%Widget_Template/Issues%",
+          "wrap": true,
+          "horizontalAlignment": "Center",
+          "size": "Large",
+          "weight": "Bolder"
+        },
+        {
+          "type": "TextBlock",
+          "text": "%Extension_Name/GitHub%",
+          "wrap": true,
+          "horizontalAlignment": "Center",
+          "spacing": "None",
+          "size": "Small",
+          "isSubtle": true,
+          "weight": "Lighter"
+        }
+      ]
+    },
+    {
+      "type": "Input.Text",
+      "id": "Repo",
+      "label": "%Widget_Template_Label/Url%",
+      "inlineAction": {
+        "type": "Action.Execute",
+        "tooltip": "%Widget_Template_Tooltip/Submit%",
+        "verb": "CheckUrl",
+        "title": "%Widget_Template_Button/Submit%"
+      },
+      "spacing": "Medium",
+      "style": "Url",
+      "placeholder": "%Widget_Template_Input/UrlPlaceholder%",
+      "value": "${$root.configuration.url}"
+    },
+    {
+      "type": "Container",
+      "items": [
+        {
+          "type": "TextBlock",
+          "text": "${errorMessage}",
+          "wrap": true,
+          "horizontalAlignment": "Center"
+        }
+      ],
+      "$when": "${errorMessage != null}",
+      "separator": true,
+      "horizontalAlignment": "Center",
+      "verticalContentAlignment": "Center",
+      "style": "warning"
+    },
+    {
+      "type": "Container",
+      "items": [
+        {
+          "type": "TextBlock",
+          "text": "%Widget_Template/Repository%",
+          "wrap": true,
+          "spacing": "Medium",
+          "size": "Small"
+        },
+        {
+          "type": "TextBlock",
+          "text": "${name}",
+          "wrap": true,
+          "spacing": "None"
+        },
+        {
+          "type": "TextBlock",
+          "text": "%Widget_Template/Label%",
+          "wrap": true,
+          "size": "Small"
+        },
+        {
+          "type": "TextBlock",
+          "text": "${label}",
+          "wrap": true,
+          "spacing": "None"
+        },
+        {
+          "type": "TextBlock",
+          "text": "%Widget_Template/Author%",
+          "wrap": true,
+          "size": "Small"
+        },
+        {
+          "type": "TextBlock",
+          "text": "${owner}",
+          "wrap": true,
+          "spacing": "None"
+        },
+        {
+          "type": "TextBlock",
+          "text": "%Widget_Template/Milestone%",
+          "wrap": true,
+          "size": "Small"
+        },
+        {
+          "type": "TextBlock",
+          "text": "${milestone}",
+          "wrap": true,
+          "spacing": "None"
+        },
+        {
+          "type": "TextBlock",
+          "text": "%Widget_Template/Project%",
+          "wrap": true,
+          "size": "Small"
+        },
+        {
+          "type": "TextBlock",
+          "text": "${Project}",
+          "wrap": true,
+          "spacing": "None"
+        }
+      ],
+      "spacing": "Medium",
+      "$data": "${$root.configuration}",
+      "$when": "${$root.hasConfiguration}",
+      "horizontalAlignment": "Left",
+      "bleed": true
+    }
+  ]
+}
