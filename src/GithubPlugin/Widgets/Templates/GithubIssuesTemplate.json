@@ -1,0 +1,93 @@
+{
+  "type": "AdaptiveCard",
+  "body": [
+    {
+      "type": "ColumnSet",
+      "columns": [
+        {
+          "type": "Column",
+          "width": "1",
+          "items": [
+            {
+              "type": "Image",
+              "url": "https://learn.microsoft.com/en-us/windows/apps/design/style/images/segoe-mdl/e958.png",
+              "size": "Small"
+            }
+          ],
+          "verticalContentAlignment": "Center"
+        },
+        {
+          "type": "Column",
+          "width": "9",
+          "items": [
+            {
+              "type": "TextBlock",
+              "text": "%Widget_Template/Issues% / ${selected_repo}",
+              "size": "Large",
+              "style": "Heading",
+              "wrap": true
+            }
+          ],
+          "verticalContentAlignment": "Center"
+        }
+      ]
+    },
+    {
+      "$data": "${issues}",
+      "type": "ColumnSet",
+      "style": "emphasis",
+      "selectAction": {
+        "type": "Action.OpenUrl",
+        "url": "${url}",
+        "tooltip": "%Widget_Template_Tooltip/OpenIssue%"
+      },
+      "columns": [
+        {
+          "type": "Column",
+          "items": [
+            {
+              "type": "Image",
+              "style": "Person",
+              "url": "${avatar}",
+              "size": "small"
+            }
+          ],
+          "width": "12px"
+        },
+        {
+          "type": "Column",
+          "width": "stretch",
+          "items": [
+            {
+              "type": "TextBlock",
+              "weight": "Bolder",
+              "text": "${title}"
+            },
+            {
+              "type": "RichTextBlock",
+              "spacing": "None",
+              "inlines": [
+                {
+                  "$data": "${labels}",
+                  "type": "TextRun",
+                  "text": "${name} ",
+                  "size": "small",
+                  "isSubtle": true
+                }
+              ]
+            },
+            {
+              "type": "TextBlock",
+              "spacing": "None",
+              "text": "#${number} %Widget_Template/Opened% ${date} %Widget_Template/By% ${user}",
+              "isSubtle": true,
+              "wrap": true
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+  "version": "1.5"
+}

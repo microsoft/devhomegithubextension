@@ -1,0 +1,136 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Package xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10" xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10" xmlns:uap3="http://schemas.microsoft.com/appx/manifest/uap/windows10/3" xmlns:rescap="http://schemas.microsoft.com/appx/manifest/foundation/windows10/restrictedcapabilities" xmlns:genTemplate="http://schemas.microsoft.com/appx/developer/templatestudio" xmlns:com="http://schemas.microsoft.com/appx/manifest/com/windows10" xmlns:desktop="http://schemas.microsoft.com/appx/manifest/desktop/windows10" IgnorableNamespaces="uap uap3 rescap genTemplate">
+  <Identity Name="Microsoft.Windows.DevHomeGitHubExtension" Publisher="CN=Microsoft Corporation, O=Microsoft Corporation, L=Redmond, S=Washington, C=US" Version="0.0.0.0" />
+  <Properties>
+    <DisplayName>Dev Home GitHub Extension</DisplayName>
+    <PublisherDisplayName>Microsoft Corporation</PublisherDisplayName>
+    <Logo>Assets\StoreLogo.png</Logo>
+  </Properties>
+  <Dependencies>
+    <TargetDeviceFamily Name="Windows.Universal" MinVersion="10.0.17763.0" MaxVersionTested="10.0.19041.0" />
+    <TargetDeviceFamily Name="Windows.Desktop" MinVersion="10.0.17763.0" MaxVersionTested="10.0.19041.0" />
+  </Dependencies>
+  <Resources>
+    <Resource Language="x-generate" />
+  </Resources>
+  <Applications>
+    <Application Id="App" Executable="DevHomeGitHubExtension.exe" EntryPoint="$targetentrypoint$">
+      <uap:VisualElements DisplayName="Dev Home GitHub Extension" Description="Dev Home GitHub Extension" AppListEntry="none" BackgroundColor="transparent" Square150x150Logo="Assets\Square150x150Logo.png" Square44x44Logo="Assets\Square44x44Logo.png">
+        <uap:DefaultTile Wide310x150Logo="Assets\Wide310x150Logo.png" />
+        <uap:SplashScreen Image="Assets\SplashScreen.png" />
+      </uap:VisualElements>
+      <Extensions>
+        <com:Extension Category="windows.comServer">
+          <com:ComServer>
+            <com:ExeServer Executable="DevHomeGitHubExtension.exe" Arguments="-RegisterProcessAsComServer" DisplayName="GitHub Plugin Widget">
+              <com:Class Id="F23870B0-B391-4466-84E2-42A991078613" DisplayName="GitHub Plugin Widget" />
+            </com:ExeServer>
+          </com:ComServer>
+        </com:Extension>
+        <com:Extension Category="windows.comServer">
+          <com:ComServer>
+            <com:ExeServer Executable="DevHomeGitHubExtension.exe" Arguments="-RegisterProcessAsComServer" DisplayName="GitHub Plugin">
+              <com:Class Id="6B5F1179-B2AE-4D5E-94FC-E5E119D1B8F0" DisplayName="GitHub Plugin" />
+            </com:ExeServer>
+          </com:ComServer>
+        </com:Extension>
+        <uap3:Extension Category="windows.appExtension">
+          <uap3:AppExtension Name="com.microsoft.devhome" Id="PG-SP-ID" PublicFolder="Public" DisplayName="Dev Home Github plugin" Description="Dev Home Github plugin">
+            <uap3:Properties>
+              <DevHomeProvider>
+                <Activation>
+                  <CreateInstance ClassId="6B5F1179-B2AE-4D5E-94FC-E5E119D1B8F0" />
+                </Activation>
+                <SupportedInterfaces>
+                  <DevId />
+                  <Repository />
+                </SupportedInterfaces>
+              </DevHomeProvider>
+            </uap3:Properties>
+          </uap3:AppExtension>
+        </uap3:Extension>
+        <uap:Extension Category="windows.protocol">
+          <uap:Protocol Name="devhome">
+            <uap:DisplayName>Login to Dev Home</uap:DisplayName>
+          </uap:Protocol>
+        </uap:Extension>
+        <desktop:Extension Category="windows.toastNotificationActivation">
+          <desktop:ToastNotificationActivation ToastActivatorCLSID="01E4A0B1-D229-4A9A-8936-C2AC42BBCEC7" />
+        </desktop:Extension>
+        <com:Extension Category="windows.comServer">
+          <com:ComServer>
+            <com:ExeServer Executable="DevHomeGitHubExtension.exe" Arguments="----AppNotificationActivated:" DisplayName="DevHome GitHub Extension Toast Activator">
+              <com:Class Id="01E4A0B1-D229-4A9A-8936-C2AC42BBCEC7" DisplayName="DevHome GitHub Extension Toast Activator"/>
+            </com:ExeServer>
+          </com:ComServer>
+        </com:Extension>
+        <uap3:Extension Category="windows.appExtension">
+          <uap3:AppExtension Name="com.microsoft.windows.widgets" DisplayName="GitHub" Id="01" PublicFolder="Public">
+            <uap3:Properties>
+              <WidgetProvider>
+                <ProviderIcons>
+                  <Icon Path="Assets\StoreLogo.png" />
+                </ProviderIcons>
+                <Activation>
+                  <!-- Apps exports COM interface which implements IWidgetProvider -->
+                  <CreateInstance ClassId="F23870B0-B391-4466-84E2-42A991078613" />
+                </Activation>
+                <Definitions>
+                  <Definition Id="GitHub_Issues" DisplayName="Issues" Description="List of issues in a GitHub repository.">
+                    <Capabilities>
+                      <Capability>
+                        <Size Name="small" />
+                      </Capability>
+                      <Capability>
+                        <Size Name="medium" />
+                      </Capability>
+                      <Capability>
+                        <Size Name="large" />
+                      </Capability>
+                    </Capabilities>
+                    <ThemeResources>
+                      <Icons>
+                        <Icon Path="Widgets\Assets\gh_logo.jpg" />
+                      </Icons>
+                      <Screenshots>
+                        <Screenshot Path="Widgets\Assets\screenshot.png" DisplayAltText="For accessibility" />
+                      </Screenshots>
+                      <DarkMode />
+                      <LightMode />
+                    </ThemeResources>
+                  </Definition>
+                  <Definition Id="GitHub_PullRequests" DisplayName="Pull requests" Description="List of open pull requests in a GitHub repository.">
+                    <Capabilities>
+                      <Capability>
+                        <Size Name="small" />
+                      </Capability>
+                      <Capability>
+                        <Size Name="medium" />
+                      </Capability>
+                      <Capability>
+                        <Size Name="large" />
+                      </Capability>
+                    </Capabilities>
+                    <ThemeResources>
+                      <Icons>
+                        <Icon Path="Widgets\Assets\gh_logo.jpg" />
+                      </Icons>
+                      <Screenshots>
+                        <Screenshot Path="Widgets\Assets\screenshot.png" DisplayAltText="For accessibility" />
+                      </Screenshots>
+                      <DarkMode />
+                      <LightMode />
+                    </ThemeResources>
+                  </Definition>
+                </Definitions>
+              </WidgetProvider>
+            </uap3:Properties>
+          </uap3:AppExtension>
+        </uap3:Extension>
+      </Extensions>
+    </Application>
+  </Applications>
+  <Capabilities>
+    <rescap:Capability Name="runFullTrust" />
+  </Capabilities>
+</Package>
