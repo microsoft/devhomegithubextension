@@ -16,22 +16,27 @@ public class RepositoryProvider : IRepositoryProvider
 
     public string DisplayName => "GitHub";
 
-    public IRepository? ParseRepositoryFromUrl(Uri uri)
+    public IAsyncOperation<IRepository?> ParseRepositoryFromUrlAsync(Uri uri)
     {
-        try
+        return Task.Run(() =>
         {
-            if (Validation.IsValidGitHubURL(uri.OriginalString))
+            try
             {
-                return new DevHomeRepository(uri);
+                if (Validation.IsValidGitHubURL(uri.OriginalString))
+                {
+                    var client = GitHubClientProvider.Instance.GetClient();
+                    var ocktoKitRepo = client.Repository.Get(Validation.ParseOwnerFromGitHubURL(uri), Validation.ParseRepositoryFromGitHubURL(uri)).Result;
+                    return new DevHomeRepository(ocktoKitRepo) as IRepository;
+                }
             }
-        }
-        catch (Exception)
-        {
-            Log.Logger()?.ReportDebug("Github extension could not parse the url: " + uri.OriginalString);
-            return null;
-        }
+            catch (Exception)
+            {
+                Log.Logger()?.ReportDebug("Github extension could not parse the url: " + uri.OriginalString);
+                return null;
+            }
 
-        return null;
+            return null;
+        }).AsAsyncOperation();
     }
 
     public IAsyncOperation<IEnumerable<IRepository>> GetRepositoriesAsync(IDeveloperId developerId)

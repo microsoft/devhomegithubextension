@@ -12,11 +12,20 @@ namespace GitHubPlugin.Providers;
 public class DevHomeRepository : Microsoft.Windows.DevHome.SDK.IRepository
 {
     private readonly string name;
+
     private readonly Uri cloneUrl;
+
+    private readonly bool _isPrivate;
+
+    private readonly DateTimeOffset _lastUpdated;
 
     string Microsoft.Windows.DevHome.SDK.IRepository.DisplayName => name;
 
     public string OwningAccountName => Validation.ParseOwnerFromGitHubURL(this.cloneUrl);
+
+    public bool IsPrivate => _isPrivate;
+
+    public DateTimeOffset LastUpdated => _lastUpdated;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="DevHomeRepository"/> class.
@@ -27,6 +36,13 @@ public class DevHomeRepository : Microsoft.Windows.DevHome.SDK.IRepository
     {
         this.name = Validation.ParseFullNameFromGitHubURL(uri);
         this.cloneUrl = uri;
+
+        var client = GitHubClientProvider.Instance.GetClient();
+        var getTask = client.Repository.Get(Validation.ParseOwnerFromGitHubURL(uri), Validation.ParseRepositoryFromGitHubURL(uri));
+        getTask.Wait();
+        var repo = getTask.Result;
+        _isPrivate = repo.Private;
+        _lastUpdated = repo.UpdatedAt;
     }
 
     /// <summary>
@@ -37,6 +53,9 @@ public class DevHomeRepository : Microsoft.Windows.DevHome.SDK.IRepository
     {
         this.name = ocktokitRepository.Name;
         this.cloneUrl = new Uri(ocktokitRepository.CloneUrl);
+
+        _lastUpdated = ocktokitRepository.UpdatedAt;
+        _isPrivate = ocktokitRepository.Private;
     }
 
     public IAsyncAction CloneRepositoryAsync(string cloneDestination, IDeveloperId developerId)
