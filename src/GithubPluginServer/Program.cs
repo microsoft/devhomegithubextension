@@ -30,7 +30,7 @@ public sealed class Program
         if (!mainInstance.IsCurrent)
         {
             Log.Logger()?.ReportInfo($"Not main instance, redirecting.");
-            var asyncAction = mainInstance.RedirectActivationToAsync(activationArgs);
+            mainInstance.RedirectActivationToAsync(activationArgs).AsTask().Wait();
             notificationManager.Unregister();
             return;
         }
