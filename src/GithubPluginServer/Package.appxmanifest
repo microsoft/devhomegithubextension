@@ -35,7 +35,7 @@
           </com:ComServer>
         </com:Extension>
         <uap3:Extension Category="windows.appExtension">
-          <uap3:AppExtension Name="com.microsoft.devhome" Id="PG-SP-ID" PublicFolder="Public" DisplayName="Dev Home Github plugin" Description="Dev Home Github plugin">
+          <uap3:AppExtension Name="com.microsoft.devhome" Id="PG-SP-ID" PublicFolder="Public" DisplayName="GitHub" Description="Dev Home GitHub plugin">
             <uap3:Properties>
               <DevHomeProvider>
                 <Activation>
