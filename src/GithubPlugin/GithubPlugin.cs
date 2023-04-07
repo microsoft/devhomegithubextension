@@ -26,7 +26,7 @@ public sealed class GitHubPlugin : IPlugin
         {
             case ProviderType.DevDoctor:
                 return new object();
-            case ProviderType.DevId:
+            case ProviderType.DeveloperId:
                 return DeveloperIdProvider.GetInstance();
             case ProviderType.Repository:
                 return new RepositoryProvider();
