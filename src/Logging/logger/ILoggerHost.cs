@@ -16,11 +16,6 @@ public interface ILoggerHost : IDisposable
         get;
     }
 
-    Dictionary<string, IListener> Listeners
-    {
-        get;
-    }
-
     void AddListener(IListener listener);
 
     void ReportEvent(LogEvent evt);

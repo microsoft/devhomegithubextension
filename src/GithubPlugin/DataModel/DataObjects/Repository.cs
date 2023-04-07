@@ -151,20 +151,17 @@ public class Repository
             {
                 repository.Id = existingRepository.Id;
                 dataStore.Connection!.Update(repository);
-                Log.Logger()?.ReportDebug($"Updated Repository, Id = {repository.Id}");
                 repository.DataStore = dataStore;
                 return repository;
             }
             else
             {
-                Log.Logger()?.ReportDebug($"No change to Repository, Id = {existingRepository.Id}");
                 return existingRepository;
             }
         }
 
         // No existing repository, add it.
         repository.Id = dataStore.Connection!.Insert(repository);
-        Log.Logger()?.ReportDebug($"Inserted Repository, Id = {repository.Id}");
         repository.DataStore = dataStore;
         return repository;
     }
@@ -189,7 +186,6 @@ public class Repository
             InternalId = internalId,
         };
 
-        Log.Logger()?.ReportDebug(DataStore.GetSqlLogMessage(sql, param));
         var repo = dataStore.Connection!.QueryFirstOrDefault<Repository>(sql, param, null);
         if (repo is not null)
         {

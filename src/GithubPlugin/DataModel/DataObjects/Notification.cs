@@ -87,7 +87,6 @@ public class Notification
                 try
                 {
                     DataStore.Connection!.Update(this);
-                    Log.Logger()?.ReportDebug($"Set Notification Id = {Id}  ToastState = {ToastState}");
                 }
                 catch (Exception ex)
                 {
@@ -247,7 +246,6 @@ public class Notification
     public static Notification Add(DataStore dataStore, Notification notification)
     {
         notification.Id = dataStore.Connection!.Insert(notification);
-        Log.Logger()?.ReportDebug($"Inserted Notification, Id = {notification.Id}");
         notification.DataStore = dataStore;
         return notification;
     }

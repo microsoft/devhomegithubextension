@@ -16,7 +16,13 @@ public class LogFileListener : ListenerBase, IDisposable
         // And fail silently if we can't write for whatever reason.
         try
         {
-            writer = new StreamWriter(filename, true);
+            var options = new FileStreamOptions
+            {
+                Access = FileAccess.Write,
+                Mode = FileMode.Append,
+                Share = FileShare.ReadWrite,
+            };
+            writer = new StreamWriter(filename, options);
         }
         catch (IOException)
         {
@@ -42,7 +48,7 @@ public class LogFileListener : ListenerBase, IDisposable
             return;
         }
 
-        writer?.Write($"[{DateTime.UtcNow:yyyy/MM/dd hh\\:mm\\:ss\\.ffff}][{evt.FullSourceName}] {evt.Severity.ToString().ToUpper(CultureInfo.InvariantCulture)}: {evt.Message}");
+        writer?.Write($"[{evt.Created:yyyy/MM/dd hh\\:mm\\:ss\\.ffff}][{evt.FullSourceName}] {evt.Severity.ToString().ToUpper(CultureInfo.InvariantCulture)}: {evt.Message}");
         if (elapsed != LogEvent.NoElapsed)
         {
             writer?.Write($" [Elapsed: {elapsed:hh\\:mm\\:ss\\.ffffff}]");

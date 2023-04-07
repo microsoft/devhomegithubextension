@@ -1,6 +1,7 @@
 ﻿// Copyright (c) Microsoft Corporation and Contributors
 // Licensed under the MIT license.
 
+using System.Collections.Concurrent;
 using DevHome.Logging.Helpers;
 using DevHome.Logging.Listeners;
 
@@ -16,14 +17,14 @@ public class Logger : ILoggerHost, IDisposable
         if (options.DebugListenerEnabled)
         {
             var debugListener = new DebugListener("Debug");
-            AddListener(debugListener);
+            AddListenerInternal(debugListener);
         }
 
         // Console listener
         if (options.LogStdoutEnabled)
         {
             var stdoutListener = new StdoutListener("Stdout");
-            AddListener(stdoutListener);
+            AddListenerInternal(stdoutListener);
         }
 
         // Log to file listener
@@ -32,8 +33,10 @@ public class Logger : ILoggerHost, IDisposable
             var logFilename = FileSystem.BuildOutputFilename(options.LogFileName, options.LogFileFolderPath);
             var logFileListener = new LogFileListener("LogFile", logFilename);
             ReportInfo($"Logging to {logFilename}");
-            AddListener(logFileListener);
+            AddListenerInternal(logFileListener);
         }
+
+        StartLogEventProcessor();
     }
 
     ~Logger()
@@ -41,7 +44,15 @@ public class Logger : ILoggerHost, IDisposable
         Dispose();
     }
 
-    public Dictionary<string, IListener> Listeners { get; } = new Dictionary<string, IListener>();
+    private readonly BlockingCollection<LogEvent> eventQueue = new (new ConcurrentQueue<LogEvent>());
+
+    private readonly ManualResetEvent processorCanceledEvent = new (true);
+
+    private CancellationTokenSource? cancelTokenSource;
+
+    private bool _logEventProcessorIsStopped = true;
+
+    private ConcurrentDictionary<string, IListener> Listeners { get; } = new ConcurrentDictionary<string, IListener>();
 
     public Options Options
     {
@@ -55,17 +66,99 @@ public class Logger : ILoggerHost, IDisposable
 
     public void AddListener(IListener listener)
     {
+        // External adds outside the constructor need to stop the log event processor.
+        // Otherwise we could be adding while iterating through the list.
+        StopLogEventProcessor();
+        AddListenerInternal(listener);
+        StartLogEventProcessor();
+    }
+
+    private void AddListenerInternal(IListener listener)
+    {
         listener.Host = this;
-        Listeners.Add(listener.Name, listener);
+        Listeners.TryAdd(listener.Name, listener);
     }
 
     public void ReportEvent(LogEvent evt)
     {
-        ReportEventNoFailFast(evt);
-        FailFastIfMeetsFailFastSeverity(evt);
+        try
+        {
+            _ = eventQueue.TryAdd(evt);
+        }
+        catch
+        {
+            // Errors trying to add to the log are ignored.
+        }
     }
 
-    private void ReportEventNoFailFast(LogEvent evt)
+    private void StartLogEventProcessor()
+    {
+        _ = Task.Run(() =>
+        {
+            _logEventProcessorIsStopped = false;
+            cancelTokenSource = new CancellationTokenSource();
+            processorCanceledEvent.Reset();
+            while (!eventQueue.IsCompleted)
+            {
+                LogEvent? logEvent;
+                try
+                {
+                    _ = eventQueue.TryTake(out logEvent, -1, cancelTokenSource.Token);
+                }
+                catch (OperationCanceledException)
+                {
+                    // It is possible we miss events because cancellation occurred while there was
+                    // still an event queue. Drain the remaining queue and process those events
+                    // before terminating.
+                    try
+                    {
+                        // This is a snapshot of the current collection, it will not block or handle
+                        // new items added after this point.
+                        foreach (var evt in eventQueue)
+                        {
+                            ProcessLogEvent(evt);
+                        }
+                    }
+                    catch
+                    {
+                        // This is best effort, if there are problems, carry on.
+                    }
+
+                    _logEventProcessorIsStopped = true;
+                    processorCanceledEvent.Set();
+                    break;
+                }
+
+                if (logEvent is not null)
+                {
+                    ProcessLogEventFailFast(logEvent);
+                }
+            }
+        });
+    }
+
+    private void StopLogEventProcessor()
+    {
+        if (_logEventProcessorIsStopped)
+        {
+            return;
+        }
+
+        try
+        {
+            cancelTokenSource?.Cancel();
+        }
+        catch
+        {
+            // if there is a problem cancelling the task, don't wait on it finishing.
+            return;
+        }
+
+        // Give the logger at most five seconds to finish writing out events.
+        processorCanceledEvent.WaitOne(5 * 1000);
+    }
+
+    private void ProcessLogEvent(LogEvent evt)
     {
         foreach (var listener in Listeners)
         {
@@ -84,6 +177,12 @@ public class Logger : ILoggerHost, IDisposable
         }
     }
 
+    private void ProcessLogEventFailFast(LogEvent evt)
+    {
+        ProcessLogEvent(evt);
+        FailFastIfMeetsFailFastSeverity(evt);
+    }
+
     private void FailFastIfMeetsFailFastSeverity(LogEvent evt)
     {
         if (FailFast.IsFailFastSeverityLevel(evt.Severity, Options.FailFastSeverity))
@@ -94,7 +193,7 @@ public class Logger : ILoggerHost, IDisposable
                 null!,
                 SeverityLevel.Critical,
                 $"Terminating program: failure event meets FailFast threshold of '{Options.FailFastSeverity}'.\n{Environment.StackTrace}");
-            ReportEventNoFailFast(failFastNotice);
+            ProcessLogEvent(failFastNotice);
             Environment.FailFast(evt.Message, evt.Exception);
         }
     }
@@ -133,32 +232,44 @@ public class Logger : ILoggerHost, IDisposable
 
     public void ReportDebug(string message)
     {
+#if DEBUG
         ReportEvent(SeverityLevel.Debug, message);
+#endif
     }
 
     public void ReportDebug(string message, Exception exception)
     {
+#if DEBUG
         ReportEvent(SeverityLevel.Debug, message, exception);
+#endif
     }
 
     public void ReportDebug(string component, string message)
     {
+#if DEBUG
         ReportEvent(component, SeverityLevel.Debug, message);
+#endif
     }
 
     public void ReportDebug(string component, string message, Exception exception)
     {
+#if DEBUG
         ReportEvent(component, SeverityLevel.Debug, message, exception);
+#endif
     }
 
     public void ReportDebug(string component, string subComponent, string message)
     {
+#if DEBUG
         ReportEvent(component, subComponent, SeverityLevel.Debug, message);
+#endif
     }
 
     public void ReportDebug(string component, string subComponent, string message, Exception exception)
     {
+#if DEBUG
         ReportEvent(component, subComponent, SeverityLevel.Debug, message, exception);
+#endif
     }
 
     public void ReportInfo(string message)
@@ -289,12 +400,8 @@ public class Logger : ILoggerHost, IDisposable
         {
             var disposingEvent = LogEvent.Create(Name, null!, SeverityLevel.Debug, "Disposing of all logging listeners.");
             ReportEvent(disposingEvent);
-
-            if (disposing)
-            {
-                Listeners.DisposeAll();
-            }
-
+            StopLogEventProcessor();
+            Listeners.DisposeAll();
             disposed = true;
         }
     }

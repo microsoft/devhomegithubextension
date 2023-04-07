@@ -211,7 +211,6 @@ public class Issue
             {
                 issue.Id = existing.Id;
                 dataStore.Connection!.Update(issue);
-                Log.Logger()?.ReportDebug($"Updated Issue, Id = {issue.Id}");
                 issue.DataStore = dataStore;
 
                 if (issue.LabelIds != existing.LabelIds)
@@ -228,14 +227,12 @@ public class Issue
             }
             else
             {
-                Log.Logger()?.ReportDebug($"No change to Issue, Id = {existing.Id}");
                 return existing;
             }
         }
 
         // No existing issue, add it.
         issue.Id = dataStore.Connection!.Insert(issue);
-        Log.Logger()?.ReportDebug($"Inserted Issue, Id = {issue.Id}");
 
         // Now that we have an inserted Id, we can associate labels and assignees.
         UpdateLabelsForIssue(dataStore, issue);
@@ -265,7 +262,6 @@ public class Issue
             InternalId = internalId,
         };
 
-        Log.Logger()?.ReportDebug(DataStore.GetSqlLogMessage(sql, param));
         var issue = dataStore.Connection!.QueryFirstOrDefault<Issue>(sql, param, null);
         if (issue is not null)
         {

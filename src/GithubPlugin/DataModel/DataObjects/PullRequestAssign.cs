@@ -27,7 +27,6 @@ public class PullRequestAssign
             UserId = userId,
         };
 
-        Log.Logger()?.ReportDebug(DataStore.GetSqlLogMessage(sql, param));
         return dataStore.Connection!.QueryFirstOrDefault<PullRequestAssign>(sql, param, null);
     }
 
@@ -47,7 +46,6 @@ public class PullRequestAssign
         };
 
         newPullRequestAssign.Id = dataStore.Connection!.Insert(newPullRequestAssign);
-        Log.Logger()?.ReportDebug($"Inserted PullRequestAssign, id = {newPullRequestAssign.Id}");
         return newPullRequestAssign;
     }
 
@@ -70,7 +68,6 @@ public class PullRequestAssign
         var command = dataStore.Connection!.CreateCommand();
         command.CommandText = sql;
         command.Parameters.AddWithValue("$PullRequestId", pullRequest.Id);
-        Log.Logger()?.ReportDebug(DataStore.GetCommandLogMessage(sql, command));
         command.ExecuteNonQuery();
     }
 }

@@ -46,7 +46,7 @@ internal class GithubIssuesWidget : GithubWidget
 
         try
         {
-            Log.Logger()?.ReportInfo(Name, ShortId, $"Requesting data update for {GetOwner()}/{GetRepo()}");
+            Log.Logger()?.ReportDebug(Name, ShortId, $"Requesting data update for {GetOwner()}/{GetRepo()}");
             var requestOptions = new RequestOptions
             {
                 // We are only interested in getting the first 10 issues. Repositories can have

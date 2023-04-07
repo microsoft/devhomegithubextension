@@ -26,8 +26,6 @@ public class IssueAssign
             IssueId = issueId,
             UserId = userId,
         };
-
-        Log.Logger()?.ReportDebug(DataStore.GetSqlLogMessage(sql, param));
         return dataStore.Connection!.QueryFirstOrDefault<IssueAssign>(sql, param, null);
     }
 
@@ -45,9 +43,7 @@ public class IssueAssign
             Issue = issue.Id,
             User = user.Id,
         };
-
         newIssueAssign.Id = dataStore.Connection!.Insert(newIssueAssign);
-        Log.Logger()?.ReportDebug($"Inserted IssueAssign, id = {newIssueAssign.Id}");
         return newIssueAssign;
     }
 
@@ -70,7 +66,6 @@ public class IssueAssign
         var command = dataStore.Connection!.CreateCommand();
         command.CommandText = sql;
         command.Parameters.AddWithValue("$IssueId", issue.Id);
-        Log.Logger()?.ReportDebug(DataStore.GetCommandLogMessage(sql, command));
         command.ExecuteNonQuery();
     }
 }

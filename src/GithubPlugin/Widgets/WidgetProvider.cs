@@ -13,7 +13,7 @@ public sealed class WidgetProvider : IWidgetProvider
 {
     public WidgetProvider()
     {
-        Log.Logger()?.ReportInfo("Provider Constructed");
+        Log.Logger()?.ReportDebug("Provider Constructed");
         widgetDefinitionRegistry.Add("GitHub_Issues", new WidgetImplFactory<GithubIssuesWidget>());
         widgetDefinitionRegistry.Add("GitHub_PullRequests", new WidgetImplFactory<GithubPullsWidget>());
         RecoverRunningWidgets();
@@ -31,7 +31,7 @@ public sealed class WidgetProvider : IWidgetProvider
     {
         var widgetId = widgetContext.Id;
         var widgetDefinitionId = widgetContext.DefinitionId;
-        Log.Logger()?.ReportInfo($"Calling Initialize for Widget Id: {widgetId} - {widgetDefinitionId}");
+        Log.Logger()?.ReportDebug($"Calling Initialize for Widget Id: {widgetId} - {widgetDefinitionId}");
         if (widgetDefinitionRegistry.ContainsKey(widgetDefinitionId))
         {
             if (!runningWidgets.ContainsKey(widgetId))
@@ -39,7 +39,6 @@ public sealed class WidgetProvider : IWidgetProvider
                 var factory = widgetDefinitionRegistry[widgetDefinitionId];
                 var widgetImpl = factory.Create(widgetContext, state);
                 runningWidgets.Add(widgetId, widgetImpl);
-                Log.Logger()?.ReportDebug("Widget initialized");
             }
             else
             {
@@ -67,7 +66,7 @@ public sealed class WidgetProvider : IWidgetProvider
 
         if (runningWidgets is null)
         {
-            Log.Logger()?.ReportInfo("No running widgets to recover.");
+            Log.Logger()?.ReportDebug("No running widgets to recover.");
             return;
         }
 
@@ -79,7 +78,7 @@ public sealed class WidgetProvider : IWidgetProvider
             }
         }
 
-        Log.Logger()?.ReportInfo("Finished recovering widgets.");
+        Log.Logger()?.ReportDebug("Finished recovering widgets.");
     }
 
     public void CreateWidget(WidgetContext widgetContext)
@@ -90,7 +89,7 @@ public sealed class WidgetProvider : IWidgetProvider
 
     public void Activate(WidgetContext widgetContext)
     {
-        Log.Logger()?.ReportInfo($"Activate id: {widgetContext.Id} definitionId: {widgetContext.DefinitionId}");
+        Log.Logger()?.ReportDebug($"Activate id: {widgetContext.Id} definitionId: {widgetContext.DefinitionId}");
         var widgetId = widgetContext.Id;
         if (runningWidgets.ContainsKey(widgetId))
         {
@@ -110,7 +109,7 @@ public sealed class WidgetProvider : IWidgetProvider
 
     public void Deactivate(string widgetId)
     {
-        Log.Logger()?.ReportInfo($"Deactivate id: {widgetId}");
+        Log.Logger()?.ReportDebug($"Deactivate id: {widgetId}");
         if (runningWidgets.ContainsKey(widgetId))
         {
             runningWidgets[widgetId].Deactivate(widgetId);
@@ -129,7 +128,7 @@ public sealed class WidgetProvider : IWidgetProvider
 
     public void OnActionInvoked(WidgetActionInvokedArgs actionInvokedArgs)
     {
-        Log.Logger()?.ReportInfo($"OnActionInvoked id: {actionInvokedArgs.WidgetContext.Id} definitionId: {actionInvokedArgs.WidgetContext.DefinitionId}");
+        Log.Logger()?.ReportDebug($"OnActionInvoked id: {actionInvokedArgs.WidgetContext.Id} definitionId: {actionInvokedArgs.WidgetContext.DefinitionId}");
         var widgetContext = actionInvokedArgs.WidgetContext;
         var widgetId = widgetContext.Id;
         if (runningWidgets.ContainsKey(widgetId))
@@ -140,7 +139,7 @@ public sealed class WidgetProvider : IWidgetProvider
 
     public void OnWidgetContextChanged(WidgetContextChangedArgs contextChangedArgs)
     {
-        Log.Logger()?.ReportInfo($"OnWidgetContextChanged id: {contextChangedArgs.WidgetContext.Id} definitionId: {contextChangedArgs.WidgetContext.DefinitionId}");
+        Log.Logger()?.ReportDebug($"OnWidgetContextChanged id: {contextChangedArgs.WidgetContext.Id} definitionId: {contextChangedArgs.WidgetContext.DefinitionId}");
         var widgetContext = contextChangedArgs.WidgetContext;
         var widgetId = widgetContext.Id;
         if (runningWidgets.ContainsKey(widgetId))

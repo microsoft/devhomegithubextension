@@ -59,19 +59,16 @@ public class Label
             {
                 label.Id = existing.Id;
                 dataStore.Connection!.Update(label);
-                Log.Logger()?.ReportDebug($"Updating Label, Id = {label.Id}");
                 return label;
             }
             else
             {
-                Log.Logger()?.ReportDebug($"No change to Label, Id = {existing.Id}");
                 return existing;
             }
         }
 
         // No existing pull request, add it.
         label.Id = dataStore.Connection!.Insert(label);
-        Log.Logger()?.ReportDebug($"Inserted Label, Id = {label.Id}");
         return label;
     }
 
@@ -88,7 +85,6 @@ public class Label
             InternalId = internalId,
         };
 
-        Log.Logger()?.ReportDebug(DataStore.GetSqlLogMessage(sql, param));
         return dataStore.Connection!.QueryFirstOrDefault<Label>(sql, param, null);
     }
 

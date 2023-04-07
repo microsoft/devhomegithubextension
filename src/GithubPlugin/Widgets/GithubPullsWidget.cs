@@ -48,7 +48,7 @@ internal class GithubPullsWidget : GithubWidget
 
         try
         {
-            Log.Logger()?.ReportInfo(Name, ShortId, $"Requesting data update for {GetOwner()}/{GetRepo()}");
+            Log.Logger()?.ReportDebug(Name, ShortId, $"Requesting data update for {GetOwner()}/{GetRepo()}");
             var requestOptions = new RequestOptions
             {
                 PullRequestRequest = new PullRequestRequest
