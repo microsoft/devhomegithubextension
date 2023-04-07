@@ -254,7 +254,7 @@ public abstract class GithubWidget : WidgetImpl
 
     public bool IsUserLoggedIn()
     {
-        IDevIdProvider authProvider = DeveloperIdProvider.GetInstance();
+        IDeveloperIdProvider authProvider = DeveloperIdProvider.GetInstance();
         return authProvider.GetLoggedInDeveloperIds().Any();
     }
 

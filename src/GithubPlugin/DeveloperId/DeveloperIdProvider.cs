@@ -7,7 +7,7 @@ using Windows.Foundation;
 
 namespace GitHubPlugin.DeveloperId;
 
-public class DeveloperIdProvider : IDevIdProvider
+public class DeveloperIdProvider : IDeveloperIdProvider
 {
     // _
     // Locks to control access to Singleton class members
@@ -81,7 +81,7 @@ public class DeveloperIdProvider : IDevIdProvider
 
     // _
     // _
-    // _ IDevIdProvider interface functions
+    // _ IDeveloperIdProvider interface functions
     // _
     // _
     public string GetName()
@@ -163,7 +163,7 @@ public class DeveloperIdProvider : IDevIdProvider
 
         try
         {
-            LoggedOut?.Invoke(this as IDevIdProvider, developerIdToLogout as IDeveloperId);
+            LoggedOut?.Invoke(this as IDeveloperIdProvider, developerIdToLogout as IDeveloperId);
         }
         catch (Exception error)
         {
@@ -256,7 +256,7 @@ public class DeveloperIdProvider : IDevIdProvider
 
                 try
                 {
-                    Updated?.Invoke(this as IDevIdProvider, duplicateDeveloperIds.Single() as IDeveloperId);
+                    Updated?.Invoke(this as IDeveloperIdProvider, duplicateDeveloperIds.Single() as IDeveloperId);
                 }
                 catch (Exception error)
                 {
@@ -280,7 +280,7 @@ public class DeveloperIdProvider : IDevIdProvider
 
             try
             {
-                LoggedIn?.Invoke(this as IDevIdProvider, newDeveloperId as IDeveloperId);
+                LoggedIn?.Invoke(this as IDeveloperIdProvider, newDeveloperId as IDeveloperId);
             }
             catch (Exception error)
             {
@@ -319,7 +319,7 @@ public class DeveloperIdProvider : IDevIdProvider
         // TODO - Get a new token(Oauth process) if there is a problem with current token
         // TODO - Github doesn't currently refresh tokens. Add that functionality here when github allows this.
         // TODO - Only invoke the event if token was updated
-        Updated?.Invoke(this as IDevIdProvider, developerIdInternal as IDeveloperId);
+        Updated?.Invoke(this as IDeveloperIdProvider, developerIdInternal as IDeveloperId);
     }
 
     public IPluginAdaptiveCardController GetAdaptiveCardController(string[] args)
