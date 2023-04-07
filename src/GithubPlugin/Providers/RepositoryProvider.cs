@@ -4,6 +4,7 @@
 using GitHubPlugin.Client;
 using GitHubPlugin.DeveloperId;
 using Microsoft.Windows.DevHome.SDK;
+using Octokit;
 using Windows.Foundation;
 
 namespace GitHubPlugin.Providers;
@@ -50,7 +51,10 @@ public class RepositoryProvider : IRepositoryProvider
             {
                 // Authenticate as the specified developer Id
                 var client = DeveloperIdProvider.GetInstance().GetDeveloperIdInternal(developerId).GitHubClient;
-                var repositories = client.Repository.GetAllForCurrent().Result;
+                RepositoryRequest request = new RepositoryRequest();
+                request.Type = RepositoryType.Owner;
+                var repositories = client.Repository.GetAllForCurrent(request).Result;
+
                 foreach (var repository in repositories)
                 {
                     repositoryList.Add(new DevHomeRepository(repository));
