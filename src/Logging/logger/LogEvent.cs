@@ -31,6 +31,11 @@ public class LogEvent
         get;
     }
 
+    public DateTime Created
+    {
+        get;
+    }
+
     public TimeSpan Elapsed
     {
         get;
@@ -53,6 +58,7 @@ public class LogEvent
         Message = message;
         Exception = exception;
         Elapsed = elapsed;
+        Created = DateTime.UtcNow;
     }
 
     public static LogEvent Create(string source, string subSource, SeverityLevel severity, string message) => Create(source, subSource, severity, message, null, NoElapsed);

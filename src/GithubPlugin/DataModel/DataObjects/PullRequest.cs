@@ -389,7 +389,6 @@ public class PullRequest
             {
                 pull.Id = existingPull.Id;
                 dataStore.Connection!.Update(pull);
-                Log.Logger()?.ReportDebug($"Updated PullRequest, Id = {pull.Id}");
                 pull.DataStore = dataStore;
 
                 if (pull.LabelIds != existingPull.LabelIds)
@@ -406,14 +405,12 @@ public class PullRequest
             }
             else
             {
-                Log.Logger()?.ReportDebug($"No change to PullRequest, Id = {existingPull.Id}");
                 return existingPull;
             }
         }
 
         // No existing pull request, add it.
         pull.Id = dataStore.Connection!.Insert(pull);
-        Log.Logger()?.ReportDebug($"Inserted PullRequest, Id = {pull.Id}");
 
         // Now that we have an inserted Id, we can associate labels and assignees.
         UpdateLabelsForPullRequest(dataStore, pull);
@@ -444,7 +441,6 @@ public class PullRequest
             InternalId = internalId,
         };
 
-        Log.Logger()?.ReportDebug(DataStore.GetSqlLogMessage(sql, param));
         var pull = dataStore.Connection!.QueryFirstOrDefault<PullRequest>(sql, param, null);
         if (pull is not null)
         {

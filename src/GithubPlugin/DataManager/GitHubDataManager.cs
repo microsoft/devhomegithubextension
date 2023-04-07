@@ -485,7 +485,7 @@ public partial class GitHubDataManager : IGitHubDataManager, IDisposable
 
         if (ShouldCreateCheckSucceededNotification(curStatus, prevStatus))
         {
-            Log.Logger()?.ReportInfo(Name, "Notifications", $"Creating CheckRunSuccess Notification for {curStatus}");
+            Log.Logger()?.ReportDebug(Name, "Notifications", $"Creating CheckRunSuccess Notification for {curStatus}");
             var notification = Notification.Create(curStatus, NotificationType.CheckRunSucceeded);
             Notification.Add(DataStore, notification);
         }

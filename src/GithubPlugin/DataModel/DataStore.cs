@@ -136,7 +136,7 @@ public class DataStore : IDisposable
     {
         if (Connection is not null)
         {
-            Log.Logger()?.ReportInfo($"Connection is already open.");
+            Log.Logger()?.ReportDebug($"Connection is already open.");
             return;
         }
 
@@ -161,12 +161,12 @@ public class DataStore : IDisposable
             Log.Logger()?.ReportCritical($"Failed to open connection: {Connection.ConnectionString}", e);
         }
 
-        Log.Logger()?.ReportInfo($"Opened DataStore at {DataStoreFilePath}");
+        Log.Logger()?.ReportDebug($"Opened DataStore at {DataStoreFilePath}");
     }
 
     private void CreateSchema()
     {
-        Log.Logger()?.ReportInfo("Creating Schema");
+        Log.Logger()?.ReportDebug("Creating Schema");
         SetPragma("encoding", "\"UTF-8\"");
 
         using var tx = BeginTransaction();
@@ -176,7 +176,7 @@ public class DataStore : IDisposable
             Execute(sql);
         }
 
-        Log.Logger()?.ReportInfo($"Created schema ({sqls.Count} entities)");
+        Log.Logger()?.ReportDebug($"Created schema ({sqls.Count} entities)");
         SetPragma("user_version", schema.SchemaVersion);
         tx.Commit();
     }
@@ -246,7 +246,6 @@ public class DataStore : IDisposable
 
     private void Execute(string sql)
     {
-        Log.Logger()?.ReportDebug(GetSqlLogMessage(sql));
         using var command = Connection!.CreateCommand();
         command!.CommandText = sql;
         try

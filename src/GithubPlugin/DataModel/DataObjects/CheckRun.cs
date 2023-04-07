@@ -98,19 +98,16 @@ public class CheckRun
             {
                 checkRun.Id = existing.Id;
                 dataStore.Connection!.Update(checkRun);
-                Log.Logger()?.ReportDebug($"Updating CheckRun, Id = {checkRun.Id}");
                 return checkRun;
             }
             else
             {
-                Log.Logger()?.ReportDebug($"No change to CheckRun, Id = {existing.Id}");
                 return existing;
             }
         }
 
         // No existing pull request, add it.
         checkRun.Id = dataStore.Connection!.Insert(checkRun);
-        Log.Logger()?.ReportDebug($"Inserted CheckRun, Id = {checkRun.Id}");
         return checkRun;
     }
 
@@ -172,7 +169,6 @@ public class CheckRun
             InternalId = internalId,
         };
 
-        Log.Logger()?.ReportDebug(DataStore.GetSqlLogMessage(sql, param));
         return dataStore.Connection!.QueryFirstOrDefault<CheckRun>(sql, param, null);
     }
 
@@ -192,7 +188,6 @@ public class CheckRun
             pullRequest.HeadSha,
         };
 
-        Log.Logger()?.ReportDebug(DataStore.GetSqlLogMessage(sql, param));
         return dataStore.Connection!.Query<CheckRun>(sql, param, null) ?? Enumerable.Empty<CheckRun>();
     }
 
