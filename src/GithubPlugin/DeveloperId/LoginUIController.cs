@@ -47,7 +47,7 @@ internal class LoginUIController : IPluginAdaptiveCardController
 
                 try
                 {
-                    var devId = await (DeveloperIdProvider.GetInstance() as IDevIdProvider).LoginNewDeveloperIdAsync();
+                    var devId = await (DeveloperIdProvider.GetInstance() as IDeveloperIdProvider).LoginNewDeveloperIdAsync();
                     if (devId != null)
                     {
                         var resourceLoader = new ResourceLoader(ResourceLoader.GetDefaultResourceFilePath(), "GitHubPlugin/Resources");
