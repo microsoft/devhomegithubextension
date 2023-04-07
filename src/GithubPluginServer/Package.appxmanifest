@@ -42,7 +42,7 @@
                   <CreateInstance ClassId="6B5F1179-B2AE-4D5E-94FC-E5E119D1B8F0" />
                 </Activation>
                 <SupportedInterfaces>
-                    <DeveloperId />
+                  <DeveloperId />
                   <Repository />
                 </SupportedInterfaces>
               </DevHomeProvider>

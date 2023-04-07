@@ -81,7 +81,7 @@ public class DeveloperIdProvider : IDeveloperIdProvider
 
     // _
     // _
-    // _ IDevIdProvider interface functions
+    // _ IDeveloperIdProvider interface functions
     // _
     // _
     public string GetName()
