@@ -42,19 +42,16 @@ public class CommitCombinedStatus
             {
                 existing.StateId = status.StateId;
                 dataStore.Connection!.Update(existing);
-                Log.Logger()?.ReportDebug($"Updating CommitCombinedStatus, Id = {existing.Id}");
                 return existing;
             }
             else
             {
-                Log.Logger()?.ReportDebug($"No change to CommitCombinedStatus, Id = {existing.Id}");
                 return existing;
             }
         }
 
         // No existing combined commit status, add it.
         status.Id = dataStore.Connection!.Insert(status);
-        Log.Logger()?.ReportDebug($"Inserted CommitCombinedStatus, Id = {status.Id}");
         return status;
     }
 
@@ -89,7 +86,6 @@ public class CommitCombinedStatus
             HeadSha = headSha,
         };
 
-        Log.Logger()?.ReportDebug(DataStore.GetSqlLogMessage(sql, param));
         return dataStore.Connection!.QueryFirstOrDefault<CommitCombinedStatus>(sql, param, null);
     }
 
@@ -101,7 +97,6 @@ public class CommitCombinedStatus
             pullRequest.HeadSha,
         };
 
-        Log.Logger()?.ReportDebug(DataStore.GetSqlLogMessage(sql, param));
         var status = dataStore.Connection!.QueryFirstOrDefault<CommitCombinedStatus>(sql, param, null);
         if (status == null)
         {

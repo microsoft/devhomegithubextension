@@ -75,19 +75,16 @@ public class CheckSuite
             {
                 checkSuite.Id = existing.Id;
                 dataStore.Connection!.Update(checkSuite);
-                Log.Logger()?.ReportDebug($"Updating CheckSuite, Id = {checkSuite.Id}");
                 return checkSuite;
             }
             else
             {
-                Log.Logger()?.ReportDebug($"No change to CheckSuite, Id = {existing.Id}");
                 return checkSuite;
             }
         }
 
         // No existing pull request, add it.
         checkSuite.Id = dataStore.Connection!.Insert(checkSuite);
-        Log.Logger()?.ReportDebug($"Inserted CheckSuite, Id = {checkSuite.Id}");
         return checkSuite;
     }
 
@@ -149,7 +146,6 @@ public class CheckSuite
             InternalId = internalId,
         };
 
-        Log.Logger()?.ReportDebug(DataStore.GetSqlLogMessage(sql, param));
         return dataStore.Connection!.QueryFirstOrDefault<CheckSuite>(sql, param, null);
     }
 
@@ -169,7 +165,6 @@ public class CheckSuite
             pullRequest.HeadSha,
         };
 
-        Log.Logger()?.ReportDebug(DataStore.GetSqlLogMessage(sql, param));
         return dataStore.Connection!.Query<CheckSuite>(sql, param, null) ?? Enumerable.Empty<CheckSuite>();
     }
 

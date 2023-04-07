@@ -26,8 +26,6 @@ public class IssueLabel
             IssueId = issueId,
             LabelId = labelId,
         };
-
-        Log.Logger()?.ReportDebug(DataStore.GetSqlLogMessage(sql, param));
         return dataStore.Connection!.QueryFirstOrDefault<IssueLabel>(sql, param, null);
     }
 
@@ -45,9 +43,7 @@ public class IssueLabel
             Issue = issue.Id,
             Label = label.Id,
         };
-
         newIssueLabel.Id = dataStore.Connection!.Insert(newIssueLabel);
-        Log.Logger()?.ReportDebug($"Inserted IssueLabel, id = {newIssueLabel.Id}");
         return newIssueLabel;
     }
 
@@ -70,7 +66,6 @@ public class IssueLabel
         var command = dataStore.Connection!.CreateCommand();
         command.CommandText = sql;
         command.Parameters.AddWithValue("$IssueId", issue.Id);
-        Log.Logger()?.ReportDebug(DataStore.GetCommandLogMessage(sql, command));
         command.ExecuteNonQuery();
     }
 }

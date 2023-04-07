@@ -24,8 +24,6 @@ public class MetaData
         command.CommandText = sql;
         command.Parameters.AddWithValue("$Key", key);
         command.Parameters.AddWithValue("$Value", value);
-
-        Log.Logger()?.ReportDebug(DataStore.GetCommandLogMessage(sql, command));
         command.ExecuteNonQuery();
     }
 
@@ -37,7 +35,6 @@ public class MetaData
             Key = key,
         };
 
-        Log.Logger()?.ReportDebug(DataStore.GetSqlLogMessage(sql, param));
         return dataStore.Connection!.QueryFirstOrDefault<MetaData>(sql, param, null);
     }
 

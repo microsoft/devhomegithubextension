@@ -26,8 +26,6 @@ public class PullRequestLabel
             PullId = pullId,
             LabelId = labelId,
         };
-
-        Log.Logger()?.ReportDebug(DataStore.GetSqlLogMessage(sql, param));
         return dataStore.Connection!.QueryFirstOrDefault<PullRequestLabel>(sql, param, null);
     }
 
@@ -45,9 +43,7 @@ public class PullRequestLabel
             PullRequest = pull.Id,
             Label = label.Id,
         };
-
         newPullLabel.Id = dataStore.Connection!.Insert(newPullLabel);
-        Log.Logger()?.ReportDebug($"Inserted PullRequestLabel, id = {newPullLabel.Id}");
         return newPullLabel;
     }
 
@@ -70,7 +66,6 @@ public class PullRequestLabel
         var command = dataStore.Connection!.CreateCommand();
         command.CommandText = sql;
         command.Parameters.AddWithValue("$PullRequestId", pullRequest.Id);
-        Log.Logger()?.ReportDebug(DataStore.GetCommandLogMessage(sql, command));
         command.ExecuteNonQuery();
     }
 }

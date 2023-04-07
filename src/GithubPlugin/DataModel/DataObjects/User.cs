@@ -81,20 +81,17 @@ public class User
             {
                 user.Id = existingUser.Id;
                 dataStore.Connection!.Update(user);
-                Log.Logger()?.ReportDebug($"Updating User, Id = {user.Id}");
                 user.DataStore = dataStore;
                 return user;
             }
             else
             {
-                Log.Logger()?.ReportDebug($"No change to User, Id = {existingUser.Id}");
                 return existingUser;
             }
         }
 
         // No existing pull request, add it.
         user.Id = dataStore.Connection!.Insert(user);
-        Log.Logger()?.ReportDebug($"Inserted User, Id = {user.Id}");
         user.DataStore = dataStore;
         return user;
     }
@@ -118,7 +115,6 @@ public class User
             InternalId = internalId,
         };
 
-        Log.Logger()?.ReportDebug(DataStore.GetSqlLogMessage(sql, param));
         var user = dataStore.Connection!.QueryFirstOrDefault<User>(sql, param, null);
         if (user != null)
         {

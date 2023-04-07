@@ -64,8 +64,6 @@ public class TestListener : ListenerBase
             case SeverityLevel.Debug:
                 ++EventCounts[SeverityLevel.Debug];
 
-                // Printing debug statements as they may be useful in test log analysis.
-                // If this becomes too noisy, we can add a filter option.
                 PrintEvent(evt);
                 break;
         }
