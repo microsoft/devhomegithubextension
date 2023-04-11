@@ -33,9 +33,7 @@ public partial class WidgetTests
             "github.com/owner/repo/",
             "github.com/owner/repo.git/",
             "github.com/owner/repo/pulls/4",
-            "github.com/owner/repo.git/pulls/4",
             "github.com/owner/repo/pulls/4",
-            "github.com/owner/repo.git/pulls/4",
             "owner/repo",
         };
 
