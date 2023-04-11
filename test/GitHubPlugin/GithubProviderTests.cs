@@ -48,6 +48,7 @@ public partial class GithubProviderTests
     }
 
     [TestMethod]
+    [TestCategory("Unit")]
     public void CanParseGoodURL()
     {
         var manualResetEvent = new ManualResetEvent(false);
@@ -68,6 +69,7 @@ public partial class GithubProviderTests
     }
 
     [TestMethod]
+    [TestCategory("Unit")]
     [Ignore("LibGit2Sharp can't clone to long paths.  Ignore till we found another location to clone")]
     public void CanClone()
     {
@@ -102,6 +104,7 @@ public partial class GithubProviderTests
     }
 
     [TestMethod]
+    [TestCategory("Unit")]
     [Ignore("Ignoring right now until mock repo is implemeneted")]
     public void CloneViaMakingRepoObject()
     {
