@@ -29,24 +29,6 @@ public class DevHomeRepository : Microsoft.Windows.DevHome.SDK.IRepository
 
     /// <summary>
     /// Initializes a new instance of the <see cref="DevHomeRepository"/> class.
-    /// Assumes that the uri has been checked by validation and uri is a well formed github Uri.
-    /// </summary>
-    /// <param name="uri">The Uri to the repository to clone</param>
-    public DevHomeRepository(Uri uri)
-    {
-        this.name = Validation.ParseFullNameFromGitHubURL(uri);
-        this.cloneUrl = uri;
-
-        var client = GitHubClientProvider.Instance.GetClient();
-        var getTask = client.Repository.Get(Validation.ParseOwnerFromGitHubURL(uri), Validation.ParseRepositoryFromGitHubURL(uri));
-        getTask.Wait();
-        var repo = getTask.Result;
-        _isPrivate = repo.Private;
-        _lastUpdated = repo.UpdatedAt;
-    }
-
-    /// <summary>
-    /// Initializes a new instance of the <see cref="DevHomeRepository"/> class.
     /// </summary>
     /// <param name="ocktokitRepository">The repository recived from ocktokit</param>
     public DevHomeRepository(Octokit.Repository ocktokitRepository)

@@ -93,8 +93,16 @@ public static class Validation
 
     public static string ParseRepositoryFromGitHubURL(Uri url)
     {
-        // Replace .git because libgit2sharp does not want .git.
-        return url.Segments[2].Replace("/", string.Empty).Replace(".git", string.Empty);
+        // Replace .git because Ocktokit does not want .git.
+        var repoName = url.Segments[2].Replace("/", string.Empty);
+
+        if (repoName.EndsWith(".git", StringComparison.OrdinalIgnoreCase))
+        {
+            var locationOfLastDotGit = repoName.LastIndexOf(".git", StringComparison.OrdinalIgnoreCase);
+            repoName = repoName.Remove(locationOfLastDotGit);
+        }
+
+        return repoName;
     }
 
     public static string ParseFullNameFromGitHubURL(string url)
