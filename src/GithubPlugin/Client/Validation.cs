@@ -93,7 +93,8 @@ public static class Validation
 
     public static string ParseRepositoryFromGitHubURL(Uri url)
     {
-        return url.Segments[2].Replace("/", string.Empty);
+        // Replace .git because libgit2sharp does not want .git.
+        return url.Segments[2].Replace("/", string.Empty).Replace(".git", string.Empty);
     }
 
     public static string ParseFullNameFromGitHubURL(string url)
