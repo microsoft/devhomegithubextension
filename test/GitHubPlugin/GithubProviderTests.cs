@@ -38,6 +38,7 @@ public partial class GithubProviderTests
     }
 
     [TestMethod]
+    [TestCategory("Unit")]
     public void ValidateCanGetProvider()
     {
         var manualResetEvent = new ManualResetEvent(false);
