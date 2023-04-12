@@ -79,9 +79,6 @@
                   <Definition Id="GitHub_Issues" DisplayName="Issues" Description="List of issues in a GitHub repository.">
                     <Capabilities>
                       <Capability>
-                        <Size Name="small" />
-                      </Capability>
-                      <Capability>
                         <Size Name="medium" />
                       </Capability>
                       <Capability>
@@ -101,9 +98,6 @@
                   </Definition>
                   <Definition Id="GitHub_PullRequests" DisplayName="Pull requests" Description="List of open pull requests in a GitHub repository.">
                     <Capabilities>
-                      <Capability>
-                        <Size Name="small" />
-                      </Capability>
                       <Capability>
                         <Size Name="medium" />
                       </Capability>
