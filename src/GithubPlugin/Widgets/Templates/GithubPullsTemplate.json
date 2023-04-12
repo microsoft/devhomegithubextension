@@ -45,7 +45,9 @@
         {
           "type": "TextBlock",
           "text": "${title}",
-          "weight": "Bolder"
+          "weight": "Bolder",
+          "wrap": true,
+          "maxLines": 2
         },
         {
           "type": "TextBlock",
