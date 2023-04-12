@@ -36,7 +36,6 @@
       "$data": "${pulls}",
       "type": "Container",
       "style": "emphasis",
-      "spacing": "medium",
       "selectAction": {
         "type": "Action.OpenUrl",
         "url": "${url}",

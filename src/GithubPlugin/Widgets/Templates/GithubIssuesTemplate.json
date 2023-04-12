@@ -61,7 +61,8 @@
             {
               "type": "TextBlock",
               "weight": "Bolder",
-              "text": "${title}"
+              "text": "${title}",
+              "maxLines": 2
             },
             {
               "type": "RichTextBlock",
@@ -81,7 +82,7 @@
               "spacing": "None",
               "text": "#${number} %Widget_Template/Opened% ${date} %Widget_Template/By% ${user}",
               "isSubtle": true,
-              "wrap": true
+              "maxLines": 2
             }
           ]
         }
