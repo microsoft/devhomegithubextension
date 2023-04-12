@@ -56,7 +56,7 @@ public static class Validation
             url = urlWithProtocol;
         }
 
-        return new Uri(url);
+        return new Uri(RemoveDotGitFromEndOfString(url));
     }
 
     public static string ParseOwnerFromGitHubURL(string url)
@@ -95,14 +95,29 @@ public static class Validation
     {
         // Replace .git because Ocktokit does not want .git.
         var repoName = url.Segments[2].Replace("/", string.Empty);
+        return RemoveDotGitFromEndOfString(repoName);
+    }
 
-        if (repoName.EndsWith(".git", StringComparison.OrdinalIgnoreCase))
+    /// <summary>
+    /// Removes either .git or .git/ from the end of the string.  If the string doe not end with
+    /// .git or .git/ the original string is returned unmodified.
+    /// </summary>
+    /// <param name="stringWithDotGit">The string to parse</param>
+    /// <returns>stringWithDotGit with .git or .git/ removed from the end.</returns>
+    private static string RemoveDotGitFromEndOfString(string stringWithDotGit)
+    {
+        if (stringWithDotGit.EndsWith(".git", StringComparison.OrdinalIgnoreCase))
         {
-            var locationOfLastDotGit = repoName.LastIndexOf(".git", StringComparison.OrdinalIgnoreCase);
-            repoName = repoName.Remove(locationOfLastDotGit);
+            var locationOfLastDotGit = stringWithDotGit.LastIndexOf(".git", StringComparison.OrdinalIgnoreCase);
+            return stringWithDotGit.Remove(locationOfLastDotGit);
+        }
+        else if (stringWithDotGit.EndsWith(".git/", StringComparison.OrdinalIgnoreCase))
+        {
+            var locationOfLastDotGit = stringWithDotGit.LastIndexOf(".git/", StringComparison.OrdinalIgnoreCase);
+            return stringWithDotGit.Remove(locationOfLastDotGit);
         }
 
-        return repoName;
+        return stringWithDotGit;
     }
 
     public static string ParseFullNameFromGitHubURL(string url)
