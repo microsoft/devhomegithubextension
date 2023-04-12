@@ -63,6 +63,12 @@
       <Content Update="Widgets\Assets\gh_logo.jpg">
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </Content>
+      <Content Update="Widgets\Assets\GitHubLogo_Dark.png">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </Content>
+      <Content Update="Widgets\Assets\GitHubLogo_Light.png">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </Content>
       <Content Update="Widgets\Assets\screenshot.png">
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </Content>

@@ -69,7 +69,7 @@
             <uap3:Properties>
               <WidgetProvider>
                 <ProviderIcons>
-                  <Icon Path="Assets\StoreLogo.png" />
+                  <Icon Path="Widgets\Assets\gh_logo.jpg" />
                 </ProviderIcons>
                 <Activation>
                   <!-- Apps exports COM interface which implements IWidgetProvider -->
@@ -87,13 +87,27 @@
                     </Capabilities>
                     <ThemeResources>
                       <Icons>
-                        <Icon Path="Widgets\Assets\gh_logo.jpg" />
+                        <Icon Path="Widgets\Assets\GitHubLogo_Light.jpg" />
                       </Icons>
                       <Screenshots>
                         <Screenshot Path="Widgets\Assets\screenshot.png" DisplayAltText="For accessibility" />
                       </Screenshots>
-                      <DarkMode />
-                      <LightMode />
+                      <DarkMode>
+                        <Icons>
+                          <Icon Path="Widgets\Assets\GitHubLogo_Dark.png" />
+                        </Icons>
+                        <Screenshots>
+                          <Screenshot Path="Widgets\Assets\screenshot.png" DisplayAltText ="For accessibility"/>
+                        </Screenshots>
+                      </DarkMode>
+                      <LightMode>
+                        <Icons>
+                          <Icon Path="Widgets\Assets\GitHubLogo_Light.png" />
+                        </Icons>
+                        <Screenshots>
+                          <Screenshot Path="Widgets\Assets\screenshot.png"/>
+                        </Screenshots>
+                      </LightMode>
                     </ThemeResources>
                   </Definition>
                   <Definition Id="GitHub_PullRequests" DisplayName="Pull requests" Description="List of open pull requests in a GitHub repository.">
@@ -107,13 +121,27 @@
                     </Capabilities>
                     <ThemeResources>
                       <Icons>
-                        <Icon Path="Widgets\Assets\gh_logo.jpg" />
+                        <Icon Path="Widgets\Assets\GitHubLogo_Light.jpg" />
                       </Icons>
                       <Screenshots>
                         <Screenshot Path="Widgets\Assets\screenshot.png" DisplayAltText="For accessibility" />
                       </Screenshots>
-                      <DarkMode />
-                      <LightMode />
+                      <DarkMode>
+                        <Icons>
+                          <Icon Path="Widgets\Assets\GitHubLogo_Dark.png" />
+                        </Icons>
+                        <Screenshots>
+                          <Screenshot Path="Widgets\Assets\screenshot.png" DisplayAltText="For accessibility"/>
+                        </Screenshots>
+                      </DarkMode>
+                      <LightMode>
+                        <Icons>
+                          <Icon Path="Widgets\Assets\GitHubLogo_Light.png" />
+                        </Icons>
+                        <Screenshots>
+                          <Screenshot Path="Widgets\Assets\screenshot.png"/>
+                        </Screenshots>
+                      </LightMode>
                     </ThemeResources>
                   </Definition>
                 </Definitions>
