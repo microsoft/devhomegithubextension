@@ -117,12 +117,12 @@ internal class GithubIssuesWidget : GithubWidget
                         { "color", label.Color },
                     };
 
-                    issueLabels.Add(issueLabel);
+                    ((IList<JsonNode?>)issueLabels).Add(issueLabel);
                 }
 
                 issue.Add("labels", issueLabels);
 
-                issuesArray.Add(issue);
+                ((IList<JsonNode?>)issuesArray).Add(issue);
             }
 
             issuesData.Add("issues", issuesArray);

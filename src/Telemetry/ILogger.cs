@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -55,7 +56,7 @@ public interface ILogger
     /// <param name="data">Values to send to the telemetry system.</param>
     /// <param name="relatedActivityId">Optional relatedActivityId which will allow to correlate this telemetry with other telemetry in the same action/activity or thread and corelate them</param>
     /// <typeparam name="T">Anonymous type.</typeparam>
-    public void Log<T>(string eventName, LogLevel level, T data, Guid? relatedActivityId = null);
+    public void Log<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)] T>(string eventName, LogLevel level, T data, Guid? relatedActivityId = null);
 
     /// <summary>
     /// Log an error event. Typically used for just a single event that's only called one place in the code.
@@ -66,5 +67,5 @@ public interface ILogger
     /// <param name="data">Values to send to the telemetry system.</param>
     /// <param name="relatedActivityId">Optional Optional relatedActivityId which will allow to correlate this telemetry with other telemetry in the same action/activity or thread and corelate them</param>
     /// <typeparam name="T">Anonymous type.</typeparam>
-    public void LogError<T>(string eventName, LogLevel level, T data, Guid? relatedActivityId = null);
+    public void LogError<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)] T>(string eventName, LogLevel level, T data, Guid? relatedActivityId = null);
 }

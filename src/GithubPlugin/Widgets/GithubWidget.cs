@@ -4,6 +4,7 @@
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Nodes;
+using System.Text.Json.Serialization;
 using GitHubPlugin.Client;
 using GitHubPlugin.DataManager;
 using GitHubPlugin.DeveloperId;
@@ -69,11 +70,6 @@ public abstract class GithubWidget : WidgetImpl
         DataUpdater?.Dispose();
         DeveloperIdProvider.GetInstance().LoggedIn -= HandleDeveloperIdChange;
         DeveloperIdProvider.GetInstance().LoggedOut -= HandleDeveloperIdChange;
-    }
-
-    private class DataPayload
-    {
-        public string? Repo { get; set; }
     }
 
     public virtual void RequestContentData()
@@ -149,7 +145,7 @@ public abstract class GithubWidget : WidgetImpl
         // the Configure state.
         Page = WidgetPageState.Configure;
         var data = args.Data;
-        var dataObject = JsonSerializer.Deserialize<DataPayload>(data);
+        var dataObject = JsonSerializer.Deserialize(data, SourceGenerationContext.Default.DataPayload);
         if (dataObject != null && dataObject.Repo != null)
         {
             var updateRequestOptions = new WidgetUpdateRequestOptions(Id)
@@ -422,4 +418,18 @@ public abstract class GithubWidget : WidgetImpl
         Log.Logger()?.ReportInfo(Name, ShortId, $"Change in Developer Id,  Updating widget state.");
         UpdateActivityState();
     }
+}
+
+internal class DataPayload
+{
+    public string? Repo
+    {
+        get; set;
+    }
+}
+
+[JsonSourceGenerationOptions(WriteIndented = true)]
+[JsonSerializable(typeof(DataPayload))]
+internal partial class SourceGenerationContext : JsonSerializerContext
+{
 }
