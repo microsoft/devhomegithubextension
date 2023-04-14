@@ -34,7 +34,7 @@
         "type": "Action.Execute",
         "tooltip": "%Widget_Template_Tooltip/Submit%",
         "verb": "CheckUrl",
-        "title": "%Widget_Template_Button/Submit%"
+        "iconUrl": "https://learn.microsoft.com/en-us/uwp/api/windows.ui.xaml.controls/images/segoe-mdl/e122.png"
       },
       "spacing": "Medium",
       "style": "Url",
