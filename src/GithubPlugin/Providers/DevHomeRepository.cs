@@ -2,6 +2,7 @@
 // Licensed under the MIT license.
 
 using GitHubPlugin.Client;
+using GitHubPlugin.DeveloperId;
 using LibGit2Sharp;
 using Microsoft.Windows.DevHome.SDK;
 using Windows.Foundation;
@@ -69,6 +70,16 @@ public class DevHomeRepository : Microsoft.Windows.DevHome.SDK.IRepository
                 {
                     Checkout = true,
                 };
+
+                if (developerId != null)
+                {
+                    var internalDeveloperId = DeveloperIdProvider.GetInstance().GetDeveloperIdInternal(developerId);
+                    cloneOptions.CredentialsProvider = (url, user, cred) => new UsernamePasswordCredentials
+                    {
+                        Username = internalDeveloperId.GetCredential().UserName,
+                        Password = internalDeveloperId.GetCredential().Password,
+                    };
+                }
 
                 try
                 {
