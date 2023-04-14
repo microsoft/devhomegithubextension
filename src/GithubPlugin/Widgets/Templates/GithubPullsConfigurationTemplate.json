@@ -65,6 +65,7 @@
           "text": "%Widget_Template/Repository%",
           "wrap": true,
           "spacing": "Medium",
+          "weight": "lighter",
           "size": "Small"
         },
         {
@@ -77,6 +78,7 @@
           "type": "TextBlock",
           "text": "%Widget_Template/Label%",
           "wrap": true,
+          "weight": "lighter",
           "size": "Small"
         },
         {
@@ -89,6 +91,7 @@
           "type": "TextBlock",
           "text": "%Widget_Template/Author%",
           "wrap": true,
+          "weight": "lighter",
           "size": "Small"
         },
         {
@@ -99,20 +102,9 @@
         },
         {
           "type": "TextBlock",
-          "text": "%Widget_Template/Milestone%",
-          "wrap": true,
-          "size": "Small"
-        },
-        {
-          "type": "TextBlock",
-          "text": "${milestone}",
-          "wrap": true,
-          "spacing": "None"
-        },
-        {
-          "type": "TextBlock",
           "text": "%Widget_Template/Project%",
           "wrap": true,
+          "weight": "lighter",
           "size": "Small"
         },
         {

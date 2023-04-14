@@ -72,16 +72,16 @@
                 {
                   "$data": "${labels}",
                   "type": "TextRun",
-                  "text": "${name} ",
-                  "size": "small",
-                  "isSubtle": true
+                  "text": "${name}  ",
+                  "isSubtle": true,
+                  "size": "small"
                 }
               ]
             },
             {
               "type": "TextBlock",
               "spacing": "None",
-              "text": "#${number} %Widget_Template/Opened% ${date} %Widget_Template/By% ${user}",
+              "text": "#${number} %Widget_Template/Opened% {{DATE(${formatDateTime(date, 'yyyy-MM-ddTHH:mm:ssZ')}, COMPACT)}} %Widget_Template/By% ${user}",
               "isSubtle": true,
               "wrap": true,
               "maxLines": 2
