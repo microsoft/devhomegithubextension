@@ -76,8 +76,9 @@ public class DevHomeRepository : Microsoft.Windows.DevHome.SDK.IRepository
                     var internalDeveloperId = DeveloperIdProvider.GetInstance().GetDeveloperIdInternal(developerId);
                     cloneOptions.CredentialsProvider = (url, user, cred) => new UsernamePasswordCredentials
                     {
-                        Username = internalDeveloperId.GetCredential().UserName,
-                        Password = internalDeveloperId.GetCredential().Password,
+                        // Password is a PAT unique to github.
+                        Username = internalDeveloperId.GetCredential().Password,
+                        Password = string.Empty,
                     };
                 }
 
