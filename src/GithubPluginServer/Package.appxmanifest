@@ -60,7 +60,7 @@
         <com:Extension Category="windows.comServer">
           <com:ComServer>
             <com:ExeServer Executable="DevHomeGitHubExtension.exe" Arguments="----AppNotificationActivated:" DisplayName="DevHome GitHub Extension Toast Activator">
-              <com:Class Id="01E4A0B1-D229-4A9A-8936-C2AC42BBCEC7" DisplayName="DevHome GitHub Extension Toast Activator"/>
+              <com:Class Id="01E4A0B1-D229-4A9A-8936-C2AC42BBCEC7" DisplayName="DevHome GitHub Extension Toast Activator" />
             </com:ExeServer>
           </com:ComServer>
         </com:Extension>
@@ -97,7 +97,7 @@
                           <Icon Path="Widgets\Assets\GitHubLogo_Dark.png" />
                         </Icons>
                         <Screenshots>
-                          <Screenshot Path="Widgets\Assets\screenshot.png" DisplayAltText ="For accessibility"/>
+                          <Screenshot Path="Widgets\Assets\screenshot.png" DisplayAltText="For accessibility" />
                         </Screenshots>
                       </DarkMode>
                       <LightMode>
@@ -105,7 +105,7 @@
                           <Icon Path="Widgets\Assets\GitHubLogo_Light.png" />
                         </Icons>
                         <Screenshots>
-                          <Screenshot Path="Widgets\Assets\screenshot.png"/>
+                          <Screenshot Path="Widgets\Assets\screenshot.png" />
                         </Screenshots>
                       </LightMode>
                     </ThemeResources>
@@ -131,7 +131,7 @@
                           <Icon Path="Widgets\Assets\GitHubLogo_Dark.png" />
                         </Icons>
                         <Screenshots>
-                          <Screenshot Path="Widgets\Assets\screenshot.png" DisplayAltText="For accessibility"/>
+                          <Screenshot Path="Widgets\Assets\screenshot.png" DisplayAltText="For accessibility" />
                         </Screenshots>
                       </DarkMode>
                       <LightMode>
@@ -139,7 +139,7 @@
                           <Icon Path="Widgets\Assets\GitHubLogo_Light.png" />
                         </Icons>
                         <Screenshots>
-                          <Screenshot Path="Widgets\Assets\screenshot.png"/>
+                          <Screenshot Path="Widgets\Assets\screenshot.png" />
                         </Screenshots>
                       </LightMode>
                     </ThemeResources>
