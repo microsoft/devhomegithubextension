@@ -71,6 +71,7 @@
           "type": "TextBlock",
           "text": "${name}",
           "wrap": true,
+          "weight": "bolder",
           "spacing": "None"
         },
         {
@@ -83,6 +84,7 @@
           "type": "TextBlock",
           "text": "${label}",
           "wrap": true,
+          "weight": "bolder",
           "spacing": "None"
         },
         {
@@ -95,18 +97,7 @@
           "type": "TextBlock",
           "text": "${owner}",
           "wrap": true,
-          "spacing": "None"
-        },
-        {
-          "type": "TextBlock",
-          "text": "%Widget_Template/Milestone%",
-          "wrap": true,
-          "size": "Small"
-        },
-        {
-          "type": "TextBlock",
-          "text": "${milestone}",
-          "wrap": true,
+          "weight": "bolder",
           "spacing": "None"
         },
         {
@@ -119,6 +110,7 @@
           "type": "TextBlock",
           "text": "${Project}",
           "wrap": true,
+          "weight": "bolder",
           "spacing": "None"
         }
       ],
