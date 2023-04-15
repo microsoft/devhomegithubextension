@@ -65,52 +65,52 @@
           "text": "%Widget_Template/Repository%",
           "wrap": true,
           "spacing": "Medium",
-          "weight": "lighter",
           "size": "Small"
         },
         {
           "type": "TextBlock",
           "text": "${name}",
           "wrap": true,
+          "weight": "bolder",
           "spacing": "None"
         },
         {
           "type": "TextBlock",
           "text": "%Widget_Template/Label%",
           "wrap": true,
-          "weight": "lighter",
           "size": "Small"
         },
         {
           "type": "TextBlock",
           "text": "${label}",
           "wrap": true,
+          "weight": "bolder",
           "spacing": "None"
         },
         {
           "type": "TextBlock",
           "text": "%Widget_Template/Author%",
           "wrap": true,
-          "weight": "lighter",
           "size": "Small"
         },
         {
           "type": "TextBlock",
           "text": "${owner}",
           "wrap": true,
+          "weight": "bolder",
           "spacing": "None"
         },
         {
           "type": "TextBlock",
           "text": "%Widget_Template/Project%",
           "wrap": true,
-          "weight": "lighter",
           "size": "Small"
         },
         {
           "type": "TextBlock",
           "text": "${Project}",
           "wrap": true,
+          "weight": "bolder",
           "spacing": "None"
         }
       ],
