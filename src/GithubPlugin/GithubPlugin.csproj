@@ -47,7 +47,7 @@
         <PackageReference Include="Microsoft.Windows.CsWinRT" Version="2.0.1" />
         <PackageReference Include="Microsoft.Windows.DevHome.SDK" Version="0.100.103" />
         <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.2.230313.1" />
-        <PackageReference Include="Octokit" Version="5.0.3" />
+        <PackageReference Include="Octokit" Version="5.0.4" />
     </ItemGroup>
 
     <ItemGroup>
