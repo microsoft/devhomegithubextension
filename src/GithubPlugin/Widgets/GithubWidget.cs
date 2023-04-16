@@ -316,7 +316,7 @@ public abstract class GithubWidget : WidgetImpl
 
         try
         {
-            var path = Path.Combine(Windows.ApplicationModel.Package.Current.InstalledLocation.Path, GetTemplatePath(page));
+            var path = Path.Combine(AppContext.BaseDirectory, GetTemplatePath(page));
             var template = File.ReadAllText(path, Encoding.Default) ?? throw new FileNotFoundException(path);
             template = Resources.ReplaceIdentifers(template, Resources.GetWidgetResourceIdentifiers(), Log.Logger());
             Log.Logger()?.ReportDebug(Name, ShortId, $"Caching template for {page}");
