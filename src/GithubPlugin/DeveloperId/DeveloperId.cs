@@ -60,10 +60,6 @@ public class DeveloperId : IDeveloperId
     // _
     string IDeveloperId.LoginId() => LoginId;
 
-    string IDeveloperId.DisplayName() => DisplayName;
-
-    string IDeveloperId.Email() => Email;
-
     string IDeveloperId.Url() => Url;
 
     // _
