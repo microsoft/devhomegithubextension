@@ -22,7 +22,7 @@
           "items": [
             {
               "type": "TextBlock",
-              "text": "%Widget_Template/Pulls% / ${selected_repo}",
+              "text": "${selected_repo}",
               "size": "Large",
               "style": "heading",
               "wrap": true
@@ -36,7 +36,6 @@
       "$data": "${pulls}",
       "type": "Container",
       "style": "emphasis",
-      "spacing": "medium",
       "selectAction": {
         "type": "Action.OpenUrl",
         "url": "${url}",
@@ -46,7 +45,9 @@
         {
           "type": "TextBlock",
           "text": "${title}",
-          "weight": "Bolder"
+          "weight": "Bolder",
+          "wrap": true,
+          "maxLines": 2
         },
         {
           "type": "TextBlock",

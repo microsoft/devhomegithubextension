@@ -2,6 +2,7 @@
 // Licensed under the MIT license.
 
 using GitHubPlugin.Client;
+using GitHubPlugin.DeveloperId;
 using LibGit2Sharp;
 using Microsoft.Windows.DevHome.SDK;
 using Windows.Foundation;
@@ -26,24 +27,6 @@ public class DevHomeRepository : Microsoft.Windows.DevHome.SDK.IRepository
     public bool IsPrivate => _isPrivate;
 
     public DateTimeOffset LastUpdated => _lastUpdated;
-
-    /// <summary>
-    /// Initializes a new instance of the <see cref="DevHomeRepository"/> class.
-    /// Assumes that the uri has been checked by validation and uri is a well formed github Uri.
-    /// </summary>
-    /// <param name="uri">The Uri to the repository to clone</param>
-    public DevHomeRepository(Uri uri)
-    {
-        this.name = Validation.ParseFullNameFromGitHubURL(uri);
-        this.cloneUrl = uri;
-
-        var client = GitHubClientProvider.Instance.GetClient();
-        var getTask = client.Repository.Get(Validation.ParseOwnerFromGitHubURL(uri), Validation.ParseRepositoryFromGitHubURL(uri));
-        getTask.Wait();
-        var repo = getTask.Result;
-        _isPrivate = repo.Private;
-        _lastUpdated = repo.UpdatedAt;
-    }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="DevHomeRepository"/> class.
@@ -87,6 +70,17 @@ public class DevHomeRepository : Microsoft.Windows.DevHome.SDK.IRepository
                 {
                     Checkout = true,
                 };
+
+                if (developerId != null)
+                {
+                    var internalDeveloperId = DeveloperIdProvider.GetInstance().GetDeveloperIdInternal(developerId);
+                    cloneOptions.CredentialsProvider = (url, user, cred) => new UsernamePasswordCredentials
+                    {
+                        // Password is a PAT unique to github.
+                        Username = internalDeveloperId.GetCredential().Password,
+                        Password = string.Empty,
+                    };
+                }
 
                 try
                 {

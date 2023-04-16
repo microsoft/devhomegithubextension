@@ -34,7 +34,7 @@
         "type": "Action.Execute",
         "tooltip": "%Widget_Template_Tooltip/Submit%",
         "verb": "CheckUrl",
-        "title": "%Widget_Template_Button/Submit%"
+        "iconUrl": "https://learn.microsoft.com/en-us/uwp/api/windows.ui.xaml.controls/images/segoe-mdl/e122.png"
       },
       "spacing": "Medium",
       "style": "Url",
@@ -71,6 +71,7 @@
           "type": "TextBlock",
           "text": "${name}",
           "wrap": true,
+          "weight": "bolder",
           "spacing": "None"
         },
         {
@@ -83,6 +84,7 @@
           "type": "TextBlock",
           "text": "${label}",
           "wrap": true,
+          "weight": "bolder",
           "spacing": "None"
         },
         {
@@ -95,18 +97,7 @@
           "type": "TextBlock",
           "text": "${owner}",
           "wrap": true,
-          "spacing": "None"
-        },
-        {
-          "type": "TextBlock",
-          "text": "%Widget_Template/Milestone%",
-          "wrap": true,
-          "size": "Small"
-        },
-        {
-          "type": "TextBlock",
-          "text": "${milestone}",
-          "wrap": true,
+          "weight": "bolder",
           "spacing": "None"
         },
         {
@@ -119,6 +110,7 @@
           "type": "TextBlock",
           "text": "${Project}",
           "wrap": true,
+          "weight": "bolder",
           "spacing": "None"
         }
       ],
