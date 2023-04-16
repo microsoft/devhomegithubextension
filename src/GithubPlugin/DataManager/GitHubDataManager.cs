@@ -25,7 +25,7 @@ public partial class GitHubDataManager : IGitHubDataManager, IDisposable
 
     public static IGitHubDataManager? CreateInstance(DataStoreOptions? options = null)
     {
-        options ??= DefaultOptions();
+        options ??= DefaultOptions;
 
         try
         {
@@ -640,7 +640,13 @@ public partial class GitHubDataManager : IGitHubDataManager, IDisposable
         }
     }
 
-    private static DataStoreOptions DefaultOptions()
+    // Making the default options a singleton to avoid repeatedly calling the storage APIs and
+    // creating a new GitHubDataStoreSchema when not necessary.
+    private static readonly Lazy<DataStoreOptions> LazyDataStoreOptions = new (DefaultOptionsInit);
+
+    private static DataStoreOptions DefaultOptions => LazyDataStoreOptions.Value;
+
+    private static DataStoreOptions DefaultOptionsInit()
     {
         return new DataStoreOptions
         {
