@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Diagnostics.Tracing;
 using System.IO;
 using System.Linq;
@@ -190,7 +191,7 @@ internal class Logger : ILogger
     /// <param name="data">Values to send to the telemetry system.</param>
     /// <param name="relatedActivityId">Optional relatedActivityId which will allow to correlate this telemetry with other telemetry in the same action/activity or thread and corelate them</param>
     /// <typeparam name="T">Anonymous type.</typeparam>
-    public void Log<T>(string eventName, LogLevel level, T data, Guid? relatedActivityId = null)
+    public void Log<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)] T>(string eventName, LogLevel level, T data, Guid? relatedActivityId = null)
     {
         WriteTelemetryEvent(eventName, level, relatedActivityId ?? DefaultRelatedActivityId, false, data);
     }
@@ -203,7 +204,7 @@ internal class Logger : ILogger
     /// <param name="data">Values to send to the telemetry system.</param>
     /// <param name="relatedActivityId">Optional Optional relatedActivityId which will allow to correlate this telemetry with other telemetry in the same action/activity or thread and corelate them</param>
     /// <typeparam name="T">Anonymous type.</typeparam>
-    public void LogError<T>(string eventName, LogLevel level, T data, Guid? relatedActivityId = null)
+    public void LogError<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)] T>(string eventName, LogLevel level, T data, Guid? relatedActivityId = null)
     {
         WriteTelemetryEvent(eventName, level, relatedActivityId ?? DefaultRelatedActivityId, true, data);
     }
@@ -256,7 +257,11 @@ internal class Logger : ILogger
     /// <param name="level">Determines whether to upload the data to our servers, and the sample set of host machines.</param>
     /// <param name="isError">Set to true if an error condition raised this event.</param>
     /// <param name="data">Values to send to the telemetry system.</param>
-    private void WriteTelemetryEvent<T>(string eventName, LogLevel level, Guid relatedActivityId, bool isError, T data)
+    [UnconditionalSuppressMessage(
+        "ReflectionAnalysis",
+        "IL2026:RequiresUnreferencedCode",
+        Justification = "The type passed for data is an anonymous type consisting of primitive type properties declared in an assembly that is not marked trimmable.")]
+    private void WriteTelemetryEvent<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)] T>(string eventName, LogLevel level, Guid relatedActivityId, bool isError, T data)
     {
         EventSourceOptions telemetryOptions;
         if (IsTelemetryOn)
