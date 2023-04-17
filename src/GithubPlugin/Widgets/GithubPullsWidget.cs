@@ -107,7 +107,7 @@ internal class GithubPullsWidget : GithubWidget
                     { "avatar", pullItem.Author.AvatarUrl },
                 };
 
-                pullsArray.Add(pull);
+                ((IList<JsonNode?>)pullsArray).Add(pull);
             }
 
             pullsData.Add("pulls", pullsArray);

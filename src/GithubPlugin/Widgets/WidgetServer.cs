@@ -2,6 +2,7 @@
 // Licensed under the MIT license.
 
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
 using Microsoft.Windows.Widgets.Providers;
 
@@ -10,6 +11,10 @@ public sealed class WidgetServer : IDisposable
 {
     private readonly HashSet<int> registrationCookies = new ();
 
+    [UnconditionalSuppressMessage(
+        "ReflectionAnalysis",
+        "IL2050:COMCorrectness",
+        Justification = "WidgetProviderFactory and all the interfaces it implements are defined in an assembly that is not marked trimmable which means the relevant interfaces won't be trimmed.")]
     public void RegisterWidget<T>(Func<T> createWidget)
         where T : IWidgetProvider
     {
