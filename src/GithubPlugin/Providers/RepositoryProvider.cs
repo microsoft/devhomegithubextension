@@ -42,20 +42,44 @@ public class RepositoryProvider : IRepositoryProvider
 
     public IAsyncOperation<IEnumerable<IRepository>> GetRepositoriesAsync(IDeveloperId developerId)
     {
-        return Task.Run(() =>
+        return Task.Run(async () =>
         {
             // This is fetching all repositories available to the specified DevId
             // We are not using the datastore cache for this query, it will always go to GitHub directly.
             var repositoryList = new List<IRepository>();
             try
             {
+                ApiOptions apiOptions = new ();
+                apiOptions.PageSize = 50;
+                apiOptions.PageCount = 1;
+
                 // Authenticate as the specified developer Id
                 var client = DeveloperIdProvider.GetInstance().GetDeveloperIdInternal(developerId).GitHubClient;
                 RepositoryRequest request = new RepositoryRequest();
-                request.Type = RepositoryType.Owner;
-                var repositories = client.Repository.GetAllForCurrent(request).Result;
+                request.Sort = RepositorySort.Updated;
+                request.Direction = SortDirection.Descending;
+                request.Affiliation = RepositoryAffiliation.Owner;
 
-                foreach (var repository in repositories)
+                // Gets only public repos for the owned repos.
+                request.Visibility = RepositoryRequestVisibility.Public;
+                var getPublicReposTask = client.Repository.GetAllForUser(developerId.LoginId(), apiOptions);
+
+                // this is getting private org and user repos
+                request.Visibility = RepositoryRequestVisibility.Private;
+                var getPrivateReposTask = client.Repository.GetAllForCurrent(request, apiOptions);
+
+                // This gets all org repos
+                request.Visibility = RepositoryRequestVisibility.All;
+                request.Affiliation = RepositoryAffiliation.CollaboratorAndOrganizationMember;
+                var getAllOrgReposTask = client.Repository.GetAllForCurrent(request, apiOptions);
+
+                var publicRepos = await getPublicReposTask;
+                var privateRepos = await getPrivateReposTask;
+                var orgRepos = await getAllOrgReposTask;
+
+                var allRepos = publicRepos.Union(privateRepos).Union(orgRepos);
+
+                foreach (var repository in allRepos.OrderByDescending(x => x.UpdatedAt))
                 {
                     repositoryList.Add(new DevHomeRepository(repository));
                 }
