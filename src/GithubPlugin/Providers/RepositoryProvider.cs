@@ -25,15 +25,26 @@ public class RepositoryProvider : IRepositoryProvider
             {
                 if (Validation.IsValidGitHubURL(uri.OriginalString))
                 {
-                    var client = GitHubClientProvider.Instance.GetClient();
+                    var client = GitHubClientProvider.Instance.GetClientForLoggedInDeveloper().Result;
                     var ocktoKitRepo = client.Repository.Get(Validation.ParseOwnerFromGitHubURL(uri), Validation.ParseRepositoryFromGitHubURL(uri)).Result;
                     return new DevHomeRepository(ocktoKitRepo) as IRepository;
                 }
             }
-            catch (Exception)
+            catch (Exception e)
             {
-                Log.Logger()?.ReportDebug("Github extension could not parse the url: " + uri.OriginalString);
-                return null;
+                if (e.InnerException is Octokit.NotFoundException)
+                {
+                    Log.Logger()?.ReportDebug("Url is a github url, but the repo could not be found.  Maybe you forgot to log in and this is a private repo?");
+
+                    // E_ACCESSDENIED
+                    e.HResult = unchecked((int)0x80070005);
+                }
+                else
+                {
+                    Log.Logger()?.ReportDebug("Github extension could not parse the url: " + uri.OriginalString);
+                }
+
+                throw;
             }
 
             return null;
