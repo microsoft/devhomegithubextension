@@ -1,6 +1,7 @@
 ﻿// Copyright (c) Microsoft Corporation and Contributors
 // Licensed under the MIT license.
 
+using System.Xml.Linq;
 using GitHubPlugin.Client;
 using GitHubPlugin.DeveloperId;
 using Microsoft.Windows.DevHome.SDK;
@@ -21,33 +22,54 @@ public class RepositoryProvider : IRepositoryProvider
     {
         return Task.Run(() =>
         {
-            try
-            {
-                if (Validation.IsValidGitHubURL(uri.OriginalString))
+                if (!Validation.IsValidGitHubURL(uri))
                 {
-                    var client = GitHubClientProvider.Instance.GetClientForLoggedInDeveloper().Result;
-                    var ocktoKitRepo = client.Repository.Get(Validation.ParseOwnerFromGitHubURL(uri), Validation.ParseRepositoryFromGitHubURL(uri)).Result;
-                    return new DevHomeRepository(ocktoKitRepo) as IRepository;
+                    return null;
                 }
-            }
-            catch (Exception e)
-            {
-                if (e.InnerException is Octokit.NotFoundException)
-                {
-                    Log.Logger()?.ReportDebug("Url is a github url, but the repo could not be found.  Maybe you forgot to log in and this is a private repo?");
 
-                    // E_ACCESSDENIED
-                    e.HResult = unchecked((int)0x80070005);
+                Octokit.Repository? ocktokitRepo = null;
+                var owner = Validation.ParseOwnerFromGitHubURL(uri);
+                var repoName = Validation.ParseRepositoryFromGitHubURL(uri);
+
+                var loggedInDeveloperIds = DeveloperId.DeveloperIdProvider.GetInstance().GetLoggedInDeveloperIdsInternal();
+
+                foreach (var loggedInDeveloperId in loggedInDeveloperIds)
+                {
+                    try
+                    {
+                        ocktokitRepo = loggedInDeveloperId.GitHubClient.Repository.Get(owner, repoName).Result;
+                        break;
+                    }
+                    catch (Exception e)
+                    {
+                        if (e is Octokit.NotFoundException)
+                        {
+                            Log.Logger()?.ReportDebug($"DeveloperId {loggedInDeveloperId.LoginId} did not find {owner}/{repoName}");
+                            continue;
+                        }
+
+                        if (e is Octokit.ForbiddenException)
+                        {
+                            Log.Logger()?.ReportDebug($"DeveloperId {loggedInDeveloperId.LoginId} has forbidden access to {owner}/{repoName}");
+                            continue;
+                        }
+
+                        if (e is Octokit.RateLimitExceededException)
+                        {
+                            Log.Logger()?.ReportError($"DeveloperId {loggedInDeveloperId.LoginId} rate limit exceeded.", e);
+                            throw;
+                        }
+                    }
+                }
+
+                if (ocktokitRepo != null)
+                {
+                    return new DevHomeRepository(ocktokitRepo) as IRepository;
                 }
                 else
                 {
-                    Log.Logger()?.ReportDebug("Github extension could not parse the url: " + uri.OriginalString);
+                throw new RepositoryNotFoundException($"The repository {owner}/{repoName} could not be accessed by any available developer accounts.");
                 }
-
-                throw;
-            }
-
-            return null;
         }).AsAsyncOperation();
     }
 
