@@ -60,27 +60,26 @@
           "items": [
             {
               "type": "TextBlock",
+              "size": "medium",
               "weight": "Bolder",
               "text": "${title}",
               "wrap": true,
               "maxLines": 2
             },
             {
-              "type": "RichTextBlock",
-              "spacing": "None",
-              "inlines": [
+              "type": "ItemLabels",
+              "labels": [
                 {
                   "$data": "${labels}",
-                  "type": "TextRun",
-                  "text": "${name}  ",
-                  "isSubtle": true,
-                  "size": "small"
+                  "text": "${name}",
+                  "color": "${color}"
                 }
               ]
             },
             {
               "type": "TextBlock",
-              "spacing": "None",
+              "size": "small",
+              "spacing": "small",
               "text": "#${number} %Widget_Template/Opened% {{DATE(${formatDateTime(date, 'yyyy-MM-ddTHH:mm:ssZ')}, COMPACT)}} %Widget_Template/By% ${user}",
               "isSubtle": true,
               "wrap": true,
