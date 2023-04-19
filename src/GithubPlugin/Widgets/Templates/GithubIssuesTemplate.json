@@ -66,12 +66,17 @@
               "maxLines": 2
             },
             {
-              "type": "TextBlock",
+              "type": "RichTextBlock",
               "spacing": "None",
-              "weight": "lighter",
-              "size": "small",
-              "isSubtle": true,
-              "text": "${labelsString} "
+              "inlines": [
+                {
+                  "$data": "${labels}",
+                  "type": "TextRun",
+                  "text": "${name}  ",
+                  "isSubtle": true,
+                  "size": "small"
+                }
+              ]
             },
             {
               "type": "TextBlock",
