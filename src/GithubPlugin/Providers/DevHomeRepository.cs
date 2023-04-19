@@ -56,7 +56,7 @@ public class DevHomeRepository : Microsoft.Windows.DevHome.SDK.IRepository
     /// </summary>
     /// <param name="cloneDestination">The location to clone to</param>
     /// <param name="developerId">The account to use to clone repos.  If null plugin will iterate through all logged in accounts and try to clone
-    /// with the credentials.  develoerID is null and no users are logged in the repo will be cloned without using credentials.</param>
+    /// with the credentials.  If developerId is null and no users are logged in the repo will be cloned without using credentials.</param>
     /// <returns>A action to await on</returns>
     /// <remarks>
     /// Cloning can throw.  Please catch any exceptions.
