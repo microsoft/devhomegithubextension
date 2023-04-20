@@ -1,5 +1,7 @@
 trigger:
 - main
+- staging
+- release
 
 pool:
   vmImage: 'windows-latest'
@@ -22,6 +24,7 @@ parameters:
 
 variables:
   MSIXVersion: '0.100'
+  ASDF
   solution: '**/GITServices.sln'
   appxPackageDir: 'AppxPackages'
   testOutputArtifactDir: 'TestResults'
@@ -35,7 +38,8 @@ resources:
 
 stages:
 - stage: SourceAnalysis
-  dependsOn: ''
+  # This stage is expected to run in parallel with BuildWindowsAppSDK-Stages.
+  dependsOn: []
   jobs:
   - job: SDLSourcesScanning
     steps:
@@ -84,8 +88,17 @@ stages:
         minRiskLevel: 2
         onlyInputs: false
 
+- stage: SyncMirror
+  dependsOn: []
+  condition: or(eq(variables['BuildingBranch'], 'staging'), eq(variables['BuildingBranch'], 'release'))
+  jobs:
+  - template: SyncMirroredRepository.yml
+    parameters:
+      SourceToTargetBranch: "$(BuildingBranch)"
+
 - stage: Build_Msix
-  dependsOn: ''
+  dependsOn: SyncMirror
+  condition: in(dependencies.SyncMirror.result, 'Succeeded', 'Skipped')
   jobs:
   - ${{ each configuration in parameters.Configurations }}:
     - ${{ each platform in parameters.Platforms }}:
@@ -114,7 +127,7 @@ stages:
           displayName: Build GITServices Extension
           inputs:
             filePath: 'build/scripts/Build.ps1'
-            arguments: -Platform "${{ platform }}" -Configuration "${{ configuration }}" -Version $(MSIXVersion) -BuildStep "msix" -IsAzurePipelineBuild -ClientId $(GitHubClientId) -ClientSecret $(GitHubClientSecret)
+            arguments: -Platform "${{ platform }}" -Configuration "${{ configuration }}" -Version $(MSIXVersion) -BuildStep "msix" -AzureBuildingBranch "$(BuildingBranch)" -IsAzurePipelineBuild -ClientId $(GitHubClientId) -ClientSecret $(GitHubClientSecret)
 
         - task: EsrpCodeSigning@2
           inputs:
@@ -163,6 +176,23 @@ stages:
             artifactName: msix_${{ platform }}_${{ configuration }}
             targetPath: $(appxPackageDir)\${{ configuration }}
 
+        - task: AzureKeyVault@1
+          inputs:
+            azureSubscription: 'DevHomeAzureServiceConnection'
+            KeyVaultName: 'DevHomeKeyVault'
+            SecretsFilter: 'ApiScanConnectionString'
+            RunAsPreJob: false
+
+        - task: APIScan@2
+          inputs:
+            softwareFolder: '$(Build.StagingDirectory)'
+            softwareName: 'Dev Home GitHub Extension'
+            softwareVersionNum: '1.0'
+            softwareBuildNum: '$(Build.BuildId)'
+            symbolsFolder: 'SRV*http://symweb'
+          env:
+            AzureServicesAuthConnectionString: $(ApiScanConnectionString)
+
         - task: Windows Application Driver@0
           condition: and(always(), ne('${{ platform}}', 'arm64'))
           inputs:
@@ -202,6 +232,12 @@ stages:
 
 - stage: Build_MsixBundle
   dependsOn: Build_Msix
+  condition: |
+    and
+    (
+      in(dependencies.SyncMirror.result, 'Succeeded', 'Skipped'),
+      in(dependencies.Build_Msix.result, 'Succeeded')
+    )
   jobs:
   - job: Build_MsixBundles
     steps:
@@ -265,3 +301,45 @@ stages:
           inputs:
             artifactName: MsixBundle_${{ configuration }}
             targetPath: AppxBundles\${{ configuration }}
+
+- stage: Store_Publish
+  dependsOn:
+  - SourceAnalysis
+  - Build_MsixBundle
+  condition: |
+    and
+    (
+      in(dependencies.SyncMirror.result, 'Succeeded', 'Skipped'),
+      in(dependencies.Build_MsixBundle.result, 'Succeeded'),
+      in(dependencies.SourceAnalysis.result, 'Succeeded'),
+      eq(variables['EnableStorePublishing'], 'true')
+    )
+  jobs:
+  - job: Store_Publish
+    timeoutInMinutes: 120
+    steps:
+    - task: DownloadPipelineArtifact@2
+      inputs:
+        buildType: 'current'
+        artifactName: MsixBundle_Release
+        targetPath: StorePublish
+
+    - task: MS-RDX-MRO.windows-store-publish-dev.publish-task.store-publish@2
+      displayName: 'Publish Staging build to store - NEEDS TO BE CHANGED TO CANARY STORE ENTRY WHEN AVAILABLE'
+      condition: eq(variables['BuildingBranch'], 'staging')
+      inputs:
+        serviceEndpoint: 'DevHomeGitHubExtension StoreBroker'
+        appId: 9NZCC27PR6N6
+        sourceFolder: 'StorePublish'
+        contents: '*.msixbundle'
+        force: true
+
+    - task: MS-RDX-MRO.windows-store-publish-dev.publish-task.store-publish@2
+      displayName: 'Publish Release build to store'
+      condition: eq(variables['BuildingBranch'], 'release')
+      inputs:
+        serviceEndpoint: 'DevHomeGitHubExtension StoreBroker'
+        appId: 9NZCC27PR6N6
+        sourceFolder: 'StorePublish'
+        contents: '*.msixbundle'
+        force: true
