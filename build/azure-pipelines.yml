@@ -24,7 +24,6 @@ parameters:
 
 variables:
   MSIXVersion: '0.100'
-  ASDF
   solution: '**/GITServices.sln'
   appxPackageDir: 'AppxPackages'
   testOutputArtifactDir: 'TestResults'
