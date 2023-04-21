@@ -1,7 +1,6 @@
 ﻿// Copyright (c) Microsoft Corporation and Contributors
 // Licensed under the MIT license.
 
-using System.Text;
 using System.Text.Json.Nodes;
 using GitHubPlugin.Client;
 using GitHubPlugin.DataManager;
@@ -96,7 +95,6 @@ internal class GithubIssuesWidget : GithubWidget
 
             var issuesData = new JsonObject();
             var issuesArray = new JsonArray();
-
             foreach (var issueItem in issues)
             {
                 var issue = new JsonObject
@@ -111,7 +109,6 @@ internal class GithubIssuesWidget : GithubWidget
 
                 var labels = issueItem.Labels.ToList();
                 var issueLabels = new JsonArray();
-                StringBuilder labelsString = new ();
                 foreach (var label in labels)
                 {
                     var issueLabel = new JsonObject
@@ -121,17 +118,9 @@ internal class GithubIssuesWidget : GithubWidget
                     };
 
                     ((IList<JsonNode?>)issueLabels).Add(issueLabel);
-
-                    if (labelsString.Length != 0)
-                    {
-                        labelsString.Append("  ");
-                    }
-
-                    labelsString.Append(label.Name);
                 }
 
                 issue.Add("labels", issueLabels);
-                issue.Add("labelsString", labelsString.ToString());
 
                 ((IList<JsonNode?>)issuesArray).Add(issue);
             }
