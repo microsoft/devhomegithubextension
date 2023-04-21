@@ -5,6 +5,7 @@ Param(
     [string]$ClientId,
     [string]$ClientSecret,
     [string]$BuildStep = "all",
+    [string]$AzureBuildingBranch = "main",
     [switch]$IsAzurePipelineBuild = $false,
     [switch]$Help = $false
 )
@@ -80,12 +81,44 @@ $ErrorActionPreference = "Stop"
 
 Try {
   if (($BuildStep -ieq "all") -Or ($BuildStep -ieq "msix")) {
-    # Update the msix version in the appxmanifest
+    $buildRing = "Dev"
+    $newPackageName = $null
+    $newPackageDisplayName = $null
+    $newAppDisplayNameResource = $null
+
+    if ($AzureBuildingBranch -ieq "release") {
+      $buildRing = "Stable"
+      $newPackageName = "Microsoft.Windows.DevHomeGitHubExtension"
+      $newPackageDisplayName = "Dev Home GitHub Extension (Preview)"
+      $newAppDisplayNameResource = "ms-resource:AppDisplayNameStable"
+    } elseif ($AzureBuildingBranch -ieq "staging") {
+      $buildRing = "Canary"
+      $newPackageName = "Microsoft.Windows.DevHomeGitHubExtension.Canary"
+      $newPackageDisplayName = "Dev Home GitHub Extension (Canary)"
+      $newAppDisplayNameResource = "ms-resource:AppDisplayNameCanary"
+    }
+
     [Reflection.Assembly]::LoadWithPartialName("System.Xml.Linq")
+    $xIdentity = [System.Xml.Linq.XName]::Get("{http://schemas.microsoft.com/appx/manifest/foundation/windows10}Identity");
+    $xProperties = [System.Xml.Linq.XName]::Get("{http://schemas.microsoft.com/appx/manifest/foundation/windows10}Properties");
+    $xDisplayName = [System.Xml.Linq.XName]::Get("{http://schemas.microsoft.com/appx/manifest/foundation/windows10}DisplayName");
+    $xApplications = [System.Xml.Linq.XName]::Get("{http://schemas.microsoft.com/appx/manifest/foundation/windows10}Applications");
+    $xApplication = [System.Xml.Linq.XName]::Get("{http://schemas.microsoft.com/appx/manifest/foundation/windows10}Application");
+    $uapVisualElements = [System.Xml.Linq.XName]::Get("{http://schemas.microsoft.com/appx/manifest/uap/windows10}VisualElements");
+
+    # Update the appxmanifest
     $appxmanifestPath = (Join-Path $env:Build_RootDirectory "src\GithubPluginServer\Package.appxmanifest")
     $appxmanifest = [System.Xml.Linq.XDocument]::Load($appxmanifestPath)
-    $xName = [System.Xml.Linq.XName]::Get("{http://schemas.microsoft.com/appx/manifest/foundation/windows10}Identity");
-    $appxmanifest.Root.Element($xName).Attribute("Version").Value = $env:msix_version
+    $appxmanifest.Root.Element($xIdentity).Attribute("Version").Value = $env:msix_version
+    if (-not ([string]::IsNullOrEmpty($newPackageName))) {
+      $appxmanifest.Root.Element($xIdentity).Attribute("Name").Value = $newPackageName
+    } 
+    if (-not ([string]::IsNullOrEmpty($newPackageDisplayName))) {
+      $appxmanifest.Root.Element($xProperties).Element($xDisplayName).Value = $newPackageDisplayName
+    }
+    if (-not ([string]::IsNullOrEmpty($newAppDisplayNameResource))) {
+      $appxmanifest.Root.Element($xApplications).Element($xApplication).Element($uapVisualElements).Attribute("DisplayName").Value = $newAppDisplayNameResource
+    }
     $appxmanifest.Save($appxmanifestPath)
 
     foreach ($platform in $env:Build_Platform.Split(",")) {
@@ -100,7 +133,8 @@ Try {
             ("/binaryLogger:GITServices.$platform.$configuration.binlog"),
             ("/p:AppxPackageOutput=$appxPackageDir\GITServices-$platform.msix"),
             ("/p:AppxPackageSigningEnabled=false"),
-            ("/p:GenerateAppxPackageOnBuild=true")
+            ("/p:GenerateAppxPackageOnBuild=true"),
+            ("/p:BuildRing=$buildRing")
         )
 
         & $msbuildPath $msbuildArgs
@@ -110,10 +144,12 @@ Try {
       }
     }
 
-    # Reset the msix version in the appxmanifest
+    # Reset the appxmanifest to prevent unnecessary code changes
     $appxmanifest = [System.Xml.Linq.XDocument]::Load($appxmanifestPath)
-    $xName = [System.Xml.Linq.XName]::Get("{http://schemas.microsoft.com/appx/manifest/foundation/windows10}Identity");
-    $appxmanifest.Root.Element($xName).Attribute("Version").Value = "0.0.0.0"
+    $appxmanifest.Root.Element($xIdentity).Attribute("Version").Value = "0.0.0.0"
+    $appxmanifest.Root.Element($xIdentity).Attribute("Name").Value = "Microsoft.Windows.DevHomeGitHubExtension.Dev"
+    $appxmanifest.Root.Element($xProperties).Element($xDisplayName).Value = "Dev Home GitHub Extension (Dev)"
+    $appxmanifest.Root.Element($xApplications).Element($xApplication).Element($uapVisualElements).Attribute("DisplayName").Value = "ms-resource:AppDisplayNameDev"
     $appxmanifest.Save($appxmanifestPath)
   }
 
