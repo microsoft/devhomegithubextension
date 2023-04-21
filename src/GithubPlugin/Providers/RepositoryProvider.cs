@@ -4,6 +4,7 @@
 using System.Xml.Linq;
 using GitHubPlugin.Client;
 using GitHubPlugin.DeveloperId;
+using GitHubPlugin.Helpers;
 using Microsoft.Windows.DevHome.SDK;
 using Octokit;
 using Windows.Foundation;
@@ -16,7 +17,13 @@ public class RepositoryProvider : IRepositoryProvider
     {
     }
 
-    public string DisplayName => "GitHub";
+#if CANARY_BUILD
+    public string DisplayName => Resources.GetResource(@"AppDisplayNameCanary");
+#elif STABLE_BUILD
+    public string DisplayName => Resources.GetResource(@"AppDisplayNameStable");
+#else
+    public string DisplayName => Resources.GetResource(@"AppDisplayNameDev");
+#endif
 
     /// <summary>
     /// Tries to parse the uri to check if it is a valid Github uri and if the current account can find it.

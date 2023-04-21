@@ -105,6 +105,9 @@ Try {
     $xApplications = [System.Xml.Linq.XName]::Get("{http://schemas.microsoft.com/appx/manifest/foundation/windows10}Applications");
     $xApplication = [System.Xml.Linq.XName]::Get("{http://schemas.microsoft.com/appx/manifest/foundation/windows10}Application");
     $uapVisualElements = [System.Xml.Linq.XName]::Get("{http://schemas.microsoft.com/appx/manifest/uap/windows10}VisualElements");
+    $xExtensions = [System.Xml.Linq.XName]::Get("{http://schemas.microsoft.com/appx/manifest/foundation/windows10}Extensions");
+    $uapExtension = [System.Xml.Linq.XName]::Get("{http://schemas.microsoft.com/appx/manifest/uap/windows10/3}Extension");
+    $uapAppExtension = [System.Xml.Linq.XName]::Get("{http://schemas.microsoft.com/appx/manifest/uap/windows10/3}AppExtension");
 
     # Update the appxmanifest
     $appxmanifestPath = (Join-Path $env:Build_RootDirectory "src\GithubPluginServer\Package.appxmanifest")
@@ -118,6 +121,7 @@ Try {
     }
     if (-not ([string]::IsNullOrEmpty($newAppDisplayNameResource))) {
       $appxmanifest.Root.Element($xApplications).Element($xApplication).Element($uapVisualElements).Attribute("DisplayName").Value = $newAppDisplayNameResource
+      $appxmanifest.Root.Element($xApplications).Element($xApplication).Element($xExtensions).Element($uapExtension).Element($uapAppExtension).Attribute("DisplayName") = $newAppDisplayNameResource
     }
     $appxmanifest.Save($appxmanifestPath)
 
