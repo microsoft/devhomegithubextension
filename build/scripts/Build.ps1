@@ -121,7 +121,7 @@ Try {
     }
     if (-not ([string]::IsNullOrEmpty($newAppDisplayNameResource))) {
       $appxmanifest.Root.Element($xApplications).Element($xApplication).Element($uapVisualElements).Attribute("DisplayName").Value = $newAppDisplayNameResource
-      $appxmanifest.Root.Element($xApplications).Element($xApplication).Element($xExtensions).Element($uapExtension).Element($uapAppExtension).Attribute("DisplayName") = $newAppDisplayNameResource
+      $appxmanifest.Root.Element($xApplications).Element($xApplication).Element($xExtensions).Element($uapExtension).Element($uapAppExtension).Attribute("DisplayName").Value = $newAppDisplayNameResource
     }
     $appxmanifest.Save($appxmanifestPath)
 
@@ -154,6 +154,7 @@ Try {
     $appxmanifest.Root.Element($xIdentity).Attribute("Name").Value = "Microsoft.Windows.DevHomeGitHubExtension.Dev"
     $appxmanifest.Root.Element($xProperties).Element($xDisplayName).Value = "Dev Home GitHub Extension (Dev)"
     $appxmanifest.Root.Element($xApplications).Element($xApplication).Element($uapVisualElements).Attribute("DisplayName").Value = "ms-resource:AppDisplayNameDev"
+    $appxmanifest.Root.Element($xApplications).Element($xApplication).Element($xExtensions).Element($uapExtension).Element($uapAppExtension).Attribute("DisplayName").Value = "ms-resource:AppDisplayNameDev"
     $appxmanifest.Save($appxmanifestPath)
   }
 
