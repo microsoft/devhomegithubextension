@@ -261,4 +261,20 @@
     <value>Loading...</value>
     <comment>Shown in Loading Widget, Message text</comment>
   </data>
+  <data name="AppDisplayNameDev" xml:space="preserve">
+    <value>Dev Home GitHub Extension (Dev)</value>
+    <comment>The name of our application when built for dev ring</comment>
+  </data>
+  <data name="AppDisplayNameCanary" xml:space="preserve">
+    <value>Dev Home GitHub Extension (Canary)</value>
+    <comment>The name of our application when built for canary ring</comment>
+  </data>
+  <data name="AppDisplayNameStable" xml:space="preserve">
+    <value>Dev Home GitHub Extension (Preview)</value>
+    <comment>The name of our application when built for stable ring</comment>
+  </data>
+  <data name="AppDescription" xml:space="preserve">
+    <value>Dev Home GitHub Extension</value>
+    <comment>The name of our application</comment>
+  </data>
 </root>
