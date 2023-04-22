@@ -53,6 +53,7 @@ public static class Resources
     {
         return new string[]
         {
+            "Widget_Template/ContentLoading",
             "Widget_Template/Pulls",
             "Widget_Template/Issues",
             "Widget_Template/Opened",

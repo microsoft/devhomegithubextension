@@ -277,4 +277,8 @@
     <value>Dev Home GitHub Extension</value>
     <comment>The name of our application</comment>
   </data>
+  <data name="Widget_Template.ContentLoading" xml:space="preserve">
+    <value>Loading content...</value>
+    <comment>Shown in Widget, when loading content (issues or PRs)</comment>
+  </data>
 </root>
