@@ -127,10 +127,11 @@ internal class GithubIssuesWidget : GithubWidget
 
             issuesData.Add("issues", issuesArray);
             issuesData.Add("selected_repo", repository?.FullName ?? string.Empty);
+            issuesData.Add("is_loading_data", DataState == WidgetDataState.Unknown);
 
             LastUpdated = DateTime.Now;
-            ContentData = issuesData.ToJsonString();
             DataState = WidgetDataState.Okay;
+            ContentData = issuesData.ToJsonString();
         }
         catch (Exception e)
         {

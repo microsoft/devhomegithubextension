@@ -34,11 +34,11 @@
     },
     {
       "type": "Container",
-      "$when":  "${count(issues) == 0}",
+      "$when":  "${(count(issues) == 0)}",
       "items": [
         {
           "type": "TextBlock",
-          "text": "%Widget_Template/ContentLoading%",
+          "text": "${if(is_loading_data, '%Widget_Template/ContentLoading%', '%Widget_Template/EmptyIssues%')}",
           "wrap": true,
           "horizontalAlignment": "center"
         }

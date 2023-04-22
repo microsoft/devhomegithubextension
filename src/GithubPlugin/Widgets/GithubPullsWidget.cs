@@ -112,10 +112,11 @@ internal class GithubPullsWidget : GithubWidget
 
             pullsData.Add("pulls", pullsArray);
             pullsData.Add("selected_repo", repository?.FullName ?? string.Empty);
+            pullsData.Add("is_loading_data", DataState == WidgetDataState.Unknown);
 
             LastUpdated = DateTime.Now;
-            ContentData = pullsData.ToJsonString();
             DataState = WidgetDataState.Okay;
+            ContentData = pullsData.ToJsonString();
         }
         catch (Exception e)
         {

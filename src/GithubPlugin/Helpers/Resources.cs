@@ -54,6 +54,8 @@ public static class Resources
         return new string[]
         {
             "Widget_Template/ContentLoading",
+            "Widget_Template/EmptyIssues",
+            "Widget_Template/EmptyPulls",
             "Widget_Template/Pulls",
             "Widget_Template/Issues",
             "Widget_Template/Opened",
