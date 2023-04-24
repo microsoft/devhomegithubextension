@@ -33,6 +33,21 @@
       ]
     },
     {
+      "type": "Container",
+      "$when":  "${(count(issues) == 0)}",
+      "items": [
+        {
+          "type": "TextBlock",
+          "text": "${if(is_loading_data, '%Widget_Template/ContentLoading%', '%Widget_Template/EmptyIssues%')}",
+          "wrap": true,
+          "horizontalAlignment": "center"
+        }
+      ],
+      "verticalContentAlignment": "center",
+      "style": "accent",
+      "separator": true
+    },
+    {
       "$data": "${issues}",
       "type": "ColumnSet",
       "style": "emphasis",
