@@ -278,7 +278,7 @@
     <comment>The name of our application</comment>
   </data>
   <data name="Widget_Template.ContentLoading" xml:space="preserve">
-    <value>Loading content...</value>
+    <value>Loading...</value>
     <comment>Shown in Widget, when loading content (issues or PRs)</comment>
   </data>
   <data name="Widget_Template.EmptyIssues" xml:space="preserve">
