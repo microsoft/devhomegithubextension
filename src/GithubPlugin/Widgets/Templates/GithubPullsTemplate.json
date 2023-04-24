@@ -7,28 +7,28 @@
         {
           "type": "Column",
           "width": 1,
+          "verticalContentAlignment": "Center",
           "items": [
             {
               "type": "Image",
               "url": "https://learn.microsoft.com/en-us/windows/apps/design/style/images/segoe-mdl/e958.png",
-              "size": "Small"
+              "size": "small"
             }
-          ],
-          "verticalContentAlignment": "Center"
+          ]
         },
         {
           "type": "Column",
           "width": 9,
+          "verticalContentAlignment": "Center",
           "items": [
             {
               "type": "TextBlock",
               "text": "${selected_repo}",
-              "size": "Large",
+              "size": "large",
               "style": "heading",
               "wrap": true
             }
-          ],
-          "verticalContentAlignment": "Center"
+          ]
         }
       ]
     },
@@ -36,6 +36,7 @@
       "$data": "${pulls}",
       "type": "Container",
       "style": "emphasis",
+      "spacing": "small",
       "selectAction": {
         "type": "Action.OpenUrl",
         "url": "${url}",
@@ -45,7 +46,7 @@
         {
           "type": "TextBlock",
           "text": "${title}",
-          "weight": "Bolder",
+          "weight": "bolder",
           "wrap": true,
           "maxLines": 2
         },
@@ -57,17 +58,17 @@
         },
         {
           "type": "ColumnSet",
-          "spacing": "Small",
+          "spacing": "small",
           "columns": [
             {
               "type": "Column",
-              "width": "16px",
+              "width": "12px",
               "items": [
                 {
                   "type": "Image",
                   "style": "Person",
                   "url": "${avatar}",
-                  "size": "Small"
+                  "size": "small"
                 }
               ]
             },
@@ -78,7 +79,8 @@
                 {
                   "type": "TextBlock",
                   "text": "${user}",
-                  "size": "Small",
+                  "isSubtle": true,
+                  "size": "small",
                   "spacing": "None"
                 }
               ]
