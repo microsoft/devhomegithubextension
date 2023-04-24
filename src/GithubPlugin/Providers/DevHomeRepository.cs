@@ -135,7 +135,6 @@ public class DevHomeRepository : Microsoft.Windows.DevHome.SDK.IRepository
                     {
                         Log.Logger()?.ReportError("DevHomeRepository", "Could not clone the repository", e);
                         cloningExceptions.Add(e);
-                        unexpectedError = true;
                     }
                 }
             }
@@ -174,7 +173,6 @@ public class DevHomeRepository : Microsoft.Windows.DevHome.SDK.IRepository
                 {
                     Log.Logger()?.ReportError("DevHomeRepository", "Could not clone the repository", e);
                     cloningExceptions.Add(e);
-                    unexpectedError = true;
                 }
             }
 
@@ -185,23 +183,24 @@ public class DevHomeRepository : Microsoft.Windows.DevHome.SDK.IRepository
             {
                 if (isPathNotEmpty)
                 {
-                    throw new DirectoryNotFoundException();
+                    throw new DirectoryNotFoundException("This is my message");
                 }
                 else if (accessDenied)
                 {
-                    throw new UnauthorizedAccessException();
+                    throw new UnauthorizedAccessException("This is my message");
                 }
                 else if (cantCloneAllSubmodules)
                 {
-                    throw new FileNotFoundException();
+                    throw new FileNotFoundException("This is my message");
                 }
                 else if (didUserStopCloning)
                 {
-                    throw new UserCancelledException();
+                    throw new OperationCanceledException("This is my message");
                 }
                 else
                 {
-                    throw new InvalidOperationException();
+                    // If the repo was not cloned and none of the known exceptions were thrown
+                    throw new InvalidOperationException("This is my message");
                 }
             }
         }).AsAsyncAction();
