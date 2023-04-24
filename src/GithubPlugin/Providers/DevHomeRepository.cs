@@ -1,6 +1,7 @@
 ﻿// Copyright (c) Microsoft Corporation and Contributors
 // Licensed under the MIT license.
 
+using System.Runtime.InteropServices;
 using GitHubPlugin.Client;
 using GitHubPlugin.DeveloperId;
 using LibGit2Sharp;
@@ -81,8 +82,13 @@ public class DevHomeRepository : Microsoft.Windows.DevHome.SDK.IRepository
                 internalDeveloperIdsToUse.AddRange(DeveloperIdProvider.GetInstance().GetLoggedInDeveloperIdsInternal());
             }
 
+            var accessDenied = false;
+            var cantCloneAllSubmodules = false;
+            var didUserStopCloning = false;
             var clonedRepo = false;
+            var isPathNotEmpty = false;
 
+            var cloningExceptions = new List<Exception>();
             if (internalDeveloperIdsToUse.Any())
             {
                 foreach (var internalDeveloperId in internalDeveloperIdsToUse)
@@ -103,28 +109,33 @@ public class DevHomeRepository : Microsoft.Windows.DevHome.SDK.IRepository
                     }
                     catch (RecurseSubmodulesException recurseException)
                     {
-                        Providers.Log.Logger()?.ReportError("DevHomeRepository", "Could not clone all sub modules", recurseException);
-                        continue;
+                        Log.Logger()?.ReportError("DevHomeRepository", "Could not clone all sub modules", recurseException);
+                        cloningExceptions.Add(recurseException);
+                        cantCloneAllSubmodules = true;
                     }
                     catch (UserCancelledException userCancelledException)
                     {
-                        Providers.Log.Logger()?.ReportError("DevHomeRepository", "The user stoped the clone operation", userCancelledException);
-                        continue;
+                        Log.Logger()?.ReportError("DevHomeRepository", "The user stoped the clone operation", userCancelledException);
+                        cloningExceptions.Add(userCancelledException);
+                        didUserStopCloning = true;
                     }
                     catch (NameConflictException nameConflictException)
                     {
-                        Providers.Log.Logger()?.ReportError("DevHomeRepository", nameConflictException);
-                        continue;
+                        Log.Logger()?.ReportError("DevHomeRepository", nameConflictException);
+                        cloningExceptions.Add(nameConflictException);
+                        isPathNotEmpty = true;
                     }
                     catch (LibGit2SharpException libGitTwoException)
                     {
-                        Providers.Log.Logger()?.ReportError("DevHomeRepository", $"Either no logged in account has access to this repo, or the repo can't be found", libGitTwoException);
-                        continue;
+                        Log.Logger()?.ReportError("DevHomeRepository", $"Either no logged in account has access to this repo, or the repo can't be found", libGitTwoException);
+                        cloningExceptions.Add(libGitTwoException);
+                        accessDenied = true;
                     }
                     catch (Exception e)
                     {
-                        Providers.Log.Logger()?.ReportError("DevHomeRepository", "Could not clone the repository", e);
-                        continue;
+                        Log.Logger()?.ReportError("DevHomeRepository", "Could not clone the repository", e);
+                        cloningExceptions.Add(e);
+                        unexpectedError = true;
                     }
                 }
             }
@@ -132,40 +143,66 @@ public class DevHomeRepository : Microsoft.Windows.DevHome.SDK.IRepository
             {
                 try
                 {
-                    LibGit2Sharp.Repository.Clone(cloneUrl.OriginalString, cloneDestination, cloneOptions);
+                    Repository.Clone(cloneUrl.OriginalString, cloneDestination, cloneOptions);
                     clonedRepo = true;
                 }
                 catch (RecurseSubmodulesException recurseException)
                 {
-                    Providers.Log.Logger()?.ReportError("DevHomeRepository", "Could not clone all sub modules", recurseException);
-                    throw;
+                    Log.Logger()?.ReportError("DevHomeRepository", "Could not clone all sub modules", recurseException);
+                    cloningExceptions.Add(recurseException);
+                    cantCloneAllSubmodules = true;
                 }
                 catch (UserCancelledException userCancelledException)
                 {
-                    Providers.Log.Logger()?.ReportError("DevHomeRepository", "The user stoped the clone operation", userCancelledException);
-                    throw;
+                    Log.Logger()?.ReportError("DevHomeRepository", "The user stoped the clone operation", userCancelledException);
+                    cloningExceptions.Add(userCancelledException);
+                    didUserStopCloning = true;
                 }
                 catch (NameConflictException nameConflictException)
                 {
-                    Providers.Log.Logger()?.ReportError("DevHomeRepository", nameConflictException);
-                    throw;
+                    Log.Logger()?.ReportError("DevHomeRepository", nameConflictException);
+                    cloningExceptions.Add(nameConflictException);
+                    isPathNotEmpty = true;
                 }
                 catch (LibGit2SharpException libGitTwoException)
                 {
-                    Providers.Log.Logger()?.ReportError("DevHomeRepository", $"Either no logged in account has access to this repo, or the repo can't be found", libGitTwoException);
-                    throw;
+                    Log.Logger()?.ReportError("DevHomeRepository", $"Either no logged in account has access to this repo, or the repo can't be found", libGitTwoException);
+                    cloningExceptions.Add(libGitTwoException);
+                    accessDenied = true;
                 }
                 catch (Exception e)
                 {
-                    Providers.Log.Logger()?.ReportError("DevHomeRepository", "Could not clone the repository", e);
-                    throw;
+                    Log.Logger()?.ReportError("DevHomeRepository", "Could not clone the repository", e);
+                    cloningExceptions.Add(e);
+                    unexpectedError = true;
                 }
             }
 
+            // Because all devIds are looped over multiple exceptions can happen.
+            // This is a rough generalization of the exceptions so they can be communicated to dev home.
+            // WIll need to think of a better way of communication exceptions later.
             if (!clonedRepo)
             {
-                Providers.Log.Logger()?.ReportError("DevHomeRepository", $"Either no logged in accounts could clone repo {name} or the repo could not be found");
-                throw new LibGit2SharpException($"Either no logged in accounts could clone repo {name} or the repo could not be found");
+                if (isPathNotEmpty)
+                {
+                    throw new DirectoryNotFoundException();
+                }
+                else if (accessDenied)
+                {
+                    throw new UnauthorizedAccessException();
+                }
+                else if (cantCloneAllSubmodules)
+                {
+                    throw new FileNotFoundException();
+                }
+                else if (didUserStopCloning)
+                {
+                    throw new UserCancelledException();
+                }
+                else
+                {
+                    throw new InvalidOperationException();
+                }
             }
         }).AsAsyncAction();
     }
