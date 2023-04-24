@@ -6,29 +6,29 @@
       "columns": [
         {
           "type": "Column",
-          "width": "1",
+          "width": 1,
+          "verticalContentAlignment": "Center",
           "items": [
             {
               "type": "Image",
               "url": "https://learn.microsoft.com/en-us/windows/apps/design/style/images/segoe-mdl/e958.png",
-              "size": "Small"
+              "size": "small"
             }
-          ],
-          "verticalContentAlignment": "Center"
+          ]
         },
         {
           "type": "Column",
-          "width": "9",
+          "width": 9,
+          "verticalContentAlignment": "Center",
           "items": [
             {
               "type": "TextBlock",
               "text": "${selected_repo}",
-              "size": "Large",
-              "style": "Heading",
+              "size": "large",
+              "style": "heading",
               "wrap": true
             }
-          ],
-          "verticalContentAlignment": "Center"
+          ]
         }
       ]
     },
@@ -36,6 +36,7 @@
       "$data": "${issues}",
       "type": "ColumnSet",
       "style": "emphasis",
+      "spacing": "small",
       "selectAction": {
         "type": "Action.OpenUrl",
         "url": "${url}",
@@ -44,6 +45,7 @@
       "columns": [
         {
           "type": "Column",
+          "width": "12px",
           "items": [
             {
               "type": "Image",
@@ -51,8 +53,7 @@
               "url": "${avatar}",
               "size": "small"
             }
-          ],
-          "width": "12px"
+          ]
         },
         {
           "type": "Column",
@@ -60,22 +61,26 @@
           "items": [
             {
               "type": "TextBlock",
-              "weight": "Bolder",
+              "size": "medium",
+              "weight": "bolder",
               "text": "${title}",
               "wrap": true,
               "maxLines": 2
             },
             {
-              "type": "TextBlock",
-              "spacing": "None",
-              "weight": "lighter",
-              "size": "small",
-              "isSubtle": true,
-              "text": "${labelsString} "
+              "type": "LabelGroup",
+              "labels": [
+                {
+                  "$data": "${labels}",
+                  "text": "${name}",
+                  "color": "${color}"
+                }
+              ]
             },
             {
               "type": "TextBlock",
-              "spacing": "None",
+              "size": "small",
+              "spacing": "small",
               "text": "#${number} %Widget_Template/Opened% {{DATE(${formatDateTime(date, 'yyyy-MM-ddTHH:mm:ssZ')}, COMPACT)}} %Widget_Template/By% ${user}",
               "isSubtle": true,
               "wrap": true,
