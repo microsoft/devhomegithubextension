@@ -177,11 +177,11 @@ internal class GithubIssuesWidget : GithubWidget
 
     private void DataManagerUpdateHandler(object? source, DataManagerUpdateEventArgs e)
     {
-        Log.Logger()?.ReportDebug(Name, ShortId, $"Data Update Event: Kind={e.Kind} Info={e.Repository} Context={string.Join(",", e.Context)}");
+        Log.Logger()?.ReportDebug(Name, ShortId, $"Data Update Event: Kind={e.Kind} Info={e.Description} Context={string.Join(",", e.Context)}");
         if (e.Kind == DataManagerUpdateKind.Repository && !string.IsNullOrEmpty(RepositoryUrl))
         {
             var fullName = Validation.ParseFullNameFromGitHubURL(RepositoryUrl);
-            if (fullName == e.Repository && e.Context.Contains("Issues"))
+            if (fullName == e.Description && e.Context.Contains("Issues"))
             {
                 Log.Logger()?.ReportInfo(Name, ShortId, $"Received matching repository update event.");
                 LoadContentData();
