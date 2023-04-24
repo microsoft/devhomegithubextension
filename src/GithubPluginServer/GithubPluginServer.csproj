@@ -25,6 +25,7 @@
     <EnableTrimAnalyzer>true</EnableTrimAnalyzer>
     <ILLinkTreatWarningsAsErrors>false</ILLinkTreatWarningsAsErrors>
     <BuiltInComInteropSupport>true</BuiltInComInteropSupport>
+    <BuildRing Condition="'$(BuildRing)'==''">Dev</BuildRing>
   </PropertyGroup>
 
   <ItemGroup>
@@ -42,4 +43,8 @@
     <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.2.230313.1" />
   </ItemGroup>
 
+  <PropertyGroup>
+    <DefineConstants Condition="'$(BuildRing)'=='Canary'">$(DefineConstants);CANARY_BUILD</DefineConstants>
+    <DefineConstants Condition="'$(BuildRing)'=='Stable'">$(DefineConstants);STABLE_BUILD</DefineConstants>
+  </PropertyGroup>
 </Project>
