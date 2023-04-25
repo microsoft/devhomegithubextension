@@ -40,12 +40,12 @@
           "type": "TextBlock",
           "text": "${if(is_loading_data, '%Widget_Template/ContentLoading%', '%Widget_Template/EmptyPulls%')}",
           "wrap": true,
+          "weight": "bolder",
           "horizontalAlignment": "center"
         }
       ],
-      "verticalContentAlignment": "center",
-      "style": "accent",
-      "separator": true
+      "spacing": "medium",
+      "verticalContentAlignment": "center"
     },
     {
       "$data": "${pulls}",
