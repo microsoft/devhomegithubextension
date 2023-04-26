@@ -17,6 +17,12 @@ public interface IGitHubDataManager : IDisposable
 
     Task UpdatePullRequestsForRepositoryAsync(string owner, string name, RequestOptions? options = null);
 
+    Task UpdateMentionedInAsync(string owner, string name, RequestOptions? options = null);
+
+    Task UpdateAssignedToAsync(string assignedToUser, RequestOptions? options = null);
+
+    Task UpdatePullRequestsReviewRequestedForRepositoryAsync(string referredUser, RequestOptions? options = null);
+
     Task UpdatePullRequestsForRepositoryAsync(string fullName, RequestOptions? options = null);
 
     Task UpdateIssuesForRepositoryAsync(string owner, string name, RequestOptions? options = null);
@@ -34,4 +40,8 @@ public interface IGitHubDataManager : IDisposable
     Repository? GetRepository(string owner, string name);
 
     Repository? GetRepository(string fullName);
+
+    IEnumerable<Issue> GetIssuesMentionedIn();
+
+    IEnumerable<Issue> GetIssuesAssignedTo();
 }

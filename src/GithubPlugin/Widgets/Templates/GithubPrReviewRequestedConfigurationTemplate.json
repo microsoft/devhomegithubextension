@@ -1,0 +1,50 @@
+{
+  "type": "AdaptiveCard",
+  "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+  "version": "1.5",
+  "body": [
+    {
+      "type": "Container",
+      "items": [
+        {
+          "type": "TextBlock",
+          "text": "%Widget_Template/PrReviewRequested%",
+          "wrap": true,
+          "horizontalAlignment": "Center",
+          "size": "Large",
+          "weight": "Bolder"
+        },
+        {
+          "type": "TextBlock",
+          "text": "%Extension_Name/GitHub%",
+          "wrap": true,
+          "horizontalAlignment": "Center",
+          "spacing": "None",
+          "size": "Small",
+          "isSubtle": true,
+          "weight": "Lighter"
+        }
+      ]
+    },
+    {
+      "type": "TextBlock",
+      "text": "%Widget_Template/PR_description%",
+      "wrap": true,
+      "horizontalAlignment": "Center",
+      "spacing": "None",
+      "size": "Small",
+      "isSubtle": true,
+      "weight": "Lighter"
+    },
+    {
+      "type": "TextBlock",
+      "text": "%Widget_Template/PR_info%",
+      "wrap": true,
+      "horizontalAlignment": "Center",
+      "spacing": "None",
+      "size": "Small",
+      "isSubtle": true,
+      "weight": "Lighter"
+    }
+  ]
+}

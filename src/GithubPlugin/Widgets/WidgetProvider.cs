@@ -16,6 +16,10 @@ public sealed class WidgetProvider : IWidgetProvider
         Log.Logger()?.ReportDebug("Provider Constructed");
         widgetDefinitionRegistry.Add("GitHub_Issues", new WidgetImplFactory<GithubIssuesWidget>());
         widgetDefinitionRegistry.Add("GitHub_PullRequests", new WidgetImplFactory<GithubPullsWidget>());
+        widgetDefinitionRegistry.Add("GitHub_MentionedIns", new WidgetImplFactory<GithubMentionedInWidget>());
+        widgetDefinitionRegistry.Add("GitHub_PrReviewRequesteds", new WidgetImplFactory<GithubPrReviewRequestedWidget>());
+        widgetDefinitionRegistry.Add("GitHub_Assigneds", new WidgetImplFactory<GithubAssignedWidget>());
+        widgetDefinitionRegistry.Add("SSH_Wallet", new WidgetImplFactory<SshWalletWidget>());
         RecoverRunningWidgets();
     }
 

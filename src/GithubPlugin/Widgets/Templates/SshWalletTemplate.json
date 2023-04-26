@@ -1,0 +1,93 @@
+{
+  "type": "AdaptiveCard",
+  "body": [
+    {
+      "type": "ColumnSet",
+      "columns": [
+        {
+          "type": "Column",
+          "width": 1,
+          "items": [
+            {
+              "type": "Image",
+              "url": "https://learn.microsoft.com/en-us/windows/apps/design/style/images/segoe-mdl/e958.png",
+              "size": "Small"
+            }
+          ],
+          "verticalContentAlignment": "Center"
+        },
+        {
+          "type": "Column",
+          "width": 9,
+          "items": [
+            {
+              "type": "TextBlock",
+              "text": "${selected_repo}",
+              "size": "Large",
+              "style": "heading",
+              "wrap": true
+            }
+          ],
+          "verticalContentAlignment": "Center"
+        }
+      ]
+    },
+    {
+      "$data": "${pulls}",
+      "type": "Container",
+      "style": "emphasis",
+      "selectAction": {
+        "type": "Action.OpenUrl",
+        "url": "${url}",
+        "tooltip": "%Widget_Template_Tooltip/OpenPullRequest%"
+      },
+      "items": [
+        {
+          "type": "TextBlock",
+          "text": "${title}",
+          "weight": "Bolder",
+          "wrap": true,
+          "maxLines": 2
+        },
+        {
+          "type": "TextBlock",
+          "text": "#${number}",
+          "isSubtle": true,
+          "spacing": "None"
+        },
+        {
+          "type": "ColumnSet",
+          "spacing": "Small",
+          "columns": [
+            {
+              "type": "Column",
+              "width": "16px",
+              "items": [
+                {
+                  "type": "Image",
+                  "style": "Person",
+                  "url": "${avatar}",
+                  "size": "Small"
+                }
+              ]
+            },
+            {
+              "type": "Column",
+              "width": "stretch",
+              "items": [
+                {
+                  "type": "TextBlock",
+                  "text": "${user}",
+                  "size": "Small",
+                  "spacing": "None"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+  "version": "1.5"
+}

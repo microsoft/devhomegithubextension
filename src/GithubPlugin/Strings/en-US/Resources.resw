@@ -289,4 +289,52 @@
     <value>There are no pull requests in this repository.</value>
     <comment>Shown in Widget, when there are no pull requests</comment>
   </data>
+  <data name="Widget_Template.AssignedTitle" xml:space="preserve">
+    <value>Assigned pull requests and isues</value>
+    <comment>Shown in Widget</comment>
+  </data>
+  <data name="Widget_Template/PrReviewRequested" xml:space="preserve">
+    <value>Pull requests, review requested</value>
+    <comment>Shown in Widget</comment>
+  </data>
+  <data name="Widget_Template/Mentioned_user" xml:space="preserve">
+    <value>Mentioned user</value>
+    <comment>Shown in Widget</comment>
+  </data>
+  <data name="Widget_Template/PR_Issue_description" xml:space="preserve">
+    <value>Items in widget will appear in chronological order from when the pull request or issue was last updated</value>
+    <comment>Shown in Widget</comment>
+  </data>
+  <data name="Widget_Template.Assigned" xml:space="preserve">
+    <value>assigned</value>
+    <comment>Shown in Widget</comment>
+  </data>
+  <data name="Widget_Template.AssignedTo" xml:space="preserve">
+    <value>Assigned to</value>
+    <comment>Shown in Widget</comment>
+  </data>
+  <data name="Widget_Template.Open" xml:space="preserve">
+    <value>open</value>
+    <comment>Shown in Widget</comment>
+  </data>
+  <data name="Widget_Template/Mentioned" xml:space="preserve">
+    <value>Mentioned</value>
+    <comment>Shown in Widget</comment>
+  </data>
+  <data name="Widget_Template/MentionedLow" xml:space="preserve">
+    <value>mentioned</value>
+    <comment>Shown in Widget</comment>
+  </data>
+  <data name="Widget_Template/PR_description" xml:space="preserve">
+    <value>Items in widget will appear in chronological order from when the pull request was last updated</value>
+    <comment>Shown in Widget</comment>
+  </data>
+  <data name="Widget_Template/PR_info" xml:space="preserve">
+    <value>Display pull requests where my review has been requested</value>
+    <comment>Shown in Widget</comment>
+  </data>
+  <data name="Widget_Template/ReviewRequested" xml:space="preserve">
+    <value>Review requested</value>
+    <comment>Shown in Widget</comment>
+  </data>
 </root>

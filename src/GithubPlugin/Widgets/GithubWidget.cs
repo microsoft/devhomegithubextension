@@ -254,7 +254,7 @@ public abstract class GithubWidget : WidgetImpl
         return authProvider.GetLoggedInDeveloperIds().Any();
     }
 
-    public void UpdateActivityState()
+    public void UpdateActivityState(bool skipRepositoryCheck = false)
     {
         // State logic for the Widget:
         // Signed in -> Valid Repository Url -> Active / Inactive per widget host.
@@ -264,7 +264,7 @@ public abstract class GithubWidget : WidgetImpl
             return;
         }
 
-        if (string.IsNullOrEmpty(RepositoryUrl))
+        if (string.IsNullOrEmpty(RepositoryUrl) && !skipRepositoryCheck)
         {
             SetConfigure();
             return;
@@ -423,6 +423,11 @@ public abstract class GithubWidget : WidgetImpl
 internal class DataPayload
 {
     public string? Repo
+    {
+        get; set;
+    }
+
+    public string? ShowCategory
     {
         get; set;
     }
