@@ -109,6 +109,24 @@ public class Repository
         }
     }
 
+    public IEnumerable<Issue> GetIssuesForQuery(string query)
+    {
+        if (DataStore == null)
+        {
+            return Enumerable.Empty<Issue>();
+        }
+        else
+        {
+            var search = Search.Get(DataStore, query, Id);
+            if (search is null)
+            {
+                return Enumerable.Empty<Issue>();
+            }
+
+            return Issue.GetForSearch(DataStore, search);
+        }
+    }
+
     public override string ToString() => FullName;
 
     // Create repository from OctoKit repo

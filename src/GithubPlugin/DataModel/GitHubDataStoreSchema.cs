@@ -13,7 +13,7 @@ public class GitHubDataStoreSchema : IDataStoreSchema
     }
 
     // Update this anytime incompatible changes happen with a released version.
-    private const long SchemaVersionValue = 0x0003;
+    private const long SchemaVersionValue = 0x0004;
 
     private static readonly string Metadata =
     @"CREATE TABLE Metadata (" +
@@ -213,6 +213,24 @@ public class GitHubDataStoreSchema : IDataStoreSchema
         "TimeCreated INTEGER NOT NULL" +
     ");";
 
+    private static readonly string Search =
+    @"CREATE TABLE Search (" +
+        "Id INTEGER PRIMARY KEY NOT NULL," +
+        "RepositoryId INTEGER NOT NULL," +
+        "TimeUpdated INTEGER NOT NULL," +
+        "Query TEXT NOT NULL COLLATE NOCASE" +
+    ");" +
+    "CREATE UNIQUE INDEX IDX_Search_RepositoryIdQuery ON Search (RepositoryId, Query);";
+
+    private static readonly string SearchIssue =
+    @"CREATE TABLE SearchIssue (" +
+        "Id INTEGER PRIMARY KEY NOT NULL," +
+        "TimeUpdated INTEGER NOT NULL," +
+        "Search INTEGER NOT NULL," +
+        "Issue INTEGER NOT NULL" +
+    ");" +
+    "CREATE UNIQUE INDEX IDX_SearchIssue_SearchIssue ON SearchIssue (Search, Issue);";
+
     // All Sqls together.
     private static readonly List<string> SchemaSqlsValue = new ()
     {
@@ -231,5 +249,7 @@ public class GitHubDataStoreSchema : IDataStoreSchema
         CheckSuite,
         CommitCombinedStatus,
         Notification,
+        Search,
+        SearchIssue,
     };
 }
