@@ -49,11 +49,23 @@ internal class GithubIssuesWidget : GithubWidget
             Log.Logger()?.ReportDebug(Name, ShortId, $"Requesting data update for {GetOwner()}/{GetRepo()}");
             var requestOptions = new RequestOptions
             {
+                UsePublicClientAsFallback = true,
+            };
+
+            var issueQuery = GetIssueQuery();
+            if (!string.IsNullOrEmpty(issueQuery))
+            {
+                // If a query was provided, use that query for parameters.
+                requestOptions.SearchIssuesRequest = new SearchIssuesRequest(issueQuery);
+            }
+            else
+            {
+                // Default query parameters.
                 // We are only interested in getting the first 10 issues. Repositories can have
                 // hundreds and thousands of issues open, and the widget can only display a small
                 // number of them. We also don't need all of the issues possible, just the most
                 // recent which are likely of interest to the developer to watch for new issues.
-                SearchIssuesRequest = new SearchIssuesRequest
+                requestOptions.SearchIssuesRequest = new SearchIssuesRequest
                 {
                     State = ItemState.Open,
                     Type = IssueTypeQualifier.Issue,
@@ -61,9 +73,8 @@ internal class GithubIssuesWidget : GithubWidget
                     Order = SortDirection.Descending,
                     PerPage = 10,
                     Page = 1,
-                },
-                UsePublicClientAsFallback = true,
-            };
+                };
+            }
 
             var dataManager = GitHubDataManager.CreateInstance();
             _ = dataManager?.UpdateIssuesForRepositoryAsync(GetOwner(), GetRepo(), requestOptions);
@@ -91,7 +102,24 @@ internal class GithubIssuesWidget : GithubWidget
         {
             using var dataManager = GitHubDataManager.CreateInstance();
             var repository = dataManager!.GetRepository(GetOwner(), GetRepo());
-            var issues = repository is null ? Enumerable.Empty<DataModel.Issue>() : repository.Issues;
+
+            IEnumerable<DataModel.Issue> issues;
+            if (repository is null)
+            {
+                issues = Enumerable.Empty<DataModel.Issue>();
+            }
+            else
+            {
+                var issueQuery = GetIssueQuery();
+                if (!string.IsNullOrEmpty(issueQuery))
+                {
+                    issues = repository.GetIssuesForQuery(issueQuery);
+                }
+                else
+                {
+                    issues = repository.Issues;
+                }
+            }
 
             var issuesData = new JsonObject();
             var issuesArray = new JsonArray();
@@ -167,11 +195,11 @@ internal class GithubIssuesWidget : GithubWidget
 
     private void DataManagerUpdateHandler(object? source, DataManagerUpdateEventArgs e)
     {
-        Log.Logger()?.ReportDebug(Name, ShortId, $"Data Update Event: Kind={e.Kind} Info={e.Repository} Context={string.Join(",", e.Context)}");
+        Log.Logger()?.ReportDebug(Name, ShortId, $"Data Update Event: Kind={e.Kind} Info={e.Description} Context={string.Join(",", e.Context)}");
         if (e.Kind == DataManagerUpdateKind.Repository && !string.IsNullOrEmpty(RepositoryUrl))
         {
             var fullName = Validation.ParseFullNameFromGitHubURL(RepositoryUrl);
-            if (fullName == e.Repository && e.Context.Contains("Issues"))
+            if (fullName == e.Description && e.Context.Contains("Issues"))
             {
                 Log.Logger()?.ReportInfo(Name, ShortId, $"Received matching repository update event.");
                 LoadContentData();

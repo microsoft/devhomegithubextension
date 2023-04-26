@@ -14,6 +14,8 @@ public class DataStoreOperationParameters
 
     public string OperationName { get; set; } = string.Empty;
 
+    public string? Query { get; set; }
+
     public IEnumerable<IDeveloperId> DeveloperIds { get; set; } = Enumerable.Empty<IDeveloperId>();
 
     public RequestOptions? RequestOptions { get; set; }

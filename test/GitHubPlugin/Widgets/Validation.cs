@@ -33,6 +33,8 @@ public partial class WidgetTests
             "github.com/owner/repo/pulls/4",
             "github.com/owner/repo/pulls/4",
             "owner/repo",
+            "https://github.com/owner/repo/issues?q=is%3Aopen+mentions%3A%40me",
+            "github.com/owner/repo/issues?q=is%3Aopen+mentions%3A%40me",
         };
 
         foreach (var uriString in testUrisValid)
@@ -40,7 +42,40 @@ public partial class WidgetTests
             Assert.AreEqual("owner", Client.Validation.ParseOwnerFromGitHubURL(uriString));
             Assert.AreEqual("repo", Client.Validation.ParseRepositoryFromGitHubURL(uriString));
             Assert.AreEqual("owner/repo", Client.Validation.ParseFullNameFromGitHubURL(uriString));
+            if (Client.Validation.IsValidGitHubIssueQueryURL(uriString))
+            {
+                Assert.AreEqual("is%3Aopen+mentions%3A%40me", Client.Validation.ParseIssueQueryFromGitHubURL(uriString));
+            }
+            else
+            {
+                Assert.AreEqual(string.Empty, Client.Validation.ParseIssueQueryFromGitHubURL(uriString));
+            }
+
             TestContext?.WriteLine($"Valid: {uriString}");
+        }
+
+        var testUrisQuery = new List<string>
+        {
+            "https://github.com/owner/repo/issues?q=is%3Aopen+mentions%3A%40me",
+            "https://github.com/owner/repo/ISSUES?q=is%3Aopen+mentions%3A%40me",
+        };
+
+        foreach (var uriString in testUrisQuery)
+        {
+            Assert.IsTrue(Client.Validation.IsValidGitHubIssueQueryURL(uriString));
+            Assert.AreEqual("is%3Aopen+mentions%3A%40me", Client.Validation.ParseIssueQueryFromGitHubURL(uriString));
+            TestContext?.WriteLine($"Is query URL: {uriString}");
+        }
+
+        var testFailUrisQuery = new List<string>
+        {
+            "https://github.com/owner/repo/pulls?q=is%3Aopen+mentions%3A%40me",
+        };
+
+        foreach (var uriString in testFailUrisQuery)
+        {
+            Assert.IsFalse(Client.Validation.IsValidGitHubIssueQueryURL(uriString));
+            TestContext?.WriteLine($"Is not query URL: {uriString}");
         }
 
         testListener.PrintEventCounts();
