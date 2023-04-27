@@ -277,4 +277,16 @@
     <value>Dev Home GitHub Extension</value>
     <comment>The name of our application</comment>
   </data>
+  <data name="Widget_Template.ContentLoading" xml:space="preserve">
+    <value>Loading...</value>
+    <comment>Shown in Widget, when loading content (issues or PRs)</comment>
+  </data>
+  <data name="Widget_Template.EmptyIssues" xml:space="preserve">
+    <value>There are no issues in this repository.</value>
+    <comment>Shown in Widget, when there are no issues</comment>
+  </data>
+  <data name="Widget_Template.EmptyPulls" xml:space="preserve">
+    <value>There are no pull requests in this repository.</value>
+    <comment>Shown in Widget, when there are no pull requests</comment>
+  </data>
 </root>

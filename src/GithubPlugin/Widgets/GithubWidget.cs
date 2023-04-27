@@ -58,6 +58,11 @@ public abstract class GithubWidget : WidgetImpl
         return Validation.ParseRepositoryFromGitHubURL(RepositoryUrl);
     }
 
+    public string GetIssueQuery()
+    {
+        return Validation.ParseIssueQueryFromGitHubURL(RepositoryUrl);
+    }
+
     public GithubWidget()
     {
         DataUpdater = new DataUpdater(PeriodicUpdate);
@@ -225,7 +230,8 @@ public abstract class GithubWidget : WidgetImpl
                 configurationData.Add("hasConfiguration", true);
                 configurationData.Add("configuration", repositoryData);
 
-                RepositoryUrl = repository.HtmlUrl;
+                // Set the Repository URL to the original string passed in from the user.
+                RepositoryUrl = data;
             }
             catch (Exception ex)
             {

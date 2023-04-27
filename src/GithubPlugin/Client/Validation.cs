@@ -42,6 +42,27 @@ public static class Validation
         return IsValidGitHubURL(parsedUri);
     }
 
+    public static bool IsValidGitHubIssueQueryURL(string url)
+    {
+        if (!IsValidGitHubURL(url))
+        {
+            return false;
+        }
+
+        Uri? uri;
+        if (!(Uri.TryCreate(url, UriKind.Absolute, out uri) && (uri.Scheme == Uri.UriSchemeHttp || uri.Scheme == Uri.UriSchemeHttps)))
+        {
+            return false;
+        }
+
+        if (uri.Segments.Length < 4 || !uri.Segments[3].Equals("issues", StringComparison.OrdinalIgnoreCase))
+        {
+            return false;
+        }
+
+        return true;
+    }
+
     public static Uri GetUriFromGitHubUrlString(string url)
     {
         if (!IsValidGitHubURL(url))
@@ -96,6 +117,26 @@ public static class Validation
         // Replace .git because Ocktokit does not want .git.
         var repoName = url.Segments[2].Replace("/", string.Empty);
         return RemoveDotGitFromEndOfString(repoName);
+    }
+
+    public static string ParseIssueQueryFromGitHubURL(string url)
+    {
+        if (!IsValidGitHubIssueQueryURL(url))
+        {
+            return string.Empty;
+        }
+
+        var uri = new Uri(url);
+
+        // Query includes the ?q= prefix, which we need to remove and return the raw query string.
+        if (uri.Query.StartsWith(@"?q=", StringComparison.OrdinalIgnoreCase))
+        {
+            return uri.Query[3..];
+        }
+        else
+        {
+            return string.Empty;
+        }
     }
 
     /// <summary>

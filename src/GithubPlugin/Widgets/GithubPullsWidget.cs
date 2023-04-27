@@ -10,6 +10,15 @@ using Octokit;
 namespace GitHubPlugin.Widgets;
 internal class GithubPullsWidget : GithubWidget
 {
+    private readonly string pullsIconData =
+        "iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAYAAACNiR0NAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv" +
+        "8YQUAAAG5SURBVHgB1VRLUsJAFHwzuBdvgCfQAyBiuUB04XADPYFyAvAEwAnkBDqsAF0Q1GIL3gBPQFYupJKxX0yoBPLBKjf2JpN5PZ2eed" +
+        "MR5KPYV2Up6ZLHrku9t6q2aA2lJ3UjlzS2LvSMEiA94lA1cjl6FIbygqiQkzQqPatGRAwc1JpYYVMKBDtjAeHSvlXVc54s91XB5GgqHKphz" +
+        "grEXEN1Y2iGHdiTBJeiNFBtPAsvZ1pFHPVVlwTZ0qGu2aFpzNo5hO9eq7q7sWV8fbHxJUm7/OTzgvtrHhsSV+OKFuKT9uC+gzO/Pxqo24ig" +
+        "NKShqHibwaQ/Vl6NReGCRQWZLmplq6Zt61y3DRxKQZGzFr5A00ivoGHDhm+FBnWsim6GySzGW12d9UjlzRctljuyMDl9+FgJBmSItrxJl+p" +
+        "WzLWJw/FQGfBPAr4MCjyBLbzD4WxbsThI+mP8I0FODO7eAdp0WPzpZiqYgwR5TXSwJiIYZJkbgtd5XJbDCGcfrxp3sRXwt8ryurM0voS6Qu" +
+        "B7QZHBY+NQz0Vt3V0WPzPLcUjjb5XliMMM/q+yHBJI5EeyjB+o8s9JZ8Uvif8N+rQImUfqheMAAAAASUVORK5CYII=";
+
     private static Dictionary<string, string> Templates { get; set; } = new ();
 
     protected static readonly new string Name = nameof(GithubPullsWidget);
@@ -112,10 +121,12 @@ internal class GithubPullsWidget : GithubWidget
 
             pullsData.Add("pulls", pullsArray);
             pullsData.Add("selected_repo", repository?.FullName ?? string.Empty);
+            pullsData.Add("is_loading_data", DataState == WidgetDataState.Unknown);
+            pullsData.Add("pulls_icon_data", pullsIconData);
 
             LastUpdated = DateTime.Now;
-            ContentData = pullsData.ToJsonString();
             DataState = WidgetDataState.Okay;
+            ContentData = pullsData.ToJsonString();
         }
         catch (Exception e)
         {
@@ -124,6 +135,25 @@ internal class GithubPullsWidget : GithubWidget
             return;
         }
     }
+
+#if false
+    /// <summary>
+    /// This method converts an image to a Base64 string that can be used to embed an image in an Adaptive Card.
+    /// If any of the following images change, change the image property "Copy to Output Directotry" to "Always".
+    /// Then run this method and replace the existing string with the output.
+    /// <list type="bullet">
+    /// <item>pulls.png</item>
+    /// <item>issues.png</item>
+    /// </list>
+    /// </summary>
+    /// <returns>The converted base64 image.</returns>
+    public static string ConvertIconToDataString(string fileName)
+    {
+        var path = Path.Combine(AppContext.BaseDirectory, "../../GitHubPlugin/Widgets/Assets/", fileName);
+        var imageData = Convert.ToBase64String(File.ReadAllBytes(path.ToString()));
+        return imageData;
+    }
+#endif
 
     public override string GetTemplatePath(WidgetPageState page)
     {
@@ -151,11 +181,11 @@ internal class GithubPullsWidget : GithubWidget
 
     private void DataManagerUpdateHandler(object? source, DataManagerUpdateEventArgs e)
     {
-        Log.Logger()?.ReportDebug(Name, ShortId, $"Data Update Event: Kind={e.Kind} Info={e.Repository} Context={string.Join(",", e.Context)}");
+        Log.Logger()?.ReportDebug(Name, ShortId, $"Data Update Event: Kind={e.Kind} Info={e.Description} Context={string.Join(",", e.Context)}");
         if (e.Kind == DataManagerUpdateKind.Repository && !string.IsNullOrEmpty(RepositoryUrl))
         {
             var fullName = Validation.ParseFullNameFromGitHubURL(RepositoryUrl);
-            if (fullName == e.Repository && e.Context.Contains("PullRequests"))
+            if (fullName == e.Description && e.Context.Contains("PullRequests"))
             {
                 Log.Logger()?.ReportInfo(Name, ShortId, $"Received matching repository update event.");
                 LoadContentData();

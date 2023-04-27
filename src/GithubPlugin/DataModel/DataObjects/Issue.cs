@@ -296,6 +296,30 @@ public class Issue
         return issues;
     }
 
+    public static IEnumerable<Issue> GetForSearch(DataStore dataStore, Search search)
+    {
+        // Order the resulting set by TimeUpdated on the SearchIssue table. Items returned first in
+        // a search result will be processed first, and added first to the datastore. This means the
+        // newest timestamp entry is the last one in the list. So we must order the results by time
+        // updated, but ascending to get them in the order in which they were received in the search.
+        // This is how we preserve whatever ordering the search had for these items without knowing
+        // what that search ordering actually was.
+        var sql = @"SELECT * FROM Issue AS I INNER JOIN SearchIssue AS SI ON I.Id = SI.Issue WHERE SI.Search = @SearchId ORDER BY SI.TimeUpdated ASC";
+        var param = new
+        {
+            SearchId = search.Id,
+        };
+
+        Log.Logger()?.ReportDebug(DataStore.GetSqlLogMessage(sql, param));
+        var issues = dataStore.Connection!.Query<Issue>(sql, param, null) ?? Enumerable.Empty<Issue>();
+        foreach (var issue in issues)
+        {
+            issue.DataStore = dataStore;
+        }
+
+        return issues;
+    }
+
     private static void UpdateLabelsForIssue(DataStore dataStore, Issue issue)
     {
         // Delete existing labels for this issue and add new ones.
