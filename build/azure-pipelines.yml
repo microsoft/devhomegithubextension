@@ -87,17 +87,8 @@ stages:
         minRiskLevel: 2
         onlyInputs: false
 
-- stage: SyncMirror
-  dependsOn: []
-  condition: or(eq(variables['BuildingBranch'], 'staging'), eq(variables['BuildingBranch'], 'release'))
-  jobs:
-  - template: SyncMirroredRepository.yml
-    parameters:
-      SourceToTargetBranch: "$(BuildingBranch)"
-
 - stage: Build_Msix
-  dependsOn: SyncMirror
-  condition: in(dependencies.SyncMirror.result, 'Succeeded', 'Skipped')
+  dependsOn: []
   jobs:
   - ${{ each configuration in parameters.Configurations }}:
     - ${{ each platform in parameters.Platforms }}:
@@ -231,12 +222,7 @@ stages:
 
 - stage: Build_MsixBundle
   dependsOn: Build_Msix
-  condition: |
-    and
-    (
-      in(dependencies.SyncMirror.result, 'Succeeded', 'Skipped'),
-      in(dependencies.Build_Msix.result, 'Succeeded')
-    )
+  condition: in(dependencies.Build_Msix.result, 'Succeeded')
   jobs:
   - job: Build_MsixBundles
     steps:
@@ -308,7 +294,6 @@ stages:
   condition: |
     and
     (
-      in(dependencies.SyncMirror.result, 'Succeeded', 'Skipped'),
       in(dependencies.Build_MsixBundle.result, 'Succeeded'),
       in(dependencies.SourceAnalysis.result, 'Succeeded'),
       eq(variables['EnableStorePublishing'], 'true')
