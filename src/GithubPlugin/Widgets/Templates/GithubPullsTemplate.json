@@ -11,8 +11,9 @@
           "items": [
             {
               "type": "Image",
-              "url": "https://learn.microsoft.com/en-us/windows/apps/design/style/images/segoe-mdl/e958.png",
-              "size": "small"
+              "url": "data:image/png;base64,${pulls_icon_data}",
+              "size": "medium",
+              "horizontalAlignment": "Center"
             }
           ]
         },
