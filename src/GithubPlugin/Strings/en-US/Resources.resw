@@ -337,4 +337,36 @@
     <value>Review requested</value>
     <comment>Shown in Widget</comment>
   </data>
+  <data name="Widget_Template/Ssh_wallet" xml:space="preserve">
+    <value>SSH Wallet</value>
+    <comment>Shown in Widget</comment>
+  </data>
+  <data name="Widget_Template_Label/AllMemory" xml:space="preserve">
+    <value>All Memory</value>
+  </data>
+  <data name="Widget_Template_Label/Cached" xml:space="preserve">
+    <value>Cached</value>
+  </data>
+  <data name="Widget_Template_Label/Commited" xml:space="preserve">
+    <value>Commited</value>
+  </data>
+  <data name="Widget_Template_Label/Config_file_path" xml:space="preserve">
+    <value>Config File Path</value>
+    <comment>Shown in Widget</comment>
+  </data>
+  <data name="Widget_Template_Label/MemoryUsage" xml:space="preserve">
+    <value>Memory usage</value>
+  </data>
+  <data name="Widget_Template_Label/NonPagedPool" xml:space="preserve">
+    <value>Non paged pool</value>
+  </data>
+  <data name="Widget_Template_Label/PagedPool" xml:space="preserve">
+    <value>Paged Pool</value>
+  </data>
+  <data name="Widget_Template_Label/SystemMemory" xml:space="preserve">
+    <value>System Memory</value>
+  </data>
+  <data name="Widget_Template_Label/UsedMemory" xml:space="preserve">
+    <value>Used Memory</value>
+  </data>
 </root>

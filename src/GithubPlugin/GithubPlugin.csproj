@@ -24,6 +24,7 @@
     <None Remove="Widgets\Templates\GithubSignInTemplate.json" />
     <None Remove="Widgets\Templates\SshWalletConfigurationTemplate.json" />
     <None Remove="Widgets\Templates\SshWalletTemplate.json" />
+    <None Remove="Widgets\Templates\SystemMemoryTemplate.json" />
   </ItemGroup>
 
   <ItemGroup>
@@ -67,6 +68,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Widgets\Templates\SshWalletTemplate.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Widgets\Templates\SystemMemoryTemplate.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>

@@ -105,13 +105,6 @@ internal class GithubPrReviewRequestedWidget : GithubWidget
 
     public override void LoadContentData()
     {
-        if (RepositoryUrl == string.Empty)
-        {
-            ContentData = string.Empty;
-            DataState = WidgetDataState.Okay;
-            return;
-        }
-
         Log.Logger()?.ReportDebug(Name, ShortId, "Getting Data for Pull Requests");
 
         try
@@ -122,35 +115,21 @@ internal class GithubPrReviewRequestedWidget : GithubWidget
 
             var issue = new JsonObject
                 {
-                    { "title", "Invade Tatooin" },
+                    { "title", "Houston, check problems" },
                     { "url", "https://github.com/microsoft/PowerToys" },
                     { "number", 12 },
-                    { "date", "2023-02-02" },
-                    { "user", "Darth Vader" },
+                    { "date", "2023-03-06" },
+                    { "user", "NASA" },
                     { "repository", "microsoft/PowerToys" },
                 };
-            var issueLabels = new JsonArray();
-            var issueLabel = new JsonObject
-            {
-                        { "name", "Tag1" },
-                        { "color", "warning" },
-            };
-            ((IList<JsonNode?>)issueLabels).Add(issueLabel);
-            issueLabel = new JsonObject
-            {
-                        { "name", "Tag2" },
-                        { "color", "good" },
-            };
-            ((IList<JsonNode?>)issueLabels).Add(issueLabel);
-            issue.Add("labels", issueLabels);
             ((IList<JsonNode?>)issuesArray).Add(issue);
             issue = new JsonObject
                 {
-                    { "title", "check carrots" },
+                    { "title", "check lab door" },
                     { "url", "https://github.com/microsoft/PowerToys" },
                     { "number", 34 },
-                    { "date", "2022-04-04" },
-                    { "user", "Bugs Bunny" },
+                    { "date", "2019-10-04" },
+                    { "user", "corona lab" },
                     { "repository", "microsoft/PowerToys" },
                 };
             issue.Add("labels", new JsonArray());

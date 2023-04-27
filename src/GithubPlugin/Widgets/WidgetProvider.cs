@@ -20,6 +20,7 @@ public sealed class WidgetProvider : IWidgetProvider
         widgetDefinitionRegistry.Add("GitHub_PrReviewRequesteds", new WidgetImplFactory<GithubPrReviewRequestedWidget>());
         widgetDefinitionRegistry.Add("GitHub_Assigneds", new WidgetImplFactory<GithubAssignedWidget>());
         widgetDefinitionRegistry.Add("SSH_Wallet", new WidgetImplFactory<SshWalletWidget>());
+        widgetDefinitionRegistry.Add("System_Memory", new WidgetImplFactory<SystemMemoryWidget>());
         RecoverRunningWidgets();
     }
 

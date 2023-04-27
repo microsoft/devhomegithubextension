@@ -23,11 +23,11 @@
       "inlineAction": {
         "type": "Action.Execute",
         "tooltip": "%Widget_Template_Tooltip/Submit%",
-        "verb": "CheckConfigFilel",
+        "verb": "CheckConfigFile",
         "iconUrl": "https://learn.microsoft.com/en-us/uwp/api/windows.ui.xaml.controls/images/segoe-mdl/e122.png"
       },
       "spacing": "Medium",
-      "placeholder": "%Widget_Template_Input/ConfigFilePlaceholder%",
+      "placeholder": "${ConfigFilePlaceholder}",
       "value": "${$root.configuration.sshConfigFile}"
     },
     {
