@@ -17,6 +17,7 @@ public partial class GitHubDataManager : IGitHubDataManager, IDisposable
 
     private static readonly string LastUpdatedKeyName = "LastUpdated";
     private static readonly TimeSpan NotificationRetentionTime = TimeSpan.FromDays(7);
+    private static readonly TimeSpan SearchRetentionTime = TimeSpan.FromDays(7);
     private static readonly TimeSpan PullRequestStaleTime = TimeSpan.FromDays(30);
     private static readonly long CheckSuiteIdDependabot = 29110;
 
@@ -741,10 +742,29 @@ public partial class GitHubDataManager : IGitHubDataManager, IDisposable
             return;
         }
 
+        // Associate search term if one was provided.
+        Search? search = null;
+        if (!string.IsNullOrEmpty(options.SearchIssuesRequest.Term))
+        {
+            Log.Logger()?.ReportDebug($"Term = {options.SearchIssuesRequest.Term}");
+            search = Search.GetOrCreate(DataStore, options.SearchIssuesRequest.Term, repository.Id);
+        }
+
         Log.Logger()?.ReportDebug(Name, $"Results contain {issuesResult.Items.Count} issues.");
         foreach (var issue in issuesResult.Items)
         {
-            Issue.GetOrCreateByOctokitIssue(DataStore, issue, repository.Id);
+            var dsIssue = Issue.GetOrCreateByOctokitIssue(DataStore, issue, repository.Id);
+            if (search is not null)
+            {
+                SearchIssue.AddIssueToSearch(DataStore, dsIssue, search);
+            }
+        }
+
+        if (search is not null)
+        {
+            // If this is associated with a search and there are existing issues in the search that
+            // were not recently updated (within the last minute), remove them from the search result.
+            SearchIssue.DeleteBefore(DataStore, search, DateTime.Now - TimeSpan.FromMinutes(1));
         }
     }
 
@@ -756,6 +776,8 @@ public partial class GitHubDataManager : IGitHubDataManager, IDisposable
         CommitCombinedStatus.DeleteUnreferenced(DataStore);
         PullRequestStatus.DeleteUnreferenced(DataStore);
         Notification.DeleteBefore(DataStore, DateTime.Now - NotificationRetentionTime);
+        Search.DeleteBefore(DataStore, DateTime.Now - SearchRetentionTime);
+        SearchIssue.DeleteUnreferenced(DataStore);
     }
 
     // Sets a last-updated in the MetaData

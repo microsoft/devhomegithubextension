@@ -11,14 +11,23 @@ internal class Program
         using var dataManager = GitHubDataManager.CreateInstance();
         Task.Run(async () =>
         {
-            await dataManager!.UpdatePullRequestsForRepositoryAsync(args[0]);
+            var parameters = new RequestOptions
+            {
+                SearchIssuesRequest = new Octokit.SearchIssuesRequest(args[0]),
+            };
+            await dataManager!.UpdateIssuesForRepositoryAsync("microsoft", "devhome", parameters);
         }).Wait();
 
-        // Show any new notifications that were created from the pull request update.
-        var notifications = dataManager!.GetNotifications();
-        foreach (var notification in notifications)
+        var repository = dataManager!.GetRepository("microsoft/devhome");
+        if (repository == null)
         {
-            notification.ShowToast();
+            Console.WriteLine("No results");
+            return;
+        }
+
+        foreach (var issue in repository.GetIssuesForQuery(args[0]))
+        {
+            Console.WriteLine($"  Issue: {issue.Number} {issue.Author.Login} {issue.Title}");
         }
     }
 }
