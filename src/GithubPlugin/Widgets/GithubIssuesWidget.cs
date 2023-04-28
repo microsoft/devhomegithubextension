@@ -10,6 +10,17 @@ using Octokit;
 namespace GitHubPlugin.Widgets;
 internal class GithubIssuesWidget : GithubWidget
 {
+    private readonly string issuesIconData =
+        "iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAYAAACNiR0NAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv" +
+        "8YQUAAAIlSURBVHgBnVVNTttQEJ55RqoilSrdkaRVwwmI1EKyqeKegHKD5AYsWaT1M+0eegJyg9IT1O6mQLtwduzqSgQjVpaIQCzsYcZOhB" +
+        "JiE/xJT/F7b+abN79BmIOyNsulaNQBZbR520CA+vjKIwBfxfGP4Zc//Xm6OHtQ6W18VAYcEGBZlFnAAaL/Y+k1Pp8Y8DGO7VniKcKa1dxjk" +
+        "m1eDiHaF/rIgTlY0S0TiQ4SYiJ9vntiPxCq2i2rajWp+nlDw4Ko6pYWnYq1vjc5M5KXfVrv8GP32ZrN1vSihFfOmbP84TUi4M7z97XB6Nfw" +
+        "NHGZrfxjNyGwj1ehACpW8ycTNa6xtKrS10GdoqgLBSHx5h+ujJuOIqU2JZsXX/86UBDj5PmcYlMhEGcKBnkKUkqy8mSIyOVgrqm0rsjLI0M" +
+        "Dv8uq9N5mkqK8kEOn4DEs3X9GS8aj4kLIvuObLIFAnxwS0hZFtHXJ35lMiNxF5Il9cdeEHAR5RPdocLoHHENweVNf6b0zoSCkFYWDFB6qZ3" +
+        "jb56SEaBgWFITivk5KTx/1la+9MEbocpZM7uMnk8oMSF6XFnfayyNnePqi/eolB3ZnuV2DK3foLkwWk5YZwG27L2dT40umB1+KRT/mVszqH" +
+        "om3hEi8IoJvwe7x9uTuwYDlAHd41lmTIcqx8XifdhKXF+/N9I5CQqMb6N9TFYCQASFWFG9CoowNOUsnOPHfALo3WOqH2gln9e4AsojlBmUp" +
+        "4xMAAAAASUVORK5CYII=";
+
     protected static readonly new string Name = nameof(GithubIssuesWidget);
 
     public GithubIssuesWidget()
@@ -132,7 +143,7 @@ internal class GithubIssuesWidget : GithubWidget
                     { "number", issueItem.Number },
                     { "date", issueItem.CreatedAt.ToLocalTime().ToStringInvariant() },
                     { "user", issueItem.Author.Login },
-                    { "avatar", issueItem.Author.AvatarUrl },
+                    { "icon", issuesIconData },
                 };
 
                 var labels = issueItem.Labels.ToList();
@@ -156,6 +167,7 @@ internal class GithubIssuesWidget : GithubWidget
             issuesData.Add("issues", issuesArray);
             issuesData.Add("selected_repo", repository?.FullName ?? string.Empty);
             issuesData.Add("is_loading_data", DataState == WidgetDataState.Unknown);
+            issuesData.Add("issues_icon_data", issuesIconData);
 
             LastUpdated = DateTime.Now;
             DataState = WidgetDataState.Okay;
