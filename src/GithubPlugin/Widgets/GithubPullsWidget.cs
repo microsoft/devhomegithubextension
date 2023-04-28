@@ -171,10 +171,10 @@ internal class GithubPullsWidget : GithubWidget
     {
         return page switch
         {
-            WidgetPageState.SignIn => new JsonObject { { "message", Resources.GetResource(@"Widget_Template/SignInRequired", Log.Logger()) } }.ToJsonString(),
+            WidgetPageState.SignIn => GetSignIn(),
             WidgetPageState.Configure => GetConfiguration(RepositoryUrl),
             WidgetPageState.Content => ContentData,
-            WidgetPageState.Loading => EmptyJson,
+            WidgetPageState.Loading => new JsonObject { { "configuring", true } }.ToJsonString(),
             _ => throw new NotImplementedException(Page.GetType().Name),
         };
     }
