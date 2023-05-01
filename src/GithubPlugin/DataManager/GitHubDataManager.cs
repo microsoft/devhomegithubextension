@@ -1,6 +1,7 @@
 ﻿// Copyright (c) Microsoft Corporation and Contributors
 // Licensed under the MIT license.
 
+using System.Collections.Generic;
 using System.Xml.Linq;
 using Dapper;
 using DevHome.Logging;
@@ -132,7 +133,7 @@ public partial class GitHubDataManager : IGitHubDataManager, IDisposable
         SendRepositoryUpdateEvent(this, GetFullNameFromOwnerAndRepository(owner, name), new string[] { "PullRequests" });
     }
 
-    public async Task UpdateMentionedInAsync(string mentionedName, RequestOptions? options = null)
+    public async Task UpdateMentionedInAsync(string mentionedName, string category, RequestOptions? options = null)
     {
         ValidateDataStore();
         var parameters = new DataStoreOperationParameters
@@ -146,7 +147,7 @@ public partial class GitHubDataManager : IGitHubDataManager, IDisposable
             parameters,
             async (parameters, devId) =>
             {
-                await UpdateMentionedInSearchAsync(mentionedName, devId.GitHubClient);
+                await UpdateMentionedInSearchAsync(mentionedName, category, devId.GitHubClient);
             });
 
         SendRepositoryUpdateEvent(this, "Mentioned in " + mentionedName, new string[] { "MentionedIn" });
@@ -504,28 +505,58 @@ public partial class GitHubDataManager : IGitHubDataManager, IDisposable
     }
 
     // Internal method to update a search for issues with mentioned in criteria
-    private async Task UpdateMentionedInSearchAsync(string mentionedName, Octokit.GitHubClient? client = null)
+    private async Task UpdateMentionedInSearchAsync(string mentionedName, string category, Octokit.GitHubClient? client = null)
     {
         client ??= await GitHubClientProvider.Instance.GetClientForLoggedInDeveloper(true);
         Log.Logger()?.ReportInfo(Name, $"Updating search for issues with mentioned in criteria: {mentionedName}");
-        var octokitResult = await client.Search.SearchIssues(new Octokit.SearchIssuesRequest()
+        Octokit.SearchIssuesRequest request = new Octokit.SearchIssuesRequest()
         {
             State = Octokit.ItemState.Open,
             Mentions = mentionedName,
+
             Archived = false,
             PerPage = 10,
-        });
-        if (octokitResult == null)
+        };
+
+        var mentionedUser = GetUserByName(mentionedName);
+
+        // search for issues
+        if (category.Contains("Issues"))
         {
-            Log.Logger()?.ReportDebug($"No issues found.");
-            return;
+            request.Is = new List<Octokit.IssueIsQualifier>() { Octokit.IssueIsQualifier.Issue };
+            var octokitResult = await client.Search.SearchIssues(request);
+            if (octokitResult == null)
+            {
+                Log.Logger()?.ReportDebug($"No issues found.");
+            }
+            else
+            {
+                Log.Logger()?.ReportDebug(Name, $"Results contain {octokitResult.Items.Count} issues.");
+                foreach (var issue in octokitResult.Items)
+                {
+                    var mentionedIssue = Issue.GetOrCreateByOctokitIssue(DataStore, issue, DataStore.NoForeignKey);
+                    IssueMention.AddUserToIssue(DataStore, mentionedIssue, mentionedUser!);
+                }
+            }
         }
 
-        Log.Logger()?.ReportDebug(Name, $"Results contain {octokitResult.Items.Count} issues.");
-        var mentionedUser = GetUserByName(mentionedName);
-        foreach (var issue in octokitResult.Items)
+        if (category.Contains("PRs"))
         {
-            Issue.GetOrCreateByOctokitIssue(DataStore, issue, DataStore.NoForeignKey, mentionedUser);
+            request.Is = new List<Octokit.IssueIsQualifier>() { Octokit.IssueIsQualifier.PullRequest };
+            var octokitResult = await client.Search.SearchIssues(request);
+            if (octokitResult == null)
+            {
+                Log.Logger()?.ReportDebug($"No pull requests found.");
+            }
+            else
+            {
+                Log.Logger()?.ReportDebug(Name, $"Results contain {octokitResult.Items.Count} [ull requests.");
+                foreach (var issue in octokitResult.Items)
+                {
+                    var mentionedPull = PullRequest.GetOrCreateByOctokitIssue(DataStore, issue, DataStore.NoForeignKey);
+                    PullMention.AddUserToPull(DataStore, mentionedPull, mentionedUser!);
+                }
+            }
         }
     }
 
@@ -571,6 +602,25 @@ public partial class GitHubDataManager : IGitHubDataManager, IDisposable
         return issues;
     }
 
+    public IEnumerable<PullRequest> GetPullsMentionedIn(string mentionedName)
+    {
+        var user = GetUserByName(mentionedName);
+        if (user == null)
+        {
+            return Enumerable.Empty<PullRequest>();
+        }
+
+        var sql = $"SELECT * FROM PullMention WHERE User = {user.Id};";
+        Log.Logger()?.ReportDebug(DataStore.GetSqlLogMessage(sql));
+        var pullMentions = DataStore.Connection!.Query<PullMention>(sql, null) ?? Enumerable.Empty<PullMention>();
+
+        var mentionedPullIds = string.Join(',', pullMentions.Select(x => x.Pull));
+        sql = $"SELECT * FROM PullRequest WHERE Id in ({mentionedPullIds});";
+        Log.Logger()?.ReportDebug(DataStore.GetSqlLogMessage(sql));
+        var pulls = DataStore.Connection!.Query<PullRequest>(sql, null) ?? Enumerable.Empty<PullRequest>();
+        return pulls;
+    }
+
     private User? GetUserByName(string userName)
     {
         var sql = $"SELECT * FROM User WHERE Login = \"{userName}\";";
@@ -596,6 +646,11 @@ public partial class GitHubDataManager : IGitHubDataManager, IDisposable
     public IEnumerable<Label> GetLabelsForIssue(Issue issue)
     {
         return IssueLabel.GetLabelsForIssue(DataStore, issue);
+    }
+
+    public IEnumerable<Label> GetLabelsForPullRequest(PullRequest pullRequest)
+    {
+        return PullRequestLabel.GetLabelsForPullRequest(DataStore, pullRequest);
     }
 
     // Internal method to update pull requests. Assumes Repository has already been populated and

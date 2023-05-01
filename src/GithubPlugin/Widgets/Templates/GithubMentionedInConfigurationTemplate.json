@@ -37,62 +37,43 @@
             "weight": "Lighter"
         },
         {
-            "type": "ColumnSet",
-            "columns": [
+            "type": "TextBlock",
+            "text": "Show ${showCategory} in widget",
+            "wrap": true,
+            "horizontalAlignment": "Left",
+            "spacing": "None",
+            "size": "Small",
+            "isSubtle": true,
+            "weight": "Lighter"
+        },
+        {
+            "type": "TextBlock",
+            "text": "Select what items appear in this widget",
+            "wrap": true,
+            "horizontalAlignment": "Left",
+            "spacing": "None",
+            "size": "Small",
+            "isSubtle": true,
+            "weight": "Lighter"
+        },
+        {
+            "type": "Input.ChoiceSet",
+            "id": "ShowCategory",
+            "style": "compact",
+            "isMultiSelect": false,
+            "value": "${showCategory}",
+            "choices": [
                 {
-                    "type": "Column",
-                    "width": 2,
-                    "verticalContentAlignment": "Center",
-                    "items": [
-                        {
-                            "type": "TextBlock",
-                            "text": "Show in widget",
-                            "wrap": true,
-                            "horizontalAlignment": "Left",
-                            "spacing": "None",
-                            "size": "Small",
-                            "isSubtle": true,
-                            "weight": "Lighter"
-                        },
-                        {
-                            "type": "TextBlock",
-                            "text": "Select what items appear in this widget",
-                            "wrap": true,
-                            "horizontalAlignment": "Left",
-                            "spacing": "None",
-                            "size": "Small",
-                            "isSubtle": true,
-                            "weight": "Lighter"
-                        }
-                    ]
+                    "title": "Issues",
+                    "value": "Issues"
                 },
                 {
-                    "type": "Column",
-                    "width": 1,
-                    "verticalContentAlignment": "Center",
-                    "items": [
-                        {
-                            "type": "Input.ChoiceSet",
-                            "id": "ShowCategory",
-                            "style": "compact",
-                            "isMultiSelect": false,
-                            "value": "Issues PRs",
-                            "choices": [
-                                {
-                                    "title": "Issues",
-                                    "value": "Issues"
-                                },
-                                {
-                                    "title": "Pull Requests",
-                                    "value": "PRs"
-                                },
-                                {
-                                    "title": "Isuues & Pull Requests",
-                                    "value": "Issues PRs"
-                                }
-                            ]
-                        }
-                    ]
+                    "title": "Pull Requests",
+                    "value": "PRs"
+                },
+                {
+                    "title": "Isuues & Pull Requests",
+                    "value": "Issues & PRs"
                 }
             ]
         }

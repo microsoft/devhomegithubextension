@@ -76,7 +76,7 @@
                             "id": "ShowCategory",
                             "style": "compact",
                             "isMultiSelect": false,
-                            "value": "Issues PRs",
+                            "value": "Issues & PRs",
                             "choices": [
                                 {
                                     "title": "Issues",
@@ -88,7 +88,7 @@
                                 },
                                 {
                                     "title": "Isuues & Pull Requests",
-                                    "value": "Issues PRs"
+                                    "value": "Issues & PRs"
                                 }
                             ]
                         }

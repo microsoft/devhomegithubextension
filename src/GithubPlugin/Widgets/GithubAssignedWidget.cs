@@ -92,7 +92,7 @@ internal class GithubAssignedWidget : GithubWidget
         : base()
     {
         GitHubDataManager.OnUpdate += DataManagerUpdateHandler;
-        ShowCategory = "Issues PRs";
+        ShowCategory = "Issues & PRs";
         AssignedToName = string.Empty;
     }
 

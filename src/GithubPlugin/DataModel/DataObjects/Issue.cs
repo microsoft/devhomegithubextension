@@ -48,9 +48,6 @@ public class Issue
     // Same use as Label IDs.
     public string AssigneeIds { get; set; } = string.Empty;
 
-    // Same use as Label IDs.
-    public string MentionIds { get; set; } = string.Empty;
-
     [Write(false)]
     private DataStore? DataStore
     {
@@ -107,23 +104,6 @@ public class Issue
 
     [Write(false)]
     [Computed]
-    public IEnumerable<User> Mentions
-    {
-        get
-        {
-            if (DataStore == null)
-            {
-                return Enumerable.Empty<User>();
-            }
-            else
-            {
-                return IssueMention.GetUsersForIssue(DataStore, this) ?? Enumerable.Empty<User>();
-            }
-        }
-    }
-
-    [Write(false)]
-    [Computed]
     public Repository Repository
     {
         get
@@ -160,7 +140,7 @@ public class Issue
 
     // Create issue from OctoKit issue data
     // If repository id is known at the time it can be supplied.
-    private static Issue CreateFromOctokitIssue(DataStore dataStore, Octokit.Issue okitIssue, long repositoryId, User? mentionedUser)
+    private static Issue CreateFromOctokitIssue(DataStore dataStore, Octokit.Issue okitIssue, long repositoryId)
     {
         var issue = new Issue
         {
@@ -200,16 +180,6 @@ public class Issue
 
         issue.AssigneeIds = string.Join(",", assignees);
 
-        // Mentions are a string concat of User internal ids.
-        var mentiones = new List<string>();
-        if (mentionedUser != null)
-        {
-            mentiones.Add(mentionedUser.InternalId.ToStringInvariant());
-            User.AddOrUpdateUser(dataStore, mentionedUser);
-        }
-
-        issue.MentionIds = string.Join(",", mentiones);
-
         // Owner is a rowid in the User table
         var author = User.GetOrCreateByOctokitUser(dataStore, okitIssue.User);
         issue.AuthorId = author.Id;
@@ -237,7 +207,7 @@ public class Issue
         var existing = GetByInternalId(dataStore, issue.InternalId);
         if (existing is not null)
         {
-            if ((issue.TimeUpdated > existing.TimeUpdated) || (issue.MentionIds != existing.MentionIds))
+            if (issue.TimeUpdated > existing.TimeUpdated)
             {
                 issue.Id = existing.Id;
                 dataStore.Connection!.Update(issue);
@@ -251,11 +221,6 @@ public class Issue
                 if (issue.AssigneeIds != existing.AssigneeIds)
                 {
                     UpdateAssigneesForIssue(dataStore, issue);
-                }
-
-                if (issue.MentionIds != existing.MentionIds)
-                {
-                    UpdateMentionsForIssue(dataStore, issue);
                 }
 
                 return issue;
@@ -307,9 +272,9 @@ public class Issue
         return issue;
     }
 
-    public static Issue GetOrCreateByOctokitIssue(DataStore dataStore, Octokit.Issue octokitIssue, long repositoryId = DataStore.NoForeignKey, User? mentionedUser = null)
+    public static Issue GetOrCreateByOctokitIssue(DataStore dataStore, Octokit.Issue octokitIssue, long repositoryId = DataStore.NoForeignKey)
     {
-        var issue = CreateFromOctokitIssue(dataStore, octokitIssue, repositoryId, mentionedUser);
+        var issue = CreateFromOctokitIssue(dataStore, octokitIssue, repositoryId);
         return AddOrUpdateIssue(dataStore, issue);
     }
 
@@ -384,23 +349,6 @@ public class Issue
                 if (userObj is not null)
                 {
                     IssueAssign.AddUserToIssue(dataStore, issue, userObj);
-                }
-            }
-        }
-    }
-
-    private static void UpdateMentionsForIssue(DataStore dataStore, Issue issue)
-    {
-        // Delete existing mentions for this issue and add new ones.
-        IssueMention.DeleteIssueMentionForIssue(dataStore, issue);
-        foreach (var user in issue.MentionIds.Split(','))
-        {
-            if (long.TryParse(user, out var internalId))
-            {
-                var userObj = User.GetByInternalId(dataStore, internalId);
-                if (userObj is not null)
-                {
-                    IssueMention.AddUserToIssue(dataStore, issue, userObj);
                 }
             }
         }

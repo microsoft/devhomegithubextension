@@ -379,6 +379,72 @@ public class PullRequest
         return pull;
     }
 
+    // Create pull request from OctoKit pull request data
+    private static PullRequest CreateFromOctokitIssue(DataStore dataStore, Octokit.Issue okitIssue, long repositoryId)
+    {
+        var pull = new PullRequest
+        {
+            DataStore = dataStore,
+            InternalId = okitIssue.Id,
+            Number = okitIssue.Number,
+            Title = okitIssue.Title ?? string.Empty,
+            Body = okitIssue.Body ?? string.Empty,
+            State = okitIssue.State.Value.ToString(),
+            HeadSha = okitIssue.PullRequest.Head?.Sha ?? string.Empty,
+            Merged = okitIssue.PullRequest.Merged ? 1 : 0,
+            Mergeable = (okitIssue.PullRequest.Mergeable is not null && okitIssue.PullRequest.Mergeable == true) ? 1 : 0,
+            MergeableState = okitIssue.PullRequest.MergeableState.HasValue ? okitIssue.PullRequest.MergeableState.Value.ToString() : string.Empty,
+            CommitCount = okitIssue.PullRequest.Commits,
+            HtmlUrl = okitIssue.HtmlUrl ?? string.Empty,
+            Locked = okitIssue.Locked ? 1 : 0,
+            Draft = okitIssue.PullRequest.Draft ? 1 : 0,
+            TimeCreated = okitIssue.CreatedAt.DateTime.ToDataStoreInteger(),
+            TimeUpdated = okitIssue.PullRequest.UpdatedAt.DateTime.ToDataStoreInteger(),
+            TimeMerged = okitIssue.PullRequest.MergedAt.HasValue ? okitIssue.PullRequest.MergedAt.Value.DateTime.ToDataStoreInteger() : 0,
+            TimeClosed = okitIssue.ClosedAt.HasValue ? okitIssue.ClosedAt.Value.DateTime.ToDataStoreInteger() : 0,
+        };
+
+        // Labels are a string concat of label internal ids.
+        var labels = new List<string>();
+        foreach (var label in okitIssue.Labels)
+        {
+            labels.Add(label.Id.ToStringInvariant());
+            Label.GetOrCreateByOctokitLabel(dataStore, label);
+        }
+
+        pull.LabelIds = string.Join(",", labels);
+
+        // Assignees are a string concat of User internal ids.
+        var assignees = new List<string>();
+        foreach (var user in okitIssue.Assignees)
+        {
+            assignees.Add(user.Id.ToStringInvariant());
+            User.GetOrCreateByOctokitUser(dataStore, user);
+        }
+
+        pull.AssigneeIds = string.Join(",", assignees);
+
+        // Owner is a rowid in the User table
+        var author = User.GetOrCreateByOctokitUser(dataStore, okitIssue.User);
+        pull.AuthorId = author.Id;
+
+        // Repo is a row id in the Repository table.
+        // It is likely the case that we already know the repository id (such as when querying pulls for a repository).
+        if (repositoryId != DataStore.NoForeignKey)
+        {
+            pull.RepositoryId = repositoryId;
+        }
+        else if (okitIssue.PullRequest?.Base?.Repository is not null)
+        {
+            // Use the base repository for the pull request.
+            // This PR may be a private fork and Head and Base may be different.
+            var repo = Repository.GetOrCreateByOctokitRepository(dataStore, okitIssue.PullRequest.Base.Repository);
+            pull.RepositoryId = repo.Id;
+        }
+
+        return pull;
+    }
+
     private static PullRequest AddOrUpdatePullRequest(DataStore dataStore, PullRequest pull)
     {
         // Check for existing pull request data.
@@ -454,6 +520,12 @@ public class PullRequest
     public static PullRequest GetOrCreateByOctokitPullRequest(DataStore dataStore, Octokit.PullRequest octokitPullRequest, long repositoryId = DataStore.NoForeignKey)
     {
         var newPull = CreateFromOctokitPullRequest(dataStore, octokitPullRequest, repositoryId);
+        return AddOrUpdatePullRequest(dataStore, newPull);
+    }
+
+    public static PullRequest GetOrCreateByOctokitIssue(DataStore dataStore, Octokit.Issue octokitIssue, long repositoryId = DataStore.NoForeignKey)
+    {
+        var newPull = CreateFromOctokitIssue(dataStore, octokitIssue, repositoryId);
         return AddOrUpdatePullRequest(dataStore, newPull);
     }
 

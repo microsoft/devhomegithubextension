@@ -73,7 +73,7 @@ internal class GithubMentionedInWidget : GithubWidget
         : base()
     {
         GitHubDataManager.OnUpdate += DataManagerUpdateHandler;
-        ShowCategory = "Issues PRs";
+        ShowCategory = "Issues & PRs";
     }
 
     ~GithubMentionedInWidget()
@@ -111,6 +111,7 @@ internal class GithubMentionedInWidget : GithubWidget
             if (dataObject != null && dataObject.ShowCategory != null)
             {
                 ShowCategory = dataObject.ShowCategory;
+                UpdateActivityState();
             }
         }
         else
@@ -148,7 +149,7 @@ internal class GithubMentionedInWidget : GithubWidget
             };
 
             var dataManager = GitHubDataManager.CreateInstance();
-            _ = dataManager?.UpdateMentionedInAsync(MentionedName, requestOptions);
+            _ = dataManager?.UpdateMentionedInAsync(MentionedName, ShowCategory, requestOptions);
             Log.Logger()?.ReportInfo(Name, ShortId, $"Requested data update for {mentionedName}");
             DataState = WidgetDataState.Requested;
         }
@@ -165,14 +166,35 @@ internal class GithubMentionedInWidget : GithubWidget
         try
         {
             using var dataManager = GitHubDataManager.CreateInstance();
-            var mentionedIssues = dataManager!.GetIssuesMentionedIn(MentionedName);
+            var mentionedIssues = ShowCategory.Contains("Issues") ?
+                dataManager!.GetIssuesMentionedIn(MentionedName) :
+                new List<DataModel.Issue>();
+            var mentionedPulls = ShowCategory.Contains("PRs") ?
+                dataManager!.GetPullsMentionedIn(MentionedName) :
+                new List<DataModel.PullRequest>();
 
             var issuesData = new JsonObject();
             var issuesArray = new JsonArray();
-            if (mentionedIssues.Any())
+            issuesData.Add("openCount", mentionedIssues.Count() + mentionedPulls.Count());
+            while (mentionedIssues.Count() + mentionedPulls.Count() > 0)
             {
-                foreach (var issueItem in mentionedIssues)
+                bool nextComesAnIssue;
+                if (!mentionedPulls.Any())
                 {
+                    nextComesAnIssue = true;
+                }
+                else if (!mentionedIssues.Any())
+                {
+                    nextComesAnIssue = false;
+                }
+                else
+                {
+                    nextComesAnIssue = mentionedIssues.First().CreatedAt > mentionedPulls.First().CreatedAt;
+                }
+
+                if (nextComesAnIssue)
+                {
+                    var issueItem = mentionedIssues.First();
                     var issue = new JsonObject
                     {
                         { "title", issueItem.Title },
@@ -180,7 +202,7 @@ internal class GithubMentionedInWidget : GithubWidget
                         { "number", issueItem.Number },
                         { "date", TimeSpanHelper.TimeSpanToDisplayString(DateTime.Now - issueItem.CreatedAt) },
                         { "user", issueItem.Author.Login },
-                        { "iconUrl", GithubPullsWidget.PullsIconData },
+                        { "iconUrl", GithubIssuesWidget.IssuesIconData },
                     };
 
                     var labels = dataManager!.GetLabelsForIssue(issueItem);
@@ -201,15 +223,47 @@ internal class GithubMentionedInWidget : GithubWidget
                     issue.Add("labels", issueLabels);
 
                     ((IList<JsonNode?>)issuesArray).Add(issue);
+                    mentionedIssues = mentionedIssues.Skip(1);
+                }
+                else
+                {
+                    var pullItem = mentionedPulls.First();
+                    var pull = new JsonObject
+                    {
+                        { "title", pullItem.Title },
+                        { "url", pullItem.HtmlUrl },
+                        { "number", pullItem.Number },
+                        { "date", TimeSpanHelper.TimeSpanToDisplayString(DateTime.Now - pullItem.CreatedAt) },
+                        { "user", pullItem.Author.Login },
+                        { "iconUrl", GithubPullsWidget.PullsIconData },
+                    };
+
+                    var labels = dataManager!.GetLabelsForPullRequest(pullItem);
+
+                    var pullLabels = new JsonArray();
+                    StringBuilder labelsString = new ();
+                    foreach (var label in labels)
+                    {
+                        var pullLabel = new JsonObject
+                        {
+                            { "name", label.Name },
+                            { "color", label.Color },
+                        };
+
+                        ((IList<JsonNode?>)pullLabels).Add(pullLabel);
+                    }
+
+                    pull.Add("labels", pullLabels);
+
+                    ((IList<JsonNode?>)issuesArray).Add(pull);
+                    mentionedPulls = mentionedPulls.Skip(1);
                 }
             }
 
             issuesData.Add("items", issuesArray);
             issuesData.Add("mentionedName", MentionedName);
             issuesData.Add("titleIconUrl", TitleIconData);
-            issuesData.Add("openCount", mentionedIssues.Count());
 
-            // issuesData.Add("selected_repo", repository?.FullName ?? string.Empty);
             LastUpdated = DateTime.Now;
             ContentData = issuesData.ToJsonString();
             DataState = WidgetDataState.Okay;
@@ -239,11 +293,18 @@ internal class GithubMentionedInWidget : GithubWidget
         return page switch
         {
             WidgetPageState.SignIn => new JsonObject { { "message", Resources.GetResource(@"Widget_Template/SignInRequired", Log.Logger()) } }.ToJsonString(),
-            WidgetPageState.Configure => GetConfiguration(RepositoryUrl),
+            WidgetPageState.Configure => GetConfigurationData(),
             WidgetPageState.Content => ContentData,
             WidgetPageState.Loading => EmptyJson,
             _ => throw new NotImplementedException(Page.GetType().Name),
         };
+    }
+
+    public string GetConfigurationData()
+    {
+        var configurationData = new JsonObject();
+        configurationData.Add("showCategory", ShowCategory);
+        return configurationData.ToJsonString();
     }
 
     private void DataManagerUpdateHandler(object? source, DataManagerUpdateEventArgs e)

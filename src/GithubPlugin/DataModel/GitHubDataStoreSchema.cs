@@ -82,7 +82,6 @@ public class GitHubDataStoreSchema : IDataStoreSchema
         "HtmlUrl TEXT NULL COLLATE NOCASE," +
         "Locked INTEGER NOT NULL," +
         "AssigneeIds TEXT NULL COLLATE NOCASE," +
-        "MentionIds TEXT NULL COLLATE NOCASE," +
         "LabelIds TEXT NULL COLLATE NOCASE" +
     ");" +
     "CREATE UNIQUE INDEX IDX_Issue_InternalId ON Issue (InternalId);";
@@ -153,6 +152,14 @@ public class GitHubDataStoreSchema : IDataStoreSchema
         "Label INTEGER NOT NULL" +
     ");" +
     "CREATE UNIQUE INDEX IDX_PullRequestLabel_PullRequestLabel ON PullRequestLabel (PullRequest,Label);";
+
+    private static readonly string PullMention =
+    @"CREATE TABLE PullMention (" +
+        "Id INTEGER PRIMARY KEY NOT NULL," +
+        "Pull INTEGER NOT NULL," +
+        "User INTEGER NOT NULL" +
+    ");" +
+    "CREATE UNIQUE INDEX IDX_PullMention_PullUser ON PullMention (Pull,User);";
 
     private static readonly string CheckRun =
     @"CREATE TABLE CheckRun (" +
@@ -254,6 +261,7 @@ public class GitHubDataStoreSchema : IDataStoreSchema
         PullRequest,
         PullRequestAssign,
         PullRequestLabel,
+        PullMention,
         PullRequestStatus,
         CheckRun,
         CheckSuite,
