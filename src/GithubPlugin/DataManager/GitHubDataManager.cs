@@ -153,7 +153,7 @@ public partial class GitHubDataManager : IGitHubDataManager, IDisposable
         SendRepositoryUpdateEvent(this, "Mentioned in " + mentionedName, new string[] { "MentionedIn" });
     }
 
-    public async Task UpdateAssignedToAsync(string assignedToUser, RequestOptions? options = null)
+    public async Task UpdateAssignedToAsync(string assignedToUser, string showCategory, RequestOptions? options = null)
     {
         ValidateDataStore();
         var parameters = new DataStoreOperationParameters
@@ -167,7 +167,7 @@ public partial class GitHubDataManager : IGitHubDataManager, IDisposable
             parameters,
             async (parameters, devId) =>
             {
-                await UpdateAssignedToSearchAsync(assignedToUser, devId.GitHubClient);
+                await UpdateAssignedToSearchAsync(assignedToUser, showCategory, devId.GitHubClient);
             });
 
         SendRepositoryUpdateEvent(this, "Assigned to " + assignedToUser, new string[] { "AssignedTo" });
@@ -513,7 +513,6 @@ public partial class GitHubDataManager : IGitHubDataManager, IDisposable
         {
             State = Octokit.ItemState.Open,
             Mentions = mentionedName,
-
             Archived = false,
             PerPage = 10,
         };
@@ -560,26 +559,52 @@ public partial class GitHubDataManager : IGitHubDataManager, IDisposable
         }
     }
 
-    private async Task UpdateAssignedToSearchAsync(string assignedToUser, Octokit.GitHubClient? client = null)
+    private async Task UpdateAssignedToSearchAsync(string assignedToUser, string category, Octokit.GitHubClient? client = null)
     {
         client ??= await GitHubClientProvider.Instance.GetClientForLoggedInDeveloper(true);
-        Log.Logger()?.ReportInfo(Name, $"Updating search for issues with mentioned in criteria: {assignedToUser}");
-        var octokitResult = await client.Search.SearchIssues(new Octokit.SearchIssuesRequest()
+        Octokit.SearchIssuesRequest request = new Octokit.SearchIssuesRequest()
         {
             State = Octokit.ItemState.Open,
             Assignee = assignedToUser,
             Archived = false,
-        });
-        if (octokitResult == null)
+            PerPage = 10,
+        };
+
+        // search for issues
+        if (category.Contains("Issues"))
         {
-            Log.Logger()?.ReportDebug($"No issues found.");
-            return;
+            request.Is = new List<Octokit.IssueIsQualifier>() { Octokit.IssueIsQualifier.Issue };
+            var octokitResult = await client.Search.SearchIssues(request);
+            if (octokitResult == null)
+            {
+                Log.Logger()?.ReportDebug($"No issues found.");
+            }
+            else
+            {
+                Log.Logger()?.ReportDebug(Name, $"Results contain {octokitResult.Items.Count} issues.");
+                foreach (var issue in octokitResult.Items)
+                {
+                    Issue.GetOrCreateByOctokitIssue(DataStore, issue, DataStore.NoForeignKey);
+                }
+            }
         }
 
-        Log.Logger()?.ReportDebug(Name, $"Results contain {octokitResult.Items.Count} issues.");
-        foreach (var issue in octokitResult.Items)
+        if (category.Contains("PRs"))
         {
-            Issue.GetOrCreateByOctokitIssue(DataStore, issue, DataStore.NoForeignKey);
+            request.Is = new List<Octokit.IssueIsQualifier>() { Octokit.IssueIsQualifier.PullRequest };
+            var octokitResult = await client.Search.SearchIssues(request);
+            if (octokitResult == null)
+            {
+                Log.Logger()?.ReportDebug($"No pull requests found.");
+            }
+            else
+            {
+                Log.Logger()?.ReportDebug(Name, $"Results contain {octokitResult.Items.Count} [ull requests.");
+                foreach (var issue in octokitResult.Items)
+                {
+                    PullRequest.GetOrCreateByOctokitIssue(DataStore, issue, DataStore.NoForeignKey);
+                }
+            }
         }
     }
 
@@ -637,10 +662,34 @@ public partial class GitHubDataManager : IGitHubDataManager, IDisposable
             return Enumerable.Empty<Issue>();
         }
 
-        var sql = $"SELECT * FROM Issue WHERE State = \"open\" AND AssigneeIds like \"%{user.InternalId}%\" ORDER BY TimeUpdated DESC;";
+        var sql = $"SELECT * FROM IssueAssign WHERE User = {user.Id};";
+        Log.Logger()?.ReportDebug(DataStore.GetSqlLogMessage(sql));
+        var issueAssigns = DataStore.Connection!.Query<IssueAssign>(sql, null) ?? Enumerable.Empty<IssueAssign>();
+
+        var assignedIssueIds = string.Join(',', issueAssigns.Select(x => x.Issue));
+        sql = $"SELECT * FROM Issue WHERE Id in ({assignedIssueIds});";
         Log.Logger()?.ReportDebug(DataStore.GetSqlLogMessage(sql));
         var issues = DataStore.Connection!.Query<Issue>(sql, null) ?? Enumerable.Empty<Issue>();
         return issues;
+    }
+
+    public IEnumerable<PullRequest> GetPullsAssignedTo(string assignedToName)
+    {
+        var user = GetUserByName(assignedToName);
+        if (user == null)
+        {
+            return Enumerable.Empty<PullRequest>();
+        }
+
+        var sql = $"SELECT * FROM PullRequestAssign WHERE User = {user.Id};";
+        Log.Logger()?.ReportDebug(DataStore.GetSqlLogMessage(sql));
+        var pullAssigns = DataStore.Connection!.Query<PullRequestAssign>(sql, null) ?? Enumerable.Empty<PullRequestAssign>();
+
+        var assignedPullIds = string.Join(',', pullAssigns.Select(x => x.PullRequest));
+        sql = $"SELECT * FROM Issue WHERE Id in ({assignedPullIds});";
+        Log.Logger()?.ReportDebug(DataStore.GetSqlLogMessage(sql));
+        var pulls = DataStore.Connection!.Query<PullRequest>(sql, null) ?? Enumerable.Empty<PullRequest>();
+        return pulls;
     }
 
     public IEnumerable<Label> GetLabelsForIssue(Issue issue)

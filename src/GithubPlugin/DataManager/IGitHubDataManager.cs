@@ -19,7 +19,7 @@ public interface IGitHubDataManager : IDisposable
 
     Task UpdateMentionedInAsync(string mentionedName, string category, RequestOptions? options = null);
 
-    Task UpdateAssignedToAsync(string assignedToUser, RequestOptions? options = null);
+    Task UpdateAssignedToAsync(string assignedToUser, string showCategory, RequestOptions? options = null);
 
     Task UpdatePullRequestsReviewRequestedForRepositoryAsync(string referredUser, RequestOptions? options = null);
 
@@ -46,6 +46,8 @@ public interface IGitHubDataManager : IDisposable
     IEnumerable<PullRequest> GetPullsMentionedIn(string mentionedName);
 
     IEnumerable<Issue> GetIssuesAssignedTo(string assignedToName);
+
+    IEnumerable<PullRequest> GetPullsAssignedTo(string assignedToName);
 
     IEnumerable<Label> GetLabelsForIssue(Issue issue);
 

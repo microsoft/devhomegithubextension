@@ -124,6 +124,7 @@ internal class GithubAssignedWidget : GithubWidget
             if (dataObject != null && dataObject.ShowCategory != null)
             {
                 ShowCategory = dataObject.ShowCategory;
+                UpdateActivityState();
             }
         }
         else
@@ -182,7 +183,7 @@ internal class GithubAssignedWidget : GithubWidget
             };
 
             var dataManager = GitHubDataManager.CreateInstance();
-            _ = dataManager?.UpdateAssignedToAsync(AssignedToName, requestOptions);
+            _ = dataManager?.UpdateAssignedToAsync(AssignedToName, ShowCategory, requestOptions);
             Log.Logger()?.ReportInfo(Name, ShortId, $"Requested data update for Assigned to {AssignedToName}");
             DataState = WidgetDataState.Requested;
         }
@@ -199,14 +200,35 @@ internal class GithubAssignedWidget : GithubWidget
         try
         {
             using var dataManager = GitHubDataManager.CreateInstance();
-            var issuesAssigned = dataManager!.GetIssuesAssignedTo(AssignedToName);
+            var assignedIssues = ShowCategory.Contains("Issues") ?
+                dataManager!.GetIssuesAssignedTo(AssignedToName) :
+                new List<DataModel.Issue>();
+            var assignedPulls = ShowCategory.Contains("PRs") ?
+                dataManager!.GetPullsAssignedTo(AssignedToName) :
+                new List<DataModel.PullRequest>();
+
             var issuesData = new JsonObject();
             var issuesArray = new JsonArray();
-
-            if (issuesAssigned.Any())
+            issuesData.Add("openCount", assignedIssues.Count() + assignedPulls.Count());
+            while (assignedIssues.Count() + assignedPulls.Count() > 0)
             {
-                foreach (var issueItem in issuesAssigned)
+                bool nextComesAnIssue;
+                if (!assignedPulls.Any())
                 {
+                    nextComesAnIssue = true;
+                }
+                else if (!assignedIssues.Any())
+                {
+                    nextComesAnIssue = false;
+                }
+                else
+                {
+                    nextComesAnIssue = assignedIssues.First().CreatedAt > assignedPulls.First().CreatedAt;
+                }
+
+                if (nextComesAnIssue)
+                {
+                    var issueItem = assignedIssues.First();
                     var issue = new JsonObject
                     {
                         { "title", issueItem.Title },
@@ -235,51 +257,46 @@ internal class GithubAssignedWidget : GithubWidget
                     issue.Add("labels", issueLabels);
 
                     ((IList<JsonNode?>)issuesArray).Add(issue);
+                    assignedIssues = assignedIssues.Skip(1);
                 }
-            }
-            else
-            {
-                var issue = new JsonObject
+                else
                 {
-                    { "title", "Invade Tatooin" },
-                    { "url", "https://github.com/microsoft/PowerToys" },
-                    { "number", 12 },
-                    { "date", "2023-02-02" },
-                    { "user", "Darth Vader" },
-                    { "iconUrl", "https://learn.microsoft.com/en-us/windows/apps/design/style/images/segoe-mdl/e877.png" },
-                };
-                var issueLabels = new JsonArray();
-                var issueLabel = new JsonObject
-            {
-                        { "name", "Tag1" },
-                        { "color", "warning" },
-            };
-                ((IList<JsonNode?>)issueLabels).Add(issueLabel);
-                issueLabel = new JsonObject
-            {
-                        { "name", "Tag2" },
-                        { "color", "good" },
-            };
-                ((IList<JsonNode?>)issueLabels).Add(issueLabel);
-                issue.Add("labels", issueLabels);
-                ((IList<JsonNode?>)issuesArray).Add(issue);
-                issue = new JsonObject
-                {
-                    { "title", "check carrots" },
-                    { "url", "https://github.com/microsoft/PowerToys" },
-                    { "number", 34 },
-                    { "date", "2022-04-04" },
-                    { "user", "Bugs Bunny" },
-                    { "iconUrl", "https://learn.microsoft.com/en-us/windows/apps/design/style/images/segoe-mdl/e958.png" },
-                };
-                issue.Add("labels", new JsonArray());
-                ((IList<JsonNode?>)issuesArray).Add(issue);
+                    var pullItem = assignedPulls.First();
+                    var pull = new JsonObject
+                    {
+                        { "title", pullItem.Title },
+                        { "url", pullItem.HtmlUrl },
+                        { "number", pullItem.Number },
+                        { "date", TimeSpanHelper.TimeSpanToDisplayString(DateTime.Now - pullItem.CreatedAt) },
+                        { "user", pullItem.Author.Login },
+                        { "iconUrl", GithubPullsWidget.PullsIconData },
+                    };
+
+                    var labels = dataManager!.GetLabelsForPullRequest(pullItem);
+
+                    var pullLabels = new JsonArray();
+                    StringBuilder labelsString = new ();
+                    foreach (var label in labels)
+                    {
+                        var pullLabel = new JsonObject
+                        {
+                            { "name", label.Name },
+                            { "color", label.Color },
+                        };
+
+                        ((IList<JsonNode?>)pullLabels).Add(pullLabel);
+                    }
+
+                    pull.Add("labels", pullLabels);
+
+                    ((IList<JsonNode?>)issuesArray).Add(pull);
+                    assignedPulls = assignedPulls.Skip(1);
+                }
             }
 
             issuesData.Add("items", issuesArray);
             issuesData.Add("assignedName", AssignedToName);
             issuesData.Add("titleIconUrl", TitleIconData);
-            issuesData.Add("openCount", issuesAssigned.Count());
 
             LastUpdated = DateTime.Now;
             ContentData = issuesData.ToJsonString();
@@ -310,11 +327,18 @@ internal class GithubAssignedWidget : GithubWidget
         return page switch
         {
             WidgetPageState.SignIn => new JsonObject { { "message", Resources.GetResource(@"Widget_Template/SignInRequired", Log.Logger()) } }.ToJsonString(),
-            WidgetPageState.Configure => GetConfiguration(RepositoryUrl),
+            WidgetPageState.Configure => GetConfigurationData(),
             WidgetPageState.Content => ContentData,
             WidgetPageState.Loading => EmptyJson,
             _ => throw new NotImplementedException(Page.GetType().Name),
         };
+    }
+
+    public string GetConfigurationData()
+    {
+        var configurationData = new JsonObject();
+        configurationData.Add("showCategory", ShowCategory);
+        return configurationData.ToJsonString();
     }
 
     private void DataManagerUpdateHandler(object? source, DataManagerUpdateEventArgs e)
