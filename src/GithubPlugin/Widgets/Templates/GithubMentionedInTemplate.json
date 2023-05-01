@@ -10,8 +10,8 @@
           "items": [
             {
               "type": "Image",
-              "url": "https://learn.microsoft.com/en-us/windows/apps/design/style/images/segoe-mdl/e958.png",
-              "size": "Small"
+              "url": "data:image/png;base64,${titleIconUrl}",
+              "size": "large"
             }
           ],
           "verticalContentAlignment": "Center"
@@ -22,7 +22,7 @@
           "items": [
             {
               "type": "TextBlock",
-              "text": "%Widget_Template/Mentioned% @${assignedName}",
+              "text": "%Widget_Template/Mentioned% @${mentionedName}",
               "size": "Large",
               "style": "Heading",
               "wrap": true
@@ -55,9 +55,8 @@
           "items": [
             {
               "type": "Image",
-              "style": "Person",
-              "url": "${iconUrl}",
-              "size": "small"
+              "url": "data:image/png;base64,${iconUrl}",
+              "size": "medium"
             }
           ],
           "width": "12px"
@@ -68,29 +67,31 @@
           "items": [
             {
               "type": "TextBlock",
+              "size": "medium",
+              "wrap": true,
+              "maxLines": 2
               "weight": "Bolder",
               "text": "${title}"
             },
             {
-              "type": "RichTextBlock",
-              "spacing": "None",
-              "inlines": [
+              "type": "LabelGroup",
+              "labels": [
                 {
-                  "$data": "${labels}",
-                  "type": "TextRun",
-                  "text": "${name} ",
-                  "size": "small",
-                  "color": "${color}",
-                  "isSubtle": true
+                    "$data": "${labels}",
+                    "text": "${name}",
+                    "color": "${color}"
                 }
               ]
             },
             {
               "type": "TextBlock",
+              "size": "small",
+              "spacing": "small",
               "spacing": "None",
               "text": "#${number} %Widget_Template/MentionedLow% ${date} %Widget_Template/By% ${user}",
               "isSubtle": true,
-              "wrap": true
+              "wrap": true,
+              "maxLines": 2
             }
           ]
         }

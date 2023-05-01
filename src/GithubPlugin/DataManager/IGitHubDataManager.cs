@@ -17,7 +17,7 @@ public interface IGitHubDataManager : IDisposable
 
     Task UpdatePullRequestsForRepositoryAsync(string owner, string name, RequestOptions? options = null);
 
-    Task UpdateMentionedInAsync(string owner, string name, RequestOptions? options = null);
+    Task UpdateMentionedInAsync(string mentionedName, RequestOptions? options = null);
 
     Task UpdateAssignedToAsync(string assignedToUser, RequestOptions? options = null);
 
@@ -41,7 +41,9 @@ public interface IGitHubDataManager : IDisposable
 
     Repository? GetRepository(string fullName);
 
-    IEnumerable<Issue> GetIssuesMentionedIn();
+    IEnumerable<Issue> GetIssuesMentionedIn(string mentionedName);
 
-    IEnumerable<Issue> GetIssuesAssignedTo();
+    IEnumerable<Issue> GetIssuesAssignedTo(string assignedToName);
+
+    IEnumerable<Label> GetLabelsForIssue(Issue issue);
 }

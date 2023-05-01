@@ -10,15 +10,15 @@
           "items": [
             {
               "type": "Image",
-              "url": "https://learn.microsoft.com/en-us/windows/apps/design/style/images/segoe-mdl/f272.png",
-              "size": "Small"
+              "url": "data:image/png;base64,${titleIconUrl}",
+              "size": "large"
             }
           ],
           "verticalContentAlignment": "Center"
         },
         {
           "type": "Column",
-          "width": "9",
+          "width": "12",
           "items": [
             {
               "type": "TextBlock",
@@ -55,9 +55,8 @@
           "items": [
             {
               "type": "Image",
-              "style": "Person",
-              "url": "${iconUrl}",
-              "size": "small"
+              "url": "data:image/png;base64,${iconUrl}",
+              "size": "medium"
             }
           ],
           "width": "12px"
@@ -68,29 +67,30 @@
           "items": [
             {
               "type": "TextBlock",
-              "weight": "Bolder",
-              "text": "${title}"
+              "size": "medium",
+              "weight": "bolder",
+              "text": "${title}",
+              "wrap": true,
+              "maxLines": 2
             },
             {
-              "type": "RichTextBlock",
-              "spacing": "None",
-              "inlines": [
+              "type": "LabelGroup",
+              "labels": [
                 {
-                  "$data": "${labels}",
-                  "type": "TextRun",
-                  "text": "${name}",
-                  "size": "small",
-                  "color": "${color}",
-                  "isSubtle": true
+                    "$data": "${labels}",
+                    "text": "${name}",
+                    "color": "${color}"
                 }
               ]
             },
             {
               "type": "TextBlock",
-              "spacing": "None",
+              "size": "small",
+              "spacing": "small",
               "text": "#${number} %Widget_Template/Assigned% ${date} %Widget_Template/By% ${user}",
               "isSubtle": true,
-              "wrap": true
+              "wrap": true,
+              "maxLines": 2
             }
           ]
         }

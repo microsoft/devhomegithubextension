@@ -15,6 +15,35 @@ using Octokit;
 namespace GitHubPlugin.Widgets;
 internal class GithubMentionedInWidget : GithubWidget
 {
+    private static readonly string TitleIconData =
+        "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";
+
     private static Dictionary<string, string> Templates { get; set; } = new ();
 
     protected static readonly new string Name = nameof(GithubMentionedInWidget);
@@ -100,7 +129,7 @@ internal class GithubMentionedInWidget : GithubWidget
 
         try
         {
-            Log.Logger()?.ReportInfo(Name, ShortId, $"Requesting data update for {GetOwner()}/{GetRepo()}");
+            Log.Logger()?.ReportInfo(Name, ShortId, $"Requesting data update for {mentionedName}");
             var requestOptions = new RequestOptions
             {
                 PullRequestRequest = new PullRequestRequest
@@ -119,8 +148,8 @@ internal class GithubMentionedInWidget : GithubWidget
             };
 
             var dataManager = GitHubDataManager.CreateInstance();
-            _ = dataManager?.UpdateMentionedInAsync(GetOwner(), GetRepo(), requestOptions);
-            Log.Logger()?.ReportInfo(Name, ShortId, $"Requested data update for {GetOwner()}/{GetRepo()}");
+            _ = dataManager?.UpdateMentionedInAsync(MentionedName, requestOptions);
+            Log.Logger()?.ReportInfo(Name, ShortId, $"Requested data update for {mentionedName}");
             DataState = WidgetDataState.Requested;
         }
         catch (Exception ex)
@@ -136,88 +165,49 @@ internal class GithubMentionedInWidget : GithubWidget
         try
         {
             using var dataManager = GitHubDataManager.CreateInstance();
+            var mentionedIssues = dataManager!.GetIssuesMentionedIn(MentionedName);
+
             var issuesData = new JsonObject();
             var issuesArray = new JsonArray();
-
-            var issue = new JsonObject
-                {
-                    { "title", "Sing in the rain" },
-                    { "url", "https://github.com/microsoft/PowerToys" },
-                    { "number", 12 },
-                    { "date", "2023-04-15" },
-                    { "user", "Frank Sinatra" },
-                    { "iconUrl", "https://learn.microsoft.com/en-us/windows/apps/design/style/images/segoe-mdl/e877.png" },
-                };
-            var issueLabels = new JsonArray();
-            var issueLabel = new JsonObject
+            if (mentionedIssues.Any())
             {
-                        { "name", "Loud" },
-                        { "color", "warning" },
-            };
-            ((IList<JsonNode?>)issueLabels).Add(issueLabel);
-            issueLabel = new JsonObject
-            {
-                        { "name", "C mol" },
-                        { "color", "good" },
-            };
-            ((IList<JsonNode?>)issueLabels).Add(issueLabel);
-            issue.Add("labels", issueLabels);
-            ((IList<JsonNode?>)issuesArray).Add(issue);
-            issue = new JsonObject
+                foreach (var issueItem in mentionedIssues)
                 {
-                    { "title", "win WC" },
-                    { "url", "https://github.com/microsoft/PowerToys" },
-                    { "number", 34 },
-                    { "date", "2023-03-25" },
-                    { "user", "Leonel Messi" },
-                    { "iconUrl", "https://learn.microsoft.com/en-us/windows/apps/design/style/images/segoe-mdl/e958.png" },
-                };
-            issue.Add("labels", new JsonArray());
-            ((IList<JsonNode?>)issuesArray).Add(issue);
-
-            /*
-            foreach (var issueItem in issues)
-            {
-                var issue = new JsonObject
-                {
-                    { "title", issueItem.Title },
-                    { "url", issueItem.HtmlUrl },
-                    { "number", issueItem.Number },
-                    { "date", issueItem.CreatedAt.ToLocalTime().ToStringInvariant() },
-                    { "user", issueItem.Author.Login },
-                    { "avatar", issueItem.Author.AvatarUrl },
-                };
-
-                var labels = issueItem.Labels.ToList();
-                var issueLabels = new JsonArray();
-                StringBuilder labelsString = new ();
-                foreach (var label in labels)
-                {
-                    var issueLabel = new JsonObject
+                    var issue = new JsonObject
                     {
-                        { "name", label.Name },
-                        { "color", label.Color },
+                        { "title", issueItem.Title },
+                        { "url", issueItem.HtmlUrl },
+                        { "number", issueItem.Number },
+                        { "date", TimeSpanHelper.TimeSpanToDisplayString(DateTime.Now - issueItem.CreatedAt) },
+                        { "user", issueItem.Author.Login },
+                        { "iconUrl", GithubPullsWidget.PullsIconData },
                     };
 
-                    ((IList<JsonNode?>)issueLabels).Add(issueLabel);
+                    var labels = dataManager!.GetLabelsForIssue(issueItem);
 
-                    if (labelsString.Length != 0)
+                    var issueLabels = new JsonArray();
+                    StringBuilder labelsString = new ();
+                    foreach (var label in labels)
                     {
-                        labelsString.Append("  ");
+                        var issueLabel = new JsonObject
+                        {
+                            { "name", label.Name },
+                            { "color", label.Color },
+                        };
+
+                        ((IList<JsonNode?>)issueLabels).Add(issueLabel);
                     }
 
-                    labelsString.Append(label.Name);
+                    issue.Add("labels", issueLabels);
+
+                    ((IList<JsonNode?>)issuesArray).Add(issue);
                 }
-
-                issue.Add("labels", issueLabels);
-                issue.Add("labelsString", labelsString.ToString());
-
-                ((IList<JsonNode?>)issuesArray).Add(issue);
             }
-            */
+
             issuesData.Add("items", issuesArray);
-            issuesData.Add("assignedName", MentionedName);
-            issuesData.Add("openCount", "2");
+            issuesData.Add("mentionedName", MentionedName);
+            issuesData.Add("titleIconUrl", TitleIconData);
+            issuesData.Add("openCount", mentionedIssues.Count());
 
             // issuesData.Add("selected_repo", repository?.FullName ?? string.Empty);
             LastUpdated = DateTime.Now;
@@ -258,15 +248,15 @@ internal class GithubMentionedInWidget : GithubWidget
 
     private void DataManagerUpdateHandler(object? source, DataManagerUpdateEventArgs e)
     {
-        Log.Logger()?.ReportDebug(Name, ShortId, $"Data Update Event: Kind={e.Kind} Info={e.Repository} Context={string.Join(",", e.Context)}");
-        if (e.Kind == DataManagerUpdateKind.Repository && !string.IsNullOrEmpty(RepositoryUrl))
+        Log.Logger()?.ReportDebug(Name, ShortId, $"Data Update Event: Kind={e.Kind} Info={e.Description} Context={string.Join(",", e.Context)}");
+        if (e.Kind == DataManagerUpdateKind.Repository)
         {
-            var fullName = Validation.ParseFullNameFromGitHubURL(RepositoryUrl);
-            if (fullName == e.Repository && e.Context.Contains("MentionedIn"))
+            // var fullName = Validation.ParseFullNameFromGitHubURL(RepositoryUrl);
+            if (e.Context.Contains("MentionedIn"))
             {
                 Log.Logger()?.ReportInfo(Name, ShortId, $"Received matching repository update event.");
                 LoadContentData();
-                UpdateActivityState();
+                UpdateActivityState(true);
             }
         }
     }

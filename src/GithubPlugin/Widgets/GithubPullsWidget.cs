@@ -10,7 +10,7 @@ using Octokit;
 namespace GitHubPlugin.Widgets;
 internal class GithubPullsWidget : GithubWidget
 {
-    private readonly string pullsIconData =
+    public static readonly string PullsIconData =
         "iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAYAAACNiR0NAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv" +
         "8YQUAAAG5SURBVHgB1VRLUsJAFHwzuBdvgCfQAyBiuUB04XADPYFyAvAEwAnkBDqsAF0Q1GIL3gBPQFYupJKxX0yoBPLBKjf2JpN5PZ2eed" +
         "MR5KPYV2Up6ZLHrku9t6q2aA2lJ3UjlzS2LvSMEiA94lA1cjl6FIbygqiQkzQqPatGRAwc1JpYYVMKBDtjAeHSvlXVc54s91XB5GgqHKphz" +
@@ -122,7 +122,7 @@ internal class GithubPullsWidget : GithubWidget
             pullsData.Add("pulls", pullsArray);
             pullsData.Add("selected_repo", repository?.FullName ?? string.Empty);
             pullsData.Add("is_loading_data", DataState == WidgetDataState.Unknown);
-            pullsData.Add("pulls_icon_data", pullsIconData);
+            pullsData.Add("pulls_icon_data", PullsIconData);
 
             LastUpdated = DateTime.Now;
             DataState = WidgetDataState.Okay;

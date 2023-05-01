@@ -177,6 +177,7 @@ internal class GithubPrReviewRequestedWidget : GithubWidget
             */
             issuesData.Add("items", issuesArray);
             issuesData.Add("assignedName", ReferredUserName);
+            issuesData.Add("titleIconUrl", GithubPullsWidget.PullsIconData);
             issuesData.Add("openCount", "2");
 
             // issuesData.Add("selected_repo", repository?.FullName ?? string.Empty);
@@ -218,11 +219,11 @@ internal class GithubPrReviewRequestedWidget : GithubWidget
 
     private void DataManagerUpdateHandler(object? source, DataManagerUpdateEventArgs e)
     {
-        Log.Logger()?.ReportDebug(Name, ShortId, $"Data Update Event: Kind={e.Kind} Info={e.Repository} Context={string.Join(",", e.Context)}");
+        Log.Logger()?.ReportDebug(Name, ShortId, $"Data Update Event: Kind={e.Kind} Info={e.Description} Context={string.Join(",", e.Context)}");
         if (e.Kind == DataManagerUpdateKind.Repository && !string.IsNullOrEmpty(RepositoryUrl))
         {
             var fullName = Validation.ParseFullNameFromGitHubURL(RepositoryUrl);
-            if (fullName == e.Repository && e.Context.Contains("PrRequested"))
+            if (fullName == e.Description && e.Context.Contains("PrRequested"))
             {
                 Log.Logger()?.ReportInfo(Name, ShortId, $"Received matching repository update event.");
                 LoadContentData();

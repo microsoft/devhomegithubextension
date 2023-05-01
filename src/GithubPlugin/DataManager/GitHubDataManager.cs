@@ -23,9 +23,15 @@ public partial class GitHubDataManager : IGitHubDataManager, IDisposable
 
     private static readonly string Name = nameof(GitHubDataManager);
 
-    private DataStore DataStore { get; set; }
+    private DataStore DataStore
+    {
+        get; set;
+    }
 
-    public DataStoreOptions DataStoreOptions { get; private set; }
+    public DataStoreOptions DataStoreOptions
+    {
+        get; private set;
+    }
 
     public static IGitHubDataManager? CreateInstance(DataStoreOptions? options = null)
     {
@@ -126,13 +132,12 @@ public partial class GitHubDataManager : IGitHubDataManager, IDisposable
         SendRepositoryUpdateEvent(this, GetFullNameFromOwnerAndRepository(owner, name), new string[] { "PullRequests" });
     }
 
-    public async Task UpdateMentionedInAsync(string owner, string name, RequestOptions? options = null)
+    public async Task UpdateMentionedInAsync(string mentionedName, RequestOptions? options = null)
     {
         ValidateDataStore();
         var parameters = new DataStoreOperationParameters
         {
-            Owner = owner,
-            RepositoryName = name,
+            Owner = mentionedName,
             RequestOptions = options,
             OperationName = "UpdateMentionedInAsync",
         };
@@ -141,10 +146,10 @@ public partial class GitHubDataManager : IGitHubDataManager, IDisposable
             parameters,
             async (parameters, devId) =>
             {
-                await UpdateMentionedInSearchAsync(parameters.Owner!, parameters.RepositoryName!, devId.GitHubClient);
+                await UpdateMentionedInSearchAsync(mentionedName, devId.GitHubClient);
             });
 
-        SendRepositoryUpdateEvent(this, GetFullNameFromOwnerAndRepository(owner, name), new string[] { "MentionedIn" });
+        SendRepositoryUpdateEvent(this, "Mentioned in " + mentionedName, new string[] { "MentionedIn" });
     }
 
     public async Task UpdateAssignedToAsync(string assignedToUser, RequestOptions? options = null)
@@ -161,7 +166,7 @@ public partial class GitHubDataManager : IGitHubDataManager, IDisposable
             parameters,
             async (parameters, devId) =>
             {
-                await UpdateAssignedToSearchAsync(parameters.Owner!, parameters.RepositoryName!, devId.GitHubClient);
+                await UpdateAssignedToSearchAsync(assignedToUser, devId.GitHubClient);
             });
 
         SendRepositoryUpdateEvent(this, "Assigned to " + assignedToUser, new string[] { "AssignedTo" });
@@ -181,7 +186,7 @@ public partial class GitHubDataManager : IGitHubDataManager, IDisposable
             parameters,
             async (parameters, devId) =>
             {
-                await UpdatePullRequestsReviewRequestedAsync(devId.GitHubClient, parameters.RequestOptions);
+                await UpdatePullRequestsReviewRequestedAsync(referredUser, devId.GitHubClient, parameters.RequestOptions);
             });
 
         SendRepositoryUpdateEvent(this, "PR requested " + referredUser, new string[] { "PrRequested" });
@@ -300,7 +305,11 @@ public partial class GitHubDataManager : IGitHubDataManager, IDisposable
         parameters.RequestOptions ??= RequestOptions.RequestOptionsDefault();
         parameters.DeveloperIds = DeveloperId.DeveloperIdProvider.GetInstance().GetLoggedInDeveloperIdsInternal();
 
-        ValidateRepositoryOwnerAndName(parameters.Owner!, parameters.RepositoryName!);
+        if ((parameters.OperationName != "UpdateAssignedToAsync") && (parameters.OperationName != "UpdateMentionedInAsync"))
+        {
+            ValidateRepositoryOwnerAndName(parameters.Owner!, parameters.RepositoryName!);
+        }
+
         if (parameters.RequestOptions.UsePublicClientAsFallback)
         {
             // Append the public client to the list of developer accounts. This will have us try the public client as a fallback.
@@ -495,11 +504,41 @@ public partial class GitHubDataManager : IGitHubDataManager, IDisposable
     }
 
     // Internal method to update a search for issues with mentioned in criteria
-    private async Task UpdateMentionedInSearchAsync(string owner, string repositoryName, Octokit.GitHubClient? client = null)
+    private async Task UpdateMentionedInSearchAsync(string mentionedName, Octokit.GitHubClient? client = null)
     {
         client ??= await GitHubClientProvider.Instance.GetClientForLoggedInDeveloper(true);
-        Log.Logger()?.ReportInfo(Name, $"Updating search for issues with mentioned in criteria: {owner}/{repositoryName}");
-        var octokitResult = await client.Search.SearchIssues(new Octokit.SearchIssuesRequest("q=is%3Aopen+is%3Aissue+archived%3Afalse+sort%3Aupdated-desc+mentions%3Acrutkas"));
+        Log.Logger()?.ReportInfo(Name, $"Updating search for issues with mentioned in criteria: {mentionedName}");
+        var octokitResult = await client.Search.SearchIssues(new Octokit.SearchIssuesRequest()
+        {
+            State = Octokit.ItemState.Open,
+            Mentions = mentionedName,
+            Archived = false,
+            PerPage = 10,
+        });
+        if (octokitResult == null)
+        {
+            Log.Logger()?.ReportDebug($"No issues found.");
+            return;
+        }
+
+        Log.Logger()?.ReportDebug(Name, $"Results contain {octokitResult.Items.Count} issues.");
+        var mentionedUser = GetUserByName(mentionedName);
+        foreach (var issue in octokitResult.Items)
+        {
+            Issue.GetOrCreateByOctokitIssue(DataStore, issue, DataStore.NoForeignKey, mentionedUser);
+        }
+    }
+
+    private async Task UpdateAssignedToSearchAsync(string assignedToUser, Octokit.GitHubClient? client = null)
+    {
+        client ??= await GitHubClientProvider.Instance.GetClientForLoggedInDeveloper(true);
+        Log.Logger()?.ReportInfo(Name, $"Updating search for issues with mentioned in criteria: {assignedToUser}");
+        var octokitResult = await client.Search.SearchIssues(new Octokit.SearchIssuesRequest()
+        {
+            State = Octokit.ItemState.Open,
+            Assignee = assignedToUser,
+            Archived = false,
+        });
         if (octokitResult == null)
         {
             Log.Logger()?.ReportDebug($"No issues found.");
@@ -513,38 +552,50 @@ public partial class GitHubDataManager : IGitHubDataManager, IDisposable
         }
     }
 
-    private async Task UpdateAssignedToSearchAsync(string owner, string repositoryName, Octokit.GitHubClient? client = null)
+    public IEnumerable<Issue> GetIssuesMentionedIn(string mentionedName)
     {
-        client ??= await GitHubClientProvider.Instance.GetClientForLoggedInDeveloper(true);
-        Log.Logger()?.ReportInfo(Name, $"Updating search for issues with mentioned in criteria: {owner}/{repositoryName}");
-        var octokitResult = await client.Search.SearchIssues(new Octokit.SearchIssuesRequest("q=is%3Aopen+is%3Aissue+archived%3Afalse+sort%3Aupdated-desc+mentions%3Acrutkas"));
-        if (octokitResult == null)
+        var user = GetUserByName(mentionedName);
+        if (user == null)
         {
-            Log.Logger()?.ReportDebug($"No issues found.");
-            return;
+            return Enumerable.Empty<Issue>();
         }
 
-        Log.Logger()?.ReportDebug(Name, $"Results contain {octokitResult.Items.Count} issues.");
-        foreach (var issue in octokitResult.Items)
-        {
-            Issue.GetOrCreateByOctokitIssue(DataStore, issue, DataStore.NoForeignKey);
-        }
-    }
+        var sql = $"SELECT * FROM IssueMention WHERE User = {user.Id};";
+        Log.Logger()?.ReportDebug(DataStore.GetSqlLogMessage(sql));
+        var issueMentions = DataStore.Connection!.Query<IssueMention>(sql, null) ?? Enumerable.Empty<IssueMention>();
 
-    public IEnumerable<Issue> GetIssuesMentionedIn()
-    {
-        var sql = @"SELECT * FROM Issue WHERE AssigneeIds like ""%crutkas%"" ORDER BY TimeUpdated DESC;";
+        var mentionedIssueIds = string.Join(',', issueMentions.Select(x => x.Issue));
+        sql = $"SELECT * FROM Issue WHERE Id in ({mentionedIssueIds});";
         Log.Logger()?.ReportDebug(DataStore.GetSqlLogMessage(sql));
         var issues = DataStore.Connection!.Query<Issue>(sql, null) ?? Enumerable.Empty<Issue>();
         return issues;
     }
 
-    public IEnumerable<Issue> GetIssuesAssignedTo()
+    private User? GetUserByName(string userName)
     {
-        var sql = @"SELECT * FROM Issue WHERE AssigneeIds like ""%crutkas%"" ORDER BY TimeUpdated DESC;";
+        var sql = $"SELECT * FROM User WHERE Login = \"{userName}\";";
+        Log.Logger()?.ReportDebug(DataStore.GetSqlLogMessage(sql));
+        var users = DataStore.Connection!.Query<User>(sql, null) ?? Enumerable.Empty<User>();
+        return users.Count() == 1 ? users.Single() : null;
+    }
+
+    public IEnumerable<Issue> GetIssuesAssignedTo(string assignedToName)
+    {
+        var user = GetUserByName(assignedToName);
+        if (user == null)
+        {
+            return Enumerable.Empty<Issue>();
+        }
+
+        var sql = $"SELECT * FROM Issue WHERE State = \"open\" AND AssigneeIds like \"%{user.InternalId}%\" ORDER BY TimeUpdated DESC;";
         Log.Logger()?.ReportDebug(DataStore.GetSqlLogMessage(sql));
         var issues = DataStore.Connection!.Query<Issue>(sql, null) ?? Enumerable.Empty<Issue>();
         return issues;
+    }
+
+    public IEnumerable<Label> GetLabelsForIssue(Issue issue)
+    {
+        return IssueLabel.GetLabelsForIssue(DataStore, issue);
     }
 
     // Internal method to update pull requests. Assumes Repository has already been populated and
@@ -589,8 +640,28 @@ public partial class GitHubDataManager : IGitHubDataManager, IDisposable
     // Internal method to update pull requests where the logged in user is requested for a review.
     // Assumes Repository has already been populated and
     // created. DataStore transaction is assumed to be wrapped around this in the public method.
-    private async Task UpdatePullRequestsReviewRequestedAsync(Octokit.GitHubClient? client = null, RequestOptions? options = null)
+    private async Task UpdatePullRequestsReviewRequestedAsync(string referredUser, Octokit.GitHubClient? client = null, RequestOptions? options = null)
     {
+        client ??= await GitHubClientProvider.Instance.GetClientForLoggedInDeveloper(true);
+        Log.Logger()?.ReportInfo(Name, $"Updating search for issues with review requested criteria: {referredUser}");
+        var octokitResult = await client.Search.SearchIssues(new Octokit.SearchIssuesRequest()
+        {
+            State = Octokit.ItemState.Open,
+            Assignee = referredUser,
+            Archived = false,
+        });
+        if (octokitResult == null)
+        {
+            Log.Logger()?.ReportDebug($"No issues found.");
+            return;
+        }
+
+        Log.Logger()?.ReportDebug(Name, $"Results contain {octokitResult.Items.Count} issues.");
+        foreach (var issue in octokitResult.Items)
+        {
+            Issue.GetOrCreateByOctokitIssue(DataStore, issue, DataStore.NoForeignKey);
+        }
+
         // options ??= RequestOptions.RequestOptionsDefault();
         client ??= await GitHubClientProvider.Instance.GetClientForLoggedInDeveloper(true);
 

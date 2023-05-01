@@ -10,7 +10,7 @@ using Octokit;
 namespace GitHubPlugin.Widgets;
 internal class GithubIssuesWidget : GithubWidget
 {
-    private readonly string issuesIconData =
+    public static readonly string IssuesIconData =
         "iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAYAAACNiR0NAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv" +
         "8YQUAAAIlSURBVHgBnVVNTttQEJ55RqoilSrdkaRVwwmI1EKyqeKegHKD5AYsWaT1M+0eegJyg9IT1O6mQLtwduzqSgQjVpaIQCzsYcZOhB" +
         "JiE/xJT/F7b+abN79BmIOyNsulaNQBZbR520CA+vjKIwBfxfGP4Zc//Xm6OHtQ6W18VAYcEGBZlFnAAaL/Y+k1Pp8Y8DGO7VniKcKa1dxjk" +
@@ -143,7 +143,7 @@ internal class GithubIssuesWidget : GithubWidget
                     { "number", issueItem.Number },
                     { "date", issueItem.CreatedAt.ToLocalTime().ToStringInvariant() },
                     { "user", issueItem.Author.Login },
-                    { "icon", issuesIconData },
+                    { "icon", IssuesIconData },
                 };
 
                 var labels = issueItem.Labels.ToList();
@@ -167,7 +167,7 @@ internal class GithubIssuesWidget : GithubWidget
             issuesData.Add("issues", issuesArray);
             issuesData.Add("selected_repo", repository?.FullName ?? string.Empty);
             issuesData.Add("is_loading_data", DataState == WidgetDataState.Unknown);
-            issuesData.Add("issues_icon_data", issuesIconData);
+            issuesData.Add("issues_icon_data", IssuesIconData);
 
             LastUpdated = DateTime.Now;
             DataState = WidgetDataState.Okay;
