@@ -205,9 +205,6 @@
     <value>Checks succeeded</value>
     <comment>Shown in toast notification.</comment>
   </data>
-  <data name="LoginUI_Title" xml:space="preserve">
-    <value>Connect to GitHub</value>
-  </data>
   <data name="LoginUI_LoginFailedPage_text1" xml:space="preserve">
     <value>Something went wrong :(</value>
   </data>
@@ -236,7 +233,7 @@
     <value>&lt;Enter the GitHub Server link&gt;</value>
   </data>
   <data name="LoginUI_LoginPage_Button2Text" xml:space="preserve">
-    <value>Sign in to GitHub Enterprise</value>
+    <value>Sign in to GitHub Enterprise (Coming Soon!)</value>
   </data>
   <data name="LoginUI_LoginPage_Button2ToolTip" xml:space="preserve">
     <value>Coming soon!</value>
@@ -251,7 +248,7 @@
     <value>has logged in successfully! You may close this window.</value>
   </data>
   <data name="LoginUI_WaitingPage_Text" xml:space="preserve">
-    <value>Waiting for browser ...</value>
+    <value>Waiting for browser ...Please check your browser in the background</value>
   </data>
   <data name="Widget_Template.SignInRequired" xml:space="preserve">
     <value>You must sign in to view this widget's content.</value>

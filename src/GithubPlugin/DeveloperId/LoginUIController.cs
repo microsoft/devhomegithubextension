@@ -99,13 +99,6 @@ internal class LoginUIController : IPluginAdaptiveCardController
     ""type"": ""AdaptiveCard"",
     ""body"": [
         {
-            ""type"": ""TextBlock"",
-            ""size"": ""Medium"",
-            ""weight"": ""Bolder"",
-            ""text"": """ + $"{loader.GetString("LoginUI_Title")}" + @""",
-            ""horizontalAlignment"": ""Left""
-        },
-        {
             ""type"": ""ColumnSet"",
             ""spacing"": ""Large"",
             ""columns"": [
@@ -139,7 +132,7 @@ internal class LoginUIController : IPluginAdaptiveCardController
                         },
                         {
                             ""type"": ""TextBlock"",
-                            ""text"": ""___"",
+                            ""text"": """",
                             ""wrap"": true,
                             ""spacing"": ""Large"",
                             ""horizontalAlignment"": ""Center"",
@@ -280,13 +273,6 @@ internal class LoginUIController : IPluginAdaptiveCardController
     ""body"": [
         {
             ""type"": ""TextBlock"",
-            ""size"": ""Medium"",
-            ""weight"": ""Bolder"",
-            ""text"": """ + $"{loader.GetString("LoginUI_Title")}" + @""",
-            ""horizontalAlignment"": ""Left""
-        },
-        {
-            ""type"": ""TextBlock"",
             ""text"": """ + $"{loader.GetString("LoginUI_WaitingPage_Text")}" + @""",
             ""isSubtle"": false,
             ""wrap"": true,
@@ -310,13 +296,6 @@ internal class LoginUIController : IPluginAdaptiveCardController
     ""body"": [
         {
             ""type"": ""TextBlock"",
-            ""size"": ""Medium"",
-            ""weight"": ""Bolder"",
-            ""text"": """ + $"{loader.GetString("LoginUI_Title")}" + @""",
-            ""horizontalAlignment"": ""Left""
-        },
-        {
-            ""type"": ""TextBlock"",
             ""text"": ""${message}"",
             ""isSubtle"": false,
             ""wrap"": true,
@@ -337,13 +316,6 @@ internal class LoginUIController : IPluginAdaptiveCardController
 {
     ""type"": ""AdaptiveCard"",
     ""body"": [
-        {
-            ""type"": ""TextBlock"",
-            ""size"": ""Medium"",
-            ""weight"": ""Bolder"",
-            ""text"": """ + $"{loader.GetString("LoginUI_Title")}" + @""",
-            ""horizontalAlignment"": ""Left""
-        },
         {
             ""type"": ""TextBlock"",
             ""text"": """ + $"{loader.GetString("LoginUI_LoginFailedPage_text1")}" + @""",
