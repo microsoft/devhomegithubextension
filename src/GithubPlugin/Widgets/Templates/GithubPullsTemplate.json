@@ -35,7 +35,7 @@
     },
     {
       "type": "Container",
-      "$when":  "${(count(pulls) == 0)}",
+      "$when": "${(count(pulls) == 0)}",
       "items": [
         {
           "type": "TextBlock",
@@ -49,55 +49,61 @@
       "verticalContentAlignment": "center"
     },
     {
-      "$data": "${pulls}",
       "type": "Container",
-      "style": "emphasis",
-      "spacing": "small",
-      "selectAction": {
-        "type": "Action.OpenUrl",
-        "url": "${url}",
-        "tooltip": "%Widget_Template_Tooltip/OpenPullRequest%"
-      },
+      "spacing": "default",
       "items": [
         {
-          "type": "TextBlock",
-          "text": "${title}",
-          "weight": "bolder",
-          "wrap": true,
-          "maxLines": 2
-        },
-        {
-          "type": "TextBlock",
-          "text": "#${number}",
-          "isSubtle": true,
-          "spacing": "None"
-        },
-        {
-          "type": "ColumnSet",
+          "$data": "${pulls}",
+          "type": "Container",
+          "style": "emphasis",
           "spacing": "small",
-          "columns": [
+          "selectAction": {
+            "type": "Action.OpenUrl",
+            "url": "${url}",
+            "tooltip": "%Widget_Template_Tooltip/OpenPullRequest%"
+          },
+          "items": [
             {
-              "type": "Column",
-              "width": "12px",
-              "items": [
-                {
-                  "type": "Image",
-                  "style": "Person",
-                  "url": "${avatar}",
-                  "size": "small"
-                }
-              ]
+              "type": "TextBlock",
+              "text": "${title}",
+              "weight": "bolder",
+              "wrap": true,
+              "maxLines": 2
             },
             {
-              "type": "Column",
-              "width": "stretch",
-              "items": [
+              "type": "TextBlock",
+              "text": "#${number}",
+              "isSubtle": true,
+              "spacing": "None"
+            },
+            {
+              "type": "ColumnSet",
+              "spacing": "small",
+              "columns": [
                 {
-                  "type": "TextBlock",
-                  "text": "${user}",
-                  "isSubtle": true,
-                  "size": "small",
-                  "spacing": "None"
+                  "type": "Column",
+                  "width": "12px",
+                  "items": [
+                    {
+                      "type": "Image",
+                      "style": "Person",
+                      "url": "${avatar}",
+                      "size": "small"
+                    }
+                  ]
+                },
+                {
+                  "type": "Column",
+                  "width": "stretch",
+                  "items": [
+                    {
+                      "type": "TextBlock",
+                      "text": "${user}",
+                      "isSubtle": true,
+                      "size": "small",
+                      "spacing": "None"
+                    }
+                  ]
                 }
               ]
             }
