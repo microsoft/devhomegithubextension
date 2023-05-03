@@ -80,6 +80,7 @@
                 {
                   "type": "TextBlock",
                   "text": "${title}",
+                  "size": "medium",
                   "weight": "bolder",
                   "wrap": true,
                   "maxLines": 2
