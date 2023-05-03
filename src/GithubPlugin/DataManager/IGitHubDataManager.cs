@@ -1,6 +1,7 @@
 ﻿// Copyright (c) Microsoft Corporation and Contributors
 // Licensed under the MIT license.
 
+using GitHubPlugin.DataManager;
 using GitHubPlugin.DataModel;
 
 namespace GitHubPlugin;
@@ -17,7 +18,7 @@ public interface IGitHubDataManager : IDisposable
 
     Task UpdatePullRequestsForRepositoryAsync(string owner, string name, RequestOptions? options = null);
 
-    Task UpdateMentionedInAsync(string mentionedName, string category, RequestOptions? options = null);
+    Task UpdateMentionedInAsync(string mentionedName, SearchCategory category, RequestOptions? options = null);
 
     Task UpdateAssignedToAsync(string assignedToUser, string showCategory, RequestOptions? options = null);
 
@@ -48,8 +49,4 @@ public interface IGitHubDataManager : IDisposable
     IEnumerable<Issue> GetIssuesAssignedTo(string assignedToName);
 
     IEnumerable<PullRequest> GetPullsAssignedTo(string assignedToName);
-
-    IEnumerable<Label> GetLabelsForIssue(Issue issue);
-
-    IEnumerable<Label> GetLabelsForPullRequest(PullRequest pullRequest);
 }

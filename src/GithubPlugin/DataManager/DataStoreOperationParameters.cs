@@ -1,6 +1,7 @@
 ﻿// Copyright (c) Microsoft Corporation and Contributors
 // Licensed under the MIT license.
 
+using GitHubPlugin.DataManager;
 using GitHubPlugin.DeveloperId;
 using Microsoft.Windows.DevHome.SDK;
 
@@ -12,7 +13,7 @@ public class DataStoreOperationParameters
 
     public string? RepositoryName { get; set; }
 
-    public string OperationName { get; set; } = string.Empty;
+    public OperationName OperationName { get; set; } = OperationName.Unknown;
 
     public string? Query { get; set; }
 

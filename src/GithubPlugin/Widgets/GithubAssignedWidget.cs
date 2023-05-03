@@ -167,23 +167,11 @@ internal class GithubAssignedWidget : GithubWidget
                     Page = 1,
                 },
 
-                // PullRequestRequest = new PullRequestRequest
-                // {
-                //    State = ItemStateFilter.Open,
-                //    SortProperty = PullRequestSort.Updated,
-                //    SortDirection = SortDirection.Descending,
-                // },
-                // ApiOptions = new ApiOptions
-                // {
-                //    PageSize = 10,
-                //    PageCount = 1,
-                //    StartPage = 1,
-                // },
                 UsePublicClientAsFallback = true,
             };
 
             var dataManager = GitHubDataManager.CreateInstance();
-            _ = dataManager?.UpdateAssignedToAsync(AssignedToName, ShowCategory, requestOptions);
+            dataManager?.UpdateAssignedToAsync(AssignedToName, ShowCategory, requestOptions);
             Log.Logger()?.ReportInfo(Name, ShortId, $"Requested data update for Assigned to {AssignedToName}");
             DataState = WidgetDataState.Requested;
         }
@@ -210,6 +198,12 @@ internal class GithubAssignedWidget : GithubWidget
             var issuesData = new JsonObject();
             var issuesArray = new JsonArray();
             issuesData.Add("openCount", assignedIssues.Count() + assignedPulls.Count());
+
+            // next step: composing the item list, which will be sent to the widget
+            // the assignedIssues and assignedPulls contain the items, the final list of items
+            // should be orderd by creation time. Both lists are ordered so in every step
+            // check the first items (if there are any) and compare them. Repeat until both
+            // lists are empty
             while (assignedIssues.Count() + assignedPulls.Count() > 0)
             {
                 bool nextComesAnIssue;
@@ -239,11 +233,8 @@ internal class GithubAssignedWidget : GithubWidget
                         { "iconUrl", GithubIssuesWidget.IssuesIconData },
                     };
 
-                    var labels = dataManager!.GetLabelsForIssue(issueItem);
-
                     var issueLabels = new JsonArray();
-                    StringBuilder labelsString = new ();
-                    foreach (var label in labels)
+                    foreach (var label in issueItem.Labels)
                     {
                         var issueLabel = new JsonObject
                         {
@@ -272,11 +263,8 @@ internal class GithubAssignedWidget : GithubWidget
                         { "iconUrl", GithubPullsWidget.PullsIconData },
                     };
 
-                    var labels = dataManager!.GetLabelsForPullRequest(pullItem);
-
                     var pullLabels = new JsonArray();
-                    StringBuilder labelsString = new ();
-                    foreach (var label in labels)
+                    foreach (var label in pullItem.Labels)
                     {
                         var pullLabel = new JsonObject
                         {
@@ -346,7 +334,6 @@ internal class GithubAssignedWidget : GithubWidget
         Log.Logger()?.ReportDebug(Name, ShortId, $"Data Update Event: Kind={e.Kind} Info={e.Description} Context={string.Join(",", e.Context)}");
         if (e.Kind == DataManagerUpdateKind.Repository)
         {
-            // var fullName = Validation.ParseFullNameFromGitHubURL(RepositoryUrl);
             if (e.Context.Contains("AssignedTo"))
             {
                 Log.Logger()?.ReportInfo(Name, ShortId, $"Received matching repository update event.");

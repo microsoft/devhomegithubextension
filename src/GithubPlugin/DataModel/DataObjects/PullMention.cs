@@ -6,8 +6,8 @@ using Dapper.Contrib.Extensions;
 
 namespace GitHubPlugin.DataModel;
 
-[Table("PullMention")]
-public class PullMention
+[Table("PullRequestMention")]
+public class PullRequestMention
 {
     [Key]
     public long Id { get; set; } = DataStore.NoForeignKey;
@@ -18,18 +18,18 @@ public class PullMention
     // User table
     public long User { get; set; } = DataStore.NoForeignKey;
 
-    private static PullMention GetByPullIdAndUserId(DataStore dataStore, long pullId, long userId)
+    private static PullRequestMention GetByPullIdAndUserId(DataStore dataStore, long pullId, long userId)
     {
-        var sql = @"SELECT * FROM PullMention WHERE Pull = @PullId AND User = @UserId;";
+        var sql = @"SELECT * FROM PullRequestMention WHERE Pull = @PullId AND User = @UserId;";
         var param = new
         {
             PullId = pullId,
             UserId = userId,
         };
-        return dataStore.Connection!.QueryFirstOrDefault<PullMention>(sql, param, null);
+        return dataStore.Connection!.QueryFirstOrDefault<PullRequestMention>(sql, param, null);
     }
 
-    public static PullMention AddUserToPull(DataStore dataStore, PullRequest pull, User user)
+    public static PullRequestMention AddUserToPull(DataStore dataStore, PullRequest pull, User user)
     {
         var exists = GetByPullIdAndUserId(dataStore, pull.Id, user.Id);
         if (exists is not null)
@@ -38,18 +38,18 @@ public class PullMention
             return exists;
         }
 
-        var newPullMention = new PullMention
+        var newPullRequestMention = new PullRequestMention
         {
             Pull = pull.Id,
             User = user.Id,
         };
-        newPullMention.Id = dataStore.Connection!.Insert(newPullMention);
-        return newPullMention;
+        newPullRequestMention.Id = dataStore.Connection!.Insert(newPullRequestMention);
+        return newPullRequestMention;
     }
 
     public static IEnumerable<User> GetUsersForPull(DataStore dataStore, PullRequest pull)
     {
-        var sql = @"SELECT * FROM User AS U WHERE U.Id IN (SELECT User FROM PullMention WHERE PullMention.Pull = @PullId)";
+        var sql = @"SELECT * FROM User AS U WHERE U.Id IN (SELECT User FROM PullRequestMention WHERE PullRequestMention.Pull = @PullId)";
         var param = new
         {
             PullId = pull.Id,
@@ -59,10 +59,10 @@ public class PullMention
         return dataStore.Connection!.Query<User>(sql, param, null) ?? Enumerable.Empty<User>();
     }
 
-    public static void DeletePullMentionForPull(DataStore dataStore, PullRequest pull)
+    public static void DeletePullRequestMentionForPull(DataStore dataStore, PullRequest pull)
     {
-        // Delete all PullMention entries that match this Pull Id.
-        var sql = @"DELETE FROM PullMention WHERE Pull = $PullId;";
+        // Delete all PullRequestMention entries that match this Pull Id.
+        var sql = @"DELETE FROM PullRequestMention WHERE Pull = $PullId;";
         var command = dataStore.Connection!.CreateCommand();
         command.CommandText = sql;
         command.Parameters.AddWithValue("$PullId", pull.Id);

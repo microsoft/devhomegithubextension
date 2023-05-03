@@ -89,7 +89,7 @@ public partial class GitHubDataManager : IGitHubDataManager, IDisposable
             Owner = owner,
             RepositoryName = name,
             RequestOptions = options,
-            OperationName = "UpdateAllDataForRepositoryAsync",
+            OperationName = OperationName.UpdateAllDataForRepositoryAsync,
         };
 
         await UpdateDataForRepositoryAsync(
@@ -119,7 +119,7 @@ public partial class GitHubDataManager : IGitHubDataManager, IDisposable
             Owner = owner,
             RepositoryName = name,
             RequestOptions = options,
-            OperationName = "UpdatePullRequestsForRepositoryAsync",
+            OperationName = OperationName.UpdatePullRequestsForRepositoryAsync,
         };
 
         await UpdateDataForRepositoryAsync(
@@ -133,14 +133,14 @@ public partial class GitHubDataManager : IGitHubDataManager, IDisposable
         SendRepositoryUpdateEvent(this, GetFullNameFromOwnerAndRepository(owner, name), new string[] { "PullRequests" });
     }
 
-    public async Task UpdateMentionedInAsync(string mentionedName, string category, RequestOptions? options = null)
+    public async Task UpdateMentionedInAsync(string mentionedName, SearchCategory category, RequestOptions? options = null)
     {
         ValidateDataStore();
         var parameters = new DataStoreOperationParameters
         {
             Owner = mentionedName,
             RequestOptions = options,
-            OperationName = "UpdateMentionedInAsync",
+            OperationName = OperationName.UpdateMentionedInAsync,
         };
 
         await UpdateDataForRepositoryAsync(
@@ -160,7 +160,7 @@ public partial class GitHubDataManager : IGitHubDataManager, IDisposable
         {
             Owner = assignedToUser,
             RequestOptions = options,
-            OperationName = "UpdateAssignedToAsync",
+            OperationName = OperationName.UpdateAssignedToAsync,
         };
 
         await UpdateDataForRepositoryAsync(
@@ -180,7 +180,7 @@ public partial class GitHubDataManager : IGitHubDataManager, IDisposable
         {
             Owner = referredUser,
             RequestOptions = options,
-            OperationName = "UpdatePullRequestsReviewRequestedForRepositoryAsync",
+            OperationName = OperationName.UpdatePullRequestsReviewRequestedForRepositoryAsync,
         };
 
         await UpdateDataForRepositoryAsync(
@@ -208,7 +208,7 @@ public partial class GitHubDataManager : IGitHubDataManager, IDisposable
             Owner = owner,
             RepositoryName = name,
             RequestOptions = options,
-            OperationName = "UpdateIssuesForRepositoryAsync",
+            OperationName = OperationName.UpdateIssuesForRepositoryAsync,
         };
 
         await UpdateDataForRepositoryAsync(
@@ -234,7 +234,7 @@ public partial class GitHubDataManager : IGitHubDataManager, IDisposable
         ValidateDataStore();
         var parameters = new DataStoreOperationParameters
         {
-            OperationName = "UpdatePullRequestsForLoggedInDeveloperIdsAsync",
+            OperationName = OperationName.UpdatePullRequestsForLoggedInDeveloperIdsAsync,
         };
         await UpdateDataStoreAsync(parameters, UpdatePullRequestsForLoggedInDeveloperIdsAsync);
         SendDeveloperUpdateEvent(this);
@@ -306,7 +306,7 @@ public partial class GitHubDataManager : IGitHubDataManager, IDisposable
         parameters.RequestOptions ??= RequestOptions.RequestOptionsDefault();
         parameters.DeveloperIds = DeveloperId.DeveloperIdProvider.GetInstance().GetLoggedInDeveloperIdsInternal();
 
-        if ((parameters.OperationName != "UpdateAssignedToAsync") && (parameters.OperationName != "UpdateMentionedInAsync"))
+        if ((parameters.OperationName != OperationName.UpdateAssignedToAsync) && (parameters.OperationName != OperationName.UpdateMentionedInAsync))
         {
             ValidateRepositoryOwnerAndName(parameters.Owner!, parameters.RepositoryName!);
         }
@@ -505,9 +505,8 @@ public partial class GitHubDataManager : IGitHubDataManager, IDisposable
     }
 
     // Internal method to update a search for issues with mentioned in criteria
-    private async Task UpdateMentionedInSearchAsync(string mentionedName, string category, Octokit.GitHubClient? client = null)
+    private async Task UpdateMentionedInSearchAsync(string mentionedName, SearchCategory category, Octokit.GitHubClient? client = null)
     {
-        client ??= await GitHubClientProvider.Instance.GetClientForLoggedInDeveloper(true);
         Log.Logger()?.ReportInfo(Name, $"Updating search for issues with mentioned in criteria: {mentionedName}");
         Octokit.SearchIssuesRequest request = new Octokit.SearchIssuesRequest()
         {
@@ -518,9 +517,10 @@ public partial class GitHubDataManager : IGitHubDataManager, IDisposable
         };
 
         var mentionedUser = GetUserByName(mentionedName);
+        client ??= await GitHubClientProvider.Instance.GetClientForLoggedInDeveloper(true);
 
         // search for issues
-        if (category.Contains("Issues"))
+        if (category.Equals(SearchCategory.Issues) || category.Equals(SearchCategory.IssuesAndPullRequests))
         {
             request.Is = new List<Octokit.IssueIsQualifier>() { Octokit.IssueIsQualifier.Issue };
             var octokitResult = await client.Search.SearchIssues(request);
@@ -539,7 +539,7 @@ public partial class GitHubDataManager : IGitHubDataManager, IDisposable
             }
         }
 
-        if (category.Contains("PRs"))
+        if (category.Equals(SearchCategory.PullRequests) || category.Equals(SearchCategory.IssuesAndPullRequests))
         {
             request.Is = new List<Octokit.IssueIsQualifier>() { Octokit.IssueIsQualifier.PullRequest };
             var octokitResult = await client.Search.SearchIssues(request);
@@ -553,7 +553,7 @@ public partial class GitHubDataManager : IGitHubDataManager, IDisposable
                 foreach (var issue in octokitResult.Items)
                 {
                     var mentionedPull = PullRequest.GetOrCreateByOctokitIssue(DataStore, issue, DataStore.NoForeignKey);
-                    PullMention.AddUserToPull(DataStore, mentionedPull, mentionedUser!);
+                    PullRequestMention.AddUserToPull(DataStore, mentionedPull, mentionedUser!);
                 }
             }
         }
@@ -616,12 +616,7 @@ public partial class GitHubDataManager : IGitHubDataManager, IDisposable
             return Enumerable.Empty<Issue>();
         }
 
-        var sql = $"SELECT * FROM IssueMention WHERE User = {user.Id};";
-        Log.Logger()?.ReportDebug(DataStore.GetSqlLogMessage(sql));
-        var issueMentions = DataStore.Connection!.Query<IssueMention>(sql, null) ?? Enumerable.Empty<IssueMention>();
-
-        var mentionedIssueIds = string.Join(',', issueMentions.Select(x => x.Issue));
-        sql = $"SELECT * FROM Issue WHERE Id in ({mentionedIssueIds});";
+        var sql = $"SELECT * FROM Issue WHERE Id in (SELECT Issue FROM IssueMention WHERE User = {user.Id});";
         Log.Logger()?.ReportDebug(DataStore.GetSqlLogMessage(sql));
         var issues = DataStore.Connection!.Query<Issue>(sql, null) ?? Enumerable.Empty<Issue>();
         return issues;
@@ -635,12 +630,7 @@ public partial class GitHubDataManager : IGitHubDataManager, IDisposable
             return Enumerable.Empty<PullRequest>();
         }
 
-        var sql = $"SELECT * FROM PullMention WHERE User = {user.Id};";
-        Log.Logger()?.ReportDebug(DataStore.GetSqlLogMessage(sql));
-        var pullMentions = DataStore.Connection!.Query<PullMention>(sql, null) ?? Enumerable.Empty<PullMention>();
-
-        var mentionedPullIds = string.Join(',', pullMentions.Select(x => x.Pull));
-        sql = $"SELECT * FROM PullRequest WHERE Id in ({mentionedPullIds});";
+        var sql = $"SELECT * FROM PullRequest WHERE Id in (SELECT Pull FROM PullRequestMention WHERE User = {user.Id});";
         Log.Logger()?.ReportDebug(DataStore.GetSqlLogMessage(sql));
         var pulls = DataStore.Connection!.Query<PullRequest>(sql, null) ?? Enumerable.Empty<PullRequest>();
         return pulls;
@@ -662,12 +652,7 @@ public partial class GitHubDataManager : IGitHubDataManager, IDisposable
             return Enumerable.Empty<Issue>();
         }
 
-        var sql = $"SELECT * FROM IssueAssign WHERE User = {user.Id};";
-        Log.Logger()?.ReportDebug(DataStore.GetSqlLogMessage(sql));
-        var issueAssigns = DataStore.Connection!.Query<IssueAssign>(sql, null) ?? Enumerable.Empty<IssueAssign>();
-
-        var assignedIssueIds = string.Join(',', issueAssigns.Select(x => x.Issue));
-        sql = $"SELECT * FROM Issue WHERE Id in ({assignedIssueIds});";
+        var sql = $"SELECT * FROM Issue WHERE Id in (SELECT Issue FROM IssueAssign WHERE User = {user.Id});";
         Log.Logger()?.ReportDebug(DataStore.GetSqlLogMessage(sql));
         var issues = DataStore.Connection!.Query<Issue>(sql, null) ?? Enumerable.Empty<Issue>();
         return issues;
@@ -681,25 +666,10 @@ public partial class GitHubDataManager : IGitHubDataManager, IDisposable
             return Enumerable.Empty<PullRequest>();
         }
 
-        var sql = $"SELECT * FROM PullRequestAssign WHERE User = {user.Id};";
-        Log.Logger()?.ReportDebug(DataStore.GetSqlLogMessage(sql));
-        var pullAssigns = DataStore.Connection!.Query<PullRequestAssign>(sql, null) ?? Enumerable.Empty<PullRequestAssign>();
-
-        var assignedPullIds = string.Join(',', pullAssigns.Select(x => x.PullRequest));
-        sql = $"SELECT * FROM Issue WHERE Id in ({assignedPullIds});";
+        var sql = $"SELECT * FROM PullRequest WHERE Id in (SELECT PullRequest FROM PullRequestAssign WHERE User = {user.Id});";
         Log.Logger()?.ReportDebug(DataStore.GetSqlLogMessage(sql));
         var pulls = DataStore.Connection!.Query<PullRequest>(sql, null) ?? Enumerable.Empty<PullRequest>();
         return pulls;
-    }
-
-    public IEnumerable<Label> GetLabelsForIssue(Issue issue)
-    {
-        return IssueLabel.GetLabelsForIssue(DataStore, issue);
-    }
-
-    public IEnumerable<Label> GetLabelsForPullRequest(PullRequest pullRequest)
-    {
-        return PullRequestLabel.GetLabelsForPullRequest(DataStore, pullRequest);
     }
 
     // Internal method to update pull requests. Assumes Repository has already been populated and
@@ -765,47 +735,6 @@ public partial class GitHubDataManager : IGitHubDataManager, IDisposable
         {
             Issue.GetOrCreateByOctokitIssue(DataStore, issue, DataStore.NoForeignKey);
         }
-
-        // options ??= RequestOptions.RequestOptionsDefault();
-        client ??= await GitHubClientProvider.Instance.GetClientForLoggedInDeveloper(true);
-
-        await client.Search.SearchIssues(new Octokit.SearchIssuesRequest("q=is%3Aopen+is%3Apr+review-requested%3Acrutkas+archived%3Afalse+sort%3Aupdated-desc"));
-        /*
-        Log.Logger()?.ReportInfo(Name, $"Updating pull requests with review request for: {repository.FullName}");
-
-        var authProvider = DeveloperId.DeveloperIdProvider.GetInstance();
-        var devIds = authProvider.GetLoggedInDeveloperIdsInternal();
-
-        foreach (var octoPull in result.Items)
-        {
-            var dsPullRequest = PullRequest.GetOrCreateByOctokitPullRequest(DataStore, octoPull, repository.Id);
-            CheckRun.DeleteAllForPullRequest(DataStore, dsPullRequest);
-            var octoCheckRunResponse = await client.Check.Run.GetAllForReference(repository.InternalId, dsPullRequest.HeadSha);
-            foreach (var run in octoCheckRunResponse.CheckRuns)
-            {
-                CheckRun.GetOrCreateByOctokitCheckRun(DataStore, run);
-            }
-
-            CheckSuite.DeleteAllForPullRequest(DataStore, dsPullRequest);
-            var octoCheckSuiteResponse = await client.Check.Suite.GetAllForReference(repository.InternalId, dsPullRequest.HeadSha);
-            foreach (var suite in octoCheckSuiteResponse.CheckSuites)
-            {
-                // Skip Dependabot, as it is not part of a pull request's blocking suites.
-                if (suite.App.Id == CheckSuiteIdDependabot)
-                {
-                    continue;
-                }
-
-                Log.Logger()?.ReportDebug($"Suite: {suite.App.Name} - {suite.App.Id} - {suite.App.Owner.Login}  Conclusion: {suite.Conclusion}  Status: {suite.Status}");
-                CheckSuite.GetOrCreateByOctokitCheckSuite(DataStore, suite);
-            }
-
-            var commitCombinedStatus = await client.Repository.Status.GetCombined(repository.InternalId, dsPullRequest.HeadSha);
-            CommitCombinedStatus.GetOrCreate(DataStore, commitCombinedStatus);
-
-            CreatePullRequestStatus(dsPullRequest);
-        }
-        */
     }
 
     private void CreatePullRequestStatus(PullRequest pullRequest)

@@ -113,74 +113,11 @@ internal class GithubPrReviewRequestedWidget : GithubWidget
             var issuesData = new JsonObject();
             var issuesArray = new JsonArray();
 
-            var issue = new JsonObject
-                {
-                    { "title", "Houston, check problems" },
-                    { "url", "https://github.com/microsoft/PowerToys" },
-                    { "number", 12 },
-                    { "date", "2023-03-06" },
-                    { "user", "NASA" },
-                    { "repository", "microsoft/PowerToys" },
-                };
-            ((IList<JsonNode?>)issuesArray).Add(issue);
-            issue = new JsonObject
-                {
-                    { "title", "check lab door" },
-                    { "url", "https://github.com/microsoft/PowerToys" },
-                    { "number", 34 },
-                    { "date", "2019-10-04" },
-                    { "user", "corona lab" },
-                    { "repository", "microsoft/PowerToys" },
-                };
-            issue.Add("labels", new JsonArray());
-            ((IList<JsonNode?>)issuesArray).Add(issue);
-
-            /*
-            foreach (var issueItem in issues)
-            {
-                var issue = new JsonObject
-                {
-                    { "title", issueItem.Title },
-                    { "url", issueItem.HtmlUrl },
-                    { "number", issueItem.Number },
-                    { "date", issueItem.CreatedAt.ToLocalTime().ToStringInvariant() },
-                    { "user", issueItem.Author.Login },
-                    { "avatar", issueItem.Author.AvatarUrl },
-                };
-
-                var labels = issueItem.Labels.ToList();
-                var issueLabels = new JsonArray();
-                StringBuilder labelsString = new ();
-                foreach (var label in labels)
-                {
-                    var issueLabel = new JsonObject
-                    {
-                        { "name", label.Name },
-                        { "color", label.Color },
-                    };
-
-                    ((IList<JsonNode?>)issueLabels).Add(issueLabel);
-
-                    if (labelsString.Length != 0)
-                    {
-                        labelsString.Append("  ");
-                    }
-
-                    labelsString.Append(label.Name);
-                }
-
-                issue.Add("labels", issueLabels);
-                issue.Add("labelsString", labelsString.ToString());
-
-                ((IList<JsonNode?>)issuesArray).Add(issue);
-            }
-            */
             issuesData.Add("items", issuesArray);
             issuesData.Add("assignedName", ReferredUserName);
             issuesData.Add("titleIconUrl", GithubPullsWidget.PullsIconData);
             issuesData.Add("openCount", "2");
 
-            // issuesData.Add("selected_repo", repository?.FullName ?? string.Empty);
             LastUpdated = DateTime.Now;
             ContentData = issuesData.ToJsonString();
             DataState = WidgetDataState.Okay;

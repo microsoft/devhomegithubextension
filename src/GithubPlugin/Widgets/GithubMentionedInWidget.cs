@@ -48,7 +48,7 @@ internal class GithubMentionedInWidget : GithubWidget
 
     protected static readonly new string Name = nameof(GithubMentionedInWidget);
 
-    private string ShowCategory
+    private SearchCategory ShowCategory
     {
         get; set;
     }
@@ -73,7 +73,7 @@ internal class GithubMentionedInWidget : GithubWidget
         : base()
     {
         GitHubDataManager.OnUpdate += DataManagerUpdateHandler;
-        ShowCategory = "Issues & PRs";
+        ShowCategory = SearchCategory.IssuesAndPullRequests;
     }
 
     ~GithubMentionedInWidget()
@@ -110,7 +110,7 @@ internal class GithubMentionedInWidget : GithubWidget
             var dataObject = JsonSerializer.Deserialize(actionInvokedArgs.Data, SourceGenerationContext.Default.DataPayload);
             if (dataObject != null && dataObject.ShowCategory != null)
             {
-                ShowCategory = dataObject.ShowCategory;
+                ShowCategory = EnumHelper.StringToSearchCategory(dataObject.ShowCategory);
                 UpdateActivityState();
             }
         }
@@ -166,10 +166,10 @@ internal class GithubMentionedInWidget : GithubWidget
         try
         {
             using var dataManager = GitHubDataManager.CreateInstance();
-            var mentionedIssues = ShowCategory.Contains("Issues") ?
+            var mentionedIssues = (ShowCategory.Equals(SearchCategory.Issues) || ShowCategory.Equals(SearchCategory.IssuesAndPullRequests)) ?
                 dataManager!.GetIssuesMentionedIn(MentionedName) :
                 new List<DataModel.Issue>();
-            var mentionedPulls = ShowCategory.Contains("PRs") ?
+            var mentionedPulls = (ShowCategory.Equals(SearchCategory.PullRequests) || ShowCategory.Equals(SearchCategory.IssuesAndPullRequests)) ?
                 dataManager!.GetPullsMentionedIn(MentionedName) :
                 new List<DataModel.PullRequest>();
 
@@ -205,11 +205,8 @@ internal class GithubMentionedInWidget : GithubWidget
                         { "iconUrl", GithubIssuesWidget.IssuesIconData },
                     };
 
-                    var labels = dataManager!.GetLabelsForIssue(issueItem);
-
                     var issueLabels = new JsonArray();
-                    StringBuilder labelsString = new ();
-                    foreach (var label in labels)
+                    foreach (var label in issueItem.Labels)
                     {
                         var issueLabel = new JsonObject
                         {
@@ -238,11 +235,8 @@ internal class GithubMentionedInWidget : GithubWidget
                         { "iconUrl", GithubPullsWidget.PullsIconData },
                     };
 
-                    var labels = dataManager!.GetLabelsForPullRequest(pullItem);
-
                     var pullLabels = new JsonArray();
-                    StringBuilder labelsString = new ();
-                    foreach (var label in labels)
+                    foreach (var label in pullItem.Labels)
                     {
                         var pullLabel = new JsonObject
                         {
@@ -303,7 +297,7 @@ internal class GithubMentionedInWidget : GithubWidget
     public string GetConfigurationData()
     {
         var configurationData = new JsonObject();
-        configurationData.Add("showCategory", ShowCategory);
+        configurationData.Add("showCategory", EnumHelper.SearchCategoryToString(ShowCategory));
         return configurationData.ToJsonString();
     }
 
