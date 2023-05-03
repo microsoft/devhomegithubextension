@@ -1,9 +1,13 @@
 ﻿// Copyright (c) Microsoft Corporation and Contributors
 // Licensed under the MIT license.
 
+using System.ComponentModel;
 using System.Net;
+using System.Runtime.InteropServices;
 using System.Security;
+using Octokit;
 using Windows.Security.Credentials;
+using static GitHubPlugin.DeveloperId.CredentialManager;
 
 namespace GitHubPlugin.DeveloperId;
 internal static class CredentialVault
@@ -16,57 +20,134 @@ internal static class CredentialVault
     internal static void SaveAccessTokenToVault(string loginId, SecureString? accessToken)
     {
         // TODO: Encryption can be added here
-        var vault = new PasswordVault();
-        vault.Add(new PasswordCredential(CredentialVaultConfiguration.CredResourceName, loginId, new NetworkCredential(string.Empty, accessToken).Password));
+
+        // Initialize a credential object
+        CREDENTIAL credential = new CREDENTIAL
+        {
+            Type = CRED_TYPE.GENERIC,
+            TargetName = CredentialVaultConfiguration.CredResourceName + ": " + loginId,
+            UserName = loginId,
+            Persist = (int)CRED_PERSIST.LocalMachine,
+            AttributeCount = 0,
+            Flags = 0,
+            Comment = string.Empty,
+        };
+
+        if (accessToken != null)
+        {
+            credential.CredentialBlob = Marshal.SecureStringToCoTaskMemUnicode(accessToken);
+            credential.CredentialBlobSize = accessToken.Length * 2;
+        }
+        else
+        {
+            Log.Logger()?.ReportInfo($"The access token is null for the loginId provided");
+            throw new ArgumentNullException(nameof(accessToken));
+        }
+
+        // Store credential under Windows Credentials inside CredMan
+        var isCredentialSaved = CredWrite(credential, 0);
+        if (!isCredentialSaved)
+        {
+            Log.Logger()?.ReportInfo($"Writing credentials to CredMan has failed");
+            throw new Win32Exception(Marshal.GetLastWin32Error());
+        }
     }
 
     internal static void RemoveAccessTokenFromVault(string loginId)
     {
-        var vault = new PasswordVault();
-        vault.Remove(vault.Retrieve(CredentialVaultConfiguration.CredResourceName, loginId));
-        Log.Logger()?.ReportInfo($"Removing DeveloperId credentials: {loginId}");
+        var targetCredentialToDelete = CredentialVaultConfiguration.CredResourceName + ": " + loginId;
+        var isCredentialDeleted = CredDelete(targetCredentialToDelete, CRED_TYPE.GENERIC, 0);
+        if (!isCredentialDeleted)
+        {
+            Log.Logger()?.ReportInfo($"Deleting credentials to CredMan has failed");
+            throw new Win32Exception(Marshal.GetLastWin32Error());
+        }
     }
 
     internal static PasswordCredential GetCredentialFromLocker(string loginId)
     {
         // Decryption can be added here
-        PasswordCredential credential;
-        var vault = new PasswordVault();
+        var credentialNameToRetrieve = CredentialVaultConfiguration.CredResourceName + ": " + loginId;
+        IntPtr ptrToCredential;
 
-        credential = vault.Retrieve(CredentialVaultConfiguration.CredResourceName, loginId);
-        if (credential is null)
+        var isCredentialRetrieved = CredRead(credentialNameToRetrieve, CRED_TYPE.GENERIC, 0, out ptrToCredential);
+        if (!isCredentialRetrieved)
         {
-            Log.Logger()?.ReportInfo("No credentials found for this DeveloperId: " + loginId);
+            Log.Logger()?.ReportInfo($"Retrieving credentials from CredMan has failed");
+            throw new Win32Exception(Marshal.GetLastWin32Error());
+        }
+
+        CREDENTIAL credentialObject;
+        if (ptrToCredential != IntPtr.Zero)
+        {
+#pragma warning disable CS8605 // Unboxing a possibly null value.
+            credentialObject = (CREDENTIAL)Marshal.PtrToStructure(ptrToCredential, typeof(CREDENTIAL));
+#pragma warning restore CS8605 // Unboxing a possibly null value.
+
+        }
+        else
+        {
+            Log.Logger()?.ReportInfo("No credentials found for this DeveloperId");
             throw new ArgumentOutOfRangeException(loginId);
         }
+
+        var accessTokenInChars = new char[credentialObject.CredentialBlobSize / 2];
+        Marshal.Copy(credentialObject.CredentialBlob, accessTokenInChars, 0, accessTokenInChars.Length);
+
+        SecureString accessToken = new SecureString();
+        for (var i = 0; i < accessTokenInChars.Length; i++)
+        {
+            accessToken.AppendChar(accessTokenInChars[i]);
+            accessTokenInChars[i] = '\0';
+        }
+
+        accessToken.MakeReadOnly();
+
+        PasswordCredential credential = new PasswordCredential(CredentialVaultConfiguration.CredResourceName, loginId, new NetworkCredential(string.Empty, accessToken).Password);
 
         return credential;
     }
 
     public static IEnumerable<string> GetAllSavedLoginIds()
     {
-        var vault = new PasswordVault();
-        IReadOnlyList<PasswordCredential> credentialList;
-        try
+        IntPtr[] allCredentials;
+        uint count;
+
+        IntPtr ptrToCredential;
+        if (CredEnumerate(CredentialVaultConfiguration.CredResourceName + "*", 0, out count, out ptrToCredential) != false)
         {
-            credentialList = vault.FindAllByResource(CredentialVaultConfiguration.CredResourceName);
+            allCredentials = new IntPtr[count];
+            Marshal.Copy(ptrToCredential, allCredentials, 0, (int)count);
         }
-        catch (Exception ex)
+        else
         {
+            var error = Marshal.GetLastWin32Error();
+
             // NotFound is expected and can be ignored
-            if (ex.HResult != -2147023728)
+            if (error == 1168)
+            {
+                return Enumerable.Empty<string>();
+            }
+            else
             {
                 throw new InvalidOperationException();
             }
-
-            return Enumerable.Empty<string>();
         }
 
-        if (credentialList.Count is 0)
+        if (count is 0)
         {
             return Enumerable.Empty<string>();
         }
 
-        return credentialList.Select(credential => credential.UserName).ToList();
+        var allLoginIds = new List<string>();
+        for (var i = 0; i < allCredentials.Length; i++)
+        {
+#pragma warning disable CS8605 // Unboxing a possibly null value.
+            CREDENTIAL credential = (CREDENTIAL)Marshal.PtrToStructure(allCredentials[i], typeof(CREDENTIAL));
+#pragma warning restore CS8605 // Unboxing a possibly null value.
+            allLoginIds.Add(credential.UserName);
+        }
+
+        return allLoginIds;
     }
 }
