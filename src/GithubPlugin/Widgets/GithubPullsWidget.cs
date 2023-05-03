@@ -114,6 +114,7 @@ internal class GithubPullsWidget : GithubWidget
                     { "number", pullItem.Number },
                     { "user", pullItem.Author.Login },
                     { "avatar", pullItem.Author.AvatarUrl },
+                    { "icon", pullsIconData },
                 };
 
                 ((IList<JsonNode?>)pullsArray).Add(pull);
