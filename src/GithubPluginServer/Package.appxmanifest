@@ -212,7 +212,7 @@
                       </LightMode>
                     </ThemeResources>
                   </Definition>
-				</Definitions>
+                </Definitions>
               </WidgetProvider>
             </uap3:Properties>
           </uap3:AppExtension>

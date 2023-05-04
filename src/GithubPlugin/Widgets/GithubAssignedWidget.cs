@@ -91,14 +91,14 @@ internal class GithubAssignedWidget : GithubWidget
     public GithubAssignedWidget()
         : base()
     {
-        GitHubDataManager.OnResultsAvailable += DataManagerResultsAvailableHandler;
+        GitHubSearchManager.OnResultsAvailable += SearchManagerResultsAvailableHandler;
         ShowCategory = SearchCategory.Unknown;
         AssignedToName = string.Empty;
     }
 
     ~GithubAssignedWidget()
     {
-        GitHubDataManager.OnResultsAvailable -= DataManagerResultsAvailableHandler;
+        GitHubSearchManager.OnResultsAvailable -= SearchManagerResultsAvailableHandler;
     }
 
     private void GetAssignedToName()
@@ -169,7 +169,7 @@ internal class GithubAssignedWidget : GithubWidget
     public override void DeleteWidget(string widgetId, string customState)
     {
         // Remove event handler
-        GitHubDataManager.OnResultsAvailable -= DataManagerResultsAvailableHandler;
+        GitHubSearchManager.OnResultsAvailable -= SearchManagerResultsAvailableHandler;
         base.DeleteWidget(widgetId, customState);
     }
 
@@ -198,8 +198,8 @@ internal class GithubAssignedWidget : GithubWidget
             {
                 Assignee = AssignedToName,
             };
-            var dataManager = GitHubDataManager.CreateInstance();
-            dataManager?.SearchForGithubIssuesOrPRs(request, Name, ShowCategory, requestOptions);
+            var searchManager = GitHubSearchManager.CreateInstance();
+            searchManager?.SearchForGithubIssuesOrPRs(request, Name, ShowCategory, requestOptions);
             Log.Logger()?.ReportInfo(Name, ShortId, $"Requested data update for Assigned to {AssignedToName}");
             DataState = WidgetDataState.Requested;
         }
@@ -311,7 +311,7 @@ internal class GithubAssignedWidget : GithubWidget
         return configurationData.ToJsonString();
     }
 
-    private void DataManagerResultsAvailableHandler(IEnumerable<Octokit.Issue> results, string resultType)
+    private void SearchManagerResultsAvailableHandler(IEnumerable<Octokit.Issue> results, string resultType)
     {
         Log.Logger()?.ReportDebug(Name, ShortId, $"Results Available Event: Type={resultType}");
         if (resultType == Name)

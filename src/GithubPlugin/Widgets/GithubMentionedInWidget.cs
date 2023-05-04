@@ -72,13 +72,13 @@ internal class GithubMentionedInWidget : GithubWidget
     public GithubMentionedInWidget()
         : base()
     {
-        GitHubDataManager.OnResultsAvailable += DataManagerResultsAvailableHandler;
+        GitHubSearchManager.OnResultsAvailable += SearchManagerResultsAvailableHandler;
         ShowCategory = SearchCategory.IssuesAndPullRequests;
     }
 
     ~GithubMentionedInWidget()
     {
-        GitHubDataManager.OnResultsAvailable -= DataManagerResultsAvailableHandler;
+        GitHubSearchManager.OnResultsAvailable -= SearchManagerResultsAvailableHandler;
     }
 
     private void GetMentionedName()
@@ -93,7 +93,7 @@ internal class GithubMentionedInWidget : GithubWidget
     public override void DeleteWidget(string widgetId, string customState)
     {
         // Remove event handler
-        GitHubDataManager.OnResultsAvailable -= DataManagerResultsAvailableHandler;
+        GitHubSearchManager.OnResultsAvailable -= SearchManagerResultsAvailableHandler;
         base.DeleteWidget(widgetId, customState);
     }
 
@@ -163,7 +163,7 @@ internal class GithubMentionedInWidget : GithubWidget
 
         try
         {
-            Log.Logger()?.ReportInfo(Name, ShortId, $"Requesting data update for mentioned user {mentionedName}");
+            Log.Logger()?.ReportInfo(Name, ShortId, $"Requesting search for mentioned user {mentionedName}");
             var requestOptions = new RequestOptions
             {
                 ApiOptions = new ApiOptions
@@ -180,14 +180,14 @@ internal class GithubMentionedInWidget : GithubWidget
                 Mentions = MentionedName,
             };
 
-            var dataManager = GitHubDataManager.CreateInstance();
-            dataManager?.SearchForGithubIssuesOrPRs(request, Name, ShowCategory, requestOptions);
-            Log.Logger()?.ReportInfo(Name, ShortId, $"Requested data update for {mentionedName}");
+            var searchManager = GitHubSearchManager.CreateInstance();
+            searchManager?.SearchForGithubIssuesOrPRs(request, Name, ShowCategory, requestOptions);
+            Log.Logger()?.ReportInfo(Name, ShortId, $"Requested search for {mentionedName}");
             DataState = WidgetDataState.Requested;
         }
         catch (Exception ex)
         {
-            Log.Logger()?.ReportError(Name, ShortId, "Failed requesting data update.", ex);
+            Log.Logger()?.ReportError(Name, ShortId, "Failed requesting search.", ex);
         }
     }
 
@@ -287,7 +287,7 @@ internal class GithubMentionedInWidget : GithubWidget
         return configurationData.ToJsonString();
     }
 
-    private void DataManagerResultsAvailableHandler(IEnumerable<Octokit.Issue> results, string resultType)
+    private void SearchManagerResultsAvailableHandler(IEnumerable<Octokit.Issue> results, string resultType)
     {
         Log.Logger()?.ReportDebug(Name, ShortId, $"Results Available Event: Type={resultType}");
         if (resultType == Name)

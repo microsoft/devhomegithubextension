@@ -1,7 +1,6 @@
 ﻿// Copyright (c) Microsoft Corporation and Contributors
 // Licensed under the MIT license.
 
-using Dapper;
 using GitHubPlugin.Client;
 using GitHubPlugin.DataManager;
 using GitHubPlugin.DataModel;
@@ -10,13 +9,9 @@ using Windows.Storage;
 
 namespace GitHubPlugin;
 
-public delegate void DataManagerResultsAvailableEventHandler(IEnumerable<Octokit.Issue> results, string resultType);
-
 public partial class GitHubDataManager : IGitHubDataManager, IDisposable
 {
     public static event DataManagerUpdateEventHandler? OnUpdate;
-
-    public static event DataManagerResultsAvailableEventHandler? OnResultsAvailable;
 
     private static readonly string LastUpdatedKeyName = "LastUpdated";
     private static readonly TimeSpan NotificationRetentionTime = TimeSpan.FromDays(7);
@@ -156,48 +151,6 @@ public partial class GitHubDataManager : IGitHubDataManager, IDisposable
             });
 
         SendRepositoryUpdateEvent(this, GetFullNameFromOwnerAndRepository(owner, name), new string[] { "Issues" });
-    }
-
-    public async Task SearchForGithubIssuesOrPRs(Octokit.SearchIssuesRequest request, string initiator, SearchCategory category, RequestOptions? options = null)
-    {
-        Log.Logger()?.ReportInfo(Name, $"Searching for issues or pull requests for widget {initiator}");
-        request.State = Octokit.ItemState.Open;
-        request.Archived = false;
-        request.PerPage = 10;
-
-        var client = await GitHubClientProvider.Instance.GetClientForLoggedInDeveloper(true);
-
-        // set is: parameter according to the search category
-        // for the case we are searching for both we don't have to set the parameter
-        if (category.Equals(SearchCategory.Issues))
-        {
-            request.Is = new List<Octokit.IssueIsQualifier>() { Octokit.IssueIsQualifier.Issue };
-        }
-        else if (category.Equals(SearchCategory.PullRequests))
-        {
-            request.Is = new List<Octokit.IssueIsQualifier>() { Octokit.IssueIsQualifier.PullRequest };
-        }
-
-        var octokitResult = await client.Search.SearchIssues(request);
-        if (octokitResult == null)
-        {
-            Log.Logger()?.ReportDebug($"No issues or PRs found.");
-            SendResultsAvailable(new List<Octokit.Issue>(), initiator);
-        }
-        else
-        {
-            Log.Logger()?.ReportDebug(Name, $"Results contain {octokitResult.Items.Count} items.");
-            SendResultsAvailable(octokitResult.Items, initiator);
-        }
-    }
-
-    private void SendResultsAvailable(IEnumerable<Octokit.Issue> results, string initiator)
-    {
-        if (OnResultsAvailable != null)
-        {
-            Log.Logger()?.ReportInfo(Name, $"Sending search results available Event, of type: {initiator}");
-            OnResultsAvailable.Invoke(results, initiator);
-        }
     }
 
     public async Task UpdateIssuesForRepositoryAsync(string fullName, RequestOptions? options = null)
