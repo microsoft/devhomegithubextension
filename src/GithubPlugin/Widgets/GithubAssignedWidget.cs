@@ -194,9 +194,12 @@ internal class GithubAssignedWidget : GithubWidget
                 },
                 UsePublicClientAsFallback = true,
             };
-
+            SearchIssuesRequest request = new SearchIssuesRequest()
+            {
+                Assignee = AssignedToName,
+            };
             var dataManager = GitHubDataManager.CreateInstance();
-            dataManager?.GetItemsForAssignedUser(AssignedToName, ShowCategory, requestOptions);
+            dataManager?.SearchForGithubIssuesOrPRs(request, Name, ShowCategory, requestOptions);
             Log.Logger()?.ReportInfo(Name, ShortId, $"Requested data update for Assigned to {AssignedToName}");
             DataState = WidgetDataState.Requested;
         }
@@ -311,7 +314,7 @@ internal class GithubAssignedWidget : GithubWidget
     private void DataManagerResultsAvailableHandler(IEnumerable<Octokit.Issue> results, string resultType)
     {
         Log.Logger()?.ReportDebug(Name, ShortId, $"Results Available Event: Type={resultType}");
-        if (resultType == "assigned")
+        if (resultType == Name)
         {
             Log.Logger()?.ReportInfo(Name, ShortId, $"Received matching repository update event.");
             LoadContentData(results);

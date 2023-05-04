@@ -158,16 +158,12 @@ public partial class GitHubDataManager : IGitHubDataManager, IDisposable
         SendRepositoryUpdateEvent(this, GetFullNameFromOwnerAndRepository(owner, name), new string[] { "Issues" });
     }
 
-    public async Task GetItemsForMentionedUser(string userName, SearchCategory category, RequestOptions? options = null)
+    public async Task SearchForGithubIssuesOrPRs(Octokit.SearchIssuesRequest request, string initiator, SearchCategory category, RequestOptions? options = null)
     {
-        Log.Logger()?.ReportInfo(Name, $"Getting issues with mentioned criteria: {userName}");
-        Octokit.SearchIssuesRequest request = new Octokit.SearchIssuesRequest()
-        {
-            State = Octokit.ItemState.Open,
-            Mentions = userName,
-            Archived = false,
-            PerPage = 10,
-        };
+        Log.Logger()?.ReportInfo(Name, $"Searching for issues or pull requests for widget {initiator}");
+        request.State = Octokit.ItemState.Open;
+        request.Archived = false;
+        request.PerPage = 10;
 
         var client = await GitHubClientProvider.Instance.GetClientForLoggedInDeveloper(true);
 
@@ -185,59 +181,22 @@ public partial class GitHubDataManager : IGitHubDataManager, IDisposable
         var octokitResult = await client.Search.SearchIssues(request);
         if (octokitResult == null)
         {
-            Log.Logger()?.ReportDebug($"No issues found.");
-            SendResultsAvailable(new List<Octokit.Issue>(), "mentions");
+            Log.Logger()?.ReportDebug($"No issues or PRs found.");
+            SendResultsAvailable(new List<Octokit.Issue>(), initiator);
         }
         else
         {
             Log.Logger()?.ReportDebug(Name, $"Results contain {octokitResult.Items.Count} items.");
-            SendResultsAvailable(octokitResult.Items, "mentions");
+            SendResultsAvailable(octokitResult.Items, initiator);
         }
     }
 
-    public async Task GetItemsForAssignedUser(string userName, SearchCategory category, RequestOptions? options = null)
-    {
-        Log.Logger()?.ReportInfo(Name, $"Getting issues with assigned criteria: {userName}");
-        Octokit.SearchIssuesRequest request = new Octokit.SearchIssuesRequest()
-        {
-            State = Octokit.ItemState.Open,
-            Assignee = userName,
-            Archived = false,
-            PerPage = 10,
-        };
-
-        var client = await GitHubClientProvider.Instance.GetClientForLoggedInDeveloper(true);
-
-        // set is: parameter according to the search category
-        // for the case we are searching for both we don't have to set the parameter
-        if (category.Equals(SearchCategory.Issues))
-        {
-            request.Is = new List<Octokit.IssueIsQualifier>() { Octokit.IssueIsQualifier.Issue };
-        }
-        else if (category.Equals(SearchCategory.PullRequests))
-        {
-            request.Is = new List<Octokit.IssueIsQualifier>() { Octokit.IssueIsQualifier.PullRequest };
-        }
-
-        var octokitResult = await client.Search.SearchIssues(request);
-        if (octokitResult == null)
-        {
-            Log.Logger()?.ReportDebug($"No issues found.");
-            SendResultsAvailable(new List<Octokit.Issue>(), "assigned");
-        }
-        else
-        {
-            Log.Logger()?.ReportDebug(Name, $"Results contain {octokitResult.Items.Count} items.");
-            SendResultsAvailable(octokitResult.Items, "assigned");
-        }
-    }
-
-    private void SendResultsAvailable(IEnumerable<Octokit.Issue> results, string resultType)
+    private void SendResultsAvailable(IEnumerable<Octokit.Issue> results, string initiator)
     {
         if (OnResultsAvailable != null)
         {
-            Log.Logger()?.ReportInfo(Name, $"Sending search results available Event, of type: {resultType}");
-            OnResultsAvailable.Invoke(results, resultType);
+            Log.Logger()?.ReportInfo(Name, $"Sending search results available Event, of type: {initiator}");
+            OnResultsAvailable.Invoke(results, initiator);
         }
     }
 

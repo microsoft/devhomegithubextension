@@ -36,7 +36,5 @@ public interface IGitHubDataManager : IDisposable
 
     Repository? GetRepository(string fullName);
 
-    Task GetItemsForMentionedUser(string userName, SearchCategory category, RequestOptions? options = null);
-
-    Task GetItemsForAssignedUser(string userName, SearchCategory category, RequestOptions? options = null);
+    Task SearchForGithubIssuesOrPRs(Octokit.SearchIssuesRequest request, string initiator, SearchCategory category, RequestOptions? options = null);
 }

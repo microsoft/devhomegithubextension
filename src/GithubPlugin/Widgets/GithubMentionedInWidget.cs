@@ -175,8 +175,13 @@ internal class GithubMentionedInWidget : GithubWidget
                 UsePublicClientAsFallback = true,
             };
 
+            SearchIssuesRequest request = new SearchIssuesRequest()
+            {
+                Mentions = MentionedName,
+            };
+
             var dataManager = GitHubDataManager.CreateInstance();
-            dataManager?.GetItemsForMentionedUser(MentionedName, ShowCategory, requestOptions);
+            dataManager?.SearchForGithubIssuesOrPRs(request, Name, ShowCategory, requestOptions);
             Log.Logger()?.ReportInfo(Name, ShortId, $"Requested data update for {mentionedName}");
             DataState = WidgetDataState.Requested;
         }
@@ -285,7 +290,7 @@ internal class GithubMentionedInWidget : GithubWidget
     private void DataManagerResultsAvailableHandler(IEnumerable<Octokit.Issue> results, string resultType)
     {
         Log.Logger()?.ReportDebug(Name, ShortId, $"Results Available Event: Type={resultType}");
-        if (resultType == "mentions")
+        if (resultType == Name)
         {
             Log.Logger()?.ReportInfo(Name, ShortId, $"Received matching repository update event.");
             LoadContentData(results);
