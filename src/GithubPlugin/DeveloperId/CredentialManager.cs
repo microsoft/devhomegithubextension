@@ -58,4 +58,7 @@ public static class CredentialManager
     [DllImport("advapi32.dll", EntryPoint = "CredEnumerateW", CharSet = CharSet.Unicode, SetLastError = true)]
     [return: MarshalAs(UnmanagedType.Bool)]
     internal static extern bool CredEnumerate(string filter, uint flags, out uint count, out IntPtr credentials);
+
+    [DllImport("advapi32.dll", EntryPoint = "CredFree", CharSet = CharSet.Unicode)]
+    internal static extern void CredFree(IntPtr buffer);
 }

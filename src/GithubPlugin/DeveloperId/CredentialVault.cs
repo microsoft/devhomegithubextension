@@ -19,8 +19,6 @@ internal static class CredentialVault
 
     internal static void SaveAccessTokenToVault(string loginId, SecureString? accessToken)
     {
-        // TODO: Encryption can be added here
-
         // Initialize a credential object
         CREDENTIAL credential = new CREDENTIAL
         {
@@ -44,12 +42,22 @@ internal static class CredentialVault
             throw new ArgumentNullException(nameof(accessToken));
         }
 
-        // Store credential under Windows Credentials inside CredMan
-        var isCredentialSaved = CredWrite(credential, 0);
-        if (!isCredentialSaved)
+        // Store credential under Windows Credentials inside Credential Manager
+        try
         {
-            Log.Logger()?.ReportInfo($"Writing credentials to CredMan has failed");
-            throw new Win32Exception(Marshal.GetLastWin32Error());
+            var isCredentialSaved = CredWrite(credential, 0);
+            if (!isCredentialSaved)
+            {
+                Log.Logger()?.ReportInfo($"Writing credentials to Credential Manager has failed");
+                throw new Win32Exception(Marshal.GetLastWin32Error());
+            }
+        }
+        finally
+        {
+            if (credential.CredentialBlob != IntPtr.Zero)
+            {
+                Marshal.FreeCoTaskMem(credential.CredentialBlob);
+            }
         }
     }
 
@@ -59,53 +67,63 @@ internal static class CredentialVault
         var isCredentialDeleted = CredDelete(targetCredentialToDelete, CRED_TYPE.GENERIC, 0);
         if (!isCredentialDeleted)
         {
-            Log.Logger()?.ReportInfo($"Deleting credentials to CredMan has failed");
+            Log.Logger()?.ReportInfo($"Deleting credentials from Credential Manager has failed");
             throw new Win32Exception(Marshal.GetLastWin32Error());
         }
     }
 
     internal static PasswordCredential GetCredentialFromLocker(string loginId)
     {
-        // Decryption can be added here
         var credentialNameToRetrieve = CredentialVaultConfiguration.CredResourceName + ": " + loginId;
-        IntPtr ptrToCredential;
+        IntPtr ptrToCredential = IntPtr.Zero;
 
-        var isCredentialRetrieved = CredRead(credentialNameToRetrieve, CRED_TYPE.GENERIC, 0, out ptrToCredential);
-        if (!isCredentialRetrieved)
+        try
         {
-            Log.Logger()?.ReportInfo($"Retrieving credentials from CredMan has failed");
-            throw new Win32Exception(Marshal.GetLastWin32Error());
-        }
+            var isCredentialRetrieved = CredRead(credentialNameToRetrieve, CRED_TYPE.GENERIC, 0, out ptrToCredential);
+            if (!isCredentialRetrieved)
+            {
+                Log.Logger()?.ReportInfo($"Retrieving credentials from Credential Manager has failed");
+                throw new Win32Exception(Marshal.GetLastWin32Error());
+            }
 
-        CREDENTIAL credentialObject;
-        if (ptrToCredential != IntPtr.Zero)
-        {
+            CREDENTIAL credentialObject;
+            if (ptrToCredential != IntPtr.Zero)
+            {
 #pragma warning disable CS8605 // Unboxing a possibly null value.
-            credentialObject = (CREDENTIAL)Marshal.PtrToStructure(ptrToCredential, typeof(CREDENTIAL));
+                credentialObject = (CREDENTIAL)Marshal.PtrToStructure(ptrToCredential, typeof(CREDENTIAL));
 #pragma warning restore CS8605 // Unboxing a possibly null value.
 
+            }
+            else
+            {
+                Log.Logger()?.ReportInfo("No credentials found for this DeveloperId");
+                throw new ArgumentOutOfRangeException(loginId);
+            }
+
+            var accessTokenInChars = new char[credentialObject.CredentialBlobSize / 2];
+            Marshal.Copy(credentialObject.CredentialBlob, accessTokenInChars, 0, accessTokenInChars.Length);
+
+            SecureString accessToken = new SecureString();
+            for (var i = 0; i < accessTokenInChars.Length; i++)
+            {
+                accessToken.AppendChar(accessTokenInChars[i]);
+
+                // Zero out characters after they are copied over from an unmanaged to managed type
+                accessTokenInChars[i] = '\0';
+            }
+
+            accessToken.MakeReadOnly();
+
+            PasswordCredential credential = new PasswordCredential(CredentialVaultConfiguration.CredResourceName, loginId, new NetworkCredential(string.Empty, accessToken).Password);
+            return credential;
         }
-        else
+        finally
         {
-            Log.Logger()?.ReportInfo("No credentials found for this DeveloperId");
-            throw new ArgumentOutOfRangeException(loginId);
+            if (ptrToCredential != IntPtr.Zero)
+            {
+                CredFree(ptrToCredential);
+            }
         }
-
-        var accessTokenInChars = new char[credentialObject.CredentialBlobSize / 2];
-        Marshal.Copy(credentialObject.CredentialBlob, accessTokenInChars, 0, accessTokenInChars.Length);
-
-        SecureString accessToken = new SecureString();
-        for (var i = 0; i < accessTokenInChars.Length; i++)
-        {
-            accessToken.AppendChar(accessTokenInChars[i]);
-            accessTokenInChars[i] = '\0';
-        }
-
-        accessToken.MakeReadOnly();
-
-        PasswordCredential credential = new PasswordCredential(CredentialVaultConfiguration.CredResourceName, loginId, new NetworkCredential(string.Empty, accessToken).Password);
-
-        return credential;
     }
 
     public static IEnumerable<string> GetAllSavedLoginIds()
