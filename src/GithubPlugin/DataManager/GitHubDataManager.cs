@@ -8,7 +8,6 @@ using GitHubPlugin.Helpers;
 using Windows.Storage;
 
 namespace GitHubPlugin;
-
 public partial class GitHubDataManager : IGitHubDataManager, IDisposable
 {
     public static event DataManagerUpdateEventHandler? OnUpdate;

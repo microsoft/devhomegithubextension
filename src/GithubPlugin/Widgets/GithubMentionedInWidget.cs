@@ -1,14 +1,10 @@
 ﻿// Copyright (c) Microsoft Corporation and Contributors
 // Licensed under the MIT license.
 
-using System.Text;
 using System.Text.Json;
 using System.Text.Json.Nodes;
-using GitHubPlugin.Client;
 using GitHubPlugin.DataManager;
-using GitHubPlugin.DataModel;
 using GitHubPlugin.Helpers;
-using GitHubPlugin.Widgets.Enums;
 using Microsoft.Windows.Widgets.Providers;
 using Octokit;
 
