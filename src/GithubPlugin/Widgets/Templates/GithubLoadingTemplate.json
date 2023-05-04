@@ -10,13 +10,14 @@
                     "type": "TextBlock",
                     "text": "%Widget_Template/Loading%",
                     "wrap": true,
+                    "weight": "bolder",
                     "horizontalAlignment": "Center"
                 }
             ],
             "horizontalAlignment": "Center",
             "verticalContentAlignment": "Center",
-            "style": "accent",
-            "spacing": "ExtraLarge",
+            "spacing": "extraLarge",
+            "height": "stretch",
             "separator": true
         }
     ]

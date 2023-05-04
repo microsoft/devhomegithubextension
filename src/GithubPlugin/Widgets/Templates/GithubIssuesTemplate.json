@@ -35,7 +35,7 @@
     },
     {
       "type": "Container",
-      "$when":  "${(count(issues) == 0)}",
+      "$when": "${(count(issues) == 0)}",
       "items": [
         {
           "type": "TextBlock",
@@ -49,58 +49,64 @@
       "verticalContentAlignment": "center"
     },
     {
-      "$data": "${issues}",
-      "type": "ColumnSet",
-      "style": "emphasis",
-      "spacing": "small",
-      "selectAction": {
-        "type": "Action.OpenUrl",
-        "url": "${url}",
-        "tooltip": "%Widget_Template_Tooltip/OpenIssue%"
-      },
-      "columns": [
+      "type": "Container",
+      "spacing": "default",
+      "items": [
         {
-          "type": "Column",
-          "width": "12px",
-          "items": [
+          "$data": "${issues}",
+          "type": "ColumnSet",
+          "style": "emphasis",
+          "spacing": "small",
+          "selectAction": {
+            "type": "Action.OpenUrl",
+            "url": "${url}",
+            "tooltip": "%Widget_Template_Tooltip/OpenIssue%"
+          },
+          "columns": [
             {
-              "type": "Image",
-              "style": "Person",
-              "url": "data:image/png;base64,${icon}",
-              "size": "small"
-            }
-          ]
-        },
-        {
-          "type": "Column",
-          "width": "stretch",
-          "items": [
-            {
-              "type": "TextBlock",
-              "size": "medium",
-              "weight": "bolder",
-              "text": "${title}",
-              "wrap": true,
-              "maxLines": 2
-            },
-            {
-              "type": "LabelGroup",
-              "labels": [
+              "type": "Column",
+              "width": "12px",
+              "items": [
                 {
-                  "$data": "${labels}",
-                  "text": "${name}",
-                  "color": "${color}"
+                  "type": "Image",
+                  "style": "Person",
+                  "url": "data:image/png;base64,${icon}",
+                  "size": "small"
                 }
               ]
             },
             {
-              "type": "TextBlock",
-              "size": "small",
-              "spacing": "small",
-              "text": "#${number} %Widget_Template/Opened% {{DATE(${formatDateTime(date, 'yyyy-MM-ddTHH:mm:ssZ')}, COMPACT)}} %Widget_Template/By% ${user}",
-              "isSubtle": true,
-              "wrap": true,
-              "maxLines": 2
+              "type": "Column",
+              "width": "stretch",
+              "items": [
+                {
+                  "type": "TextBlock",
+                  "size": "medium",
+                  "weight": "bolder",
+                  "text": "${title}",
+                  "wrap": true,
+                  "maxLines": 2
+                },
+                {
+                  "type": "LabelGroup",
+                  "labels": [
+                    {
+                      "$data": "${labels}",
+                      "text": "${name}",
+                      "color": "${color}"
+                    }
+                  ]
+                },
+                {
+                  "type": "TextBlock",
+                  "size": "small",
+                  "spacing": "small",
+                  "text": "#${number} %Widget_Template/Opened% {{DATE(${formatDateTime(date, 'yyyy-MM-ddTHH:mm:ssZ')}, COMPACT)}} %Widget_Template/By% ${user}",
+                  "isSubtle": true,
+                  "wrap": true,
+                  "maxLines": 2
+                }
+              ]
             }
           ]
         }
