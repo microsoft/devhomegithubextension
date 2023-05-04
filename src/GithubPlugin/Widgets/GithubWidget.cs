@@ -188,7 +188,7 @@ public abstract class GithubWidget : WidgetImpl
     public string GetConfiguration(string data)
     {
         var configurationData = new JsonObject();
-        configurationData.Add("submitIcon", IconLoader.GetIconAsBase64("arrow28.png"));
+        configurationData.Add("submitIcon", IconLoader.GetIconAsBase64("arrow.png"));
 
         if (data == string.Empty)
         {

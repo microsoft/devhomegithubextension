@@ -60,9 +60,6 @@
     <Content Update="Widgets\Assets\arrow.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Update="Widgets\Assets\arrow28.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
     <Content Update="Widgets\Assets\arrowicon.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
