@@ -144,7 +144,75 @@
                       </LightMode>
                     </ThemeResources>
                   </Definition>
-                </Definitions>
+                  <Definition Id="GitHub_MentionedIns" DisplayName="Mentioned In" Description="List of comments the user is mentioned in in a GitHub repository.">
+                    <Capabilities>
+                      <Capability>
+                        <Size Name="medium" />
+                      </Capability>
+                      <Capability>
+                        <Size Name="large" />
+                      </Capability>
+                    </Capabilities>
+                    <ThemeResources>
+                      <Icons>
+                        <Icon Path="Widgets\Assets\GitHubLogo_Light.jpg" />
+                      </Icons>
+                      <Screenshots>
+                        <Screenshot Path="Widgets\Assets\screenshot.png" DisplayAltText="For accessibility" />
+                      </Screenshots>
+                      <DarkMode>
+                        <Icons>
+                          <Icon Path="Widgets\Assets\GitHubLogo_Dark.png" />
+                        </Icons>
+                        <Screenshots>
+                          <Screenshot Path="Widgets\Assets\screenshot.png" DisplayAltText="For accessibility" />
+                        </Screenshots>
+                      </DarkMode>
+                      <LightMode>
+                        <Icons>
+                          <Icon Path="Widgets\Assets\GitHubLogo_Light.png" />
+                        </Icons>
+                        <Screenshots>
+                          <Screenshot Path="Widgets\Assets\screenshot.png" />
+                        </Screenshots>
+                      </LightMode>
+                    </ThemeResources>
+                  </Definition>
+                  <Definition Id="GitHub_Assigneds" DisplayName="Asigned PRs and Issues" Description="List of Pull Requests and Issues assigned to the user in a GitHub repository.">
+                    <Capabilities>
+                      <Capability>
+                        <Size Name="medium" />
+                      </Capability>
+                      <Capability>
+                        <Size Name="large" />
+                      </Capability>
+                    </Capabilities>
+                    <ThemeResources>
+                      <Icons>
+                        <Icon Path="Widgets\Assets\GitHubLogo_Light.jpg" />
+                      </Icons>
+                      <Screenshots>
+                        <Screenshot Path="Widgets\Assets\screenshot.png" DisplayAltText="For accessibility" />
+                      </Screenshots>
+                      <DarkMode>
+                        <Icons>
+                          <Icon Path="Widgets\Assets\GitHubLogo_Dark.png" />
+                        </Icons>
+                        <Screenshots>
+                          <Screenshot Path="Widgets\Assets\screenshot.png" DisplayAltText="For accessibility" />
+                        </Screenshots>
+                      </DarkMode>
+                      <LightMode>
+                        <Icons>
+                          <Icon Path="Widgets\Assets\GitHubLogo_Light.png" />
+                        </Icons>
+                        <Screenshots>
+                          <Screenshot Path="Widgets\Assets\screenshot.png" />
+                        </Screenshots>
+                      </LightMode>
+                    </ThemeResources>
+                  </Definition>
+				</Definitions>
               </WidgetProvider>
             </uap3:Properties>
           </uap3:AppExtension>

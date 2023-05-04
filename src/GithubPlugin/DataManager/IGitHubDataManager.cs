@@ -1,6 +1,7 @@
 ﻿// Copyright (c) Microsoft Corporation and Contributors
 // Licensed under the MIT license.
 
+using GitHubPlugin.DataManager;
 using GitHubPlugin.DataModel;
 
 namespace GitHubPlugin;
@@ -34,4 +35,8 @@ public interface IGitHubDataManager : IDisposable
     Repository? GetRepository(string owner, string name);
 
     Repository? GetRepository(string fullName);
+
+    Task GetItemsForMentionedUser(string userName, SearchCategory category, RequestOptions? options = null);
+
+    Task GetItemsForAssignedUser(string userName, SearchCategory category, RequestOptions? options = null);
 }

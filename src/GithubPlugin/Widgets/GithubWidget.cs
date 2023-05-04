@@ -354,7 +354,7 @@ public abstract class GithubWidget : WidgetImpl
         Log.Logger()?.ReportDebug(Name, ShortId, GetCurrentState());
     }
 
-    private void SetActive()
+    protected void SetActive()
     {
         ActivityState = WidgetActivityState.Active;
         Page = WidgetPageState.Content;
@@ -368,7 +368,17 @@ public abstract class GithubWidget : WidgetImpl
         UpdateWidget();
     }
 
-    private void SetInactive()
+    protected void SetLoading()
+    {
+        ActivityState = WidgetActivityState.Active;
+        Page = WidgetPageState.Loading;
+
+        _ = DataUpdater.Start();
+        LogCurrentState();
+        UpdateWidget();
+    }
+
+    protected void SetInactive()
     {
         ActivityState = WidgetActivityState.Inactive;
         DataUpdater.Stop();
@@ -377,7 +387,7 @@ public abstract class GithubWidget : WidgetImpl
         LogCurrentState();
     }
 
-    private void SetConfigure()
+    protected void SetConfigure()
     {
         // If moving to configure, reset the throttle so when we update to Active, the first update
         // will not get throttled.
@@ -389,7 +399,7 @@ public abstract class GithubWidget : WidgetImpl
         UpdateWidget();
     }
 
-    private void SetSignIn()
+    protected void SetSignIn()
     {
         Page = WidgetPageState.SignIn;
         ActivityState = WidgetActivityState.SignIn;
@@ -441,6 +451,11 @@ public abstract class GithubWidget : WidgetImpl
 internal class DataPayload
 {
     public string? Repo
+    {
+        get; set;
+    }
+
+    public string? ShowCategory
     {
         get; set;
     }
