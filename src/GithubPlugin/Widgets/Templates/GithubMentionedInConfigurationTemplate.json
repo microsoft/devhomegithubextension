@@ -38,7 +38,7 @@
         },
         {
             "type": "TextBlock",
-            "text": "Show ${showCategory} in widget",
+            "text": "%Widget_Template/ShowInWidget%:${showCategory}",
             "wrap": true,
             "horizontalAlignment": "Left",
             "spacing": "None",
@@ -48,7 +48,7 @@
         },
         {
             "type": "TextBlock",
-            "text": "Select what items appear in this widget",
+            "text": "%Widget_Template/SelectInfoText%",
             "wrap": true,
             "horizontalAlignment": "Left",
             "spacing": "None",
@@ -64,15 +64,15 @@
             "value": "${showCategory}",
             "choices": [
                 {
-                    "title": "Issues",
+                    "title": "%Widget_Template/Issues%",
                     "value": "Issues"
                 },
                 {
-                    "title": "Pull Requests",
+                    "title": "%Widget_Template/PullRequests%",
                     "value": "PRs"
                 },
                 {
-                    "title": "Isuues & Pull Requests",
+                    "title": "%Widget_Template/IssuesAndPullRequests%",
                     "value": "Issues & PRs"
                 }
             ]
@@ -81,7 +81,7 @@
     "actions": [
         {
             "type": "Action.Execute",
-            "title": "Submit",
+            "title": "%Widget_Template_Button/Submit%",
             "horizontalAlignment": "Center",
             "verb": "Submit",
             "associatedInputs": "auto"

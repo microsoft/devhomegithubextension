@@ -314,4 +314,20 @@
     <value>mentioned</value>
     <comment>Shown in Widget</comment>
   </data>
+  <data name="Widget_Template/SelectInfoText" xml:space="preserve">
+    <value>Select what items appear in this widget</value>
+    <comment>Shown in Widget</comment>
+  </data>
+  <data name="Widget_Template.IssuesAndPullRequests" xml:space="preserve">
+    <value>Issues &amp; Pull requests </value>
+    <comment>Shown in Widget</comment>
+  </data>
+  <data name="Widget_Template.ShowInWidget" xml:space="preserve">
+    <value>Show in widget</value>
+    <comment>Shown in Widget</comment>
+  </data>
+  <data name="Widget_Template/PR_Issue_description" xml:space="preserve">
+    <value>Items in widget will appear in chronological order from when the pull request or issue was last updated</value>
+    <comment>Shown in Widget</comment>
+  </data>
 </root>

@@ -82,7 +82,11 @@ public static class Resources
             "Widget_Template/Mentioned",
             "Widget_Template/MentionedLow",
             "Widget_Template/Mentioned_user",
+            "Widget_Template/ShowInWidget",
+            "Widget_Template/IssuesAndPullRequests",
             "Widget_Template/Open",
+            "Widget_Template/SelectInfoText",
+            "Widget_Template/PR_Issue_description",
         };
     }
 }
