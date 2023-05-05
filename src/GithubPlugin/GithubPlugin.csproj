@@ -57,10 +57,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Widgets\Assets\" />
-  </ItemGroup>
-
-  <ItemGroup>
+    <Content Update="Widgets\Assets\arrow.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Update="Widgets\Assets\gh_logo.jpg">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -68,6 +67,12 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Update="Widgets\Assets\GitHubLogo_Light.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Update="Widgets\Assets\issues.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Update="Widgets\Assets\pulls.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Update="Widgets\Assets\screenshot.png">
