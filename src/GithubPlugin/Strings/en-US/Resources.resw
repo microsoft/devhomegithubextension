@@ -248,7 +248,7 @@
     <value>has logged in successfully! You may close this window.</value>
   </data>
   <data name="LoginUI_WaitingPage_Text" xml:space="preserve">
-    <value>Waiting for browser ...Please check your browser in the background</value>
+    <value>Waiting for browser...</value>
   </data>
   <data name="Widget_Template.SignInRequired" xml:space="preserve">
     <value>You must sign in to view this widget's content.</value>
@@ -285,5 +285,8 @@
   <data name="Widget_Template.EmptyPulls" xml:space="preserve">
     <value>There are no pull requests in this repository.</value>
     <comment>Shown in Widget, when there are no pull requests</comment>
+  </data>
+  <data name="LoginUI_WaitingPageBrowserLaunch_Text" xml:space="preserve">
+    <value>Note: Browser may have launched in the background.</value>
   </data>
 </root>
