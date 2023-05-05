@@ -15,7 +15,7 @@ public partial class GitHubDataManager : IGitHubDataManager, IDisposable
     private static readonly string LastUpdatedKeyName = "LastUpdated";
     private static readonly TimeSpan NotificationRetentionTime = TimeSpan.FromDays(7);
     private static readonly TimeSpan SearchRetentionTime = TimeSpan.FromDays(7);
-    private static readonly TimeSpan PullRequestStaleTime = TimeSpan.FromDays(30);
+    private static readonly TimeSpan PullRequestStaleTime = TimeSpan.FromDays(1);
     private static readonly long CheckSuiteIdDependabot = 29110;
 
     private static readonly string Name = nameof(GitHubDataManager);

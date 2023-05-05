@@ -235,7 +235,7 @@ internal class GithubAssignedWidget : GithubWidget
                     { "number", item.Number },
                     { "date", TimeSpanHelper.TimeSpanToDisplayString(DateTime.Now - item.CreatedAt) },
                     { "user", item.User.Login },
-                    { "iconUrl", item.PullRequest == null ? GithubIssuesWidget.IssuesIconData : GithubPullsWidget.PullsIconData },
+                    { "iconUrl", IconLoader.GetIconAsBase64(item.PullRequest == null ? "issues.png" : "pulls.png") },
                 };
 
                 var issueLabels = new JsonArray();
