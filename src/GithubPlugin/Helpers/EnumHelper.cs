@@ -2,42 +2,29 @@
 // Licensed under the MIT license.
 using System.Globalization;
 using GitHubPlugin.DataManager;
+using GitHubPlugin.Widgets.Enums;
 
 namespace GitHubPlugin.Helpers;
 public class EnumHelper
 {
-    public static string SearchCategoryToString(SearchCategory searchCategory)
+    public static string SearchCategoryToString(SearchCategory searchCategory) => searchCategory switch
     {
-        switch (searchCategory)
-        {
-            case SearchCategory.Issues:
-                return "Issues";
-            case SearchCategory.PullRequests:
-                return "PRs";
-            case SearchCategory.IssuesAndPullRequests:
-                return "Issues & PRs";
-            default:
-                return "unknown";
-        }
-    }
+        SearchCategory.Issues => "Issues",
+        SearchCategory.PullRequests => "PRs",
+        SearchCategory.IssuesAndPullRequests => "Issues & PRs",
+        _ => "unknown"
+    };
 
     public static SearchCategory StringToSearchCategory(string value)
     {
-        if (value == "Issues")
+        try
         {
-            return SearchCategory.Issues;
+            return Enum.Parse<SearchCategory>(value);
         }
-
-        if (value == "PRs")
+        catch (Exception)
         {
-            return SearchCategory.PullRequests;
+            // Invalid value.
+            return SearchCategory.Unknown;
         }
-
-        if (value == "Issues & PRs")
-        {
-            return SearchCategory.IssuesAndPullRequests;
-        }
-
-        return SearchCategory.Unknown;
     }
 }
