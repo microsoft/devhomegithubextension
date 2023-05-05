@@ -31,20 +31,20 @@ internal static class CredentialVault
             Comment = string.Empty,
         };
 
-        if (accessToken != null)
-        {
-            credential.CredentialBlob = Marshal.SecureStringToCoTaskMemUnicode(accessToken);
-            credential.CredentialBlobSize = accessToken.Length * 2;
-        }
-        else
-        {
-            Log.Logger()?.ReportInfo($"The access token is null for the loginId provided");
-            throw new ArgumentNullException(nameof(accessToken));
-        }
-
-        // Store credential under Windows Credentials inside Credential Manager
         try
         {
+            if (accessToken != null)
+            {
+                credential.CredentialBlob = Marshal.SecureStringToCoTaskMemUnicode(accessToken);
+                credential.CredentialBlobSize = accessToken.Length * 2;
+            }
+            else
+            {
+                Log.Logger()?.ReportInfo($"The access token is null for the loginId provided");
+                throw new ArgumentNullException(nameof(accessToken));
+            }
+
+            // Store credential under Windows Credentials inside Credential Manager
             var isCredentialSaved = CredWrite(credential, 0);
             if (!isCredentialSaved)
             {
@@ -128,44 +128,55 @@ internal static class CredentialVault
 
     public static IEnumerable<string> GetAllSavedLoginIds()
     {
-        IntPtr[] allCredentials;
-        uint count;
+        IntPtr ptrToCredential = IntPtr.Zero;
 
-        IntPtr ptrToCredential;
-        if (CredEnumerate(CredentialVaultConfiguration.CredResourceName + "*", 0, out count, out ptrToCredential) != false)
+        try
         {
-            allCredentials = new IntPtr[count];
-            Marshal.Copy(ptrToCredential, allCredentials, 0, (int)count);
-        }
-        else
-        {
-            var error = Marshal.GetLastWin32Error();
+            IntPtr[] allCredentials;
+            uint count;
 
-            // NotFound is expected and can be ignored
-            if (error == 1168)
+            if (CredEnumerate(CredentialVaultConfiguration.CredResourceName + "*", 0, out count, out ptrToCredential) != false)
             {
-                return Enumerable.Empty<string>();
+                allCredentials = new IntPtr[count];
+                Marshal.Copy(ptrToCredential, allCredentials, 0, (int)count);
             }
             else
             {
-                throw new InvalidOperationException();
+                var error = Marshal.GetLastWin32Error();
+
+                // NotFound is expected and can be ignored
+                if (error == 1168)
+                {
+                    return Enumerable.Empty<string>();
+                }
+                else
+                {
+                    throw new InvalidOperationException();
+                }
+            }
+
+            if (count is 0)
+            {
+                return Enumerable.Empty<string>();
+            }
+
+            var allLoginIds = new List<string>();
+            for (var i = 0; i < allCredentials.Length; i++)
+            {
+#pragma warning disable CS8605 // Unboxing a possibly null value.
+                CREDENTIAL credential = (CREDENTIAL)Marshal.PtrToStructure(allCredentials[i], typeof(CREDENTIAL));
+#pragma warning restore CS8605 // Unboxing a possibly null value.
+                allLoginIds.Add(credential.UserName);
+            }
+
+            return allLoginIds;
+        }
+        finally
+        {
+            if (ptrToCredential != IntPtr.Zero)
+            {
+                CredFree(ptrToCredential);
             }
         }
-
-        if (count is 0)
-        {
-            return Enumerable.Empty<string>();
-        }
-
-        var allLoginIds = new List<string>();
-        for (var i = 0; i < allCredentials.Length; i++)
-        {
-#pragma warning disable CS8605 // Unboxing a possibly null value.
-            CREDENTIAL credential = (CREDENTIAL)Marshal.PtrToStructure(allCredentials[i], typeof(CREDENTIAL));
-#pragma warning restore CS8605 // Unboxing a possibly null value.
-            allLoginIds.Add(credential.UserName);
-        }
-
-        return allLoginIds;
     }
 }
