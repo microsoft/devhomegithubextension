@@ -288,7 +288,6 @@ internal class LoginUIController : IPluginAdaptiveCardController
             ""text"": """ + $"{loader.GetString("LoginUI_WaitingPageBrowserLaunch_Text")}" + @""",
             ""isSubtle"": false,
             ""horizontalAlignment"": ""Center"",
-            ""spacing"": ""E"",
             ""weight"": ""Lighter""
         }
     ],
