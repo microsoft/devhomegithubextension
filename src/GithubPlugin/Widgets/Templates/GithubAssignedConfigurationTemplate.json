@@ -69,11 +69,11 @@
                 },
                 {
                     "title": "%Widget_Template/PullRequests%",
-                    "value": "PRs"
+                    "value": "PullRequests"
                 },
                 {
                     "title": "%Widget_Template/IssuesAndPullRequests%",
-                    "value": "Issues & PRs"
+                    "value": "IssuesAndPullRequests"
                 }
             ]
         }

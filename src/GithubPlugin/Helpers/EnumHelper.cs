@@ -10,8 +10,8 @@ public class EnumHelper
     public static string SearchCategoryToString(SearchCategory searchCategory) => searchCategory switch
     {
         SearchCategory.Issues => "Issues",
-        SearchCategory.PullRequests => "PRs",
-        SearchCategory.IssuesAndPullRequests => "Issues & PRs",
+        SearchCategory.PullRequests => "PullRequests",
+        SearchCategory.IssuesAndPullRequests => "IssuesAndPullRequests",
         _ => "unknown"
     };
 

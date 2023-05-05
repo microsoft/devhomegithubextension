@@ -209,7 +209,7 @@ internal class GithubMentionedInWidget : GithubWidget
                     { "title", item.Title },
                     { "url", item.HtmlUrl },
                     { "number", item.Number },
-                    { "date", TimeSpanHelper.TimeSpanToDisplayString(DateTime.Now - item.CreatedAt) },
+                    { "date", TimeSpanHelper.TimeSpanToDisplayString(DateTime.Now - item.CreatedAt, Log.Logger()) },
                     { "user", item.User.Login },
                     { "iconUrl", IconLoader.GetIconAsBase64(item.PullRequest == null ? "issues.png" : "pulls.png") },
                 };
