@@ -455,11 +455,6 @@ internal class DataPayload
     {
         get; set;
     }
-
-    public string? ShowCategory
-    {
-        get; set;
-    }
 }
 
 [JsonSourceGenerationOptions(WriteIndented = true)]

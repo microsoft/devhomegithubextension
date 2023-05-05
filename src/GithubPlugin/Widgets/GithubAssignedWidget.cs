@@ -3,6 +3,7 @@
 
 using System.Text.Json;
 using System.Text.Json.Nodes;
+using System.Text.Json.Serialization;
 using GitHubPlugin.DataManager;
 using GitHubPlugin.Helpers;
 using Microsoft.Windows.Widgets.Providers;
@@ -116,7 +117,7 @@ internal class GithubAssignedWidget : GithubWidget
     {
         if (actionInvokedArgs.Verb == "Submit")
         {
-            var dataObject = JsonSerializer.Deserialize(actionInvokedArgs.Data, SourceGenerationContext.Default.DataPayload);
+            var dataObject = JsonSerializer.Deserialize(actionInvokedArgs.Data, SourceGenerationContextAssignedWidget.Default.DataPayloadAssignedWidget);
             if (dataObject != null && dataObject.ShowCategory != null)
             {
                 ShowCategory = EnumHelper.StringToSearchCategory(dataObject.ShowCategory);
@@ -317,4 +318,18 @@ internal class GithubAssignedWidget : GithubWidget
             UpdateActivityState();
         }
     }
+}
+
+internal class DataPayloadAssignedWidget
+{
+    public string? ShowCategory
+    {
+        get; set;
+    }
+}
+
+[JsonSourceGenerationOptions(WriteIndented = true)]
+[JsonSerializable(typeof(DataPayloadAssignedWidget))]
+internal partial class SourceGenerationContextAssignedWidget : JsonSerializerContext
+{
 }
