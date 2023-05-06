@@ -73,6 +73,10 @@
   </ItemGroup>
 
   <ItemGroup>
+	<Folder Include="Widgets\Assets\" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Content Update="Widgets\Assets\arrow.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
