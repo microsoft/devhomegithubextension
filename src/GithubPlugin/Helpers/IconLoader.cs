@@ -2,7 +2,7 @@
 // Licensed under the MIT license.
 
 namespace GitHubPlugin.Helpers;
-internal class IconLoader
+public class IconLoader
 {
     private static readonly Dictionary<string, string> Base64ImageRegistry = new ();
 
@@ -18,7 +18,7 @@ internal class IconLoader
 
     private static string ConvertIconToDataString(string fileName)
     {
-        var path = Path.Combine(AppContext.BaseDirectory, "../../GitHubPlugin/Widgets/Assets/", fileName);
+        var path = Path.Combine(AppContext.BaseDirectory, @"Widgets/Assets/", fileName);
         var imageData = Convert.ToBase64String(File.ReadAllBytes(path.ToString()));
         return imageData;
     }
