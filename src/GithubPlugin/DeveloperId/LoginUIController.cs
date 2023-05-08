@@ -282,11 +282,18 @@ internal class LoginUIController : IPluginAdaptiveCardController
             ""weight"": ""Lighter"",
             ""height"": ""stretch"",
             ""style"": ""heading""
+        },
+        {
+            ""type"" : ""TextBlock"",
+            ""text"": """ + $"{loader.GetString("LoginUI_WaitingPageBrowserLaunch_Text")}" + @""",
+            ""isSubtle"": false,
+            ""horizontalAlignment"": ""Center"",
+            ""weight"": ""Lighter""
         }
     ],
     ""$schema"": ""http://adaptivecards.io/schemas/adaptive-card.json"",
     ""version"": ""1.5"",
-    ""minHeight"": ""350px""
+    ""minHeight"": ""100px""
 }
 ";
 
