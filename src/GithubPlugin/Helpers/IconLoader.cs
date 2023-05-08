@@ -8,13 +8,15 @@ public class IconLoader
 {
     private static readonly Dictionary<string, string> Base64ImageRegistry = new ();
 
+    protected static readonly string Name = nameof(IconLoader);
+
     public static string GetIconAsBase64(string filename)
     {
-        Log.Logger()?.ReportDebug("Icon Loader", $"Asking for icon: {filename}");
+        Log.Logger()?.ReportDebug(Name, $"Asking for icon: {filename}");
         if (!Base64ImageRegistry.ContainsKey(filename))
         {
             Base64ImageRegistry.Add(filename, ConvertIconToDataString(filename));
-            Log.Logger()?.ReportDebug("Icon Loader", $"The icon {filename} was converted and is now stored.");
+            Log.Logger()?.ReportDebug(Name, $"The icon {filename} was converted and is now stored.");
         }
 
         return Base64ImageRegistry[filename];
