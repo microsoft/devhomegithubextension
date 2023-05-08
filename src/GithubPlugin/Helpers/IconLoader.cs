@@ -1,6 +1,8 @@
 ﻿// Copyright (c) Microsoft Corporation and Contributors
 // Licensed under the MIT license.
 
+using GitHubPlugin.DataModel;
+
 namespace GitHubPlugin.Helpers;
 public class IconLoader
 {
@@ -8,9 +10,11 @@ public class IconLoader
 
     public static string GetIconAsBase64(string filename)
     {
+        Log.Logger()?.ReportDebug("Icon Loader", $"Asking for icon: {filename}");
         if (!Base64ImageRegistry.ContainsKey(filename))
         {
             Base64ImageRegistry.Add(filename, ConvertIconToDataString(filename));
+            Log.Logger()?.ReportDebug("Icon Loader", $"The icon {filename} was converted and is now stored.");
         }
 
         return Base64ImageRegistry[filename];
