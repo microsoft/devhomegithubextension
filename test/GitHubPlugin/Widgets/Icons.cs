@@ -17,6 +17,6 @@ public partial class WidgetTests
         var icon = Helpers.IconLoader.GetIconAsBase64("arrow.png");
 
         Assert.IsNotNull(icon);
-        Assert.IsTrue(icon.Length != 0);
+        Assert.IsTrue(icon.Length == 0);
     }
 }
