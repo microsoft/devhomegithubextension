@@ -385,4 +385,8 @@
   <data name="LoginUI_WaitingPageBrowserLaunch_Text" xml:space="preserve">
     <value>Note: Browser may have launched in the background.</value>
   </data>
+  <data name="WidgetTemplate_UnknownTime" xml:space="preserve">
+    <value>not known</value>
+    <comment>Shown in Widget</comment>
+  </data>
 </root>

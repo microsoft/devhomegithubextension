@@ -149,7 +149,7 @@ internal class GithubReviewWidget : GithubWidget
                     { "title", item.Title },
                     { "url", item.HtmlUrl },
                     { "number", item.Number },
-                    { "date", TimeSpanHelper.TimeSpanToDisplayString(DateTime.Now - item.CreatedAt, Log.Logger()) },
+                    { "date", TimeSpanHelper.DateTimeOffsetToDisplayString(item.UpdatedAt, Log.Logger()) },
                     { "user", item.User.Login },
                     { "iconUrl", IconLoader.GetIconAsBase64("pulls.png") },
                 };
