@@ -366,6 +366,22 @@
     <value>seconds ago</value>
     <comment>Shown in Widget</comment>
   </data>
+  <data name="Widget_Template/ReviewRequestedFrom" xml:space="preserve">
+    <value>Review requested from</value>
+    <comment>Shown in Widget</comment>
+  </data>
+  <data name="Widget_Template/PR_description" xml:space="preserve">
+    <value>Items in widget will appear in chronological order from when the pull request was last updated</value>
+    <comment>Shown in Widget</comment>
+  </data>
+  <data name="Widget_Template/PR_info" xml:space="preserve">
+    <value>Display pull requests where my review has been requested</value>
+    <comment>Shown in Widget</comment>
+  </data>
+  <data name="Widget_Template/ReviewRequestedTitle" xml:space="preserve">
+    <value>Pull requests, review requested</value>
+    <comment>Shown in Widget</comment>
+  </data>
   <data name="LoginUI_WaitingPageBrowserLaunch_Text" xml:space="preserve">
     <value>Note: Browser may have launched in the background.</value>
   </data>

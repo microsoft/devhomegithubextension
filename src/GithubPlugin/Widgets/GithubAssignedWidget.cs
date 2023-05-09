@@ -216,8 +216,6 @@ internal class GithubAssignedWidget : GithubWidget
 
         try
         {
-            using var dataManager = GitHubDataManager.CreateInstance();
-
             var issuesData = new JsonObject();
             var issuesArray = new JsonArray();
             issuesData.Add("openCount", items.Count());
