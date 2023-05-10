@@ -1,0 +1,90 @@
+{
+    "type": "AdaptiveCard",
+    "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+    "version": "1.5",
+    "body": [
+        {
+            "type": "Container",
+            "items": [
+                {
+                    "type": "TextBlock",
+                    "text": "%Widget_Template/AssignedTitle%",
+                    "wrap": true,
+                    "horizontalAlignment": "Center",
+                    "size": "Large",
+                    "weight": "Bolder"
+                },
+                {
+                    "type": "TextBlock",
+                    "text": "%Extension_Name/GitHub%",
+                    "wrap": true,
+                    "horizontalAlignment": "Center",
+                    "spacing": "None",
+                    "size": "Small",
+                    "isSubtle": true,
+                    "weight": "Lighter"
+                }
+            ]
+        },
+        {
+            "type": "TextBlock",
+            "text": "%Widget_Template/PR_Issue_description%",
+            "wrap": true,
+            "horizontalAlignment": "Center",
+            "spacing": "None",
+            "size": "Small",
+            "isSubtle": true,
+            "weight": "Lighter"
+        },
+        {
+            "type": "TextBlock",
+            "text": "%Widget_Template/ShowInWidget%:${showCategory}",
+            "wrap": true,
+            "horizontalAlignment": "Left",
+            "spacing": "None",
+            "size": "Small",
+            "isSubtle": true,
+            "weight": "Lighter"
+        },
+        {
+            "type": "TextBlock",
+            "text": "%Widget_Template/SelectInfoText%",
+            "wrap": true,
+            "horizontalAlignment": "Left",
+            "spacing": "None",
+            "size": "Small",
+            "isSubtle": true,
+            "weight": "Lighter"
+        },
+        {
+            "type": "Input.ChoiceSet",
+            "id": "ShowCategory",
+            "style": "compact",
+            "isMultiSelect": false,
+            "value": "${showCategory}",
+            "choices": [
+                {
+                    "title": "%Widget_Template/Issues%",
+                    "value": "Issues"
+                },
+                {
+                    "title": "%Widget_Template/PullRequests%",
+                    "value": "PullRequests"
+                },
+                {
+                    "title": "%Widget_Template/IssuesAndPullRequests%",
+                    "value": "IssuesAndPullRequests"
+                }
+            ]
+        }
+    ],
+    "actions": [
+        {
+            "type": "Action.Execute",
+            "title": "%Widget_Template_Button/Submit%",
+            "horizontalAlignment": "Center",
+            "verb": "Submit",
+            "associatedInputs": "auto"
+        }
+    ]
+}
