@@ -105,10 +105,26 @@ internal class GithubPullsWidget : GithubWidget
                     { "title", pullItem.Title },
                     { "url", pullItem.HtmlUrl },
                     { "number", pullItem.Number },
+                    { "date", pullItem.CreatedAt.ToLocalTime().ToStringInvariant() },
                     { "user", pullItem.Author.Login },
                     { "avatar", pullItem.Author.AvatarUrl },
                     { "icon", pullsIconData },
                 };
+
+                var labels = pullItem.Labels.ToList();
+                var pullLabels = new JsonArray();
+                foreach (var label in labels)
+                {
+                    var pullLabel = new JsonObject
+                    {
+                        { "name", label.Name },
+                        { "color", label.Color },
+                    };
+
+                    ((IList<JsonNode?>)pullLabels).Add(pullLabel);
+                }
+
+                pull.Add("labels", pullLabels);
 
                 ((IList<JsonNode?>)pullsArray).Add(pull);
             }
