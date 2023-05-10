@@ -202,8 +202,8 @@ public class Notification
             nb.SetDuration(AppNotificationDuration.Long);
             nb.AddArgument("htmlurl", HtmlUrl);
 
-            // TODO: "V" is standin for missing asset, which a presumably a green checkmark.
-            nb.AddText($"V {resLoader.GetString("Notifications_Toast_CheckRunSucceeded/Title")}");
+            // TODO: "V" is standin for missing asset, which a presumably a green checkmark. Currently, is the emoji ✅.
+            nb.AddText($"✅ {resLoader.GetString("Notifications_Toast_CheckRunSucceeded/Title")}");
             nb.AddText($"#{Identifier} - {Repository.FullName}", new AppNotificationTextProperties().SetMaxLines(1));
 
             // We want to show Author login but the AppNotification has a max 3 AddText calls, see:
