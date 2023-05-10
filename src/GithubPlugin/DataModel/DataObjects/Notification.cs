@@ -170,14 +170,14 @@ public class Notification
             nb.SetDuration(AppNotificationDuration.Long);
             nb.AddArgument("htmlurl", HtmlUrl);
 
-            // TODO: "X" is standin for missing asset, which a red "X".
-            nb.AddText($"X {resLoader.GetString("Notifications_Toast_CheckRunFailed/Title")}");
+            // TODO: "X" is standin for missing asset, which a red "X". Currently, is the emoji ❌.
+            nb.AddText($"❌ {resLoader.GetString("Notifications_Toast_CheckRunFailed/Title")}");
             nb.AddText($"#{Identifier} - {Repository.FullName}", new AppNotificationTextProperties().SetMaxLines(1));
 
             // We want to show Author login but the AppNotification has a max 3 AddText calls, see:
             // https://learn.microsoft.com/en-us/windows/windows-app-sdk/api/winrt/microsoft.windows.appnotifications.builder.appnotificationbuilder.addtext?view=windows-app-sdk-1.2
             // The newline is a workaround to the 3 line restriction to show the Author line.
-            nb.AddText(Title + Environment.NewLine + User.Login);
+            nb.AddText(Title + Environment.NewLine + "@" + User.Login);
             nb.AddButton(new AppNotificationButton(resLoader.GetString("Notifications_Toast_Button/Dismiss")).AddArgument("action", "dismiss"));
             AppNotificationManager.Default.Show(nb.BuildNotification());
 
@@ -202,14 +202,14 @@ public class Notification
             nb.SetDuration(AppNotificationDuration.Long);
             nb.AddArgument("htmlurl", HtmlUrl);
 
-            // TODO: "V" is standin for missing asset, which a presumably a green checkmark.
-            nb.AddText($"V {resLoader.GetString("Notifications_Toast_CheckRunSucceeded/Title")}");
+            // TODO: "V" is standin for missing asset, which a presumably a green checkmark. Currently, is the emoji ✅.
+            nb.AddText($"✅ {resLoader.GetString("Notifications_Toast_CheckRunSucceeded/Title")}");
             nb.AddText($"#{Identifier} - {Repository.FullName}", new AppNotificationTextProperties().SetMaxLines(1));
 
             // We want to show Author login but the AppNotification has a max 3 AddText calls, see:
             // https://learn.microsoft.com/en-us/windows/windows-app-sdk/api/winrt/microsoft.windows.appnotifications.builder.appnotificationbuilder.addtext?view=windows-app-sdk-1.2
             // The newline is a workaround to the 3 line restriction to show the Author line.
-            nb.AddText(Title + Environment.NewLine + User.Login);
+            nb.AddText(Title + Environment.NewLine + "@" + User.Login);
             nb.AddButton(new AppNotificationButton(resLoader.GetString("Notifications_Toast_Button/Dismiss")).AddArgument("action", "dismiss"));
             AppNotificationManager.Default.Show(nb.BuildNotification());
 
