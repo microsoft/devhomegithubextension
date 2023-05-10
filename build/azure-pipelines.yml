@@ -220,6 +220,14 @@ stages:
             buildPlatform: '${{ platform }}'
             buildConfiguration: '${{ configuration }}'
 
+        - task: PublishSymbols@2
+          displayName: Publish Symbols
+          inputs:
+            SearchPattern: '**/BuildOutput/**/*.pdb'
+            IndexSources: false
+            SymbolServerType: TeamServices
+            SymbolsProduct: DevHomeGitHubExtension
+
 - stage: Build_MsixBundle
   dependsOn: Build_Msix
   condition: in(dependencies.Build_Msix.result, 'Succeeded')
