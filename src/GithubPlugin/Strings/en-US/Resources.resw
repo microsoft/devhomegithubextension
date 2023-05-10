@@ -142,7 +142,7 @@
     <comment>Shown in Widget</comment>
   </data>
   <data name="Widget_Template.Opened" xml:space="preserve">
-    <value>opened</value>
+    <value>opened on</value>
     <comment>Shown in Widget, part of a string:  # opened {date} by {user}</comment>
   </data>
   <data name="Widget_Template.Project" xml:space="preserve">
@@ -198,11 +198,11 @@
     <comment>Shown in toast notification.</comment>
   </data>
   <data name="Notifications_Toast_CheckRunFailed.Title" xml:space="preserve">
-    <value>Checks failed</value>
+    <value>Failed checks</value>
     <comment>Shown in toast notification.</comment>
   </data>
   <data name="Notifications_Toast_CheckRunSucceeded.Title" xml:space="preserve">
-    <value>Checks succeeded</value>
+    <value>Succeeded checks</value>
     <comment>Shown in toast notification.</comment>
   </data>
   <data name="LoginUI_LoginFailedPage_text1" xml:space="preserve">

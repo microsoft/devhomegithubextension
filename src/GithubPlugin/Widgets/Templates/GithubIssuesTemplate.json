@@ -88,6 +88,47 @@
                   "maxLines": 2
                 },
                 {
+                  "type": "ColumnSet",
+                  "spacing": "None",
+                  "wrap": true,
+                  "columns": [
+                    {
+                      "type": "Column",
+                      "width": "12px",
+                      "items": [
+                        {
+                          "type": "Image",
+                          "style": "Person",
+                          "url": "${avatar}",
+                          "size": "small"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "Column",
+                      "width": "stretch",
+                      "items": [
+                        {
+                          "type": "TextBlock",
+                          "text": "${user}",
+                          "isSubtle": true,
+                          "size": "small",
+                          "spacing": "None",
+                          "weight": "bolder"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "TextBlock",
+                  "size": "small",
+                  "text": "#${number} %Widget_Template/Opened% {{DATE(${formatDateTime(date, 'yyyy-MM-ddTHH:mm:ssZ')}, COMPACT)}}",
+                  "isSubtle": true,
+                  "spacing": "small",
+                  "wrap": true
+                },
+                {
                   "type": "LabelGroup",
                   "labels": [
                     {
@@ -96,15 +137,6 @@
                       "color": "${color}"
                     }
                   ]
-                },
-                {
-                  "type": "TextBlock",
-                  "size": "small",
-                  "spacing": "small",
-                  "text": "#${number} %Widget_Template/Opened% {{DATE(${formatDateTime(date, 'yyyy-MM-ddTHH:mm:ssZ')}, COMPACT)}} %Widget_Template/By% ${user}",
-                  "isSubtle": true,
-                  "wrap": true,
-                  "maxLines": 2
                 }
               ]
             }
