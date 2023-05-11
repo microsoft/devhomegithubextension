@@ -76,6 +76,17 @@ public static class Resources
             "Widget_Template_Tooltip/OpenIssue",
             "Widget_Template_Button/SignIn",
             "Widget_Template_Tooltip/SignIn",
+            "Widget_Template/Assigned",
+            "Widget_Template/AssignedTo",
+            "Widget_Template/AssignedTitle",
+            "Widget_Template/Mentioned",
+            "Widget_Template/MentionedLow",
+            "Widget_Template/Mentioned_user",
+            "Widget_Template/ShowInWidget",
+            "Widget_Template/IssuesAndPullRequests",
+            "Widget_Template/Open",
+            "Widget_Template/SelectInfoText",
+            "Widget_Template/PR_Issue_description",
         };
     }
 }
