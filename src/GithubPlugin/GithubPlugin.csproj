@@ -10,15 +10,25 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Widgets\Templates\GithubAssignedConfigurationTemplate.json" />
+    <None Remove="Widgets\Templates\GithubAssignedTemplate.json" />
     <None Remove="Widgets\Templates\GithubIssuesConfigurationTemplate.json" />
     <None Remove="Widgets\Templates\GithubIssuesTemplate.json" />
     <None Remove="Widgets\Templates\GithubLoadingTemplate.json" />
+    <None Remove="Widgets\Templates\GithubMentionedInConfigurationTemplate.json" />
+    <None Remove="Widgets\Templates\GithubMentionedInTemplate.json" />
     <None Remove="Widgets\Templates\GithubPullsConfigurationTemplate.json" />
     <None Remove="Widgets\Templates\GithubPullsTemplate.json" />
     <None Remove="Widgets\Templates\GithubSignInTemplate.json" />
   </ItemGroup>
 
   <ItemGroup>
+    <Content Include="Widgets\Templates\GithubAssignedConfigurationTemplate.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Widgets\Templates\GithubAssignedTemplate.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Widgets\Templates\GitHubIssuesConfigurationTemplate.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -26,6 +36,12 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Widgets\Templates\GithubLoadingTemplate.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Widgets\Templates\GithubMentionedInConfigurationTemplate.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Widgets\Templates\GithubMentionedInTemplate.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Widgets\Templates\GithubPullsConfigurationTemplate.json">
