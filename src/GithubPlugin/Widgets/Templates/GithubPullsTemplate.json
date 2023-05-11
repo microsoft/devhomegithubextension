@@ -86,14 +86,9 @@
                   "maxLines": 2
                 },
                 {
-                  "type": "TextBlock",
-                  "text": "#${number}",
-                  "isSubtle": true,
-                  "spacing": "None"
-                },
-                {
                   "type": "ColumnSet",
-                  "spacing": "small",
+                  "spacing": "None",
+                  "wrap": true,
                   "columns": [
                     {
                       "type": "Column",
@@ -116,9 +111,28 @@
                           "text": "${user}",
                           "isSubtle": true,
                           "size": "small",
-                          "spacing": "None"
+                          "spacing": "None",
+                          "weight": "bolder"
                         }
                       ]
+                    }
+                  ]
+                },
+                {
+                  "type": "TextBlock",
+                  "size": "small",
+                  "text": "#${number} %Widget_Template/Opened% {{DATE(${formatDateTime(date, 'yyyy-MM-ddTHH:mm:ssZ')}, COMPACT)}}",
+                  "isSubtle": true,
+                  "spacing": "small",
+                  "wrap": true
+                },
+                {
+                  "type": "LabelGroup",
+                  "labels": [
+                    {
+                      "$data": "${labels}",
+                      "text": "${name}",
+                      "color": "${color}"
                     }
                   ]
                 }
