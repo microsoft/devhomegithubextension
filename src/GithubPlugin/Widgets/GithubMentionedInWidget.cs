@@ -212,6 +212,7 @@ internal class GithubMentionedInWidget : GithubWidget
                     { "number", item.Number },
                     { "date", TimeSpanHelper.TimeSpanToDisplayString(DateTime.Now - item.CreatedAt, Log.Logger()) },
                     { "user", item.User.Login },
+                    { "avatar", item.User.AvatarUrl },
                     { "iconUrl", IconLoader.GetIconAsBase64(item.PullRequest == null ? "issues.png" : "pulls.png") },
                 };
 
@@ -230,6 +231,10 @@ internal class GithubMentionedInWidget : GithubWidget
                 issue.Add("labels", issueLabels);
 
                 ((IList<JsonNode?>)issuesArray).Add(issue);
+
+                var parsedUrl = item.HtmlUrl.Split('/');
+                var repo = parsedUrl[3] + '/' + parsedUrl[4];
+                issue.Add("repo", repo);
             }
 
             issuesData.Add("items", issuesArray);

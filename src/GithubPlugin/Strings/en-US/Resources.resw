@@ -209,10 +209,10 @@
     <value>Something went wrong :(</value>
   </data>
   <data name="LoginUI_LoginFailedPage_text2" xml:space="preserve">
-    <value>Make sure your inputs are correct.</value>
+    <value>Make sure your inputs are correct</value>
   </data>
   <data name="LoginUI_LoginFailedPage_text3" xml:space="preserve">
-    <value>Please consider filing Feedback</value>
+    <value>Please consider filing feedback</value>
   </data>
   <data name="LoginUI_LoginPage_Button1Text" xml:space="preserve">
     <value>Sign in to github.com</value>
@@ -287,11 +287,11 @@
     <comment>Shown in Widget, when there are no pull requests</comment>
   </data>
   <data name="Widget_Template.AssignedTitle" xml:space="preserve">
-    <value>Assigned pull requests and isues</value>
+    <value>Assigned to me</value>
     <comment>Shown in Widget</comment>
   </data>
   <data name="Widget_Template/Mentioned_user" xml:space="preserve">
-    <value>Mentioned user</value>
+    <value>Mentioned me</value>
     <comment>Shown in Widget</comment>
   </data>
   <data name="Widget_Template.Assigned" xml:space="preserve">
@@ -319,7 +319,7 @@
     <comment>Shown in Widget</comment>
   </data>
   <data name="Widget_Template.IssuesAndPullRequests" xml:space="preserve">
-    <value>Issues &amp; Pull requests </value>
+    <value>Issues &amp; pull requests </value>
     <comment>Shown in Widget</comment>
   </data>
   <data name="Widget_Template.ShowInWidget" xml:space="preserve">

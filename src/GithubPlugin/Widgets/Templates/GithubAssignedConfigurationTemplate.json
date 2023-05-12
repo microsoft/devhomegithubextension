@@ -27,36 +27,6 @@
             ]
         },
         {
-            "type": "TextBlock",
-            "text": "%Widget_Template/PR_Issue_description%",
-            "wrap": true,
-            "horizontalAlignment": "Center",
-            "spacing": "None",
-            "size": "Small",
-            "isSubtle": true,
-            "weight": "Lighter"
-        },
-        {
-            "type": "TextBlock",
-            "text": "%Widget_Template/ShowInWidget%:${showCategory}",
-            "wrap": true,
-            "horizontalAlignment": "Left",
-            "spacing": "None",
-            "size": "Small",
-            "isSubtle": true,
-            "weight": "Lighter"
-        },
-        {
-            "type": "TextBlock",
-            "text": "%Widget_Template/SelectInfoText%",
-            "wrap": true,
-            "horizontalAlignment": "Left",
-            "spacing": "None",
-            "size": "Small",
-            "isSubtle": true,
-            "weight": "Lighter"
-        },
-        {
             "type": "Input.ChoiceSet",
             "id": "ShowCategory",
             "style": "compact",
