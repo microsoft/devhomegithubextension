@@ -27,34 +27,53 @@
             ]
         },
         {
-            "type": "Input.ChoiceSet",
-            "id": "ShowCategory",
-            "style": "compact",
-            "isMultiSelect": false,
-            "value": "${showCategory}",
-            "choices": [
+            "type": "ColumnSet",
+            "columns": [
                 {
-                    "title": "%Widget_Template/Issues%",
-                    "value": "Issues"
+                    "type": "Column",
+                    "width": "stretch",
+                    "items": [
+                        {
+                            "type": "Input.ChoiceSet",
+                            "id": "ShowCategory",
+                            "style": "compact",
+                            "isMultiSelect": false,
+                            "value": "${showCategory}",
+                            "choices": [
+                                {
+                                    "title": "%Widget_Template/Issues%",
+                                    "value": "Issues"
+                                },
+                                {
+                                    "title": "%Widget_Template/PullRequests%",
+                                    "value": "PullRequests"
+                                },
+                                {
+                                    "title": "%Widget_Template/IssuesAndPullRequests%",
+                                    "value": "IssuesAndPullRequests"
+                                }
+                            ]
+                        }
+                    ]
                 },
                 {
-                    "title": "%Widget_Template/PullRequests%",
-                    "value": "PullRequests"
-                },
-                {
-                    "title": "%Widget_Template/IssuesAndPullRequests%",
-                    "value": "IssuesAndPullRequests"
+                    "type": "Column",
+                    "width": "auto",
+                    "items": [
+                        {
+                            "type": "ActionSet",
+                            "actions": [
+                                {
+                                    "type": "Action.Execute",
+                                    "title": "%Widget_Template_Button/Submit%",
+                                    "verb": "Submit",
+                                    "associatedInputs": "auto"
+                                }
+                            ]
+                        }
+                    ]
                 }
             ]
-        }
-    ],
-    "actions": [
-        {
-            "type": "Action.Execute",
-            "title": "%Widget_Template_Button/Submit%",
-            "horizontalAlignment": "Center",
-            "verb": "Submit",
-            "associatedInputs": "auto"
         }
     ]
 }

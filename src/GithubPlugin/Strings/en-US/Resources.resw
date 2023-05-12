@@ -142,7 +142,7 @@
     <comment>Shown in Widget</comment>
   </data>
   <data name="Widget_Template.Opened" xml:space="preserve">
-    <value>opened on</value>
+    <value>opened</value>
     <comment>Shown in Widget, part of a string:  # opened {date} by {user}</comment>
   </data>
   <data name="Widget_Template.Project" xml:space="preserve">

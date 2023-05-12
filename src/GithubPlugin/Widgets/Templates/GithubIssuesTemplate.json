@@ -123,7 +123,7 @@
                 {
                   "type": "TextBlock",
                   "size": "small",
-                  "text": "#${number} %Widget_Template/Opened% {{DATE(${formatDateTime(date, 'yyyy-MM-ddTHH:mm:ssZ')}, COMPACT)}}",
+                  "text": "#${number} %Widget_Template/Opened% ${date}",
                   "isSubtle": true,
                   "spacing": "small",
                   "wrap": true
