@@ -18,6 +18,7 @@ public sealed class WidgetProvider : IWidgetProvider
         widgetDefinitionRegistry.Add("GitHub_PullRequests", new WidgetImplFactory<GithubPullsWidget>());
         widgetDefinitionRegistry.Add("GitHub_MentionedIns", new WidgetImplFactory<GithubMentionedInWidget>());
         widgetDefinitionRegistry.Add("GitHub_Assigneds", new WidgetImplFactory<GithubAssignedWidget>());
+        widgetDefinitionRegistry.Add("GitHub_Reviews", new WidgetImplFactory<GithubReviewWidget>());
         RecoverRunningWidgets();
     }
 
