@@ -389,4 +389,8 @@
     <value>not known</value>
     <comment>Shown in Widget</comment>
   </data>
+  <data name="Widget_Template.Updated" xml:space="preserve">
+    <value>updated</value>
+    <comment>Shown in widget</comment>
+  </data>
 </root>
