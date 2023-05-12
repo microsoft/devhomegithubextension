@@ -91,6 +91,7 @@ public static class Resources
             "Widget_Template/ReviewRequestedTitle",
             "Widget_Template/PR_description",
             "Widget_Template/PR_info",
+            "Widget_Template/Updated",
         };
     }
 }
