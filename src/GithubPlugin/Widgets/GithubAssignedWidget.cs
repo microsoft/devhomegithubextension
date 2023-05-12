@@ -66,7 +66,9 @@ internal class GithubAssignedWidget : GithubWidget
 
     private SearchCategory ShowCategory
     {
-        get; set;
+        get => EnumHelper.StringToSearchCategory(State());
+
+        set => SetState(EnumHelper.SearchCategoryToString(value));
     }
 
     private string assignedToName = string.Empty;
@@ -208,6 +210,12 @@ internal class GithubAssignedWidget : GithubWidget
 
     public override void LoadContentData()
     {
+        var issuesData = new JsonObject();
+        issuesData.Add("openCount", 0);
+        issuesData.Add("items", new JsonArray());
+        issuesData.Add("assignedName", AssignedToName);
+        issuesData.Add("titleIconUrl", TitleIconData);
+        ContentData = issuesData.ToJsonString();
     }
 
     public void LoadContentData(IEnumerable<Octokit.Issue> items)
@@ -298,13 +306,8 @@ internal class GithubAssignedWidget : GithubWidget
 
     public string GetConfigurationData()
     {
-        if (ShowCategory == SearchCategory.Unknown)
-        {
-            ShowCategory = SearchCategory.IssuesAndPullRequests;
-        }
-
         var configurationData = new JsonObject();
-        configurationData.Add("showCategory", EnumHelper.SearchCategoryToString(ShowCategory));
+        configurationData.Add("showCategory", EnumHelper.SearchCategoryToString(ShowCategory == SearchCategory.Unknown ? SearchCategory.IssuesAndPullRequests : ShowCategory));
         return configurationData.ToJsonString();
     }
 
