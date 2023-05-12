@@ -224,8 +224,6 @@ internal class GithubAssignedWidget : GithubWidget
 
         try
         {
-            using var dataManager = GitHubDataManager.CreateInstance();
-
             var issuesData = new JsonObject();
             var issuesArray = new JsonArray();
             issuesData.Add("openCount", items.Count());
@@ -242,7 +240,7 @@ internal class GithubAssignedWidget : GithubWidget
                     { "title", item.Title },
                     { "url", item.HtmlUrl },
                     { "number", item.Number },
-                    { "date", TimeSpanHelper.TimeSpanToDisplayString(DateTime.Now - item.CreatedAt, Log.Logger()) },
+                    { "date", TimeSpanHelper.DateTimeOffsetToDisplayString(item.UpdatedAt, Log.Logger()) },
                     { "user", item.User.Login },
                     { "iconUrl", IconLoader.GetIconAsBase64(item.PullRequest == null ? "issues.png" : "pulls.png") },
                 };

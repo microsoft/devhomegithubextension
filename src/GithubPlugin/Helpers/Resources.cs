@@ -87,6 +87,10 @@ public static class Resources
             "Widget_Template/Open",
             "Widget_Template/SelectInfoText",
             "Widget_Template/PR_Issue_description",
+            "Widget_Template/ReviewRequestedFrom",
+            "Widget_Template/ReviewRequestedTitle",
+            "Widget_Template/PR_description",
+            "Widget_Template/PR_info",
         };
     }
 }
