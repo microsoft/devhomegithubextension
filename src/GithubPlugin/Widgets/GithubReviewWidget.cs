@@ -32,6 +32,13 @@ internal class GithubReviewWidget : GithubWidget
         set => referredName = value;
     }
 
+    private string ConfigurationState
+    {
+        get => State();
+
+        set => SetState(value);
+    }
+
     public GithubReviewWidget()
         : base()
     {
@@ -74,6 +81,8 @@ internal class GithubReviewWidget : GithubWidget
             SetSignIn();
             return;
         }
+
+        ConfigurationState = "Activated";
 
         if (Enabled)
         {
@@ -128,7 +137,12 @@ internal class GithubReviewWidget : GithubWidget
 
     public override void LoadContentData()
     {
-        // nothing to do
+        var issuesData = new JsonObject();
+        issuesData.Add("openCount", 0);
+        issuesData.Add("items", new JsonArray());
+        issuesData.Add("referredName", ReferredName);
+        issuesData.Add("titleIconUrl", IconLoader.GetIconAsBase64("pulls.png"));
+        ContentData = issuesData.ToJsonString();
     }
 
     public void LoadContentData(IEnumerable<Octokit.Issue> items)
