@@ -209,10 +209,7 @@
     <value>Something went wrong :(</value>
   </data>
   <data name="LoginUI_LoginFailedPage_text2" xml:space="preserve">
-    <value>Make sure your inputs are correct.</value>
-  </data>
-  <data name="LoginUI_LoginFailedPage_text3" xml:space="preserve">
-    <value>Please consider filing Feedback</value>
+    <value>Please consider filing feedback</value>
   </data>
   <data name="LoginUI_LoginPage_Button1Text" xml:space="preserve">
     <value>Sign in to github.com</value>
