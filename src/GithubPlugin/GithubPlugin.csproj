@@ -19,6 +19,8 @@
     <None Remove="Widgets\Templates\GithubMentionedInTemplate.json" />
     <None Remove="Widgets\Templates\GithubPullsConfigurationTemplate.json" />
     <None Remove="Widgets\Templates\GithubPullsTemplate.json" />
+    <None Remove="Widgets\Templates\GithubReviewConfigurationTemplate.json" />
+    <None Remove="Widgets\Templates\GithubReviewTemplate.json" />
     <None Remove="Widgets\Templates\GithubSignInTemplate.json" />
   </ItemGroup>
 
@@ -48,6 +50,12 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Widgets\Templates\GitHubPullsTemplate.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Widgets\Templates\GithubReviewConfigurationTemplate.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Widgets\Templates\GithubReviewTemplate.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Widgets\Templates\GitHubSignInTemplate.json">
