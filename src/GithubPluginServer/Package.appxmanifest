@@ -156,7 +156,7 @@
                       </LightMode>
                     </ThemeResources>
                   </Definition>
-                  <Definition Id="GitHub_MentionedIns" DisplayName="Mentioned In" Description="List of comments the user is mentioned in in a GitHub repository.">
+                  <Definition Id="GitHub_MentionedIns" DisplayName="Mentioned me" Description="List of issues and pull requests the user is mentioned in in a GitHub repository.">
                     <Capabilities>
                       <Capability>
                         <Size Name="medium" />
@@ -190,7 +190,7 @@
                       </LightMode>
                     </ThemeResources>
                   </Definition>
-                  <Definition Id="GitHub_Assigneds" DisplayName="Asigned PRs and Issues" Description="List of Pull Requests and Issues assigned to the user in a GitHub repository.">
+                  <Definition Id="GitHub_Assigneds" DisplayName="Assigned to me" Description="List of pull requests and issues assigned to the user in a GitHub repository.">
                     <Capabilities>
                       <Capability>
                         <Size Name="medium" />
