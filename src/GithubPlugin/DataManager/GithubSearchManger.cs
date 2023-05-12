@@ -39,6 +39,8 @@ public partial class GitHubSearchManager : IGitHubSearchManager, IDisposable
         request.State = Octokit.ItemState.Open;
         request.Archived = false;
         request.PerPage = 10;
+        request.SortField = Octokit.IssueSearchSort.Updated;
+        request.Order = Octokit.SortDirection.Descending;
 
         var client = await GitHubClientProvider.Instance.GetClientForLoggedInDeveloper(true);
 
