@@ -224,7 +224,7 @@
                       </LightMode>
                     </ThemeResources>
                   </Definition>
-                  <Definition Id="GitHub_Reviews" DisplayName="Reviews Requested" Description="List of Pull Requests where the user is requested for a review.">
+                  <Definition Id="GitHub_Reviews" DisplayName="Review requested" Description="List of pull requests where the user is requested for a review.">
                     <Capabilities>
                       <Capability>
                         <Size Name="medium" />
