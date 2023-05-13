@@ -19,6 +19,8 @@
     <None Remove="Widgets\Templates\GithubMentionedInTemplate.json" />
     <None Remove="Widgets\Templates\GithubPullsConfigurationTemplate.json" />
     <None Remove="Widgets\Templates\GithubPullsTemplate.json" />
+    <None Remove="Widgets\Templates\GithubReviewConfigurationTemplate.json" />
+    <None Remove="Widgets\Templates\GithubReviewTemplate.json" />
     <None Remove="Widgets\Templates\GithubSignInTemplate.json" />
   </ItemGroup>
 
@@ -50,6 +52,12 @@
     <Content Include="Widgets\Templates\GitHubPullsTemplate.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="Widgets\Templates\GithubReviewConfigurationTemplate.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Widgets\Templates\GithubReviewTemplate.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Widgets\Templates\GitHubSignInTemplate.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -63,7 +71,7 @@
       <PackageReference Include="Microsoft.Toolkit.Uwp.Notifications" Version="7.1.3" />
       <PackageReference Include="Microsoft.Windows.CsWinRT" Version="2.0.1" />
       <PackageReference Include="Microsoft.Windows.DevHome.SDK" Version="0.100.105" />
-      <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.2.230313.1" />
+      <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.3.230331000" />
       <PackageReference Include="Octokit" Version="5.0.4" />
   </ItemGroup>
 

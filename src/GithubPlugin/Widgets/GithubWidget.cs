@@ -241,6 +241,8 @@ public abstract class GithubWidget : WidgetImpl
 
                 // TODO handle this and show something meaningful in the widget to indicate invalid input.
                 configurationData.Add("hasConfiguration", false);
+                configurationData.Add("configuring", true);
+
                 var repositoryData = new JsonObject
                 {
                     { "url", RepositoryUrl },
