@@ -337,16 +337,6 @@ internal class LoginUIController : IPluginAdaptiveCardController
         {
             ""type"": ""TextBlock"",
             ""text"": """ + $"{loader.GetString("LoginUI_LoginFailedPage_text2")}" + @""",
-            ""text"": ""Make sure your inputs are correct."",
-            ""isSubtle"": true,
-            ""wrap"": true,
-            ""horizontalAlignment"": ""Center"",
-            ""size"": ""medium"",
-            ""weight"": ""Lighter""
-        },
-        {
-            ""type"": ""TextBlock"",
-            ""text"": """ + $"{loader.GetString("LoginUI_LoginFailedPage_text3")}" + @""",
             ""isSubtle"": true,
             ""wrap"": true,
             ""horizontalAlignment"": ""Center"",
