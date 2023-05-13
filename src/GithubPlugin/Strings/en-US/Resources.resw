@@ -142,7 +142,7 @@
     <comment>Shown in Widget</comment>
   </data>
   <data name="Widget_Template.Opened" xml:space="preserve">
-    <value>opened on</value>
+    <value>opened</value>
     <comment>Shown in Widget, part of a string:  # opened {date} by {user}</comment>
   </data>
   <data name="Widget_Template.Project" xml:space="preserve">
@@ -209,10 +209,10 @@
     <value>Something went wrong :(</value>
   </data>
   <data name="LoginUI_LoginFailedPage_text2" xml:space="preserve">
-    <value>Make sure your inputs are correct.</value>
+    <value>Make sure your inputs are correct</value>
   </data>
   <data name="LoginUI_LoginFailedPage_text3" xml:space="preserve">
-    <value>Please consider filing Feedback</value>
+    <value>Please consider filing feedback</value>
   </data>
   <data name="LoginUI_LoginPage_Button1Text" xml:space="preserve">
     <value>Sign in to github.com</value>
@@ -287,11 +287,11 @@
     <comment>Shown in Widget, when there are no pull requests</comment>
   </data>
   <data name="Widget_Template.AssignedTitle" xml:space="preserve">
-    <value>Assigned pull requests and isues</value>
+    <value>Assigned to me</value>
     <comment>Shown in Widget</comment>
   </data>
   <data name="Widget_Template/Mentioned_user" xml:space="preserve">
-    <value>Mentioned user</value>
+    <value>Mentioned me</value>
     <comment>Shown in Widget</comment>
   </data>
   <data name="Widget_Template.Assigned" xml:space="preserve">
@@ -319,7 +319,7 @@
     <comment>Shown in Widget</comment>
   </data>
   <data name="Widget_Template.IssuesAndPullRequests" xml:space="preserve">
-    <value>Issues &amp; Pull requests </value>
+    <value>Issues &amp; pull requests </value>
     <comment>Shown in Widget</comment>
   </data>
   <data name="Widget_Template.ShowInWidget" xml:space="preserve">
@@ -366,7 +366,31 @@
     <value>seconds ago</value>
     <comment>Shown in Widget</comment>
   </data>
+  <data name="Widget_Template/ReviewRequestedFrom" xml:space="preserve">
+    <value>Review requested from</value>
+    <comment>Shown in Widget</comment>
+  </data>
+  <data name="Widget_Template/PR_description" xml:space="preserve">
+    <value>Items in widget will appear in chronological order from when the pull request was last updated</value>
+    <comment>Shown in Widget</comment>
+  </data>
+  <data name="Widget_Template/PR_info" xml:space="preserve">
+    <value>Display pull requests where my review has been requested</value>
+    <comment>Shown in Widget</comment>
+  </data>
+  <data name="Widget_Template/ReviewRequestedTitle" xml:space="preserve">
+    <value>Pull requests, review requested</value>
+    <comment>Shown in Widget</comment>
+  </data>
   <data name="LoginUI_WaitingPageBrowserLaunch_Text" xml:space="preserve">
     <value>Note: Browser may have launched in the background.</value>
+  </data>
+  <data name="WidgetTemplate_UnknownTime" xml:space="preserve">
+    <value>not known</value>
+    <comment>Shown in Widget</comment>
+  </data>
+  <data name="Widget_Template.Updated" xml:space="preserve">
+    <value>updated</value>
+    <comment>Shown in widget</comment>
   </data>
 </root>

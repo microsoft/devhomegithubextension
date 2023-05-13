@@ -1,5 +1,6 @@
 ﻿// Copyright (c) Microsoft Corporation and Contributors
 // Licensed under the MIT license.
+using System.Text.Json.Nodes;
 using DevHome.Logging;
 
 namespace GitHubPlugin.Helpers;
@@ -48,5 +49,15 @@ internal class TimeSpanHelper
         }
 
         return $"{timeSpan.Days} {Resources.GetResource("WidgetTemplate_DaysAgo", log)}";
+    }
+
+    internal static string DateTimeOffsetToDisplayString(DateTimeOffset? dateTime, Logger? log)
+    {
+        if (dateTime == null)
+        {
+            return Resources.GetResource("WidgetTemplate_UnknownTime", log);
+        }
+
+        return TimeSpanToDisplayString(DateTime.Now - dateTime.Value.DateTime, log);
     }
 }
