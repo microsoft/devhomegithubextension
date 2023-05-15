@@ -166,9 +166,11 @@ public abstract class GithubWidget : WidgetImpl
 
     private async Task HandleSignIn()
     {
+        Log.Logger()?.ReportInfo($"WidgetAction invoked for user sign in");
         var authProvider = DeveloperIdProvider.GetInstance();
         await authProvider.LoginNewDeveloperIdAsync();
         UpdateActivityState();
+        Log.Logger()?.ReportInfo($"User sign in successful from WidgetAction invocation");
     }
 
     private WidgetAction GetWidgetActionForVerb(string verb)
