@@ -376,7 +376,7 @@
     <comment>Shown in Widget</comment>
   </data>
   <data name="Widget_Template/ReviewRequestedTitle" xml:space="preserve">
-    <value>Pull requests, review requested</value>
+    <value>Review requested</value>
     <comment>Shown in Widget</comment>
   </data>
   <data name="LoginUI_WaitingPageBrowserLaunch_Text" xml:space="preserve">
@@ -386,7 +386,7 @@
     <value>not known</value>
     <comment>Shown in Widget</comment>
   </data>
-  <data name="Widget_Template.Updated" xml:space="preserve">
+  <data name="Widget_Template/Updated" xml:space="preserve">
     <value>updated</value>
     <comment>Shown in widget</comment>
   </data>
