@@ -256,15 +256,15 @@
     <comment>Shown in Loading Widget, Message text</comment>
   </data>
   <data name="AppDisplayNameDev" xml:space="preserve">
-    <value>Dev Home GitHub Extension (Dev)</value>
+    <value>GitHub</value>
     <comment>The name of our application when built for dev ring</comment>
   </data>
   <data name="AppDisplayNameCanary" xml:space="preserve">
-    <value>Dev Home GitHub Extension (Canary)</value>
+    <value>GitHub</value>
     <comment>The name of our application when built for canary ring</comment>
   </data>
   <data name="AppDisplayNameStable" xml:space="preserve">
-    <value>Dev Home GitHub Extension (Preview)</value>
+    <value>GitHub</value>
     <comment>The name of our application when built for stable ring</comment>
   </data>
   <data name="AppDescription" xml:space="preserve">
