@@ -103,7 +103,7 @@
               "type": "TextBlock",
               "size": "small",
               "spacing": "small",
-              "text": "#${number} %Widget_Template/Assigned% ${date}",
+              "text": "#${number} %Widget_Template/Updated% ${date}",
               "isSubtle": true,
               "wrap": true,
               "maxLines": 2
