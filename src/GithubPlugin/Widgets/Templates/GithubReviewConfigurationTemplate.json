@@ -25,26 +25,6 @@
                     "weight": "Lighter"
                 }
             ]
-        },
-        {
-            "type": "TextBlock",
-            "text": "%Widget_Template/PR_description%",
-            "wrap": true,
-            "horizontalAlignment": "Center",
-            "spacing": "None",
-            "size": "Small",
-            "isSubtle": true,
-            "weight": "Lighter"
-        },
-        {
-            "type": "TextBlock",
-            "text": "%Widget_Template/PR_info%",
-            "wrap": true,
-            "horizontalAlignment": "Left",
-            "spacing": "None",
-            "size": "Small",
-            "isSubtle": true,
-            "weight": "Lighter"
         }
     ]
 }
