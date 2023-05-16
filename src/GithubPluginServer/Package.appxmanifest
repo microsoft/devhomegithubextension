@@ -14,8 +14,8 @@
     <Logo>Assets\StoreLogo.png</Logo>
   </Properties>
   <Dependencies>
-    <TargetDeviceFamily Name="Windows.Universal" MinVersion="10.0.17763.0" MaxVersionTested="10.0.19041.0" />
-    <TargetDeviceFamily Name="Windows.Desktop" MinVersion="10.0.17763.0" MaxVersionTested="10.0.19041.0" />
+    <TargetDeviceFamily Name="Windows.Universal" MinVersion="10.0.22000.0" MaxVersionTested="10.0.22000.0" />
+    <TargetDeviceFamily Name="Windows.Desktop" MinVersion="10.0.22000.0" MaxVersionTested="10.0.22000.0" />
   </Dependencies>
   <Resources>
     <Resource Language="x-generate" />
@@ -224,7 +224,7 @@
                       </LightMode>
                     </ThemeResources>
                   </Definition>
-                  <Definition Id="GitHub_Reviews" DisplayName="Reviews Requested" Description="List of Pull Requests where the user is requested for a review.">
+                  <Definition Id="GitHub_Reviews" DisplayName="Review requested" Description="List of pull requests where the user is requested for a review.">
                     <Capabilities>
                       <Capability>
                         <Size Name="medium" />
