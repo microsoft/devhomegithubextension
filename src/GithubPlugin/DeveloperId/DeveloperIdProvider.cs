@@ -117,7 +117,7 @@ public class DeveloperIdProvider : IDeveloperIdProvider
             var devId = CreateOrUpdateDeveloperId(oauthRequest);
             oauthRequest.Dispose();
 
-            Log.Logger()?.ReportInfo($"New DeveloperId logged in: {devId.LoginId}");
+            Log.Logger()?.ReportInfo($"New DeveloperId logged in");
 
             return devId as IDeveloperId;
         }).AsAsyncOperation();
@@ -153,7 +153,7 @@ public class DeveloperIdProvider : IDeveloperIdProvider
             developerIdToLogout = DeveloperIds?.Find(e => e.LoginId == developerId.LoginId());
             if (developerIdToLogout == null)
             {
-                Log.Logger()?.ReportError($"Unable to find DeveloperId {developerIdToLogout?.LoginId}");
+                Log.Logger()?.ReportError($"Unable to find DeveloperId to logout");
                 throw new ArgumentNullException(nameof(developerId));
             }
 
@@ -167,7 +167,7 @@ public class DeveloperIdProvider : IDeveloperIdProvider
         }
         catch (Exception error)
         {
-            Log.Logger()?.ReportError($"LoggedOut event signalling failed for {developerIdToLogout?.LoginId}: {error}");
+            Log.Logger()?.ReportError($"LoggedOut event signalling failed: {error}");
         }
     }
 
@@ -248,7 +248,7 @@ public class DeveloperIdProvider : IDeveloperIdProvider
 
         if (duplicateDeveloperIds.Any())
         {
-            Log.Logger()?.ReportInfo($"DeveloperID {duplicateDeveloperIds.Single().LoginId} already exists! Updating accessToken");
+            Log.Logger()?.ReportInfo($"DeveloperID already exists! Updating accessToken");
             try
             {
                 // Save the credential to Credential Vault
@@ -260,7 +260,7 @@ public class DeveloperIdProvider : IDeveloperIdProvider
                 }
                 catch (Exception error)
                 {
-                    Log.Logger()?.ReportError($"Updated event signalling failed for {duplicateDeveloperIds.Single()?.LoginId}: {error}");
+                    Log.Logger()?.ReportError($"Updated event signalling failed: {error}");
                 }
             }
             catch (InvalidOperationException)
@@ -284,7 +284,7 @@ public class DeveloperIdProvider : IDeveloperIdProvider
             }
             catch (Exception error)
             {
-                Log.Logger()?.ReportError($"LoggedIn event signalling failed for {newDeveloperId.LoginId}: {error}");
+                Log.Logger()?.ReportError($"LoggedIn event signalling failed: {error}");
             }
         }
 
@@ -308,7 +308,7 @@ public class DeveloperIdProvider : IDeveloperIdProvider
                 DeveloperIds.Add(developerId);
             }
 
-            Log.Logger()?.ReportInfo($"Restored DeveloperId : {loginId}");
+            Log.Logger()?.ReportInfo($"Restored DeveloperId");
         }
 
         return;
