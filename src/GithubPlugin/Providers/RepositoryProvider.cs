@@ -17,13 +17,7 @@ public class RepositoryProvider : IRepositoryProvider
     {
     }
 
-#if CANARY_BUILD
-    public string DisplayName => Resources.GetResource(@"AppDisplayNameCanary");
-#elif STABLE_BUILD
-    public string DisplayName => Resources.GetResource(@"AppDisplayNameStable");
-#else
-    public string DisplayName => Resources.GetResource(@"AppDisplayNameDev");
-#endif
+    public string DisplayName => Resources.GetResource(@"RepositoryProviderDisplayName");
 
     /// <summary>
     /// Tries to parse the uri to check if it is a valid Github uri and if the current account can find it.
