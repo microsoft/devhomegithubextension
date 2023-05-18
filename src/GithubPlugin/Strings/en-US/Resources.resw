@@ -256,15 +256,15 @@
     <comment>Shown in Loading Widget, Message text</comment>
   </data>
   <data name="AppDisplayNameDev" xml:space="preserve">
-    <value>GitHub</value>
+    <value>Dev Home GitHub Extension (Dev)</value>
     <comment>The name of our application when built for dev ring</comment>
   </data>
   <data name="AppDisplayNameCanary" xml:space="preserve">
-    <value>GitHub</value>
+    <value>Dev Home GitHub Extension (Canary)</value>
     <comment>The name of our application when built for canary ring</comment>
   </data>
   <data name="AppDisplayNameStable" xml:space="preserve">
-    <value>GitHub</value>
+    <value>Dev Home GitHub Extension (Preview)</value>
     <comment>The name of our application when built for stable ring</comment>
   </data>
   <data name="AppDescription" xml:space="preserve">
@@ -389,5 +389,9 @@
   <data name="Widget_Template/Updated" xml:space="preserve">
     <value>updated</value>
     <comment>Shown in widget</comment>
+  </data>
+  <data name="RepositoryProviderDisplayName" xml:space="preserve">
+    <value>GitHub</value>
+    <comment>Shown in various places, is GitHub even localized as a product name?</comment>
   </data>
 </root>
