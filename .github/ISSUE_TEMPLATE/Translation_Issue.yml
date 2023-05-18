@@ -8,10 +8,19 @@ body:
   attributes:
     value: Please make sure to [search for existing issues](https://github.com/microsoft/devhomegithubextension/issues) before filing a new one!
 
-- id: version
+- id: devhomeversion
   type: input
   attributes:
     label: Dev Home version
+    placeholder: "0.1.3651.0"
+    description: 
+  validations:
+    required: false
+
+- id: githubextensionversion
+  type: input
+  attributes:
+    label: GitHub Extension (for Dev Home) version
     placeholder: "0.1.3651.0"
     description: 
   validations:
