@@ -167,6 +167,7 @@ stages:
 
         - task: PowerShell@2
           displayName: Build GITServices Extension
+          retryCountOnTaskFailure: 2
           inputs:
             filePath: 'build/scripts/Build.ps1'
             arguments: -Platform "${{ platform }}" -Configuration "${{ configuration }}" -Version $(MSIXVersion) -BuildStep "msix" -AzureBuildingBranch "$(BuildingBranch)" -IsAzurePipelineBuild -ClientId $(GitHubClientId) -ClientSecret $(GitHubClientSecret)
@@ -243,6 +244,7 @@ stages:
         - task: PowerShell@2
           displayName: 'Run Unittests'
           condition: ne('${{ platform}}', 'arm64')
+          retryCountOnTaskFailure: 2
           inputs:
             filePath: 'build/scripts/Test.ps1'
             arguments: -Platform "${{ platform }}" -Configuration "${{ configuration }}" -IsAzurePipelineBuild
