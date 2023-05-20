@@ -8,6 +8,7 @@ using Octokit;
 
 namespace GitHubPlugin.Client;
 
+// manage all octokit clients per devid session
 public class GitHubClientProvider
 {
     private readonly GitHubClient publicRepoClient;
@@ -37,6 +38,7 @@ public class GitHubClientProvider
         publicRepoClient = new GitHubClient(new ProductHeaderValue(Constants.DEV_HOME_APPLICATION_NAME));
     }
 
+    // look up or create octokit client in memory
     public GitHubClient? GetClient(IDeveloperId devId)
     {
         var devIdInternal = DeveloperIdProvider.GetInstance().GetDeveloperIdInternal(devId) ?? throw new ArgumentException(devId.LoginId());
