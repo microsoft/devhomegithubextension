@@ -20,10 +20,10 @@ public class RepositoryProvider : IRepositoryProvider
     public string DisplayName => Resources.GetResource(@"RepositoryProviderDisplayName");
 
     /// <summary>
-    /// Tries to parse the uri to check if it is a valid Github uri and if the current account can find it.
+    /// Tries to parse the uri to check if it is a valid Github URL and if the current account can find it.
     /// </summary>
     /// <param name="uri">The uri to check.</param>
-    /// <returns>null repo if url isn't a github Url. Otherwise the repo that the uri points to.</returns>
+    /// <returns>null repo if url isn't a github URL. Otherwise the repo that the URL points to.</returns>
     /// <exception cref="RepositoryNotFoundException">If no account has access to the repo or the repo can't be found.</exception>
     public IAsyncOperation<IRepository?> ParseRepositoryFromUrlAsync(Uri uri)
     {
@@ -36,7 +36,7 @@ public class RepositoryProvider : IRepositoryProvider
 
             // One of the logged in accounts could have access to the repo.
             // Go through all of them.  If no accounts have access
-            // Throw to notify devhome that no account has access to the repo.
+            // Throw to notify DevHome that no account has access to the repo.
             // Mostly because either the repo does not exist or is private.
             Octokit.Repository? ocktokitRepo = null;
             var owner = Validation.ParseOwnerFromGitHubURL(uri);
@@ -115,7 +115,7 @@ public class RepositoryProvider : IRepositoryProvider
     {
         return Task.Run(async () =>
         {
-            // This is fetching all repositories available to the specified DevId
+            // This is fetching all repositories available to the specified DevId.
             // We are not using the datastore cache for this query, it will always go to GitHub directly.
             var repositoryList = new List<IRepository>();
             try
@@ -124,7 +124,7 @@ public class RepositoryProvider : IRepositoryProvider
                 apiOptions.PageSize = 50;
                 apiOptions.PageCount = 1;
 
-                // Authenticate as the specified developer Id
+                // Authenticate as the specified developer Id.
                 var client = DeveloperIdProvider.GetInstance().GetDeveloperIdInternal(developerId).GitHubClient;
                 RepositoryRequest request = new RepositoryRequest();
                 request.Sort = RepositorySort.Updated;
@@ -135,11 +135,11 @@ public class RepositoryProvider : IRepositoryProvider
                 request.Visibility = RepositoryRequestVisibility.Public;
                 var getPublicReposTask = client.Repository.GetAllForUser(developerId.LoginId(), apiOptions);
 
-                // this is getting private org and user repos
+                // this is getting private org and user repos.
                 request.Visibility = RepositoryRequestVisibility.Private;
                 var getPrivateReposTask = client.Repository.GetAllForCurrent(request, apiOptions);
 
-                // This gets all org repos
+                // This gets all org repos.
                 request.Visibility = RepositoryRequestVisibility.All;
                 request.Affiliation = RepositoryAffiliation.CollaboratorAndOrganizationMember;
                 var getAllOrgReposTask = client.Repository.GetAllForCurrent(request, apiOptions);

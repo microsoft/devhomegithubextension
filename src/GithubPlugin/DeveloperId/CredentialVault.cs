@@ -19,7 +19,7 @@ internal static class CredentialVault
 
     internal static void SaveAccessTokenToVault(string loginId, SecureString? accessToken)
     {
-        // Initialize a credential object
+        // Initialize a credential object.
         CREDENTIAL credential = new CREDENTIAL
         {
             Type = CRED_TYPE.GENERIC,
@@ -44,7 +44,7 @@ internal static class CredentialVault
                 throw new ArgumentNullException(nameof(accessToken));
             }
 
-            // Store credential under Windows Credentials inside Credential Manager
+            // Store credential under Windows Credentials inside Credential Manager.
             var isCredentialSaved = CredWrite(credential, 0);
             if (!isCredentialSaved)
             {
@@ -108,7 +108,7 @@ internal static class CredentialVault
             {
                 accessToken.AppendChar(accessTokenInChars[i]);
 
-                // Zero out characters after they are copied over from an unmanaged to managed type
+                // Zero out characters after they are copied over from an unmanaged to managed type.
                 accessTokenInChars[i] = '\0';
             }
 
@@ -144,7 +144,7 @@ internal static class CredentialVault
             {
                 var error = Marshal.GetLastWin32Error();
 
-                // NotFound is expected and can be ignored
+                // NotFound is expected and can be ignored.
                 if (error == 1168)
                 {
                     return Enumerable.Empty<string>();

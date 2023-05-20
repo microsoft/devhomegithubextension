@@ -129,7 +129,7 @@ public class Repository
 
     public override string ToString() => FullName;
 
-    // Create repository from OctoKit repo
+    // Create repository from OctoKit repo.
     private static Repository CreateFromOctokitRepository(DataStore dataStore, Octokit.Repository octokitRepository)
     {
         var repo = new Repository

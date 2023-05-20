@@ -19,20 +19,17 @@ public class GITServicesScenarioStandard : GITServicesSession
     {
         // Disabling this test because we do not have an App with UI testable in this way.
         // This plugin is headless except for the Widgets, which are hosted in Dev Home.
-        // Assert.AreEqual("GITServices", session.Title);
     }
 
     [ClassInitialize]
     public static void ClassInitialize(TestContext context)
     {
         // Disabled, see above.
-        // Setup(context);
     }
 
     [ClassCleanup]
     public static void ClassCleanup()
     {
         // Disabled, see above.
-        // TearDown();
     }
 }
