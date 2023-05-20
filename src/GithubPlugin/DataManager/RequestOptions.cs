@@ -6,7 +6,7 @@ using Octokit;
 namespace GitHubPlugin;
 public class RequestOptions
 {
-    // Request options for making queries to GitHub
+    // Request options for making queries to GitHub.
     public PullRequestRequest PullRequestRequest { get; set; }
 
     public SearchIssuesRequest SearchIssuesRequest { get; set; }

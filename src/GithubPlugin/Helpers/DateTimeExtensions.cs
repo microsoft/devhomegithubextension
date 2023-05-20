@@ -6,7 +6,7 @@ using System.Globalization;
 namespace GitHubPlugin.Helpers;
 public static class DateTimeExtensions
 {
-    // Data store stores time as integers, which is just the Ticks so we dont lose precision.
+    // Data store stores time as integers, which is just the Ticks so we don't lose precision.
     // This extension provides converters for storing the values as either TEXT or INTEGER,
     // Although SQLite types are suggestions, it may be internally represented differently.
     public static long ToDataStoreInteger(this DateTime value)

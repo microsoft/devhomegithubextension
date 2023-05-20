@@ -61,17 +61,17 @@ public class CommitCombinedStatus
         return AddOrUpdate(dataStore, newStatus);
     }
 
-    private static CommitState GetCommitState(Octokit.StringEnum<Octokit.CommitState> octoComitState)
+    private static CommitState GetCommitState(Octokit.StringEnum<Octokit.CommitState> octoCommitState)
     {
         CommitState state;
         try
         {
-            state = Enum.Parse<CommitState>(octoComitState.Value.ToString());
+            state = Enum.Parse<CommitState>(octoCommitState.Value.ToString());
         }
         catch (Exception)
         {
             // This error means a programming error or Octokit added to or changed their enum.
-            Log.Logger()?.ReportError($"Found Unknown CheckStatus value: {octoComitState.Value}");
+            Log.Logger()?.ReportError($"Found Unknown CheckStatus value: {octoCommitState.Value}");
             return CommitState.Unknown;
         }
 

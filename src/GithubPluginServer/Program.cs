@@ -16,17 +16,13 @@ public sealed class Program
         Log.Logger()?.ReportInfo($"Launched with args: {string.Join(' ', args.ToArray())}");
         LogPackageInformation();
 
-        // TODO: Do we need a lock here to prevent race condition around MainInstance registered?
-
         // Set up notification handling. This must happen before GetActivatedEventArgs().
         var notificationManager = new Notifications.NotificationManager(Notifications.NotificationHandler.OnNotificationInvoked);
 
-        // Force the app to be single instanced
-        // Get or register the main instance
+        // Force the app to be single instanced.
+        // Get or register the main instance.
         var mainInstance = AppInstance.FindOrRegisterForKey("mainInstance");
         var activationArgs = AppInstance.GetCurrent().GetActivatedEventArgs();
-
-        // If the main instance isn't this current instance
         if (!mainInstance.IsCurrent)
         {
             Log.Logger()?.ReportInfo($"Not main instance, redirecting.");
@@ -35,8 +31,7 @@ public sealed class Program
             return;
         }
 
-        // Otherwise, we're in the main instance
-        // Register for activation redirection
+        // Register for activation redirection.
         AppInstance.GetCurrent().Activated += AppActivationRedirected;
 
         if (args.Length > 0 && args[0] == "-RegisterProcessAsComServer")
@@ -60,7 +55,7 @@ public sealed class Program
     {
         Log.Logger()?.ReportInfo($"Redirected with kind: {activationArgs.Kind}");
 
-        // Handle COM server
+        // Handle COM server.
         if (activationArgs.Kind == ExtendedActivationKind.Launch)
         {
             var d = activationArgs.Data as ILaunchActivatedEventArgs;
@@ -73,13 +68,13 @@ public sealed class Program
             }
         }
 
-        // Handle Notification
+        // Handle Notification.
         if (activationArgs.Kind == ExtendedActivationKind.AppNotification)
         {
             HandleNotificationActivation(activationArgs);
         }
 
-        // Handle Protocol
+        // Handle Protocol.
         if (activationArgs.Kind == ExtendedActivationKind.Protocol)
         {
             var d = activationArgs.Data as IProtocolActivatedEventArgs;
@@ -89,9 +84,6 @@ public sealed class Program
                 HandleProtocolActivation(d.Uri);
             }
         }
-
-        // TODO: Handle other activation types
-        // TODO: Handle the case when protocol activation happens first - This shouldn't happen since we'd have 0 active oauth requests.
     }
 
     private static void HandleNotificationActivation(AppActivationArguments activationArgs)
@@ -113,7 +105,7 @@ public sealed class Program
     {
         Log.Logger()?.ReportInfo($"Activating COM Server");
 
-        // Register and run COM server
+        // Register and run COM server.
         // This could be called by either of the COM registrations, we will do them all to avoid deadlock and bind all on the plugin's lifetime.
         using var pluginServer = new Microsoft.Windows.DevHome.SDK.PluginServer();
         var pluginDisposedEvent = new ManualResetEvent(false);
@@ -135,7 +127,7 @@ public sealed class Program
         _ = dataUpdater.Start();
 
         // This will make the main thread wait until the event is signalled by the plugin class.
-        // Since we have single instance of the plugin object, we exit as sooon as it is disposed.
+        // Since we have single instance of the plugin object, we exit as soon as it is disposed.
         pluginDisposedEvent.WaitOne();
         Log.Logger()?.ReportInfo($"Plugin is disposed.");
     }

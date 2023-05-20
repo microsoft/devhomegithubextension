@@ -240,8 +240,6 @@ public abstract class GithubWidget : WidgetImpl
             catch (Exception ex)
             {
                 Log.Logger()?.ReportError(Name, ShortId, $"Failed getting configuration information for input url: {data}", ex);
-
-                // TODO handle this and show something meaningful in the widget to indicate invalid input.
                 configurationData.Add("hasConfiguration", false);
                 configurationData.Add("configuring", true);
 

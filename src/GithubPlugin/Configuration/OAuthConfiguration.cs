@@ -24,7 +24,7 @@ internal static class OauthConfiguration
         {
             if (string.IsNullOrEmpty(DeveloperOAuthConfiguration.ClientID))
             {
-                // Throw if neither the Build-time constant or the environment variable is set
+                // Throw if neither the Build-time constant or the environment variable is set.
                 throw new InvalidOperationException("ClientID has not been set.");
             }
 
@@ -42,7 +42,7 @@ internal static class OauthConfiguration
         {
             if (string.IsNullOrEmpty(DeveloperOAuthConfiguration.ClientSecret))
             {
-                // Throw if neither the Build-time constant or the environment variable is set
+                // Throw if neither the Build-time constant or the environment variable is set.
                 throw new InvalidOperationException("ClientSecret has not been set.");
             }
 

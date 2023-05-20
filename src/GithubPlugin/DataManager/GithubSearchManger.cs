@@ -44,8 +44,8 @@ public partial class GitHubSearchManager : IGitHubSearchManager, IDisposable
 
         var client = await GitHubClientProvider.Instance.GetClientForLoggedInDeveloper(true);
 
-        // set is: parameter according to the search category
-        // for the case we are searching for both we don't have to set the parameter
+        // Set is: parameter according to the search category.
+        // For the case we are searching for both we don't have to set the parameter
         if (category.Equals(SearchCategory.Issues))
         {
             request.Is = new List<Octokit.IssueIsQualifier>() { Octokit.IssueIsQualifier.Issue };

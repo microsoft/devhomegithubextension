@@ -7,7 +7,7 @@ using Microsoft.Windows.DevHome.SDK;
 namespace GitHubPlugin.DeveloperId;
 internal class LoginUIController : IPluginAdaptiveCardController
 {
-    // _loginEntryPoint stores the calling component on Dev Home (like "Settings", "SetupTool" etc)
+    // _loginEntryPoint stores the calling component on Dev Home (like "Settings", "SetupTool" etc).
     private readonly string _loginEntryPoint;
     private IPluginAdaptiveCard? _loginUI;
     private static readonly LoginUITemplate _loginUITemplate = new ();
@@ -39,9 +39,7 @@ internal class LoginUIController : IPluginAdaptiveCardController
         {
             case LoginUIState.LoginPage:
             {
-                // TODO: Validate inputs, and show error if there's a problem
-
-                // Inputs are validated at this point
+                // Inputs are validated at this point.
                 _loginUI.Update(_loginUITemplate.GetLoginUITemplate(LoginUIState.WaitingPage), null, LoginUIState.WaitingPage);
                 Log.Logger()?.ReportDebug($"inputs: {inputs}");
 
@@ -87,7 +85,7 @@ internal class LoginUIController : IPluginAdaptiveCardController
         }
     }
 
-    // Adaptive Card Templates for LoginUI
+    // Adaptive Card Templates for LoginUI.
     private class LoginUITemplate
     {
         internal string GetLoginUITemplate(string loginUIState)
@@ -380,7 +378,7 @@ internal class LoginUIController : IPluginAdaptiveCardController
         }
     }
 
-    // This class cannot be an enum, since we are passing this to the core app as State parameter
+    // This class cannot be an enum, since we are passing this to the core app as State parameter.
     private class LoginUIState
     {
         internal const string LoginPage = "LoginPage";

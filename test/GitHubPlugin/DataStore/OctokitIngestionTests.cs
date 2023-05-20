@@ -49,7 +49,7 @@ public partial class DataStoreTests
         {
             TestContext?.WriteLine($"  User: {user.Id}: {user.InternalId} - {user.Login} - {user.AvatarUrl} - {user.Type}");
 
-            // Ids are inserted in order starting at 1, so they should match the list index - 1
+            // Ids are inserted in order starting at 1, so they should match the list index - 1.
             var index = (int)user.Id - 1;
             Assert.AreEqual(items[index], user.Login);
         }
@@ -113,7 +113,7 @@ public partial class DataStoreTests
             var repoObj = DataModel.Repository.GetById(dataStore, i);
             Assert.IsNotNull(repoObj);
 
-            // Ids are inserted in order starting at 1, so they should match the list index - 1
+            // Ids are inserted in order starting at 1, so they should match the list index - 1.
             var index = (int)repoObj.Id - 1;
             Assert.AreEqual(items[index].Item1, repoObj.Owner.Login);
             Assert.AreEqual(items[index].Item2, repoObj.Name);
@@ -388,7 +388,7 @@ public partial class DataStoreTests
         {
             TestContext?.WriteLine($"  Id: {label.Id}  InternalId: {label.InternalId}  Name: {label.Name}  Color: {label.Color}  Default: {label.IsDefault}  Desc: {label.Description}");
 
-            // Ids are inserted in order starting at 1, so they should match the list index - 1
+            // Ids are inserted in order starting at 1, so they should match the list index - 1.
             var index = (int)label.Id - 1;
             Assert.AreEqual(pull.Labels[index].Id, label.InternalId);
             Assert.AreEqual(pull.Labels[index].Name, label.Name);
@@ -428,7 +428,7 @@ public partial class DataStoreTests
         using var tx = dataStore.Connection!.BeginTransaction();
 
         // Labels are on issues and pull requests and cannot be queried directly, get them from a pull.
-        // Add pull so we can verify label associations
+        // Add pull so we can verify label associations.
         var issue = client.Issue.Get("microsoft", "WindowsAppSDK", 3096).Result;
         var dataStoreIssue = DataModel.Issue.GetOrCreateByOctokitIssue(dataStore, issue);
 
@@ -438,7 +438,7 @@ public partial class DataStoreTests
             var inserted = DataModel.Label.GetOrCreateByOctokitLabel(dataStore, label);
             Assert.AreNotEqual(DataStore.NoForeignKey, inserted.Id);
 
-            // Associate label with the pull request
+            // Associate label with the pull request.
             IssueLabel.AddLabelToIssue(dataStore, dataStoreIssue, inserted);
         }
 
@@ -451,7 +451,7 @@ public partial class DataStoreTests
         {
             TestContext?.WriteLine($"  Id: {label.Id}  InternalId: {label.InternalId}  Name: {label.Name}  Color: {label.Color}  Default: {label.IsDefault}  Desc: {label.Description}");
 
-            // Ids are inserted in order starting at 1, so they should match the list index - 1
+            // Ids are inserted in order starting at 1, so they should match the list index - 1.
             var index = (int)label.Id - 1;
             Assert.AreEqual(issue.Labels[index].Id, label.InternalId);
             Assert.AreEqual(issue.Labels[index].Name, label.Name);

@@ -38,7 +38,7 @@ public class DataStore : IDisposable
     {
         if (File.Exists(DataStoreFilePath))
         {
-            // If not deleting, check for schema version mismatch
+            // If not deleting, check for schema version mismatch.
             // If we encounter problems or mismatch, we will delete existing db.
             if (!deleteExistingDatabase)
             {
@@ -49,7 +49,7 @@ public class DataStore : IDisposable
                     if (currentSchemaVersion != schema.SchemaVersion)
                     {
                         // Any mismatch of schema is considered invalid.
-                        // Since the data stored is functionally a cache, the simplest and most reliable
+                        // Since the data stored is functionally a cache, the simplest and most reliable.
                         // migration method is to delete the existing database and create anew.
                         deleteExistingDatabase = true;
                         Close();
@@ -181,7 +181,7 @@ public class DataStore : IDisposable
         tx.Commit();
     }
 
-    // Gets the string representing a log message for sql string + anonymous parameter object
+    // Gets the string representing a log message for sql string + anonymous parameter object.
     public static string GetSqlLogMessage(string sql, object? param = null)
     {
         var sb = new StringBuilder();
@@ -286,7 +286,7 @@ public class DataStore : IDisposable
         }
     }
 
-    private bool disposed; // To detect redundant calls
+    private bool disposed; // To detect redundant calls.
 
     protected virtual void Dispose(bool disposing)
     {
