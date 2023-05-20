@@ -8,9 +8,6 @@ namespace GitHubPlugin.DeveloperId;
 
 public class DeveloperId : IDeveloperId
 {
-    // _
-    // Members
-    // _
     public string LoginId { get; private set; }
 
     public string DisplayName { get; private set; }
@@ -23,9 +20,6 @@ public class DeveloperId : IDeveloperId
 
     public GitHubClient GitHubClient { get; private set; }
 
-    // _
-    // Constructors, Destructors
-    // _
     public DeveloperId()
     {
         LoginId = string.Empty;
@@ -50,21 +44,15 @@ public class DeveloperId : IDeveloperId
         DisplayName = string.Empty;
         Email = string.Empty;
         Url = string.Empty;
-
-        // TODO: Ensure token removed From Credential Manager here
         return;
     }
 
-    // _
-    // IDeveloperId interface functions
-    // _
+    // IDeveloperId interface functions.
     string IDeveloperId.LoginId() => LoginId;
 
     string IDeveloperId.Url() => Url;
 
-    // _
-    // IDeveloperIdInternal interface
-    // _
+    // IDeveloperIdInternal interface.
     public Windows.Security.Credentials.PasswordCredential GetCredential(bool refreshIfExpired = false)
     {
         if (refreshIfExpired && (CredentialExpiryTime < DateTime.Now))
@@ -77,12 +65,9 @@ public class DeveloperId : IDeveloperId
 
     public Windows.Security.Credentials.PasswordCredential RefreshDeveloperId()
     {
-        // Setting to MaxValue, since GitHub doesn't forcibly expire tokens currently
+        // Setting to MaxValue, since GitHub doesn't forcibly expire tokens currently.
         CredentialExpiryTime = DateTime.MaxValue;
-
-        // TODO: Use Refresh token to get new access code and populate Credential vault
         DeveloperIdProvider.GetInstance().RefreshDeveloperId(this);
-
         var credential = CredentialVault.GetCredentialFromLocker(LoginId);
         GitHubClient.Credentials = new (credential.Password);
         return credential;

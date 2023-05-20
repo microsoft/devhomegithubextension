@@ -61,7 +61,7 @@ internal class GithubReviewWidget : GithubWidget
 
     public override void DeleteWidget(string widgetId, string customState)
     {
-        // Remove event handler
+        // Remove event handler.
         GitHubSearchManager.OnResultsAvailable -= SearchManagerResultsAvailableHandler;
         base.DeleteWidget(widgetId, customState);
     }

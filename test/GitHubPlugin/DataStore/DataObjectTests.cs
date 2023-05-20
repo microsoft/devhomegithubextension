@@ -80,7 +80,6 @@ public partial class DataStoreTests
         dataStore.Create();
         Assert.IsNotNull(dataStore.Connection);
 
-        // Add Metadata
         var metadata = new List<MetaData>
         {
             { new MetaData { Key = "Kittens", Value = "Cute" } },
@@ -144,7 +143,6 @@ public partial class DataStoreTests
         dataStore.Create();
         Assert.IsNotNull(dataStore.Connection);
 
-        // Add users
         var users = new List<User>
         {
             { new User { Login = "Kittens", InternalId = 16, AvatarUrl = "https://www.microsoft.com", Type = "Cat" } },
@@ -401,7 +399,6 @@ public partial class DataStoreTests
 
         using var tx = dataStore.Connection!.BeginTransaction();
 
-        // Add checkruns
         var checks = new List<CheckRun>
         {
             { new CheckRun { HeadSha = "1234abcd", Name = "Build x86", InternalId = 16, ConclusionId = 1, StatusId = 3 } },
@@ -448,7 +445,7 @@ public partial class DataStoreTests
             }
         }
 
-        // Verify objects work
+        // Verify objects work.
         var pullrequest = DataModel.PullRequest.GetById(dataStore, 1);
         Assert.IsNotNull(pullrequest);
         var checksForPullRequest = pullrequest.Checks;
@@ -486,7 +483,7 @@ public partial class DataStoreTests
         dataStore.Create();
         Assert.IsNotNull(dataStore.Connection);
 
-        // Add checkruns
+        // Add checkruns.
         var checks = new List<CheckRun>
         {
             { new CheckRun { HeadSha = "1234abcd", Name = "Build x86", InternalId = 16, ConclusionId = 1, StatusId = 3, DetailsUrl = "https://link/to/failed/build" } },

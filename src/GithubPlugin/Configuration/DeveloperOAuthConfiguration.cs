@@ -14,7 +14,7 @@ internal static class DeveloperOAuthConfiguration
     ////                       setx GITHUB_CLIENT_SECRET "Your OAuth App's ClientSecret" /m
 
     // GitHub OAuth Client ID and Secret values should not be checked in. Rather than modifying these values,
-    // setting the environment variables like shown above will persist across branch switches
+    // setting the environment variables like shown above will persist across branch switches.
     internal static readonly string? ClientID = Environment.GetEnvironmentVariable("GITHUB_CLIENT_ID");
 
     internal static readonly string? ClientSecret = Environment.GetEnvironmentVariable("GITHUB_CLIENT_SECRET");

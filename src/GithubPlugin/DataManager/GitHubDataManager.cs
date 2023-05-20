@@ -386,7 +386,7 @@ public partial class GitHubDataManager : IGitHubDataManager, IDisposable
                         continue;
                     }
 
-                    // Update this pull request and associated CheckRuns and CheckSuites
+                    // Update this pull request and associated CheckRuns and CheckSuites.
                     var dsPullRequest = PullRequest.GetOrCreateByOctokitPullRequest(DataStore, octoPull, dsRepository.Id);
                     CheckRun.DeleteAllForPullRequest(DataStore, dsPullRequest);
                     var octoCheckRunResponse = await devId.GitHubClient.Check.Run.GetAllForReference(repoName[0], repoName[1], dsPullRequest.HeadSha);
@@ -616,13 +616,13 @@ public partial class GitHubDataManager : IGitHubDataManager, IDisposable
         SearchIssue.DeleteUnreferenced(DataStore);
     }
 
-    // Sets a last-updated in the MetaData
+    // Sets a last-updated in the MetaData.
     private void SetLastUpdatedInMetaData()
     {
         MetaData.AddOrUpdate(DataStore, LastUpdatedKeyName, DateTime.Now.ToDataStoreString());
     }
 
-    // Converts fullname -> owner, name
+    // Converts fullname -> owner, name.
     private string[] GetOwnerAndRepositoryNameFromFullName(string fullName)
     {
         var nameSplit = fullName.Split(new[] { '/' });
@@ -657,7 +657,6 @@ public partial class GitHubDataManager : IGitHubDataManager, IDisposable
     {
         if (DataStore is null || !DataStore.IsConnected)
         {
-            // TODO: Should attempt re-opening DataStore and/or reconnecting.
             throw new DataStoreInaccessibleException("DataStore is not available.");
         }
     }
@@ -679,7 +678,7 @@ public partial class GitHubDataManager : IGitHubDataManager, IDisposable
 
     public override string ToString() => "GitHubDataManager";
 
-    private bool disposed; // To detect redundant calls
+    private bool disposed; // To detect redundant calls.
 
     protected virtual void Dispose(bool disposing)
     {

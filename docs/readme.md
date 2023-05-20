@@ -19,6 +19,7 @@ Once you've discussed your proposed feature/fix/etc. with a team member, and you
 - Package new ideas into classes or refactor existing ideas into a class as you extend.
 - When adding new classes/methods/changing existing code: add new unit tests or update the existing tests.
 <!--
+
 ## GitHub Workflow
 
 - Before starting to work on a fix/feature, make sure there is an open issue to track the work.
@@ -33,7 +34,8 @@ Once you've discussed your proposed feature/fix/etc. with a team member, and you
   - mark the issue(s), that the PR solved, with the `Resolution-Fix-Committed` label, remove the `In progress` label and if the issue is assigned to a project, move the item to the `Done` status.
   - don't close the issue if it's a bug in the current released version since users tend to not search for closed issues, we will close the resolved issues when a new version is released.
   - if it's not a code fix that effects the end user, the issue can be closed (for example a fix in the build or a code refactoring and so on).
--->
+    -->
+
 ## Compiling GITServices
 
 ### Compiling Source Code
@@ -41,10 +43,9 @@ Once you've discussed your proposed feature/fix/etc. with a team member, and you
 There are two ways to compile locally.
 
 - Open the Developer Command Prompt for Visual Studio
-- Run `Build` from GITServices's root directory.  You can pass in a list of platforms/configurations
+- Run `Build` from GITServices's root directory. You can pass in a list of platforms/configurations
 - The GITServices MSIX will be in your repo under `AppxPackages\x64\debug`
 
 Alternatively
 
 - Open `GITServices.sln` in Visual Studio, in the `Solutions Configuration` drop-down menu select `Release` or `Debug`, from the `Build` menu choose `Build Solution`.
-

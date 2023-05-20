@@ -36,7 +36,7 @@ public class DataStoreTransaction : IDataStoreTransaction
         transaction?.Rollback();
     }
 
-    private bool disposed; // To detect redundant calls
+    private bool disposed; // To detect redundant calls.
 
     protected virtual void Dispose(bool disposing)
     {

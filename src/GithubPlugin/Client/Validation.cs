@@ -15,7 +15,7 @@ public static class Validation
 
     public static bool IsValidGitHubURL(Uri uri)
     {
-        // Valid github Uri has three segments.  The first is /
+        // Valid github Uri has three segments.  The first is /.
         if (uri.Segments.Length < 3 || (!uri.Host.Equals("github.com", StringComparison.OrdinalIgnoreCase) && !uri.Host.Equals("www.github.com", StringComparison.OrdinalIgnoreCase)))
         {
             Log.Logger()?.ReportDebug($"{uri.OriginalString} is not a valid github uri");
@@ -31,7 +31,7 @@ public static class Validation
         Uri? parsedUri;
 
         // https://github.com/dotnet/runtime/issues/72632
-        // IsWellFormedUriString returnes false with a github url.
+        // IsWellFormedUriString returns false with a github url.
         // Above link shows a work around.
         if (!IsValidHttpUri(url, out parsedUri) || url == null || parsedUri == null)
         {
@@ -175,7 +175,7 @@ public static class Validation
 
     public static string ParseFullNameFromGitHubURL(Uri url)
     {
-        // Need to account for the presence or absence of a trailing '/' in the segements, and
+        // Need to account for the presence or absence of a trailing '/' in the segments, and
         // ensure there is exactly one slash separator in the full name.
         return $"{url.Segments[1].Replace("/", string.Empty)}/{url.Segments[2].Replace("/", string.Empty)}";
     }

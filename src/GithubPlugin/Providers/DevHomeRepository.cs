@@ -89,7 +89,7 @@ public class DevHomeRepository : Microsoft.Windows.DevHome.SDK.IRepository
                 {
                     cloneOptions.CredentialsProvider = (url, user, cred) => new UsernamePasswordCredentials
                     {
-                        // Password is a PAT unique to github.
+                        // Password is a PAT unique to GitHub.
                         Username = internalDeveloperId.GetCredential().Password,
                         Password = string.Empty,
                     };
