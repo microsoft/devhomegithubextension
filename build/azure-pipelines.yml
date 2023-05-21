@@ -370,31 +370,6 @@ stages:
         artifactName: MsixBundle_Release
         targetPath: StorePublish
 
-    # Automated localization coming soon
-    # - task: MicrosoftTDBuild.tdbuild-task.tdbuild-task.TouchdownBuildTask@1
-    #   displayName: Download and Use Localization Files
-    #   condition: eq(variables['EnableLocalization'], 'true')
-    #   retryCountOnTaskFailure: 2
-    #   inputs:
-    #     teamId: 71220
-    #     authId: $(TouchdownAppId)
-    #     authKey: $(TouchdownAppKey)
-    #     resourceFilePath: |
-    #       **\en-US\PDP.xml
-    #     localizationTarget: false
-    #     appendRelativeDir: true
-
-    # - task: PowerShell@2
-    #   displayName: Move Loc files one level up
-    #   condition: eq(variables['EnableLocalization'], 'true')
-    #   inputs:
-    #     targetType: inline
-    #     script: >-
-    #       $Files = Get-ChildItem . -R -Filter 'Resources.resw' | ? FullName -Like '*en-US\*\Resources.resw'
-
-    #       $Files | % { Move-Item -Verbose $_.Directory $_.Directory.Parent.Parent -EA:Ignore }
-    #     pwsh: true
-
     - task: MS-RDX-MRO.windows-store-publish-dev.package-task.store-package@2
       displayName: 'Create Staging StoreBroker Package'
       condition: eq(variables['BuildingBranch'], 'staging')

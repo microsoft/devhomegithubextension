@@ -11,7 +11,7 @@ public static class Guids
     public const string IUnknown = "00000000-0000-0000-C000-000000000046";
 }
 
-// IClassFactory declaration
+// IClassFactory declaration.
 [ComImport]
 [InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 [Guid(Guids.IClassFactory)]

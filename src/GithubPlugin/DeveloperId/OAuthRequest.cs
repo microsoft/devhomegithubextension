@@ -53,7 +53,6 @@ internal class OAuthRequest : IDisposable
 
         var request = new OauthLoginRequest(OauthConfiguration.GetClientId())
         {
-            // TODO: Verify Scope is the lowest necessary
             Scopes = { "user", "notifications", "repo", "read:org" },
             State = State,
             RedirectUri = new Uri(OauthConfiguration.RedirectUri),
@@ -71,7 +70,7 @@ internal class OAuthRequest : IDisposable
 
         Task.Run(async () =>
         {
-            // Launch Github login page on Browser
+            // Launch Github login page on Browser.
             browserLaunch = await Windows.System.Launcher.LaunchUriAsync(uri, options);
 
             if (browserLaunch)
@@ -80,7 +79,6 @@ internal class OAuthRequest : IDisposable
             }
             else
             {
-                // Handle Failure Case
                 Log.Logger()?.ReportError($"Uri Launch failed");
             }
         });

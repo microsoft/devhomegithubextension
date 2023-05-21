@@ -236,7 +236,7 @@ public class CheckRun
 
     // Composite conclusion for the pull request, taking the minimum result among all runs.
     // If any completed run has failed or cancelled then that will show up here and consider
-    // the entire pull request as having that state. This means for a set of compeleted checks for
+    // the entire pull request as having that state. This means for a set of completed checks for
     // for a pull request to be considered "Success", all runs must be "Success" or "Skipped".
     public static CheckConclusion GetCheckRunConclusionForPullRequest(DataStore datastore, PullRequest pullRequest)
     {
