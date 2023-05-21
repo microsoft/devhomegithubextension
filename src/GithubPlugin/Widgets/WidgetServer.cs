@@ -47,9 +47,6 @@ public sealed class WidgetServer : IDisposable
 
     public void Run()
     {
-        // TODO : We need to handle lifetime management of the server.
-        // For details around ref counting and locking of out-of-proc COM servers, see
-        // https://docs.microsoft.com/windows/win32/com/out-of-process-server-implementation-helpers
         Console.ReadLine();
     }
 

@@ -57,7 +57,7 @@ public class DataUpdater : IDisposable
 
     public override string ToString() => "DataUpdater";
 
-    private bool disposed; // To detect redundant calls
+    private bool disposed; // To detect redundant calls.
 
     protected virtual void Dispose(bool disposing)
     {

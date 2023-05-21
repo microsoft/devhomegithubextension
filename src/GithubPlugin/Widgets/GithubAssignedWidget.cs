@@ -167,7 +167,7 @@ internal class GithubAssignedWidget : GithubWidget
 
     public override void DeleteWidget(string widgetId, string customState)
     {
-        // Remove event handler
+        // Remove event handler.
         GitHubSearchManager.OnResultsAvailable -= SearchManagerResultsAvailableHandler;
         base.DeleteWidget(widgetId, customState);
     }
@@ -228,11 +228,11 @@ internal class GithubAssignedWidget : GithubWidget
             var issuesArray = new JsonArray();
             issuesData.Add("openCount", items.Count());
 
-            // next step: composing the item list, which will be sent to the widget
+            // Next step: composing the item list, which will be sent to the widget
             // the assignedIssues and assignedPulls contain the items, the final list of items
             // should be orderd by creation time. Both lists are ordered so in every step
             // check the first items (if there are any) and compare them. Repeat until both
-            // lists are empty
+            // lists are empty.
             foreach (var item in items)
             {
                 var issue = new JsonObject

@@ -106,7 +106,6 @@ public partial class DataStoreTests
         await dataManager.UpdatePullRequestsForRepositoryAsync("octokit/octokit.net", requestOptions);
         await dataManager.UpdatePullRequestsForRepositoryAsync("microsoft/powertoys", requestOptions);
 
-        // Add Update Data test
         testListener.PrintEventCounts();
         Assert.AreEqual(false, testListener.FoundErrors());
     }
@@ -233,9 +232,6 @@ public partial class DataStoreTests
         log.AddListener(testListener);
         DataModel.Log.Attach(log);
         DeveloperId.Log.Attach(log);
-
-        // Assert.AreEqual(true, DataManager.Notifications.PullRequestStatusToast.ShowPullRequestStatusToast());
-        // Add Update Data test
         testListener.PrintEventCounts();
         Assert.AreEqual(false, testListener.FoundErrors());
     }

@@ -4,7 +4,7 @@ using GitHubPlugin.DataModel;
 
 namespace GitHubPlugin.Client;
 
-// Validation layer to help parsing github url.
+// Validation layer to help parsing GitHub URL.
 public static class Validation
 {
     private static bool IsValidHttpUri(string uriString, out Uri? uri)
@@ -15,7 +15,7 @@ public static class Validation
 
     public static bool IsValidGitHubURL(Uri uri)
     {
-        // Valid github Uri has three segments.  The first is /
+        // Valid GitHub URL has three segments.  The first is '/'.
         if (uri.Segments.Length < 3 || (!uri.Host.Equals("github.com", StringComparison.OrdinalIgnoreCase) && !uri.Host.Equals("www.github.com", StringComparison.OrdinalIgnoreCase)))
         {
             Log.Logger()?.ReportDebug($"{uri.OriginalString} is not a valid github uri");
@@ -25,13 +25,13 @@ public static class Validation
         return true;
     }
 
-    // Ensure it is a GitHub repo url.
+    // Ensure it is a GitHub repo URL.
     public static bool IsValidGitHubURL(string url)
     {
         Uri? parsedUri;
 
         // https://github.com/dotnet/runtime/issues/72632
-        // IsWellFormedUriString returnes false with a github url.
+        // IsWellFormedUriString returns false with a GitHub URL.
         // Above link shows a work around.
         if (!IsValidHttpUri(url, out parsedUri) || url == null || parsedUri == null)
         {
@@ -82,7 +82,7 @@ public static class Validation
 
     public static string ParseOwnerFromGitHubURL(string url)
     {
-        // Check if url string provided as just the repository FullName.
+        // Check if URL string provided as just the repository FullName.
         var fullNameSplit = GetNameAndRepoFromFullName(url);
         if (fullNameSplit is not null)
         {
@@ -102,7 +102,7 @@ public static class Validation
 
     public static string ParseRepositoryFromGitHubURL(string url)
     {
-        // Check if url string provided as just the repository FullName.
+        // Check if URL string provided as just the repository FullName.
         var fullNameSplit = GetNameAndRepoFromFullName(url);
         if (fullNameSplit is not null)
         {
@@ -114,7 +114,7 @@ public static class Validation
 
     public static string ParseRepositoryFromGitHubURL(Uri url)
     {
-        // Replace .git because Ocktokit does not want .git.
+        // Replace .git because Octokit does not want .git.
         var repoName = url.Segments[2].Replace("/", string.Empty);
         return RemoveDotGitFromEndOfString(repoName);
     }
@@ -163,7 +163,7 @@ public static class Validation
 
     public static string ParseFullNameFromGitHubURL(string url)
     {
-        // Check if url string provided as just the repository FullName.
+        // Check if URL string provided as just the repository FullName.
         var fullNameSplit = GetNameAndRepoFromFullName(url);
         if (fullNameSplit is not null)
         {
@@ -175,7 +175,7 @@ public static class Validation
 
     public static string ParseFullNameFromGitHubURL(Uri url)
     {
-        // Need to account for the presence or absence of a trailing '/' in the segements, and
+        // Need to account for the presence or absence of a trailing '/' in the segments, and
         // ensure there is exactly one slash separator in the full name.
         return $"{url.Segments[1].Replace("/", string.Empty)}/{url.Segments[2].Replace("/", string.Empty)}";
     }

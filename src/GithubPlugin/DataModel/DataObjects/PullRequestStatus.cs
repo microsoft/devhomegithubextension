@@ -120,8 +120,8 @@ public class PullRequestStatus
             Result = string.Empty,
         };
 
-        // Get the ConclusionId and StatusId from the CheckSuites
-        // Get the Combined Commit State
+        // Get the ConclusionId and StatusId from the CheckSuites.
+        // Get the Combined Commit State.
         pullRequestStatus.ConclusionId = (long)pullRequest.CheckSuiteConclusion;
         pullRequestStatus.StatusId = (long)pullRequest.CheckSuiteStatus;
         pullRequestStatus.StateId = (long)pullRequest.CommitState;
@@ -130,7 +130,7 @@ public class PullRequestStatus
         var failedChecks = pullRequest.FailedChecks;
         if (failedChecks.Any())
         {
-            // If we have a failed check, make the first one the Result & DetailsUrl
+            // If we have a failed check, make the first one the Result & DetailsUrl.
             pullRequestStatus.DetailsUrl = failedChecks.First().DetailsUrl;
             pullRequestStatus.Result = failedChecks.First().Result;
             pullRequestStatus.TimeOccurred = failedChecks.First().TimeCompleted == 0 ? DateTime.Now.ToDataStoreInteger() : failedChecks.First().TimeCompleted;
