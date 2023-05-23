@@ -59,7 +59,7 @@ stages:
           inputs:
             targetType: inline
             script: >-
-              Copy-Item (Join-Path $PSScriptRoot "build\nuget.config.internal") -Destination (Join-Path $PSScriptRoot "nuget.config")
+              Copy-Item (Join-Path $(Build.SourcesDirectory) "build\nuget.config.internal") -Destination (Join-Path $(Build.SourcesDirectory) "nuget.config")
             pwsh: true
 
         - task: NuGetCommand@2
