@@ -36,57 +36,6 @@ resources:
     ref: refs/heads/main
 
 stages:
-- stage: SourceAnalysis
-  # This stage is expected to run in parallel with BuildWindowsAppSDK-Stages.
-  dependsOn: []
-  jobs:
-  - job: SDLSourcesScanning
-    steps:
-    # Required by the Packaged ES SDL Templates.
-    - checkout: self
-
-    # Typically this has been done.
-    - task: NodeTool@0
-      displayName: 'Use Node >=8.6.0'
-      inputs:
-        versionSpec: '>=8.6.0'
-
-    - template: v2/Steps/PackageES/Windows.SDL.Sources.Analysis.OS.Undocked.yml@templates_onebranch
-      parameters:
-        globalsdl:
-          tsa:
-            # Not filing bugs for issues found by the scans just yet.
-            #enabled: true    
-            enabled: false
-          codeql:
-            # We currently don't disable other scans that are enabled by default. Just ensure that 
-            # scans that we are interested in are enabled.
-            psscriptanalyzer:
-              enable: true
-              break: true
-            credscan:
-              enable: true
-              break: true
-            policheck:
-              enable: true
-              break: true
-            antimalwarescan:
-              enable: true
-              break: true
-            armory:
-              enable: true
-              break: true
-            eslint:
-              enable: true
-              break: true
-
-    - task: Flawfinder@2
-      displayName: 'Run Flawfinder'
-      inputs:
-        targetFlawfinderPattern: '$(Build.SourcesDirectory)'
-        minRiskLevel: 2
-        onlyInputs: false
-
 - stage: Build_Msix
   dependsOn: []
   jobs:
@@ -104,6 +53,14 @@ stages:
           displayName: Replace Stubbed Files
           inputs:
             filePath: 'build/scripts/Unstub.ps1'
+
+        - task: PowerShell@2
+          displayName: Use internal nuget feed
+          inputs:
+            targetType: inline
+            script: >-
+              Copy-Item (Join-Path $(Build.SourcesDirectory) "build\nuget.config.internal") -Destination (Join-Path $(Build.SourcesDirectory) "nuget.config")
+            pwsh: true
 
         - task: NuGetCommand@2
           inputs:
@@ -281,6 +238,57 @@ stages:
             IndexSources: false
             SymbolServerType: TeamServices
             SymbolsProduct: DevHomeGitHubExtension
+
+- stage: SourceAnalysis
+  # This stage is expected to run in parallel with BuildWindowsAppSDK-Stages.
+  dependsOn: []
+  jobs:
+  - job: SDLSourcesScanning
+    steps:
+    # Required by the Packaged ES SDL Templates.
+    - checkout: self
+
+    # Typically this has been done.
+    - task: NodeTool@0
+      displayName: 'Use Node >=8.6.0'
+      inputs:
+        versionSpec: '>=8.6.0'
+
+    - template: v2/Steps/PackageES/Windows.SDL.Sources.Analysis.OS.Undocked.yml@templates_onebranch
+      parameters:
+        globalsdl:
+          tsa:
+            # Not filing bugs for issues found by the scans just yet.
+            #enabled: true    
+            enabled: false
+          codeql:
+            # We currently don't disable other scans that are enabled by default. Just ensure that 
+            # scans that we are interested in are enabled.
+            psscriptanalyzer:
+              enable: true
+              break: true
+            credscan:
+              enable: true
+              break: true
+            policheck:
+              enable: true
+              break: true
+            antimalwarescan:
+              enable: true
+              break: true
+            armory:
+              enable: true
+              break: true
+            eslint:
+              enable: true
+              break: true
+
+    - task: Flawfinder@2
+      displayName: 'Run Flawfinder'
+      inputs:
+        targetFlawfinderPattern: '$(Build.SourcesDirectory)'
+        minRiskLevel: 2
+        onlyInputs: false
 
 - stage: Build_MsixBundle
   dependsOn: Build_Msix
