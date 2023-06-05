@@ -24,9 +24,6 @@ jobs:
         - configuration: Debug
           platform: arm64
     runs-on: ${{ matrix.os }}
-    env:
-      MSIX_VERSION: "0.1"
-      SDK_VERSION: "0.1"
     steps:
     - uses: actions/checkout@v3
       with:
@@ -57,15 +54,13 @@ jobs:
         Add-Content $env:GITHUB_ENV "VSDevCmd=$VSDevCmd"
 
     - name: Restore dependencies
-      run: |
-        dotnet restore GITServices.sln -p:PublishReadyToRun=true
+      run: dotnet restore GITServices.sln -p:PublishReadyToRun=true
 
     - name: Restore nuget packages
-      run: |
-        cmd /c "$env:VSDevCmd" "&" nuget restore GITServices.sln
+      run: cmd /c "$env:VSDevCmd" "&" nuget restore GITServices.sln
 
     - name: Build_DevHomeGitHubExtension
-      run: cmd /c "$env:VSDevCmd" "&" msbuild /m /p:Configuration=${{ matrix.configuration }},Platform=${{ matrix.platform }} GITServices.sln
+      run: dotnet build /m /p:Configuration=${{ matrix.configuration }},Platform=${{ matrix.platform }} GITServices.sln
 
     - name: Find vstest.console.exe
       if: ${{ matrix.platform != 'arm64' }}
