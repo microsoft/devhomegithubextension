@@ -2,7 +2,7 @@
 # This workflow will build and run all unit tests.
 #
 
-name: DevHome-CI
+name: GitHubExt-CI
 on:
   push:
   pull_request:
