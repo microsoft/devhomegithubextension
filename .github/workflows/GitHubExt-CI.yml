@@ -60,7 +60,7 @@ jobs:
       run: cmd /c "$env:VSDevCmd" "&" nuget restore GITServices.sln
 
     - name: Build_DevHomeGitHubExtension
-      run: dotnet build /m /p:Configuration=${{ matrix.configuration }},Platform=${{ matrix.platform }} GITServices.sln
+      run: cmd /c "$env:VSDevCmd" "&" msbuild /m /p:Configuration=${{ matrix.configuration }},Platform=${{ matrix.platform }} /restore GITServices.sln
 
     - name: Find vstest.console.exe
       if: ${{ matrix.platform != 'arm64' }}
