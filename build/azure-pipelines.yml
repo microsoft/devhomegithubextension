@@ -382,7 +382,7 @@ stages:
       displayName: 'Create Staging StoreBroker Package'
       condition: eq(variables['BuildingBranch'], 'staging')
       inputs:
-        serviceEndpoint: 'DevHomeCanary StoreBroker'
+        serviceEndpoint: 'DevHomeGitHubExtensionCanary StoreBroker'
         sbConfigPath: '$(System.DefaultWorkingDirectory)\build\store\canary\SBConfig.json'
         sourceFolder: 'StorePublish'
         contents: '*.msixbundle'
