@@ -23,7 +23,7 @@ parameters:
     - release
 
 variables:
-  MSIXVersion: '0.137'
+  MSIXVersion: '0.200'
   solution: '**/GITServices.sln'
   appxPackageDir: 'AppxPackages'
   testOutputArtifactDir: 'TestResults'
