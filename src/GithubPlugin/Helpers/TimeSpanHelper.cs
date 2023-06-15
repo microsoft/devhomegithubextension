@@ -14,22 +14,42 @@ internal class TimeSpanHelper
             return Resources.GetResource("WidgetTemplate_Now", log);
         }
 
+        if (timeSpan.TotalSeconds < 2)
+        {
+            return $"1 {Resources.GetResource("WidgetTemplate_SecondAgo", log)}";
+        }
+
         if (timeSpan.TotalMinutes < 1)
         {
-            return MessageFormatter.Format(Resources.GetResource("WidgetTemplate_SecondsAgo", log), new { seconds = timeSpan.Seconds });
+            return $"{timeSpan.Seconds} {Resources.GetResource("WidgetTemplate_SecondsAgo", log)}";
+        }
+
+        if (timeSpan.TotalMinutes < 2)
+        {
+            return $"1 {Resources.GetResource("WidgetTemplate_MinuteAgo", log)}";
         }
 
         if (timeSpan.TotalHours < 1)
         {
-            return MessageFormatter.Format(Resources.GetResource("WidgetTemplate_MinutesAgo", log), new { minutes = timeSpan.Minutes });
+            return $"{timeSpan.Minutes} {Resources.GetResource("WidgetTemplate_MinutesAgo", log)}";
+        }
+
+        if (timeSpan.TotalHours < 2)
+        {
+            return $"1 {Resources.GetResource("WidgetTemplate_HourAgo", log)}";
         }
 
         if (timeSpan.TotalDays < 1)
         {
-            return MessageFormatter.Format(Resources.GetResource("WidgetTemplate_HoursAgo", log), new { hours = timeSpan.Hours });
+            return $"{timeSpan.Hours} {Resources.GetResource("WidgetTemplate_HourssAgo", log)}";
         }
 
-        return MessageFormatter.Format(Resources.GetResource("WidgetTemplate_DaysAgo", log), new { days = timeSpan.Days });
+        if (timeSpan.TotalDays < 2)
+        {
+            return $"1 {Resources.GetResource("WidgetTemplate_DayAgo", log)}";
+        }
+
+        return $"{timeSpan.Days} {Resources.GetResource("WidgetTemplate_DaysAgo", log)}";
     }
 
     internal static string DateTimeOffsetToDisplayString(DateTimeOffset? dateTime, Logger? log)
