@@ -2,7 +2,6 @@
 // Licensed under the MIT license.
 using System.Text.Json.Nodes;
 using DevHome.Logging;
-using Jeffijoe.MessageFormat;
 
 namespace GitHubPlugin.Helpers;
 internal class TimeSpanHelper
