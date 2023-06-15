@@ -132,7 +132,7 @@ internal class GithubIssuesWidget : GithubWidget
                     { "title", issueItem.Title },
                     { "url", issueItem.HtmlUrl },
                     { "number", issueItem.Number },
-                    { "date", TimeSpanHelper.TimeSpanToDisplayString(DateTime.UtcNow - issueItem.CreatedAt, Log.Logger()) },
+                    { "date", TimeSpanHelper.DateTimeOffsetToDisplayString(issueItem.CreatedAt, Log.Logger()) },
                     { "user", issueItem.Author.Login },
                     { "avatar", issueItem.Author.AvatarUrl },
                     { "icon", issuesIconData },

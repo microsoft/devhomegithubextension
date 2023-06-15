@@ -105,7 +105,7 @@ internal class GithubPullsWidget : GithubWidget
                     { "title", pullItem.Title },
                     { "url", pullItem.HtmlUrl },
                     { "number", pullItem.Number },
-                    { "date", TimeSpanHelper.TimeSpanToDisplayString(DateTime.UtcNow - pullItem.CreatedAt, Log.Logger()) },
+                    { "date", TimeSpanHelper.DateTimeOffsetToDisplayString(pullItem.CreatedAt, Log.Logger()) },
                     { "user", pullItem.Author.Login },
                     { "avatar", pullItem.Author.AvatarUrl },
                     { "icon", pullsIconData },
