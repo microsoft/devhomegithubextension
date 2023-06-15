@@ -54,12 +54,12 @@ public class RepositoryProvider : IRepositoryProvider
                 {
                     if (e is Octokit.NotFoundException)
                     {
-                        Log.Logger()?.ReportDebug($"Can't find {owner}/{repoName}");
+                        Log.Logger()?.ReportError($"Can't find {owner}/{repoName}");
                     }
 
                     if (e is Octokit.ForbiddenException)
                     {
-                        Log.Logger()?.ReportDebug($"Forbidden access to {owner}/{repoName}");
+                        Log.Logger()?.ReportError($"Forbidden access to {owner}/{repoName}");
                     }
 
                     if (e is Octokit.RateLimitExceededException)
@@ -82,13 +82,13 @@ public class RepositoryProvider : IRepositoryProvider
                 {
                     if (e is Octokit.NotFoundException)
                     {
-                        Log.Logger()?.ReportDebug($"DeveloperId {loggedInDeveloperId.LoginId} did not find {owner}/{repoName}");
+                        Log.Logger()?.ReportError($"DeveloperId {loggedInDeveloperId.LoginId} did not find {owner}/{repoName}");
                         continue;
                     }
 
                     if (e is Octokit.ForbiddenException)
                     {
-                        Log.Logger()?.ReportDebug($"DeveloperId {loggedInDeveloperId.LoginId} has forbidden access to {owner}/{repoName}");
+                        Log.Logger()?.ReportError($"DeveloperId {loggedInDeveloperId.LoginId} has forbidden access to {owner}/{repoName}");
                         continue;
                     }
 

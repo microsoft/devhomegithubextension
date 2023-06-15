@@ -73,6 +73,10 @@ else {
     Write-Host "ClientSecret not found at Build-time"
 }
 
+if ($IsAzurePipelineBuild) {
+  Copy-Item (Join-Path $env:Build_RootDirectory "build\nuget.config.internal") -Destination (Join-Path $env:Build_RootDirectory "nuget.config")
+}
+
 $msbuildPath = &"${env:ProgramFiles(x86)}\Microsoft Visual Studio\Installer\vswhere.exe" -latest -prerelease -products * -requires Microsoft.Component.MSBuild -find MSBuild\**\Bin\MSBuild.exe
 
 $ErrorActionPreference = "Stop"

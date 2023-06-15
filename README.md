@@ -1,4 +1,4 @@
-![image](https://github.com/microsoft/devhomegithubextension/assets/48369326/59a0a369-f166-4287-90e7-f89b7b6b5eb8)
+![image](https://github.com/microsoft/devhomegithubextension/blob/main/src/GithubPluginServer/Assets/StoreDisplay-150.png)
 
 # Welcome to the Dev Home GitHub Extension repo
 
