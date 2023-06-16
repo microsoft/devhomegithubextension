@@ -63,6 +63,11 @@ public abstract class GithubWidget : WidgetImpl
         return Validation.ParseIssueQueryFromGitHubURL(RepositoryUrl);
     }
 
+    public string GetUnescapedIssueQuery()
+    {
+        return Uri.UnescapeDataString(GetIssueQuery()).Replace('+', ' ');
+    }
+
     public GithubWidget()
     {
         DataUpdater = new DataUpdater(PeriodicUpdate);
@@ -234,7 +239,7 @@ public abstract class GithubWidget : WidgetImpl
                     { "milestone", string.Empty },
                     { "project", repository.Description },
                     { "url", repository.HtmlUrl },
-                    { "query", GetIssueQuery() },
+                    { "query", GetUnescapedIssueQuery() },
                 };
 
                 configurationData.Add("hasConfiguration", true);
