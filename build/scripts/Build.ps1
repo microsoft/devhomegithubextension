@@ -96,13 +96,13 @@ Try {
       $newPackageName = "Microsoft.Windows.DevHomeGitHubExtension"
       $newPackageDisplayName = "Dev Home GitHub Extension (Preview)"
       $newAppDisplayNameResource = "ms-resource:AppDisplayNameStable"
-      $newWidgetProviderDisplayName = "ms-resource:WidgetsDisplayNameStable"
+      $newWidgetProviderDisplayName = "ms-resource:WidgetProviderDisplayNameStable"
     } elseif ($AzureBuildingBranch -ieq "staging") {
       $buildRing = "Canary"
       $newPackageName = "Microsoft.Windows.DevHomeGitHubExtension.Canary"
       $newPackageDisplayName = "Dev Home GitHub Extension (Canary)"
       $newAppDisplayNameResource = "ms-resource:AppDisplayNameCanary"
-      $newWidgetProviderDisplayName = "ms-resource:WidgetsDisplayNameCanary"
+      $newWidgetProviderDisplayName = "ms-resource:WidgetProviderDisplayNameCanary"
     }
 
     [Reflection.Assembly]::LoadWithPartialName("System.Xml.Linq")
