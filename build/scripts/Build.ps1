@@ -89,17 +89,20 @@ Try {
     $newPackageName = $null
     $newPackageDisplayName = $null
     $newAppDisplayNameResource = $null
+    $newWidgetsDisplayName = $null
 
     if ($AzureBuildingBranch -ieq "release") {
       $buildRing = "Stable"
       $newPackageName = "Microsoft.Windows.DevHomeGitHubExtension"
       $newPackageDisplayName = "Dev Home GitHub Extension (Preview)"
       $newAppDisplayNameResource = "ms-resource:AppDisplayNameStable"
+      $newWidgetsDisplayName = "ms-resource:WidgetsDisplayNameStable"
     } elseif ($AzureBuildingBranch -ieq "staging") {
       $buildRing = "Canary"
       $newPackageName = "Microsoft.Windows.DevHomeGitHubExtension.Canary"
       $newPackageDisplayName = "Dev Home GitHub Extension (Canary)"
       $newAppDisplayNameResource = "ms-resource:AppDisplayNameCanary"
+      $newWidgetsDisplayName = "ms-resource:WidgetsDisplayNameCanary"
     }
 
     [Reflection.Assembly]::LoadWithPartialName("System.Xml.Linq")
@@ -125,7 +128,20 @@ Try {
     }
     if (-not ([string]::IsNullOrEmpty($newAppDisplayNameResource))) {
       $appxmanifest.Root.Element($xApplications).Element($xApplication).Element($uapVisualElements).Attribute("DisplayName").Value = $newAppDisplayNameResource
-      $appxmanifest.Root.Element($xApplications).Element($xApplication).Element($xExtensions).Element($uapExtension).Element($uapAppExtension).Attribute("DisplayName").Value = $newAppDisplayNameResource
+      $extensions = $appxmanifest.Root.Element($xApplications).Element($xApplication).Element($xExtensions).Elements($uapExtension)
+      foreach ($extension in $extensions) {
+        if ($extension.Attribute("Category").Value -eq "windows.appExtension") {
+          $appExtension = $extension.Element($uapAppExtension)
+          switch ($appExtension.Attribute("Name").Value) {
+            "com.microsoft.devhome" {
+              $appExtension.Attribute("DisplayName").Value = $newAppDisplayNameResource
+            }
+            "com.microsoft.windows.widgets" {
+              $appExtension.Attribute("DisplayName").Value = $newWidgetsDisplayName
+            }
+          }
+        }
+      }
     }
     $appxmanifest.Save($appxmanifestPath)
 
@@ -158,7 +174,20 @@ Try {
     $appxmanifest.Root.Element($xIdentity).Attribute("Name").Value = "Microsoft.Windows.DevHomeGitHubExtension.Dev"
     $appxmanifest.Root.Element($xProperties).Element($xDisplayName).Value = "Dev Home GitHub Extension (Dev)"
     $appxmanifest.Root.Element($xApplications).Element($xApplication).Element($uapVisualElements).Attribute("DisplayName").Value = "ms-resource:AppDisplayNameDev"
-    $appxmanifest.Root.Element($xApplications).Element($xApplication).Element($xExtensions).Element($uapExtension).Element($uapAppExtension).Attribute("DisplayName").Value = "ms-resource:AppDisplayNameDev"
+    $extensions = $appxmanifest.Root.Element($xApplications).Element($xApplication).Element($xExtensions).Elements($uapExtension)
+    foreach ($extension in $extensions) {
+      if ($extension.Attribute("Category").Value -eq "windows.appExtension") {
+        $appExtension = $extension.Element($uapAppExtension)
+        switch ($appExtension.Attribute("Name").Value) {
+          "com.microsoft.devhome" {
+            $appExtension.Attribute("DisplayName").Value = "ms-resource:AppDisplayNameDev"
+          }
+          "com.microsoft.windows.widgets" {
+            $appExtension.Attribute("DisplayName").Value = "ms-resource:WidgetsDisplayNameDev"
+          }
+        }
+      }
+    }
     $appxmanifest.Save($appxmanifestPath)
   }
 
