@@ -64,7 +64,7 @@
           </com:ComServer>
         </com:Extension>
         <uap3:Extension Category="windows.appExtension">
-          <uap3:AppExtension Name="com.microsoft.windows.widgets" DisplayName="ms-resource:WidgetsDisplayNameDev" Id="01" PublicFolder="Public">
+          <uap3:AppExtension Name="com.microsoft.windows.widgets" DisplayName="ms-resource:WidgetProviderDisplayNameDev" Id="01" PublicFolder="Public">
             <uap3:Properties>
               <WidgetProvider>
                 <ProviderIcons>

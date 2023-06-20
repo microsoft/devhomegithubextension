@@ -89,20 +89,20 @@ Try {
     $newPackageName = $null
     $newPackageDisplayName = $null
     $newAppDisplayNameResource = $null
-    $newWidgetsDisplayName = $null
+    $newWidgetProviderDisplayName = $null
 
     if ($AzureBuildingBranch -ieq "release") {
       $buildRing = "Stable"
       $newPackageName = "Microsoft.Windows.DevHomeGitHubExtension"
       $newPackageDisplayName = "Dev Home GitHub Extension (Preview)"
       $newAppDisplayNameResource = "ms-resource:AppDisplayNameStable"
-      $newWidgetsDisplayName = "ms-resource:WidgetsDisplayNameStable"
+      $newWidgetProviderDisplayName = "ms-resource:WidgetsDisplayNameStable"
     } elseif ($AzureBuildingBranch -ieq "staging") {
       $buildRing = "Canary"
       $newPackageName = "Microsoft.Windows.DevHomeGitHubExtension.Canary"
       $newPackageDisplayName = "Dev Home GitHub Extension (Canary)"
       $newAppDisplayNameResource = "ms-resource:AppDisplayNameCanary"
-      $newWidgetsDisplayName = "ms-resource:WidgetsDisplayNameCanary"
+      $newWidgetProviderDisplayName = "ms-resource:WidgetsDisplayNameCanary"
     }
 
     [Reflection.Assembly]::LoadWithPartialName("System.Xml.Linq")
@@ -137,7 +137,7 @@ Try {
               $appExtension.Attribute("DisplayName").Value = $newAppDisplayNameResource
             }
             "com.microsoft.windows.widgets" {
-              $appExtension.Attribute("DisplayName").Value = $newWidgetsDisplayName
+              $appExtension.Attribute("DisplayName").Value = $newWidgetProviderDisplayName
             }
           }
         }
@@ -183,7 +183,7 @@ Try {
             $appExtension.Attribute("DisplayName").Value = "ms-resource:AppDisplayNameDev"
           }
           "com.microsoft.windows.widgets" {
-            $appExtension.Attribute("DisplayName").Value = "ms-resource:WidgetsDisplayNameDev"
+            $appExtension.Attribute("DisplayName").Value = "ms-resource:WidgetProviderDisplayNameDev"
           }
         }
       }

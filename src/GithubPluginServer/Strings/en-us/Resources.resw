@@ -74,15 +74,15 @@
     <value>Dev Home GitHub Extension</value>
     <comment>The name of our application</comment>
   </data>
-  <data name="WidgetsDisplayNameDev" xml:space="preserve">
+  <data name="WidgetProviderDisplayNameDev" xml:space="preserve">
     <value>GitHub (Dev)</value>
     <comment>The display name of our widgets provider</comment>
   </data>
-  <data name="WidgetsDisplayNameCanary" xml:space="preserve">
+  <data name="WidgetProviderDisplayNameCanary" xml:space="preserve">
     <value>GitHub (Canary)</value>
     <comment>The display name of our widgets provider</comment>
   </data>
-  <data name="WidgetsDisplayNameStable" xml:space="preserve">
+  <data name="WidgetProviderDisplayNameStable" xml:space="preserve">
     <value>GitHub (Preview)</value>
     <comment>The display name of our widgets provider</comment>
   </data>
