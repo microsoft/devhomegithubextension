@@ -40,7 +40,8 @@ internal class TimeSpanHelper
 
         if (timeSpan.TotalDays < 1)
         {
-            return $"{timeSpan.Hours} {Resources.GetResource("WidgetTemplate_HourssAgo", log)}";
+            return $"{timeSpan.Hours} {Resources.GetResource("WidgetTemplate_HoursAgo", log)}";
+
         }
 
         if (timeSpan.TotalDays < 2)
