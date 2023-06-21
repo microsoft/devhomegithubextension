@@ -339,7 +339,7 @@
     <value>hour ago</value>
     <comment>Shown in Widget</comment>
   </data>
-  <data name="WidgetTemplate_HourssAgo" xml:space="preserve">
+  <data name="WidgetTemplate_HoursAgo" xml:space="preserve">
     <value>hours ago</value>
     <comment>Shown in Widget</comment>
   </data>
