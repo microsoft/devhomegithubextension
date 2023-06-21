@@ -399,7 +399,7 @@
     <comment>Shown in Widget, when there are no items assigned</comment>
   </data>
   <data name="Widget_Template.EmptyMentioned" xml:space="preserve">
-    <value>There are no items mentioning this user.</value>
+    <value>There are no items mentioning you.</value>
     <comment>Shown in Widget, when there are no items mentioning this user</comment>
   </data>
   <data name="Widget_Template.EmptyReviews" xml:space="preserve">
