@@ -339,7 +339,7 @@
     <value>hour ago</value>
     <comment>Shown in Widget</comment>
   </data>
-  <data name="WidgetTemplate_HourssAgo" xml:space="preserve">
+  <data name="WidgetTemplate_HoursAgo" xml:space="preserve">
     <value>hours ago</value>
     <comment>Shown in Widget</comment>
   </data>
@@ -393,5 +393,21 @@
   <data name="RepositoryProviderDisplayName" xml:space="preserve">
     <value>GitHub</value>
     <comment>Shown in various places, is GitHub even localized as a product name?</comment>
+  </data>
+  <data name="Widget_Template.Query" xml:space="preserve">
+    <value>Query</value>
+    <comment>Shown in Widget, label for the query used to filter GitHub issues</comment>
+  </data>
+  <data name="Widget_Template.EmptyAssigned" xml:space="preserve">
+    <value>There are no items assigned to you.</value>
+    <comment>Shown in Widget, when there are no items assigned</comment>
+  </data>
+  <data name="Widget_Template.EmptyMentioned" xml:space="preserve">
+    <value>There are no items mentioning you.</value>
+    <comment>Shown in Widget, when there are no items mentioning this user</comment>
+  </data>
+  <data name="Widget_Template.EmptyReviews" xml:space="preserve">
+    <value>There are no reviews requested.</value>
+    <comment>Shown in Widget, when there are no reviews requested</comment>
   </data>
 </root>
