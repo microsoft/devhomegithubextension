@@ -75,6 +75,21 @@
           "spacing": "None"
         },
         {
+          "$when": "${query != ''}",
+          "type": "TextBlock",
+          "text": "%Widget_Template/Query%",
+          "wrap": true,
+          "size": "Small"
+        },
+        {
+          "$when": "${query != ''}",
+          "type": "TextBlock",
+          "text": "${query}",
+          "wrap": true,
+          "weight": "bolder",
+          "spacing": "None"
+        },
+        {
           "type": "TextBlock",
           "text": "%Widget_Template/Label%",
           "wrap": true,

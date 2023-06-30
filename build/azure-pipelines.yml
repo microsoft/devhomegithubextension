@@ -23,7 +23,7 @@ parameters:
     - release
 
 variables:
-  MSIXVersion: '0.200'
+  MSIXVersion: '0.300'
   solution: '**/GITServices.sln'
   appxPackageDir: 'AppxPackages'
   testOutputArtifactDir: 'TestResults'
@@ -370,7 +370,7 @@ stages:
     )
   jobs:
   - job: Store_Publish
-    timeoutInMinutes: 120
+    timeoutInMinutes: 360
     steps:
     - task: DownloadPipelineArtifact@2
       inputs:
@@ -402,7 +402,7 @@ stages:
         zipPath: '$(System.DefaultWorkingDirectory)\SBOutDir\DevHomeStoreSubmissionPackage.zip'
         force: true
         deletePackages: true
-        numberOfPackagesToKeep: 0
+        numberOfPackagesToKeep: 2
         jsonZipUpdateMetadata: true
         updateImages: true
 
@@ -430,7 +430,7 @@ stages:
         zipPath: '$(System.DefaultWorkingDirectory)\SBOutDir\DevHomeStoreSubmissionPackage.zip'
         force: true
         deletePackages: true
-        numberOfPackagesToKeep: 0
+        numberOfPackagesToKeep: 2
         jsonZipUpdateMetadata: true
         updateImages: true
 

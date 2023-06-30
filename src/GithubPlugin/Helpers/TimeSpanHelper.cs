@@ -39,6 +39,6 @@ internal class TimeSpanHelper
             return Resources.GetResource("WidgetTemplate_UnknownTime", log);
         }
 
-        return TimeSpanToDisplayString(DateTime.Now - dateTime.Value.DateTime, log);
+        return TimeSpanToDisplayString(DateTime.UtcNow - dateTime.Value.DateTime, log);
     }
 }

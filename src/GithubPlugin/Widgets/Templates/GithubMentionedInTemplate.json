@@ -33,6 +33,21 @@
       ]
     },
     {
+      "type": "Container",
+      "$when": "${(count(items) == 0)}",
+      "items": [
+        {
+          "type": "TextBlock",
+          "text": "${if(is_loading_data, '%Widget_Template/ContentLoading%', '%Widget_Template/EmptyMentioned%')}",
+          "wrap": true,
+          "weight": "bolder",
+          "horizontalAlignment": "center"
+        }
+      ],
+      "spacing": "medium",
+      "verticalContentAlignment": "center"
+    },
+    {
       "$data": "${items}",
       "type": "ColumnSet",
       "style": "emphasis",
