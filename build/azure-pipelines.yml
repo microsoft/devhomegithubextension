@@ -23,7 +23,7 @@ parameters:
     - release
 
 variables:
-  MSIXVersion: '0.200'
+  MSIXVersion: '0.300'
   solution: '**/GITServices.sln'
   appxPackageDir: 'AppxPackages'
   testOutputArtifactDir: 'TestResults'
@@ -78,7 +78,7 @@ stages:
             authId: $(TouchdownAppId)
             authKey: $(TouchdownAppKey)
             resourceFilePath: |
-              **\en-US\*.resw
+              **\en-US\*.resw;P:466
               **\en-US\PDP.xml
             outputDirectoryRoot: LocOutput
             localizationTarget: true
@@ -94,7 +94,7 @@ stages:
             authId: $(TouchdownAppId)
             authKey: $(TouchdownAppKey)
             resourceFilePath: |
-              **\en-US\*.resw
+              **\en-US\*.resw;P:466
             localizationTarget: false
             appendRelativeDir: true
             pseudoSetting: Included
@@ -370,7 +370,7 @@ stages:
     )
   jobs:
   - job: Store_Publish
-    timeoutInMinutes: 120
+    timeoutInMinutes: 360
     steps:
     - task: DownloadPipelineArtifact@2
       inputs:

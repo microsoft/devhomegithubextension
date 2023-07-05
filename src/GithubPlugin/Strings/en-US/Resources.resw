@@ -327,40 +327,24 @@
     <value>Items in widget will appear in chronological order from when the pull request or issue was last updated</value>
     <comment>Shown in Widget</comment>
   </data>
-  <data name="WidgetTemplate_DayAgo" xml:space="preserve">
-    <value>day ago</value>
-    <comment>Shown in Widget</comment>
-  </data>
   <data name="WidgetTemplate_DaysAgo" xml:space="preserve">
-    <value>days ago</value>
-    <comment>Shown in Widget</comment>
-  </data>
-  <data name="WidgetTemplate_HourAgo" xml:space="preserve">
-    <value>hour ago</value>
+    <value>{days, plural, =1 {# day ago} other {# days ago}}</value>
     <comment>Shown in Widget</comment>
   </data>
   <data name="WidgetTemplate_HoursAgo" xml:space="preserve">
-    <value>hours ago</value>
-    <comment>Shown in Widget</comment>
-  </data>
-  <data name="WidgetTemplate_MinuteAgo" xml:space="preserve">
-    <value>minute ago</value>
+    <value>{hours, plural, =1 {# hour ago} other {# hours ago}}</value>
     <comment>Shown in Widget</comment>
   </data>
   <data name="WidgetTemplate_MinutesAgo" xml:space="preserve">
-    <value>minutes ago</value>
+    <value>{minutes, plural, =1 {# minute ago} other {# minutes ago}}</value>
+    <comment>Shown in Widget</comment>
+  </data>
+  <data name="WidgetTemplate_SecondsAgo" xml:space="preserve">
+    <value>{seconds, plural, =1 {# second ago} other {# seconds ago}}</value>
     <comment>Shown in Widget</comment>
   </data>
   <data name="WidgetTemplate_Now" xml:space="preserve">
     <value>now</value>
-    <comment>Shown in Widget</comment>
-  </data>
-  <data name="WidgetTemplate_SecondAgo" xml:space="preserve">
-    <value>second ago</value>
-    <comment>Shown in Widget</comment>
-  </data>
-  <data name="WidgetTemplate_SecondsAgo" xml:space="preserve">
-    <value>seconds ago</value>
     <comment>Shown in Widget</comment>
   </data>
   <data name="Widget_Template/ReviewRequestedFrom" xml:space="preserve">
