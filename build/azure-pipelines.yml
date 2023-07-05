@@ -78,7 +78,7 @@ stages:
             authId: $(TouchdownAppId)
             authKey: $(TouchdownAppKey)
             resourceFilePath: |
-              **\en-US\*.resw
+              **\en-US\*.resw;P:466
               **\en-US\PDP.xml
             outputDirectoryRoot: LocOutput
             localizationTarget: true
@@ -94,7 +94,7 @@ stages:
             authId: $(TouchdownAppId)
             authKey: $(TouchdownAppKey)
             resourceFilePath: |
-              **\en-US\*.resw
+              **\en-US\*.resw;P:466
             localizationTarget: false
             appendRelativeDir: true
             pseudoSetting: Included
