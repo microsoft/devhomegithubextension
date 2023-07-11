@@ -137,11 +137,14 @@ internal class GithubReviewWidget : GithubWidget
 
     public override void LoadContentData()
     {
-        var issuesData = new JsonObject();
-        issuesData.Add("openCount", 0);
-        issuesData.Add("items", new JsonArray());
-        issuesData.Add("referredName", ReferredName);
-        issuesData.Add("titleIconUrl", IconLoader.GetIconAsBase64("pulls.png"));
+        var issuesData = new JsonObject
+        {
+            { "openCount", 0 },
+            { "items", new JsonArray() },
+            { "referredName", ReferredName },
+            { "titleIconUrl", IconLoader.GetIconAsBase64("pulls.png") },
+            { "is_loading_data", true },
+        };
         ContentData = issuesData.ToJsonString();
     }
 

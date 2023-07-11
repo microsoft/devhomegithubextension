@@ -192,11 +192,14 @@ internal class GithubMentionedInWidget : GithubWidget
 
     public override void LoadContentData()
     {
-        var issuesData = new JsonObject();
-        issuesData.Add("openCount", 0);
-        issuesData.Add("items", new JsonArray());
-        issuesData.Add("mentionedName", MentionedName);
-        issuesData.Add("titleIconUrl", TitleIconData);
+        var issuesData = new JsonObject
+        {
+            { "openCount", 0 },
+            { "items", new JsonArray() },
+            { "mentionedName", MentionedName },
+            { "titleIconUrl", TitleIconData },
+            { "is_loading_data", true },
+        };
         ContentData = issuesData.ToJsonString();
     }
 

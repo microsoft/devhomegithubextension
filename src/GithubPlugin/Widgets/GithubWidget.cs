@@ -63,6 +63,11 @@ public abstract class GithubWidget : WidgetImpl
         return Validation.ParseIssueQueryFromGitHubURL(RepositoryUrl);
     }
 
+    public string GetUnescapedIssueQuery()
+    {
+        return Uri.UnescapeDataString(GetIssueQuery()).Replace('+', ' ');
+    }
+
     public GithubWidget()
     {
         DataUpdater = new DataUpdater(PeriodicUpdate);
@@ -189,8 +194,10 @@ public abstract class GithubWidget : WidgetImpl
 
     public string GetConfiguration(string data)
     {
-        var configurationData = new JsonObject();
-        configurationData.Add("submitIcon", IconLoader.GetIconAsBase64("arrow.png"));
+        var configurationData = new JsonObject
+        {
+            { "submitIcon", IconLoader.GetIconAsBase64("arrow.png") },
+        };
 
         if (data == string.Empty)
         {
@@ -221,6 +228,9 @@ public abstract class GithubWidget : WidgetImpl
                 var repositoryName = Validation.ParseRepositoryFromGitHubURL(data);
                 var repository = client.Repository.Get(ownerName, repositoryName).Result;
 
+                // Set the Repository URL to the original string passed in from the user.
+                RepositoryUrl = data;
+
                 var repositoryData = new JsonObject
                 {
                     { "name", repository.FullName },
@@ -229,13 +239,11 @@ public abstract class GithubWidget : WidgetImpl
                     { "milestone", string.Empty },
                     { "project", repository.Description },
                     { "url", repository.HtmlUrl },
+                    { "query", GetUnescapedIssueQuery() },
                 };
 
                 configurationData.Add("hasConfiguration", true);
                 configurationData.Add("configuration", repositoryData);
-
-                // Set the Repository URL to the original string passed in from the user.
-                RepositoryUrl = data;
             }
             catch (Exception ex)
             {
