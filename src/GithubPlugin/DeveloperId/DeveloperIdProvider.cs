@@ -44,7 +44,7 @@ public class DeveloperIdProvider : IDeveloperIdProvider
     public event EventHandler<IDeveloperId>? Updated;
 
     // public event TypedEventHandler<IDeveloperIdProvider, object>? Changed;
-    private readonly AuthenticationExperienceKind authenticationExperienceForGitbubPlugin = AuthenticationExperienceKind.CardSession;
+    private readonly AuthenticationExperienceKind authenticationExperienceForGithubPlugin = AuthenticationExperienceKind.CardSession;
 
     // Private constructor for Singleton class.
     private DeveloperIdProvider()
