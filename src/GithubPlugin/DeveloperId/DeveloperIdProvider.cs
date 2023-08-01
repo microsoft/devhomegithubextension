@@ -28,6 +28,12 @@ public class DeveloperIdProvider : IDeveloperIdProvider
         get; set;
     }
 
+    public AuthenticationState developerIDState
+    {
+        get => throw new NotImplementedException();
+        set => throw new NotImplementedException();
+    }
+
     // DeveloperIdProvider uses singleton pattern.
     private static DeveloperIdProvider? singletonDeveloperIdProvider;
 
@@ -36,6 +42,9 @@ public class DeveloperIdProvider : IDeveloperIdProvider
     public event EventHandler<IDeveloperId>? LoggedOut;
 
     public event EventHandler<IDeveloperId>? Updated;
+
+    // public event TypedEventHandler<IDeveloperIdProvider, object>? Changed;
+    private readonly AuthenticationExperienceKind authenticationExperienceForGithubPlugin = AuthenticationExperienceKind.CardSession;
 
     // Private constructor for Singleton class.
     private DeveloperIdProvider()
@@ -299,5 +308,15 @@ public class DeveloperIdProvider : IDeveloperIdProvider
 
         Log.Logger()?.ReportInfo($"GetAdaptiveCardController");
         return new LoginUIController(loginEntryPoint);
+    }
+
+    public AuthenticationExperienceKind GetAuthenticationExperienceKind()
+    {
+        return authenticationExperienceForGithubPlugin;
+    }
+
+    public event TypedEventHandler<IDeveloperIdProvider, object>? Changed
+    {
+        add { } remove { }
     }
 }
