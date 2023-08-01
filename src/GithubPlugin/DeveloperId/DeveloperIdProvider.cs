@@ -312,7 +312,7 @@ public class DeveloperIdProvider : IDeveloperIdProvider
 
     public AuthenticationExperienceKind GetAuthenticationExperienceKind()
     {
-        return authenticationExperienceForGitbubPlugin;
+        return authenticationExperienceForGithubPlugin;
     }
 
     public event TypedEventHandler<IDeveloperIdProvider, object>? Changed
