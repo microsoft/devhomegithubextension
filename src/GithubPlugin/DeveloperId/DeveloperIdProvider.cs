@@ -1,6 +1,7 @@
 ﻿// Copyright (c) Microsoft Corporation and Contributors
 // Licensed under the MIT license.
 
+using Microsoft.UI;
 using Microsoft.Windows.DevHome.SDK;
 using Octokit;
 using Windows.Foundation;
@@ -28,7 +29,7 @@ public class DeveloperIdProvider : IDeveloperIdProvider
         get; set;
     }
 
-    public AuthenticationState developerIDState
+    public AuthenticationState DeveloperIdState
     {
         get => throw new NotImplementedException();
         set => throw new NotImplementedException();
@@ -319,4 +320,6 @@ public class DeveloperIdProvider : IDeveloperIdProvider
     {
         add { } remove { }
     }
+
+    public IAsyncOperation<IDeveloperId> ShowLogonSession(WindowId windowHandle) => throw new NotImplementedException();
 }
