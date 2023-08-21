@@ -8,6 +8,7 @@ using GitHubPlugin.Helpers;
 using Microsoft.Windows.DevHome.SDK;
 using Octokit;
 using Windows.Foundation;
+using Windows.Storage.Streams;
 
 namespace GitHubPlugin.Providers;
 
@@ -18,6 +19,8 @@ public class RepositoryProvider : IRepositoryProvider
     }
 
     public string DisplayName => Resources.GetResource(@"RepositoryProviderDisplayName");
+
+    public IRandomAccessStreamReference Icon => throw new NotImplementedException();
 
     /// <summary>
     /// Tries to parse the uri to check if it is a valid Github URL and if the current account can find it.
@@ -133,7 +136,7 @@ public class RepositoryProvider : IRepositoryProvider
 
                 // Gets only public repos for the owned repos.
                 request.Visibility = RepositoryRequestVisibility.Public;
-                var getPublicReposTask = client.Repository.GetAllForUser(developerId.LoginId(), apiOptions);
+                var getPublicReposTask = client.Repository.GetAllForUser(developerId.LoginId, apiOptions);
 
                 // this is getting private org and user repos.
                 request.Visibility = RepositoryRequestVisibility.Private;
@@ -164,5 +167,24 @@ public class RepositoryProvider : IRepositoryProvider
 
             return repositoryList.AsEnumerable();
         }).AsAsyncOperation();
+    }
+
+    IAsyncOperation<RepositoriesResult> IRepositoryProvider.GetRepositoriesAsync(IDeveloperId developerId) => throw new NotImplementedException();
+
+    public IAsyncOperation<RepositoryUriSupportResult> IsUriSupportedAsync(Uri uri) => throw new NotImplementedException();
+
+    public IAsyncOperation<RepositoryUriSupportResult> IsUriSupportedAsync(Uri uri, IDeveloperId developerId) => throw new NotImplementedException();
+
+    public IAsyncOperation<RepositoriesResult> GetRepositoryFromUriAsync(Uri uri) => throw new NotImplementedException();
+
+    public IAsyncOperation<RepositoriesResult> GetRepositoryFromUriAsync(Uri uri, IDeveloperId developerId) => throw new NotImplementedException();
+
+    public IAsyncOperation<ProviderOperationResult> CloneRepositoryAsync(IRepository repository, string cloneDestination) => throw new NotImplementedException();
+
+    public IAsyncOperation<ProviderOperationResult> CloneRepositoryAsync(IRepository repository, string cloneDestination, IDeveloperId developerId) => throw new NotImplementedException();
+
+    public void Dispose()
+    {
+        GC.SuppressFinalize(this);
     }
 }

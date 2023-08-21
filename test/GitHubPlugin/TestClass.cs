@@ -54,7 +54,7 @@ public class TestClass : IDisposable
 
     public void AuthenticationEvent(object? sender, IDeveloperId developerId)
     {
-        if (developerId.LoginId() is not null)
+        if (developerId.LoginId is not null)
         {
             AuthenticationEventTriggered.Release();
         }

@@ -32,6 +32,7 @@ internal class LoginUIController : IPluginAdaptiveCardController
 
     public async void OnAction(string action, string inputs)
     {
+        /*
         Log.Logger()?.ReportInfo($"OnAction() called with state:{_loginUI?.State}");
         Log.Logger()?.ReportDebug($"action: {action}");
 
@@ -83,6 +84,9 @@ internal class LoginUIController : IPluginAdaptiveCardController
                 break;
             }
         }
+        */
+
+        await Task.Delay(2000);
     }
 
     // Adaptive Card Templates for LoginUI.

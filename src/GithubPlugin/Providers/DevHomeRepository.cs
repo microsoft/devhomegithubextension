@@ -28,6 +28,8 @@ public class DevHomeRepository : Microsoft.Windows.DevHome.SDK.IRepository
 
     public DateTimeOffset LastUpdated => _lastUpdated;
 
+    public Uri RepoUri => throw new NotImplementedException();
+
     /// <summary>
     /// Initializes a new instance of the <see cref="DevHomeRepository"/> class.
     /// </summary>

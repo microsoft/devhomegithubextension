@@ -28,11 +28,13 @@ public class DeveloperIdProvider : IDeveloperIdProvider
         get; set;
     }
 
-    public AuthenticationState developerIDState
+    public AuthenticationState DeveloperIdState
     {
         get => throw new NotImplementedException();
         set => throw new NotImplementedException();
     }
+
+    public string DisplayName => throw new NotImplementedException();
 
     // DeveloperIdProvider uses singleton pattern.
     private static DeveloperIdProvider? singletonDeveloperIdProvider;
@@ -141,7 +143,7 @@ public class DeveloperIdProvider : IDeveloperIdProvider
         DeveloperId? developerIdToLogout;
         lock (DeveloperIdsLock)
         {
-            developerIdToLogout = DeveloperIds?.Find(e => e.LoginId == developerId.LoginId());
+            developerIdToLogout = DeveloperIds?.Find(e => e.LoginId == developerId.LoginId);
             if (developerIdToLogout == null)
             {
                 Log.Logger()?.ReportError($"Unable to find DeveloperId to logout");
@@ -213,9 +215,9 @@ public class DeveloperIdProvider : IDeveloperIdProvider
     public DeveloperId GetDeveloperIdInternal(IDeveloperId devId)
     {
         var devIds = GetInstance().GetLoggedInDeveloperIdsInternal();
-        var devIdInternal = devIds.Where(i => i.LoginId.Equals(devId.LoginId(), StringComparison.OrdinalIgnoreCase)).FirstOrDefault();
+        var devIdInternal = devIds.Where(i => i.LoginId.Equals(devId.LoginId, StringComparison.OrdinalIgnoreCase)).FirstOrDefault();
 
-        return devIdInternal ?? throw new ArgumentException(devId.LoginId());
+        return devIdInternal ?? throw new ArgumentException(devId.LoginId);
     }
 
     // Internal Functions.
@@ -313,6 +315,19 @@ public class DeveloperIdProvider : IDeveloperIdProvider
     public AuthenticationExperienceKind GetAuthenticationExperienceKind()
     {
         return authenticationExperienceForGithubPlugin;
+    }
+
+    DeveloperIdsResult IDeveloperIdProvider.GetLoggedInDeveloperIds() => throw new NotImplementedException();
+
+    ProviderOperationResult IDeveloperIdProvider.LogoutDeveloperId(IDeveloperId developerId) => throw new NotImplementedException();
+
+    public IAsyncOperation<DeveloperIdResult> ShowLogonSession(ulong windowHandle) => throw new NotImplementedException();
+
+    public AdaptiveCardSessionResult GetLoginAdaptiveCardSession() => throw new NotImplementedException();
+
+    public void Dispose()
+    {
+        GC.SuppressFinalize(this);
     }
 
     public event TypedEventHandler<IDeveloperIdProvider, object>? Changed
