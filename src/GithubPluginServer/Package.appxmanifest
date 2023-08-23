@@ -1,5 +1,12 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Package xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10" xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10" xmlns:uap3="http://schemas.microsoft.com/appx/manifest/uap/windows10/3" xmlns:rescap="http://schemas.microsoft.com/appx/manifest/foundation/windows10/restrictedcapabilities" xmlns:genTemplate="http://schemas.microsoft.com/appx/developer/templatestudio" xmlns:com="http://schemas.microsoft.com/appx/manifest/com/windows10" xmlns:desktop="http://schemas.microsoft.com/appx/manifest/desktop/windows10" IgnorableNamespaces="uap uap3 rescap genTemplate">
+<Package xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10" 
+         xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10" 
+         xmlns:uap3="http://schemas.microsoft.com/appx/manifest/uap/windows10/3" 
+         xmlns:rescap="http://schemas.microsoft.com/appx/manifest/foundation/windows10/restrictedcapabilities" 
+         xmlns:genTemplate="http://schemas.microsoft.com/appx/developer/templatestudio" 
+         xmlns:com="http://schemas.microsoft.com/appx/manifest/com/windows10" 
+         xmlns:desktop="http://schemas.microsoft.com/appx/manifest/desktop/windows10" 
+         IgnorableNamespaces="uap uap3 rescap genTemplate">
   <Identity Name="Microsoft.Windows.DevHomeGitHubExtension.Dev" Publisher="CN=Microsoft Corporation, O=Microsoft Corporation, L=Redmond, S=Washington, C=US" Version="0.0.0.0" />
   <Properties>
     <DisplayName>Dev Home GitHub Extension (Dev)</DisplayName>
@@ -253,6 +260,14 @@
       </Extensions>
     </Application>
   </Applications>
+    <Extensions>
+        <Extension Category="windows.activatableClass.inProcessServer">
+            <InProcessServer>
+                <Path>Microsoft.Windows.DevHome.SDK.Lib.dll</Path>
+                <ActivatableClass ActivatableClassId="Microsoft.Windows.DevHome.SDK.RepositoryUriSupportResult" ThreadingModel="both" />
+            </InProcessServer>
+        </Extension>
+    </Extensions>
   <Capabilities>
     <rescap:Capability Name="runFullTrust" />
   </Capabilities>
