@@ -8,19 +8,83 @@ using GitHubPlugin.Helpers;
 using Microsoft.Windows.DevHome.SDK;
 using Octokit;
 using Windows.Foundation;
+using Windows.Storage;
 using Windows.Storage.Streams;
 
 namespace GitHubPlugin.Providers;
 
 public class RepositoryProvider : IRepositoryProvider
 {
-    public RepositoryProvider()
-    {
-    }
-
     public string DisplayName => Resources.GetResource(@"RepositoryProviderDisplayName");
 
-    public IRandomAccessStreamReference Icon => throw new NotImplementedException();
+    private Dictionary<string, Repository> _repositories;
+
+    public IRandomAccessStreamReference Icon
+    {
+        get; private set;
+    }
+
+    public RepositoryProvider(IRandomAccessStreamReference icon)
+    {
+        Icon = icon;
+        _repositories = new ();
+    }
+
+    public RepositoryProvider()
+    {
+        _repositories = new ();
+        Icon = RandomAccessStreamReference.CreateFromUri(new Uri("https://www.github.com/microsoft/devhome"));
+    }
+
+    public IAsyncOperation<RepositoryUriSupportResult> IsUriSupportedAsync(Uri uri)
+    {
+        return Task.Run(() =>
+        {
+            if (!Validation.IsValidGitHubURL(uri))
+            {
+                return new RepositoryUriSupportResult(false);
+            }
+
+            Octokit.Repository? ocktokitRepo = null;
+            var owner = Validation.ParseOwnerFromGitHubURL(uri);
+            var repoName = Validation.ParseRepositoryFromGitHubURL(uri);
+
+            if (_repositories.ContainsKey(Path.Join(owner, repoName)))
+            {
+                return new RepositoryUriSupportResult(true);
+            }
+
+            try
+            {
+                ocktokitRepo = GitHubClientProvider.Instance.GetClient().Repository.Get(owner, repoName).Result;
+                _repositories.Add(Path.Join(owner, repoName), ocktokitRepo);
+            }
+            catch (Exception e)
+            {
+                if (e is Octokit.NotFoundException)
+                {
+                    Log.Logger()?.ReportError($"Can't find {owner}/{repoName}");
+                    return new RepositoryUriSupportResult(e, $"Can't find {owner}/{repoName}");
+                }
+
+                if (e is Octokit.ForbiddenException)
+                {
+                    Log.Logger()?.ReportError($"Forbidden access to {owner}/{repoName}");
+                    return new RepositoryUriSupportResult(e, $"Forbidden access to {owner}/{repoName}");
+                }
+
+                if (e is Octokit.RateLimitExceededException)
+                {
+                    Log.Logger()?.ReportError("Rate limit exceeded.", e);
+                    return new RepositoryUriSupportResult(e, "Rate limit exceeded.");
+                }
+            }
+
+            return new RepositoryUriSupportResult(true);
+        }).AsAsyncOperation();
+    }
+
+    public IAsyncOperation<RepositoryUriSupportResult> IsUriSupportedAsync(Uri uri, IDeveloperId developerId) => throw new NotImplementedException();
 
     /// <summary>
     /// Tries to parse the uri to check if it is a valid Github URL and if the current account can find it.
@@ -170,10 +234,6 @@ public class RepositoryProvider : IRepositoryProvider
     }
 
     IAsyncOperation<RepositoriesResult> IRepositoryProvider.GetRepositoriesAsync(IDeveloperId developerId) => throw new NotImplementedException();
-
-    public IAsyncOperation<RepositoryUriSupportResult> IsUriSupportedAsync(Uri uri) => throw new NotImplementedException();
-
-    public IAsyncOperation<RepositoryUriSupportResult> IsUriSupportedAsync(Uri uri, IDeveloperId developerId) => throw new NotImplementedException();
 
     public IAsyncOperation<RepositoriesResult> GetRepositoryFromUriAsync(Uri uri) => throw new NotImplementedException();
 
