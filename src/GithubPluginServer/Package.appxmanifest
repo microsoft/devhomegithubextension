@@ -263,7 +263,7 @@
     <Extensions>
         <Extension Category="windows.activatableClass.inProcessServer">
             <InProcessServer>
-                <Path>Microsoft.Windows.DevHome.SDK.Lib.dll</Path>
+                <Path>Microsoft.Windows.DevHome.SDK.dll</Path>
                 <ActivatableClass ActivatableClassId="Microsoft.Windows.DevHome.SDK.RepositoryUriSupportResult" ThreadingModel="both" />
             </InProcessServer>
         </Extension>
