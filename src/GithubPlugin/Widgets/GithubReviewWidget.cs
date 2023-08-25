@@ -1,9 +1,7 @@
 ﻿// Copyright (c) Microsoft Corporation and Contributors
 // Licensed under the MIT license.
 
-using System.Text.Json;
 using System.Text.Json.Nodes;
-using System.Text.Json.Serialization;
 using GitHubPlugin.DataManager;
 using GitHubPlugin.Helpers;
 using Microsoft.Windows.Widgets.Providers;
@@ -30,13 +28,6 @@ internal class GithubReviewWidget : GithubWidget
             return referredName;
         }
         set => referredName = value;
-    }
-
-    private string ConfigurationState
-    {
-        get => State();
-
-        set => SetState(value);
     }
 
     public GithubReviewWidget()
@@ -81,8 +72,6 @@ internal class GithubReviewWidget : GithubWidget
             SetSignIn();
             return;
         }
-
-        ConfigurationState = "Activated";
 
         if (Enabled)
         {

@@ -20,6 +20,8 @@ public abstract class GithubWidget : WidgetImpl
     protected static readonly TimeSpan WidgetDataRequestMinTime = TimeSpan.FromSeconds(30);
     protected static readonly TimeSpan WidgetRefreshRate = TimeSpan.FromMinutes(5);
     protected static readonly string EmptyJson = new JsonObject().ToJsonString();
+    protected static readonly string ConfigurationState = "configurationState";
+    protected static readonly string Configuring = "configuring";
 
     private DateTime lastUpdateRequest = DateTime.MinValue;
 
@@ -202,7 +204,7 @@ public abstract class GithubWidget : WidgetImpl
         if (data == string.Empty)
         {
             configurationData.Add("hasConfiguration", false);
-            configurationData.Add("configuring", true);
+            configurationData.Add(ConfigurationState, Configuring);
             var repositoryData = new JsonObject
             {
                 { "url", string.Empty },
@@ -249,7 +251,7 @@ public abstract class GithubWidget : WidgetImpl
             {
                 Log.Logger()?.ReportError(Name, ShortId, $"Failed getting configuration information for input url: {data}", ex);
                 configurationData.Add("hasConfiguration", false);
-                configurationData.Add("configuring", true);
+                configurationData.Add(ConfigurationState, Configuring);
 
                 var repositoryData = new JsonObject
                 {
@@ -271,7 +273,7 @@ public abstract class GithubWidget : WidgetImpl
         var signInData = new JsonObject
         {
             { "message", Resources.GetResource(@"Widget_Template/SignInRequired", Log.Logger()) },
-            { "configuring", true },
+            { ConfigurationState, Configuring },
         };
 
         return signInData.ToString();
