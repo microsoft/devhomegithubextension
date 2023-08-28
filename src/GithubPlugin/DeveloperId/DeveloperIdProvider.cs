@@ -1,6 +1,7 @@
 ﻿// Copyright (c) Microsoft Corporation and Contributors
 // Licensed under the MIT license.
 
+using Microsoft.UI;
 using Microsoft.Windows.DevHome.SDK;
 using Octokit;
 using Windows.Foundation;
@@ -83,7 +84,7 @@ public class DeveloperIdProvider : IDeveloperIdProvider
         return "GitHub";
     }
 
-    public IEnumerable<IDeveloperId> GetLoggedInDeveloperIds()
+    public DeveloperIdsResult GetLoggedInDeveloperIds()
     {
         List<IDeveloperId> iDeveloperIds = new ();
         lock (DeveloperIdsLock)
@@ -91,7 +92,9 @@ public class DeveloperIdProvider : IDeveloperIdProvider
             iDeveloperIds.AddRange(DeveloperIds);
         }
 
-        return iDeveloperIds;
+        var developerIdsResult = new DeveloperIdsResult(iDeveloperIds);
+
+        return developerIdsResult;
     }
 
     public IAsyncOperation<IDeveloperId> LoginNewDeveloperIdAsync()
@@ -317,11 +320,7 @@ public class DeveloperIdProvider : IDeveloperIdProvider
         return authenticationExperienceForGithubPlugin;
     }
 
-    DeveloperIdsResult IDeveloperIdProvider.GetLoggedInDeveloperIds() => throw new NotImplementedException();
-
     ProviderOperationResult IDeveloperIdProvider.LogoutDeveloperId(IDeveloperId developerId) => throw new NotImplementedException();
-
-    public IAsyncOperation<DeveloperIdResult> ShowLogonSession(ulong windowHandle) => throw new NotImplementedException();
 
     public AdaptiveCardSessionResult GetLoginAdaptiveCardSession() => throw new NotImplementedException();
 
@@ -329,6 +328,8 @@ public class DeveloperIdProvider : IDeveloperIdProvider
     {
         GC.SuppressFinalize(this);
     }
+
+    public IAsyncOperation<DeveloperIdResult> ShowLogonSession(WindowId windowHandle) => throw new NotImplementedException();
 
     public event TypedEventHandler<IDeveloperIdProvider, object>? Changed
     {

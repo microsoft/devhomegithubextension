@@ -59,25 +59,31 @@ public class RepositoryProvider : IRepositoryProvider
                 ocktokitRepo = GitHubClientProvider.Instance.GetClient().Repository.Get(owner, repoName).Result;
                 _repositories.Add(Path.Join(owner, repoName), ocktokitRepo);
             }
-            catch (Exception e)
+            catch (AggregateException e)
             {
-                if (e is Octokit.NotFoundException)
+                var innerException = e.InnerException;
+                if (innerException is Octokit.NotFoundException)
                 {
                     Log.Logger()?.ReportError($"Can't find {owner}/{repoName}");
                     return new RepositoryUriSupportResult(e, $"Can't find {owner}/{repoName}");
                 }
 
-                if (e is Octokit.ForbiddenException)
+                if (innerException is Octokit.ForbiddenException)
                 {
                     Log.Logger()?.ReportError($"Forbidden access to {owner}/{repoName}");
                     return new RepositoryUriSupportResult(e, $"Forbidden access to {owner}/{repoName}");
                 }
 
-                if (e is Octokit.RateLimitExceededException)
+                if (innerException is Octokit.RateLimitExceededException)
                 {
                     Log.Logger()?.ReportError("Rate limit exceeded.", e);
                     return new RepositoryUriSupportResult(e, "Rate limit exceeded.");
                 }
+            }
+            catch (Exception e)
+            {
+                Log.Logger()?.ReportError("Unspecified error.", e);
+                return new RepositoryUriSupportResult(e, "Unspecified error when cloning a repo.");
             }
 
             return new RepositoryUriSupportResult(true);
