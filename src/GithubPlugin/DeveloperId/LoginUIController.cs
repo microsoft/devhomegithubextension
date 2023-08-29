@@ -107,7 +107,7 @@ internal class LoginUIController : IPluginAdaptiveCardController
                             ""type"": ""Image"",
                             ""style"": ""Person"",
                             ""url"": ""https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png"",
-                            ""size"": ""Medium"",
+                            ""size"": ""small"",
                             ""horizontalAlignment"": ""Center"",
                             ""spacing"": ""None""
                         },
