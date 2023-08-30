@@ -169,8 +169,7 @@ internal class LoginUIController : IPluginAdaptiveCardController
                                             ""id"": ""Personal""
                                         }
                                     ],
-                                    ""horizontalAlignment"": ""Center"",
-                                    ""height"": ""stretch"",
+                                    ""horizontalAlignment"": ""Center""
                                     ""spacing"": ""None""
                                 }
                             ],
@@ -231,19 +230,16 @@ internal class LoginUIController : IPluginAdaptiveCardController
                                         }
                                     ],
                                     ""spacing"": ""None"",
-                                    ""horizontalAlignment"": ""Center"",
-                                    ""height"": ""stretch""
+                                    ""horizontalAlignment"": ""Center""
                                 }
                             ],
                             ""verticalContentAlignment"": ""Center"",
                             ""spacing"": ""None"",
-                            ""horizontalAlignment"": ""Center"",
-                            ""height"": ""stretch""
+                            ""horizontalAlignment"": ""Center""
                         }
                     ],
                     ""spacing"": ""None"",
                     ""horizontalAlignment"": ""Center"",
-                    ""height"": ""stretch"",
                     ""horizontalCellContentAlignment"": ""Center"",
                     ""verticalCellContentAlignment"": ""Center""
                 }
@@ -251,7 +247,6 @@ internal class LoginUIController : IPluginAdaptiveCardController
             ""firstRowAsHeaders"": false,
             ""spacing"": ""Medium"",
             ""horizontalAlignment"": ""Center"",
-            ""height"": ""stretch"",
             ""horizontalCellContentAlignment"": ""Center"",
             ""verticalCellContentAlignment"": ""Center"",
             ""showGridLines"": false
