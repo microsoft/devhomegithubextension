@@ -169,7 +169,7 @@ internal class LoginUIController : IPluginAdaptiveCardController
                                             ""id"": ""Personal""
                                         }
                                     ],
-                                    ""horizontalAlignment"": ""Center""
+                                    ""horizontalAlignment"": ""Center"",
                                     ""spacing"": ""None""
                                 }
                             ],
