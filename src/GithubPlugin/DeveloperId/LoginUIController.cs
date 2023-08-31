@@ -118,15 +118,16 @@ internal class LoginUIController : IPluginAdaptiveCardController
                             ""wrap"": true,
                             ""horizontalAlignment"": ""Center"",
                             ""spacing"": ""Small"",
-                            ""style"": ""heading""
+                            ""size"": ""large""
                         },
                         {
                             ""type"": ""TextBlock"",
                             ""text"": """ + $"{loader.GetString("LoginUI_LoginPage_Subheading")}" + @""",
-                            ""isSubtle"": true,
+                            ""isSubtle"": false,
                             ""wrap"": true,
                             ""horizontalAlignment"": ""Center"",
-                            ""spacing"": ""None""
+                            ""spacing"": ""None"",
+                            ""size"": ""small""
                         },
                         {
                             ""type"": ""TextBlock"",
