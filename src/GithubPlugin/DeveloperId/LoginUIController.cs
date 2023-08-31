@@ -107,7 +107,7 @@ internal class LoginUIController : IPluginAdaptiveCardController
                             ""type"": ""Image"",
                             ""style"": ""Person"",
                             ""url"": ""https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png"",
-                            ""size"": ""Medium"",
+                            ""size"": ""small"",
                             ""horizontalAlignment"": ""Center"",
                             ""spacing"": ""None""
                         },
@@ -118,15 +118,15 @@ internal class LoginUIController : IPluginAdaptiveCardController
                             ""wrap"": true,
                             ""horizontalAlignment"": ""Center"",
                             ""spacing"": ""Small"",
-                            ""style"": ""heading""
+                            ""size"": ""large""
                         },
                         {
                             ""type"": ""TextBlock"",
                             ""text"": """ + $"{loader.GetString("LoginUI_LoginPage_Subheading")}" + @""",
-                            ""isSubtle"": true,
                             ""wrap"": true,
                             ""horizontalAlignment"": ""Center"",
-                            ""spacing"": ""None""
+                            ""spacing"": ""None"",
+                            ""size"": ""small""
                         },
                         {
                             ""type"": ""TextBlock"",
@@ -170,7 +170,6 @@ internal class LoginUIController : IPluginAdaptiveCardController
                                         }
                                     ],
                                     ""horizontalAlignment"": ""Center"",
-                                    ""height"": ""stretch"",
                                     ""spacing"": ""None""
                                 }
                             ],
@@ -231,19 +230,16 @@ internal class LoginUIController : IPluginAdaptiveCardController
                                         }
                                     ],
                                     ""spacing"": ""None"",
-                                    ""horizontalAlignment"": ""Center"",
-                                    ""height"": ""stretch""
+                                    ""horizontalAlignment"": ""Center""
                                 }
                             ],
                             ""verticalContentAlignment"": ""Center"",
                             ""spacing"": ""None"",
-                            ""horizontalAlignment"": ""Center"",
-                            ""height"": ""stretch""
+                            ""horizontalAlignment"": ""Center""
                         }
                     ],
                     ""spacing"": ""None"",
                     ""horizontalAlignment"": ""Center"",
-                    ""height"": ""stretch"",
                     ""horizontalCellContentAlignment"": ""Center"",
                     ""verticalCellContentAlignment"": ""Center""
                 }
@@ -251,7 +247,6 @@ internal class LoginUIController : IPluginAdaptiveCardController
             ""firstRowAsHeaders"": false,
             ""spacing"": ""Medium"",
             ""horizontalAlignment"": ""Center"",
-            ""height"": ""stretch"",
             ""horizontalCellContentAlignment"": ""Center"",
             ""verticalCellContentAlignment"": ""Center"",
             ""showGridLines"": false
