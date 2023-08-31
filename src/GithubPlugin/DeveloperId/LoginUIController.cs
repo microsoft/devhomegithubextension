@@ -123,7 +123,6 @@ internal class LoginUIController : IPluginAdaptiveCardController
                         {
                             ""type"": ""TextBlock"",
                             ""text"": """ + $"{loader.GetString("LoginUI_LoginPage_Subheading")}" + @""",
-                            ""isSubtle"": false,
                             ""wrap"": true,
                             ""horizontalAlignment"": ""Center"",
                             ""spacing"": ""None"",
