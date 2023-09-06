@@ -15,7 +15,7 @@ public static class Resources
         {
             if (_resourceLoader == null)
             {
-                _resourceLoader = new ResourceLoader(ResourceLoader.GetDefaultResourceFilePath(), "GitHubPlugin/Resources");
+                _resourceLoader = new ResourceLoader(ResourceLoader.GetDefaultResourceFilePath(), "GitHubExtension/Resources");
             }
 
             return _resourceLoader.GetString(identifier);

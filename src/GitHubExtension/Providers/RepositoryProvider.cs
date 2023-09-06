@@ -17,8 +17,6 @@ public class RepositoryProvider : IRepositoryProvider
 {
     public string DisplayName => Resources.GetResource(@"RepositoryProviderDisplayName");
 
-    private Dictionary<string, Repository> _repositories;
-
     public IRandomAccessStreamReference Icon
     {
         get; private set;
@@ -27,12 +25,10 @@ public class RepositoryProvider : IRepositoryProvider
     public RepositoryProvider(IRandomAccessStreamReference icon)
     {
         Icon = icon;
-        _repositories = new ();
     }
 
     public RepositoryProvider()
     {
-        _repositories = new ();
         Icon = RandomAccessStreamReference.CreateFromUri(new Uri("https://www.GitHub.com/microsoft/devhome"));
     }
 
@@ -49,15 +45,9 @@ public class RepositoryProvider : IRepositoryProvider
             var owner = Validation.ParseOwnerFromGitHubURL(uri);
             var repoName = Validation.ParseRepositoryFromGitHubURL(uri);
 
-            if (_repositories.ContainsKey(Path.Join(owner, repoName)))
-            {
-                return new RepositoryUriSupportResult(true);
-            }
-
             try
             {
                 ocktokitRepo = GitHubClientProvider.Instance.GetClient().Repository.Get(owner, repoName).Result;
-                _repositories.Add(Path.Join(owner, repoName), ocktokitRepo);
             }
             catch (AggregateException e)
             {
@@ -90,97 +80,52 @@ public class RepositoryProvider : IRepositoryProvider
         }).AsAsyncOperation();
     }
 
-    public IAsyncOperation<RepositoryUriSupportResult> IsUriSupportedAsync(Uri uri, IDeveloperId developerId) => throw new NotImplementedException();
-
-    /// <summary>
-    /// Tries to parse the uri to check if it is a valid GitHub URL and if the current account can find it.
-    /// </summary>
-    /// <param name="uri">The uri to check.</param>
-    /// <returns>null repo if url isn't a GitHub URL. Otherwise the repo that the URL points to.</returns>
-    /// <exception cref="RepositoryNotFoundException">If no account has access to the repo or the repo can't be found.</exception>
-    public IAsyncOperation<IRepository?> ParseRepositoryFromUrlAsync(Uri uri)
+    public IAsyncOperation<RepositoryUriSupportResult> IsUriSupportedAsync(Uri uri, IDeveloperId developerId)
     {
         return Task.Run(() =>
         {
             if (!Validation.IsValidGitHubURL(uri))
             {
-                return null;
+                return new RepositoryUriSupportResult(false);
             }
 
-            // One of the logged in accounts could have access to the repo.
-            // Go through all of them.  If no accounts have access
-            // Throw to notify DevHome that no account has access to the repo.
-            // Mostly because either the repo does not exist or is private.
             Octokit.Repository? ocktokitRepo = null;
             var owner = Validation.ParseOwnerFromGitHubURL(uri);
             var repoName = Validation.ParseRepositoryFromGitHubURL(uri);
 
-            var loggedInDeveloperIds = DeveloperId.DeveloperIdProvider.GetInstance().GetLoggedInDeveloperIdsInternal();
-
-            if (!loggedInDeveloperIds.Any())
+            try
             {
-                try
+                var loggedInDeveloperId = DeveloperId.DeveloperIdProvider.GetInstance().GetDeveloperIdInternal(developerId);
+                ocktokitRepo = loggedInDeveloperId.GitHubClient.Repository.Get(owner, repoName).Result;
+            }
+            catch (AggregateException e)
+            {
+                var innerException = e.InnerException;
+                if (innerException is Octokit.NotFoundException)
                 {
-                    ocktokitRepo = GitHubClientProvider.Instance.GetClient().Repository.Get(owner, repoName).Result;
+                    Log.Logger()?.ReportError($"Can't find {owner}/{repoName}");
+                    return new RepositoryUriSupportResult(e, $"Can't find {owner}/{repoName}");
                 }
-                catch (Exception e)
+
+                if (innerException is Octokit.ForbiddenException)
                 {
-                    if (e is Octokit.NotFoundException)
-                    {
-                        Log.Logger()?.ReportError($"Can't find {owner}/{repoName}");
-                    }
+                    Log.Logger()?.ReportError($"Forbidden access to {owner}/{repoName}");
+                    return new RepositoryUriSupportResult(e, $"Forbidden access to {owner}/{repoName}");
+                }
 
-                    if (e is Octokit.ForbiddenException)
-                    {
-                        Log.Logger()?.ReportError($"Forbidden access to {owner}/{repoName}");
-                    }
-
-                    if (e is Octokit.RateLimitExceededException)
-                    {
-                        Log.Logger()?.ReportError("Rate limit exceeded.", e);
-                    }
-
-                    throw;
+                if (innerException is Octokit.RateLimitExceededException)
+                {
+                    Log.Logger()?.ReportError("Rate limit exceeded.", e);
+                    return new RepositoryUriSupportResult(e, "Rate limit exceeded.");
                 }
             }
-
-            foreach (var loggedInDeveloperId in loggedInDeveloperIds)
+            catch (Exception e)
             {
-                try
-                {
-                    ocktokitRepo = loggedInDeveloperId.GitHubClient.Repository.Get(owner, repoName).Result;
-                    break;
-                }
-                catch (Exception e)
-                {
-                    if (e is Octokit.NotFoundException)
-                    {
-                        Log.Logger()?.ReportError($"DeveloperId {loggedInDeveloperId.LoginId} did not find {owner}/{repoName}");
-                        continue;
-                    }
-
-                    if (e is Octokit.ForbiddenException)
-                    {
-                        Log.Logger()?.ReportError($"DeveloperId {loggedInDeveloperId.LoginId} has forbidden access to {owner}/{repoName}");
-                        continue;
-                    }
-
-                    if (e is Octokit.RateLimitExceededException)
-                    {
-                        Log.Logger()?.ReportError($"DeveloperId {loggedInDeveloperId.LoginId} rate limit exceeded.", e);
-                        throw;
-                    }
-                }
+                Log.Logger()?.ReportError("Unspecified error.", e);
+                return new RepositoryUriSupportResult(e, "Unspecified error when cloning a repo.");
             }
 
-            if (ocktokitRepo != null)
-            {
-                return new DevHomeRepository(ocktokitRepo) as IRepository;
-            }
-            else
-            {
-                throw new RepositoryNotFoundException($"The repository {owner}/{repoName} could not be accessed by any available developer accounts.");
-            }
+            return new RepositoryUriSupportResult(true);
         }).AsAsyncOperation();
     }
 
@@ -241,13 +186,214 @@ public class RepositoryProvider : IRepositoryProvider
 
     IAsyncOperation<RepositoriesResult> IRepositoryProvider.GetRepositoriesAsync(IDeveloperId developerId) => throw new NotImplementedException();
 
-    public IAsyncOperation<RepositoryResult> GetRepositoryFromUriAsync(Uri uri) => throw new NotImplementedException();
+    public IAsyncOperation<RepositoryResult> GetRepositoryFromUriAsync(Uri uri)
+    {
+        return Task.Run(() =>
+        {
+            if (!Validation.IsValidGitHubURL(uri))
+            {
+                return new RepositoryResult(new ArgumentException("uri is invalid"), "Uri is invalid");
+            }
 
-    public IAsyncOperation<RepositoryResult> GetRepositoryFromUriAsync(Uri uri, IDeveloperId developerId) => throw new NotImplementedException();
+            Octokit.Repository? ocktokitRepo = null;
+            var owner = Validation.ParseOwnerFromGitHubURL(uri);
+            var repoName = Validation.ParseRepositoryFromGitHubURL(uri);
 
-    public IAsyncOperation<ProviderOperationResult> CloneRepositoryAsync(IRepository repository, string cloneDestination) => throw new NotImplementedException();
+            try
+            {
+                ocktokitRepo = GitHubClientProvider.Instance.GetClient().Repository.Get(owner, repoName).Result;
+                return new RepositoryResult(new DevHomeRepository(ocktokitRepo));
+            }
+            catch (AggregateException e)
+            {
+                var innerException = e.InnerException;
+                if (innerException is Octokit.NotFoundException)
+                {
+                    Log.Logger()?.ReportError($"Can't find {owner}/{repoName}");
+                    return new RepositoryResult(e, $"Can't find {owner}/{repoName}");
+                }
 
-    public IAsyncOperation<ProviderOperationResult> CloneRepositoryAsync(IRepository repository, string cloneDestination, IDeveloperId developerId) => throw new NotImplementedException();
+                if (innerException is Octokit.ForbiddenException)
+                {
+                    Log.Logger()?.ReportError($"Forbidden access to {owner}/{repoName}");
+                    return new RepositoryResult(e, $"Forbidden access to {owner}/{repoName}");
+                }
+
+                if (innerException is Octokit.RateLimitExceededException)
+                {
+                    Log.Logger()?.ReportError("Rate limit exceeded.", e);
+                    return new RepositoryResult(e, "Rate limit exceeded.");
+                }
+            }
+            catch (Exception e)
+            {
+                Log.Logger()?.ReportError("Unspecified error.", e);
+                return new RepositoryResult(e, "Unspecified error when cloning a repo.");
+            }
+
+            if (ocktokitRepo == null)
+            {
+                return new RepositoryResult(new ArgumentException("Repo is still null"), "Repo is still null");
+            }
+            else
+            {
+                return new RepositoryResult(new DevHomeRepository(ocktokitRepo) as IRepository);
+            }
+        }).AsAsyncOperation();
+    }
+
+    public IAsyncOperation<RepositoryResult> GetRepositoryFromUriAsync(Uri uri, IDeveloperId developerId)
+    {
+        return Task.Run(() =>
+        {
+            if (!Validation.IsValidGitHubURL(uri))
+            {
+                return new RepositoryResult(new ArgumentException("uri is invalid"), "Uri is invalid");
+            }
+
+            Octokit.Repository? ocktokitRepo = null;
+            var owner = Validation.ParseOwnerFromGitHubURL(uri);
+            var repoName = Validation.ParseRepositoryFromGitHubURL(uri);
+
+            try
+            {
+                var loggedInDeveloperId = DeveloperId.DeveloperIdProvider.GetInstance().GetDeveloperIdInternal(developerId);
+                ocktokitRepo = loggedInDeveloperId.GitHubClient.Repository.Get(owner, repoName).Result;
+            }
+            catch (AggregateException e)
+            {
+                var innerException = e.InnerException;
+                if (innerException is Octokit.NotFoundException)
+                {
+                    Log.Logger()?.ReportError($"Can't find {owner}/{repoName}");
+                    return new RepositoryResult(e, $"Can't find {owner}/{repoName}");
+                }
+
+                if (innerException is Octokit.ForbiddenException)
+                {
+                    Log.Logger()?.ReportError($"Forbidden access to {owner}/{repoName}");
+                    return new RepositoryResult(e, $"Forbidden access to {owner}/{repoName}");
+                }
+
+                if (innerException is Octokit.RateLimitExceededException)
+                {
+                    Log.Logger()?.ReportError("Rate limit exceeded.", e);
+                    return new RepositoryResult(e, "Rate limit exceeded.");
+                }
+            }
+            catch (Exception e)
+            {
+                Log.Logger()?.ReportError("Unspecified error.", e);
+                return new RepositoryResult(e, "Unspecified error when cloning a repo.");
+            }
+
+            if (ocktokitRepo == null)
+            {
+                return new RepositoryResult(new ArgumentException("Repo is still null"), "Repo is still null");
+            }
+            else
+            {
+                return new RepositoryResult(new DevHomeRepository(ocktokitRepo) as IRepository);
+            }
+        }).AsAsyncOperation();
+    }
+
+    public IAsyncOperation<ProviderOperationResult> CloneRepositoryAsync(IRepository repository, string cloneDestination)
+    {
+        return Task.Run(() =>
+        {
+            var cloneOptions = new LibGit2Sharp.CloneOptions
+            {
+                Checkout = true,
+            };
+
+            try
+            {
+                // Exceptions happen.
+                LibGit2Sharp.Repository.Clone(repository.RepoUri.OriginalString, cloneDestination, cloneOptions);
+            }
+            catch (LibGit2Sharp.RecurseSubmodulesException recurseException)
+            {
+                Providers.Log.Logger()?.ReportError("DevHomeRepository", "Could not clone all sub modules", recurseException);
+                return new ProviderOperationResult(ProviderOperationStatus.Failure, recurseException, "Could not clone all modules", "Could not clone all modules");
+            }
+            catch (LibGit2Sharp.UserCancelledException userCancelledException)
+            {
+                Providers.Log.Logger()?.ReportError("DevHomeRepository", "The user stoped the clone operation", userCancelledException);
+                return new ProviderOperationResult(ProviderOperationStatus.Failure, userCancelledException, "User cancalled the operation", "Operation canclled by user");
+            }
+            catch (LibGit2Sharp.NameConflictException nameConflictException)
+            {
+                Providers.Log.Logger()?.ReportError("DevHomeRepository", nameConflictException);
+                return new ProviderOperationResult(ProviderOperationStatus.Failure, nameConflictException, "The location exists and is non-empty", "The location exists and is non-empty");
+            }
+            catch (LibGit2Sharp.LibGit2SharpException libGitTwoException)
+            {
+                Providers.Log.Logger()?.ReportError("DevHomeRepository", $"Either no logged in account has access to this repo, or the repo can't be found", libGitTwoException);
+                return new ProviderOperationResult(ProviderOperationStatus.Failure, libGitTwoException, "LigGit2 threw an exception", "LibGit2 Threw an exception");
+            }
+            catch (Exception e)
+            {
+                Providers.Log.Logger()?.ReportError("DevHomeRepository", "Could not clone the repository", e);
+                return new ProviderOperationResult(ProviderOperationStatus.Failure, e, "Something happened when cloning the repo", "something happened when cloning the repo");
+            }
+
+            return new ProviderOperationResult(ProviderOperationStatus.Success, new ArgumentException("Nothing wrong"), "Nothing wrong", "Nothing wrong");
+        }).AsAsyncOperation();
+    }
+
+    public IAsyncOperation<ProviderOperationResult> CloneRepositoryAsync(Microsoft.Windows.DevHome.SDK.IRepository repository, string cloneDestination, IDeveloperId developerId)
+    {
+        return Task.Run(() =>
+        {
+            var cloneOptions = new LibGit2Sharp.CloneOptions
+            {
+                Checkout = true,
+            };
+
+            var loggedInDeveloperId = DeveloperId.DeveloperIdProvider.GetInstance().GetDeveloperIdInternal(developerId);
+
+            cloneOptions.CredentialsProvider = (url, user, cred) => new LibGit2Sharp.UsernamePasswordCredentials
+            {
+                // Password is a PAT unique to GitHub.
+                Username = loggedInDeveloperId.GetCredential().Password,
+                Password = string.Empty,
+            };
+
+            try
+            {
+                // Exceptions happen.
+                LibGit2Sharp.Repository.Clone(repository.RepoUri.OriginalString, cloneDestination, cloneOptions);
+            }
+            catch (LibGit2Sharp.RecurseSubmodulesException recurseException)
+            {
+                Providers.Log.Logger()?.ReportError("DevHomeRepository", "Could not clone all sub modules", recurseException);
+                return new ProviderOperationResult(ProviderOperationStatus.Failure, recurseException, "Could not clone all modules", "Could not clone all modules");
+            }
+            catch (LibGit2Sharp.UserCancelledException userCancelledException)
+            {
+                Providers.Log.Logger()?.ReportError("DevHomeRepository", "The user stoped the clone operation", userCancelledException);
+                return new ProviderOperationResult(ProviderOperationStatus.Failure, userCancelledException, "User cancalled the operation", "Operation canclled by user");
+            }
+            catch (LibGit2Sharp.NameConflictException nameConflictException)
+            {
+                Providers.Log.Logger()?.ReportError("DevHomeRepository", nameConflictException);
+                return new ProviderOperationResult(ProviderOperationStatus.Failure, nameConflictException, "The location exists and is non-empty", "The location exists and is non-empty");
+            }
+            catch (LibGit2Sharp.LibGit2SharpException libGitTwoException)
+            {
+                Providers.Log.Logger()?.ReportError("DevHomeRepository", $"Either no logged in account has access to this repo, or the repo can't be found", libGitTwoException);
+                return new ProviderOperationResult(ProviderOperationStatus.Failure, libGitTwoException, "LigGit2 threw an exception", "LibGit2 Threw an exception");
+            }
+            catch (Exception e)
+            {
+                Providers.Log.Logger()?.ReportError("DevHomeRepository", "Could not clone the repository", e);
+                return new ProviderOperationResult(ProviderOperationStatus.Failure, e, "Something happened when cloning the repo", "something happened when cloning the repo");
+            }
+
+            return new ProviderOperationResult(ProviderOperationStatus.Success, new ArgumentException("Nothing wrong"), "Nothing wrong", "Nothing wrong");
+        }).AsAsyncOperation();
+    }
 
     public void Dispose()
     {
