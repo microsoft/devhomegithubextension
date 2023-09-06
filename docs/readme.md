@@ -8,7 +8,7 @@ Once you've discussed your proposed feature/fix/etc. with a team member, and you
 
 1. Fork the repo if you haven't already
 1. Clone your fork locally
-1. Create & push a feature branch <!--1. Create a [Draft Pull Request (PR)](https://github.blog/2019-02-14-introducing-draft-pull-requests/)-->
+1. Create & push a feature branch <!--1. Create a [Draft Pull Request (PR)](https://GitHub.blog/2019-02-14-introducing-draft-pull-requests/)-->
 1. Work on your changes
 
 ## Rules

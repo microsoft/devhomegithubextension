@@ -5,11 +5,11 @@ VisualStudioVersion = 17.3.32901.215
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GITServices.UITest", "test\UITest\GITServices.UITest.csproj", "{E9F49E1C-C15D-4B87-92CA-9003C1C31DB5}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GitHubPlugin.TestConsole", "test\Console\GitHubPlugin.TestConsole.csproj", "{90991D71-5740-4C75-B79B-6092F4D75BF4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GitHubExtension.TestConsole", "test\Console\GitHubExtension.TestConsole.csproj", "{90991D71-5740-4C75-B79B-6092F4D75BF4}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GitHubPlugin", "src\GithubPlugin\GitHubPlugin.csproj", "{FFC1FC71-6386-4D30-A6A9-2401121BEEE3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GitHubExtension", "src\GitHubExtension\GitHubExtension.csproj", "{FFC1FC71-6386-4D30-A6A9-2401121BEEE3}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GitHubPluginServer", "src\GithubPluginServer\GitHubPluginServer.csproj", "{9AEDC455-CF92-43A7-8E89-C6CA50DEC536}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GitHubExtensionServer", "src\GitHubExtensionServer\GitHubExtensionServer.csproj", "{9AEDC455-CF92-43A7-8E89-C6CA50DEC536}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GITServices.Telemetry", "src\Telemetry\GITServices.Telemetry.csproj", "{8E1764CB-2FFC-4F23-9FC0-BDE84E519319}"
 EndProject
@@ -38,7 +38,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "scripts", "scripts", "{A371
 		build\scripts\Unstub.ps1 = build\scripts\Unstub.ps1
 	EndProjectSection
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GitHubPlugin.Test", "test\GitHubPlugin\GitHubPlugin.Test.csproj", "{D8EFDB34-7019-4807-AE97-1B50891F345D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GitHubExtension.Test", "test\GitHubExtension\GitHubExtension.Test.csproj", "{D8EFDB34-7019-4807-AE97-1B50891F345D}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DevHome.Logging", "src\Logging\DevHome.Logging.csproj", "{FEEEDA62-F746-4160-A3A8-1EE74137F8AB}"
 EndProject
