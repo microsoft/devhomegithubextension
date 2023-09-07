@@ -29,25 +29,14 @@ public class DeveloperIdProvider : IDeveloperIdProvider
         get; set;
     }
 
-    public AuthenticationState DeveloperIdState
-    {
-        get => throw new NotImplementedException();
-        set => throw new NotImplementedException();
-    }
-
-    public string DisplayName => throw new NotImplementedException();
-
     // DeveloperIdProvider uses singleton pattern.
     private static DeveloperIdProvider? singletonDeveloperIdProvider;
 
-    public event EventHandler<IDeveloperId>? LoggedIn;
+    public event TypedEventHandler<IDeveloperIdProvider, IDeveloperId>? Changed;
 
-    public event EventHandler<IDeveloperId>? LoggedOut;
-
-    public event EventHandler<IDeveloperId>? Updated;
-
-    // public event TypedEventHandler<IDeveloperIdProvider, object>? Changed;
     private readonly AuthenticationExperienceKind authenticationExperienceForGithubPlugin = AuthenticationExperienceKind.CardSession;
+
+    public string DisplayName => "Github";
 
     // Private constructor for Singleton class.
     private DeveloperIdProvider()
@@ -76,12 +65,6 @@ public class DeveloperIdProvider : IDeveloperIdProvider
         }
 
         return singletonDeveloperIdProvider;
-    }
-
-    // IDeveloperIdProvider interface functions.
-    public string GetName()
-    {
-        return "GitHub";
     }
 
     public DeveloperIdsResult GetLoggedInDeveloperIds()
@@ -141,7 +124,7 @@ public class DeveloperIdProvider : IDeveloperIdProvider
         return null;
     }
 
-    public void LogoutDeveloperId(IDeveloperId developerId)
+    public ProviderOperationResult LogoutDeveloperId(IDeveloperId developerId)
     {
         DeveloperId? developerIdToLogout;
         lock (DeveloperIdsLock)
@@ -150,7 +133,7 @@ public class DeveloperIdProvider : IDeveloperIdProvider
             if (developerIdToLogout == null)
             {
                 Log.Logger()?.ReportError($"Unable to find DeveloperId to logout");
-                throw new ArgumentNullException(nameof(developerId));
+                return new ProviderOperationResult(ProviderOperationStatus.Failure, new ArgumentNullException(nameof(developerId)), "The developer account to log out does not exist", "Unable to find DeveloperId to logout");
             }
 
             CredentialVault.RemoveAccessTokenFromVault(developerIdToLogout.LoginId);
@@ -159,15 +142,16 @@ public class DeveloperIdProvider : IDeveloperIdProvider
 
         try
         {
-            LoggedOut?.Invoke(this as IDeveloperIdProvider, developerIdToLogout as IDeveloperId);
+            Changed?.Invoke(this as IDeveloperIdProvider, developerIdToLogout as IDeveloperId);
         }
         catch (Exception error)
         {
             Log.Logger()?.ReportError($"LoggedOut event signalling failed: {error}");
         }
+
+        return new ProviderOperationResult(ProviderOperationStatus.Success, null, "The developer account has been logged out successfully", "LogoutDeveloperId succeeded");
     }
 
-    // IAuthenticationProviderInternal interface functions.
     public void HandleOauthRedirection(Uri authorizationResponse)
     {
         OAuthRequest? oAuthRequest = null;
@@ -240,7 +224,7 @@ public class DeveloperIdProvider : IDeveloperIdProvider
 
                 try
                 {
-                    Updated?.Invoke(this as IDeveloperIdProvider, duplicateDeveloperIds.Single() as IDeveloperId);
+                    Changed?.Invoke(this as IDeveloperIdProvider, duplicateDeveloperIds.Single() as IDeveloperId);
                 }
                 catch (Exception error)
                 {
@@ -264,7 +248,7 @@ public class DeveloperIdProvider : IDeveloperIdProvider
 
             try
             {
-                LoggedIn?.Invoke(this as IDeveloperIdProvider, newDeveloperId as IDeveloperId);
+                Changed?.Invoke(this as IDeveloperIdProvider, newDeveloperId as IDeveloperId);
             }
             catch (Exception error)
             {
@@ -300,19 +284,7 @@ public class DeveloperIdProvider : IDeveloperIdProvider
 
     internal void RefreshDeveloperId(IDeveloperId developerIdInternal)
     {
-        Updated?.Invoke(this as IDeveloperIdProvider, developerIdInternal as IDeveloperId);
-    }
-
-    public IPluginAdaptiveCardController GetAdaptiveCardController(string[] args)
-    {
-        var loginEntryPoint = string.Empty;
-        if (args is not null && args.Length != 0)
-        {
-            loginEntryPoint = args[0];
-        }
-
-        Log.Logger()?.ReportInfo($"GetAdaptiveCardController");
-        return new LoginUIController(loginEntryPoint);
+        Changed?.Invoke(this as IDeveloperIdProvider, developerIdInternal as IDeveloperId);
     }
 
     public AuthenticationExperienceKind GetAuthenticationExperienceKind()
@@ -320,9 +292,12 @@ public class DeveloperIdProvider : IDeveloperIdProvider
         return authenticationExperienceForGithubPlugin;
     }
 
-    ProviderOperationResult IDeveloperIdProvider.LogoutDeveloperId(IDeveloperId developerId) => throw new NotImplementedException();
-
-    public AdaptiveCardSessionResult GetLoginAdaptiveCardSession() => throw new NotImplementedException();
+    public AdaptiveCardSessionResult GetLoginAdaptiveCardSession()
+    {
+        var loginEntryPoint = string.Empty;
+        Log.Logger()?.ReportInfo($"GetAdaptiveCardController");
+        return new AdaptiveCardSessionResult(new LoginUIController(loginEntryPoint));
+    }
 
     public void Dispose()
     {
@@ -331,8 +306,20 @@ public class DeveloperIdProvider : IDeveloperIdProvider
 
     public IAsyncOperation<DeveloperIdResult> ShowLogonSession(WindowId windowHandle) => throw new NotImplementedException();
 
-    public event TypedEventHandler<IDeveloperIdProvider, object>? Changed
+    public AuthenticationState GetDeveloperIdState(IDeveloperId developerId)
     {
-        add { } remove { }
+        DeveloperId? developerIdToFind;
+        lock (DeveloperIdsLock)
+        {
+            developerIdToFind = DeveloperIds?.Find(e => e.LoginId == developerId.LoginId);
+            if (developerIdToFind == null)
+            {
+                return AuthenticationState.LoggedOut;
+            }
+            else
+            {
+                return AuthenticationState.LoggedIn;
+            }
+        }
     }
 }

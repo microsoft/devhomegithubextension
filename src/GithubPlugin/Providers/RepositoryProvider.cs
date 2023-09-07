@@ -17,7 +17,7 @@ public class RepositoryProvider : IRepositoryProvider
 {
     public string DisplayName => Resources.GetResource(@"RepositoryProviderDisplayName");
 
-    private Dictionary<string, Repository> _repositories;
+    private readonly Dictionary<string, Repository> _repositories;
 
     public IRandomAccessStreamReference Icon
     {
@@ -253,4 +253,8 @@ public class RepositoryProvider : IRepositoryProvider
     {
         GC.SuppressFinalize(this);
     }
+
+    IAsyncOperation<RepositoryResult> IRepositoryProvider.GetRepositoryFromUriAsync(Uri uri) => throw new NotImplementedException();
+
+    IAsyncOperation<RepositoryResult> IRepositoryProvider.GetRepositoryFromUriAsync(Uri uri, IDeveloperId developerId) => throw new NotImplementedException();
 }
