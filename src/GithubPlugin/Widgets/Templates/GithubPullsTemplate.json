@@ -56,7 +56,7 @@
           "$data": "${pulls}",
           "type": "ColumnSet",
           "style": "emphasis",
-          "spacing": "small",
+          "spacing": "default",
           "selectAction": {
             "type": "Action.OpenUrl",
             "url": "${url}",
@@ -87,7 +87,7 @@
                 },
                 {
                   "type": "ColumnSet",
-                  "spacing": "None",
+                  "spacing": "none",
                   "wrap": true,
                   "columns": [
                     {
@@ -111,7 +111,7 @@
                           "text": "${user}",
                           "isSubtle": true,
                           "size": "small",
-                          "spacing": "None",
+                          "spacing": "none",
                           "weight": "bolder"
                         }
                       ]

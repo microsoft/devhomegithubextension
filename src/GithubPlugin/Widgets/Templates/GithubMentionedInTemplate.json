@@ -51,7 +51,7 @@
       "$data": "${items}",
       "type": "ColumnSet",
       "style": "emphasis",
-      "spacing": "small",
+      "spacing": "default",
       "selectAction": {
         "type": "Action.OpenUrl",
         "url": "${url}",
