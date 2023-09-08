@@ -3,9 +3,9 @@
 
 using DevHome.Logging;
 using DevHome.Logging.Helpers;
-using GithubExtension.DataModel;
+using GitHubExtension.DataModel;
 
-namespace GithubExtension.Test;
+namespace GitHubExtension.Test;
 
 public partial class TestHelpers
 {

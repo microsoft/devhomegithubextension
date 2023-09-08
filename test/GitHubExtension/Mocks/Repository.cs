@@ -4,7 +4,7 @@
 using Microsoft.Windows.DevHome.SDK;
 using Windows.Foundation;
 
-namespace GithubExtension.Test.Mocks;
+namespace GitHubExtension.Test.Mocks;
 public class MockRepository : IRepository
 {
     public string DisplayName => "Mock Repository";

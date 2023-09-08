@@ -2,11 +2,11 @@
 // Licensed under the MIT license.
 
 using System.Diagnostics;
-using GithubExtension.DeveloperId;
-using GithubExtension.Providers;
+using GitHubExtension.DeveloperId;
+using GitHubExtension.Providers;
 using Microsoft.Windows.DevHome.SDK;
 
-namespace GithubExtension.Test;
+namespace GitHubExtension.Test;
 
 /*
  * TODO: Write unit tests.

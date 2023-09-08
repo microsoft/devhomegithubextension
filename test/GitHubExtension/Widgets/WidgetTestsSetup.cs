@@ -1,7 +1,7 @@
 ﻿// Copyright (c) Microsoft Corporation and Contributors
 // Licensed under the MIT license.
 
-namespace GithubExtension.Test;
+namespace GitHubExtension.Test;
 
 [TestClass]
 public partial class WidgetTests

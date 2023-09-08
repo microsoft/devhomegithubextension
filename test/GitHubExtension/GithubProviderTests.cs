@@ -3,7 +3,7 @@
 
 using Microsoft.Windows.DevHome.SDK;
 
-namespace GithubExtension.Test;
+namespace GitHubExtension.Test;
 [TestClass]
 public partial class GithubProviderTests
 {

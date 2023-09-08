@@ -3,10 +3,10 @@
 
 using Dapper.Contrib.Extensions;
 using DevHome.Logging;
-using GithubExtension.DataModel;
-using GithubExtension.Helpers;
+using GitHubExtension.DataModel;
+using GitHubExtension.Helpers;
 
-namespace GithubExtension.Test;
+namespace GitHubExtension.Test;
 
 public partial class DataStoreTests
 {

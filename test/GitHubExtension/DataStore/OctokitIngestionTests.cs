@@ -2,11 +2,11 @@
 // Licensed under the MIT license.
 
 using Dapper.Contrib.Extensions;
-using GithubExtension.Client;
-using GithubExtension.DataModel;
+using GitHubExtension.Client;
+using GitHubExtension.DataModel;
 using Octokit;
 
-namespace GithubExtension.Test;
+namespace GitHubExtension.Test;
 
 public partial class DataStoreTests
 {

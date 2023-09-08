@@ -5,7 +5,7 @@ using System.Globalization;
 using DevHome.Logging;
 using DevHome.Logging.Listeners;
 
-namespace GithubExtension.Test;
+namespace GitHubExtension.Test;
 
 public class TestListener : ListenerBase
 {

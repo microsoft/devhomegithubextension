@@ -3,7 +3,7 @@
 
 using Microsoft.Windows.ApplicationModel.DynamicDependency;
 
-namespace GithubExtension.Test;
+namespace GitHubExtension.Test;
 
 [TestClass]
 public class Initialize

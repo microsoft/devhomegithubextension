@@ -2,7 +2,7 @@
 // Licensed under the MIT license.
 using DevHome.Logging;
 
-namespace GithubExtension.Test;
+namespace GitHubExtension.Test;
 public partial class WidgetTests
 {
     [TestMethod]
