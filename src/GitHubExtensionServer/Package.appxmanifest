@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Package xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10" xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10" xmlns:uap3="http://schemas.microsoft.com/appx/manifest/uap/windows10/3" xmlns:rescap="http://schemas.microsoft.com/appx/manifest/foundation/windows10/restrictedcapabilities" xmlns:genTemplate="http://schemas.microsoft.com/appx/developer/templatestudio" xmlns:com="http://schemas.microsoft.com/appx/manifest/com/windows10" xmlns:desktop="http://schemas.microsoft.com/appx/manifest/desktop/windows10" IgnorableNamespaces="uap uap3 rescap genTemplate">
-  <Identity Name="Microsoft.Windows.DevHomeGitHubExtension.Dev" Publisher="CN=Microsoft Corporation, O=Microsoft Corporation, L=Redmond, S=Washington, C=US" Version="0.499.249.2148" />
+  <Identity Name="Microsoft.Windows.DevHomeGitHubExtension.Dev" Publisher="CN=Microsoft Corporation, O=Microsoft Corporation, L=Redmond, S=Washington, C=US" Version="0.0.0.0" />
   <Properties>
     <DisplayName>Dev Home GitHub Extension (Dev)</DisplayName>
     <PublisherDisplayName>Microsoft Corporation</PublisherDisplayName>
@@ -21,15 +21,15 @@
       <Extensions>
         <com:Extension Category="windows.comServer">
           <com:ComServer>
-            <com:ExeServer Executable="DevHomeGitHubExtension.exe" Arguments="-RegisterProcessAsComServer" DisplayName="GitHub Plugin Widget">
-              <com:Class Id="F23870B0-B391-4466-84E2-42A991078613" DisplayName="GitHub Plugin Widget" />
+            <com:ExeServer Executable="DevHomeGitHubExtension.exe" Arguments="-RegisterProcessAsComServer" DisplayName="GitHub Extension Widget">
+              <com:Class Id="F23870B0-B391-4466-84E2-42A991078613" DisplayName="GitHub Extension Widget" />
             </com:ExeServer>
           </com:ComServer>
         </com:Extension>
         <com:Extension Category="windows.comServer">
           <com:ComServer>
-            <com:ExeServer Executable="DevHomeGitHubExtension.exe" Arguments="-RegisterProcessAsComServer" DisplayName="GitHub Plugin">
-              <com:Class Id="6B5F1179-B2AE-4D5E-94FC-E5E119D1B8F0" DisplayName="GitHub Plugin" />
+            <com:ExeServer Executable="DevHomeGitHubExtension.exe" Arguments="-RegisterProcessAsComServer" DisplayName="GitHub Extension">
+              <com:Class Id="6B5F1179-B2AE-4D5E-94FC-E5E119D1B8F0" DisplayName="GitHub Extension" />
             </com:ExeServer>
           </com:ComServer>
         </com:Extension>
