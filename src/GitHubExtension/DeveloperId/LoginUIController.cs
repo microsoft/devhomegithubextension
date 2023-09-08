@@ -5,7 +5,7 @@ using Microsoft.Windows.ApplicationModel.Resources;
 using Microsoft.Windows.DevHome.SDK;
 using Windows.Foundation;
 
-namespace GitHubPlugin.DeveloperId;
+namespace GitHubExtension.DeveloperId;
 internal class LoginUIController : IExtensionAdaptiveCardSession
 {
     // _loginEntryPoint stores the calling component on Dev Home (like "Settings", "SetupTool" etc).

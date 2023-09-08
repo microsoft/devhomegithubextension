@@ -108,7 +108,7 @@ public sealed class Program
         // This could be called by either of the COM registrations, we will do them all to avoid deadlock and bind all on the plugin's lifetime.
         using var pluginServer = new Microsoft.Windows.DevHome.SDK.ExtensionServer();
         var pluginDisposedEvent = new ManualResetEvent(false);
-        var pluginInstance = new GitHubPlugin(pluginDisposedEvent);
+        var pluginInstance = new GitHubExtension(pluginDisposedEvent);
 
         // We are instantiating plugin instance once above, and returning it every time the callback in RegisterPlugin below is called.
         // This makes sure that only one instance of SamplePlugin is alive, which is returned every time the host asks for the IPlugin object.

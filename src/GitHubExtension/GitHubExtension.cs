@@ -11,7 +11,7 @@ namespace GitHubExtension;
 [ComVisible(true)]
 [Guid("6B5F1179-B2AE-4D5E-94FC-E5E119D1B8F0")]
 [ComDefaultInterface(typeof(IExtension))]
-public sealed class GitHubPlugin : IExtension
+public sealed class GitHubExtension : IExtension
 {
     private readonly ManualResetEvent _pluginDisposedEvent;
 
