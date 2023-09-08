@@ -4,7 +4,7 @@
 namespace GitHubExtension;
 internal static class DeveloperOAuthConfiguration
 {
-    //// Follow this link https://docs.GitHub.com/en/developers/apps/building-oauth-apps/creating-an-oauth-app
+    //// Follow this link https://docs.github.com/developers/apps/building-oauth-apps/creating-an-oauth-app
     //// to create a Git Oauth app (with RedirectUri = "devhome://oauth_redirect_uri/").
     //// The following info can be modified by setting the corresponding environment variables.
     //// How to set the environment variables:
