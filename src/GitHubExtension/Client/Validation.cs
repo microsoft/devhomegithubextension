@@ -16,7 +16,7 @@ public static class Validation
     public static bool IsValidGitHubURL(Uri uri)
     {
         // Valid GitHub URL has three segments.  The first is '/'.
-        if (uri.Segments.Length < 3 || (!uri.Host.Equals("GitHub.com", StringComparison.OrdinalIgnoreCase) && !uri.Host.Equals("www.GitHub.com", StringComparison.OrdinalIgnoreCase)))
+        if (uri.Segments.Length < 3 || (!uri.Host.Equals("github.com", StringComparison.OrdinalIgnoreCase) && !uri.Host.Equals("www.github.com", StringComparison.OrdinalIgnoreCase)))
         {
             Log.Logger()?.ReportDebug($"{uri.OriginalString} is not a valid GitHub uri");
             return false;
@@ -30,7 +30,7 @@ public static class Validation
     {
         Uri? parsedUri;
 
-        // https://GitHub.com/dotnet/runtime/issues/72632
+        // https://github.com/dotnet/runtime/issues/72632
         // IsWellFormedUriString returns false with a GitHub URL.
         // Above link shows a work around.
         if (!IsValidHttpUri(url, out parsedUri) || url == null || parsedUri == null)
@@ -67,7 +67,7 @@ public static class Validation
     {
         if (!IsValidGitHubURL(url))
         {
-            // Try adding a protocol to support just "GitHub.com/owner/repo" type inputs.
+            // Try adding a protocol to support just "github.com/owner/repo" type inputs.
             var urlWithProtocol = AddProtocolToString(url);
             if (!IsValidGitHubURL(urlWithProtocol))
             {

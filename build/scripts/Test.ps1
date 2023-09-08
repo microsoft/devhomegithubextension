@@ -53,7 +53,7 @@ if (-not($IsAzurePipelineBuild)) {
   }
   else {
     Write-Host "WinAppDriver will be installed in the background."
-    $url = "https://GitHub.com/microsoft/WinAppDriver/releases/download/v1.2.99/WindowsApplicationDriver-1.2.99-win-x64.exe"
+    $url = "https://github.com/microsoft/WinAppDriver/releases/download/v1.2.99/WindowsApplicationDriver-1.2.99-win-x64.exe"
     $outpath = "$env:Build_SourcesDirectory\temp"
     Invoke-WebRequest -Uri $url -OutFile "$env:Build_SourcesDirectory\temp\WinAppDriverx64.exe"
 

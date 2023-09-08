@@ -13,14 +13,14 @@ internal static class OauthConfiguration
     // USE DeveloperOAuthConfiguration.cs FOR LOCAL TESTS.
     private static class BuildTimeReplacements
     {
-        internal static readonly string ClientID = "%BUILD_TIME_GitHub_CLIENT_ID_PLACEHOLDER%";
+        internal static readonly string ClientID = "%BUILD_TIME_GITHUB_CLIENT_ID_PLACEHOLDER%";
 
-        internal static readonly string ClientSecret = "%BUILD_TIME_GitHub_CLIENT_SECRET_PLACEHOLDER%";
+        internal static readonly string ClientSecret = "%BUILD_TIME_GITHUB_CLIENT_SECRET_PLACEHOLDER%";
     }
 
     public static string GetClientId()
     {
-        if (BuildTimeReplacements.ClientID.Equals("%" + "BUILD_TIME_GitHub_CLIENT_ID_PLACEHOLDER" + "%", StringComparison.OrdinalIgnoreCase))
+        if (BuildTimeReplacements.ClientID.Equals("%" + "BUILD_TIME_GITHUB_CLIENT_ID_PLACEHOLDER" + "%", StringComparison.OrdinalIgnoreCase))
         {
             if (string.IsNullOrEmpty(DeveloperOAuthConfiguration.ClientID))
             {
@@ -38,7 +38,7 @@ internal static class OauthConfiguration
 
     public static string GetClientSecret()
     {
-        if (BuildTimeReplacements.ClientSecret.Equals("%" + "BUILD_TIME_GitHub_CLIENT_SECRET_PLACEHOLDER" + "%", StringComparison.OrdinalIgnoreCase))
+        if (BuildTimeReplacements.ClientSecret.Equals("%" + "BUILD_TIME_GITHUB_CLIENT_SECRET_PLACEHOLDER" + "%", StringComparison.OrdinalIgnoreCase))
         {
             if (string.IsNullOrEmpty(DeveloperOAuthConfiguration.ClientSecret))
             {
