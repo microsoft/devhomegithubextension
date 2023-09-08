@@ -81,7 +81,7 @@ Try {
           ("/Platform:$platform"),
           ("/Logger:trx;LogFileName=GitHubExtension.Test-$platform-$configuration.trx"),
           ("/TestCaseFilter:""TestCategory=Unit"""),
-          ("BuildOutput\$configuration\$platform\GitHubPlugin.Test\GitHubPlugin.Test.dll")
+          ("BuildOutput\$configuration\$platform\GitHubExtension.Test\GitHubExtension.Test.dll")
       )
       $winAppTestArgs = @(
           ("/Platform:$platform"),
