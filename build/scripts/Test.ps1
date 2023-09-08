@@ -79,7 +79,7 @@ Try {
 
       $vstestArgs = @(
           ("/Platform:$platform"),
-          ("/Logger:trx;LogFileName=GitHubPlugin.Test-$platform-$configuration.trx"),
+          ("/Logger:trx;LogFileName=GitHubExtension.Test-$platform-$configuration.trx"),
           ("/TestCaseFilter:""TestCategory=Unit"""),
           ("BuildOutput\$configuration\$platform\GitHubPlugin.Test\GitHubPlugin.Test.dll")
       )
