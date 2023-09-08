@@ -106,14 +106,14 @@ public sealed class Program
 
         // Register and run COM server.
         // This could be called by either of the COM registrations, we will do them all to avoid deadlock and bind all on the plugin's lifetime.
-        using var pluginServer = new Microsoft.Windows.DevHome.SDK.ExtensionServer();
-        var pluginDisposedEvent = new ManualResetEvent(false);
-        var pluginInstance = new GitHubExtension(pluginDisposedEvent);
+        using var extensionServer = new Microsoft.Windows.DevHome.SDK.ExtensionServer();
+        var extensionDisposedEvent = new ManualResetEvent(false);
+        var extensionInstance = new GitHubExtension(extensionDisposedEvent);
 
         // We are instantiating plugin instance once above, and returning it every time the callback in RegisterPlugin below is called.
         // This makes sure that only one instance of SamplePlugin is alive, which is returned every time the host asks for the IPlugin object.
         // If you want to instantiate a new instance each time the host asks, create the new instance inside the delegate.
-        pluginServer.RegisterExtension(() => pluginInstance, true);
+        extensionServer.RegisterExtension(() => extensionInstance, true);
 
         // Do Widget COM server registration
         // We are not using a disposed event for this, as we want the widgets to be disposed when the plugin is disposed.
