@@ -58,7 +58,7 @@ $env:msix_version = build\Scripts\CreateBuildInfo.ps1 -Version $Version -IsAzure
 $isAdmin = ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole] 'Administrator')
 
 # Set GitHub OAuth Client App configuration if build-time parameters are present
-$OAuthConfigFilePath = (Join-Path $env:Build_RootDirectory "src\GitHubPlugin\Configuration\OAuthConfiguration.cs")
+$OAuthConfigFilePath = (Join-Path $env:Build_RootDirectory "src\GitHubExtension\Configuration\OAuthConfiguration.cs")
 if (![string]::IsNullOrWhitespace($ClientId)) {
     (Get-Content $OAuthConfigFilePath).Replace("%BUILD_TIME_GITHUB_CLIENT_ID_PLACEHOLDER%", $ClientId) | Set-Content $OAuthConfigFilePath
 }
@@ -117,7 +117,7 @@ Try {
     $uapAppExtension = [System.Xml.Linq.XName]::Get("{http://schemas.microsoft.com/appx/manifest/uap/windows10/3}AppExtension");
 
     # Update the appxmanifest
-    $appxmanifestPath = (Join-Path $env:Build_RootDirectory "src\GitHubPluginServer\Package.appxmanifest")
+    $appxmanifestPath = (Join-Path $env:Build_RootDirectory "src\GitHubExtensionServer\Package.appxmanifest")
     $appxmanifest = [System.Xml.Linq.XDocument]::Load($appxmanifestPath)
     $appxmanifest.Root.Element($xIdentity).Attribute("Version").Value = $env:msix_version
     if (-not ([string]::IsNullOrEmpty($newPackageName))) {
