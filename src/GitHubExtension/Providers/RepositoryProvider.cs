@@ -34,53 +34,10 @@ public class RepositoryProvider : IRepositoryProvider
 
     public IAsyncOperation<RepositoryUriSupportResult> IsUriSupportedAsync(Uri uri)
     {
-        return Task.Run(() =>
-        {
-            if (!Validation.IsValidGitHubURL(uri))
-            {
-                return new RepositoryUriSupportResult(false);
-            }
-
-            Octokit.Repository? ocktokitRepo = null;
-            var owner = Validation.ParseOwnerFromGitHubURL(uri);
-            var repoName = Validation.ParseRepositoryFromGitHubURL(uri);
-
-            try
-            {
-                ocktokitRepo = GitHubClientProvider.Instance.GetClient().Repository.Get(owner, repoName).Result;
-            }
-            catch (AggregateException e)
-            {
-                var innerException = e.InnerException;
-                if (innerException is Octokit.NotFoundException)
-                {
-                    Log.Logger()?.ReportError($"Can't find {owner}/{repoName}");
-                    return new RepositoryUriSupportResult(innerException, $"Can't find {owner}/{repoName}.  HResult: {innerException.HResult}");
-                }
-
-                if (innerException is Octokit.ForbiddenException)
-                {
-                    Log.Logger()?.ReportError($"Forbidden access to {owner}/{repoName}");
-                    return new RepositoryUriSupportResult(innerException, $"Forbidden access to {owner}/{repoName}.  HResult {innerException.HResult}");
-                }
-
-                if (innerException is Octokit.RateLimitExceededException)
-                {
-                    Log.Logger()?.ReportError("Rate limit exceeded.", innerException);
-                    return new RepositoryUriSupportResult(innerException, $"Rate limit exceeded.  HResult: {innerException.HResult}");
-                }
-            }
-            catch (Exception e)
-            {
-                Log.Logger()?.ReportError("Unspecified error.", e);
-                return new RepositoryUriSupportResult(e, $"Unspecified error when cloning a repo. HResult: {e.HResult}");
-            }
-
-            return new RepositoryUriSupportResult(true);
-        }).AsAsyncOperation();
+        return IsUriSupportedAsync(uri, null);
     }
 
-    public IAsyncOperation<RepositoryUriSupportResult> IsUriSupportedAsync(Uri uri, IDeveloperId developerId)
+    public IAsyncOperation<RepositoryUriSupportResult> IsUriSupportedAsync(Uri uri, IDeveloperId? developerId)
     {
         return Task.Run(() =>
         {
@@ -89,40 +46,16 @@ public class RepositoryProvider : IRepositoryProvider
                 return new RepositoryUriSupportResult(false);
             }
 
-            Octokit.Repository? ocktokitRepo = null;
             var owner = Validation.ParseOwnerFromGitHubURL(uri);
+            if (string.IsNullOrEmpty(owner))
+            {
+                return new RepositoryUriSupportResult(false);
+            }
+
             var repoName = Validation.ParseRepositoryFromGitHubURL(uri);
-
-            try
+            if (string.IsNullOrEmpty(repoName))
             {
-                var loggedInDeveloperId = DeveloperId.DeveloperIdProvider.GetInstance().GetDeveloperIdInternal(developerId);
-                ocktokitRepo = loggedInDeveloperId.GitHubClient.Repository.Get(owner, repoName).Result;
-            }
-            catch (AggregateException e)
-            {
-                var innerException = e.InnerException;
-                if (innerException is Octokit.NotFoundException)
-                {
-                    Log.Logger()?.ReportError($"Can't find {owner}/{repoName}");
-                    return new RepositoryUriSupportResult(innerException, $"Can't find {owner}/{repoName}.  HResult: {innerException.HResult}");
-                }
-
-                if (innerException is Octokit.ForbiddenException)
-                {
-                    Log.Logger()?.ReportError($"Forbidden access to {owner}/{repoName}");
-                    return new RepositoryUriSupportResult(innerException, $"Forbidden access to {owner}/{repoName}.  HResult {innerException.HResult}");
-                }
-
-                if (innerException is Octokit.RateLimitExceededException)
-                {
-                    Log.Logger()?.ReportError("Rate limit exceeded.", innerException);
-                    return new RepositoryUriSupportResult(innerException, $"Rate limit exceeded.  HResult: {innerException.HResult}");
-                }
-            }
-            catch (Exception e)
-            {
-                Log.Logger()?.ReportError("Unspecified error.", e);
-                return new RepositoryUriSupportResult(e, $"Unspecified error when cloning a repo. HResult: {e.HResult}");
+                return new RepositoryUriSupportResult(false);
             }
 
             return new RepositoryUriSupportResult(true);
@@ -186,63 +119,10 @@ public class RepositoryProvider : IRepositoryProvider
 
     public IAsyncOperation<RepositoryResult> GetRepositoryFromUriAsync(Uri uri)
     {
-        return Task.Run(() =>
-        {
-            if (!Validation.IsValidGitHubURL(uri))
-            {
-                var exception = new ArgumentException("Uri is invalid");
-                return new RepositoryResult(exception, $"Uri is invalid.  HResult: {exception.HResult}");
-            }
-
-            Octokit.Repository? ocktokitRepo = null;
-            var owner = Validation.ParseOwnerFromGitHubURL(uri);
-            var repoName = Validation.ParseRepositoryFromGitHubURL(uri);
-
-            try
-            {
-                ocktokitRepo = GitHubClientProvider.Instance.GetClient().Repository.Get(owner, repoName).Result;
-                return new RepositoryResult(new DevHomeRepository(ocktokitRepo));
-            }
-            catch (AggregateException e)
-            {
-                var innerException = e.InnerException;
-                if (innerException is Octokit.NotFoundException)
-                {
-                    Log.Logger()?.ReportError($"Can't find {owner}/{repoName}");
-                    return new RepositoryResult(innerException, $"Can't find {owner}/{repoName}. HResult: {innerException.HResult}");
-                }
-
-                if (innerException is Octokit.ForbiddenException)
-                {
-                    Log.Logger()?.ReportError($"Forbidden access to {owner}/{repoName}");
-                    return new RepositoryResult(innerException, $"Forbidden access to {owner}/{repoName}.  HResult: {innerException.HResult}");
-                }
-
-                if (innerException is Octokit.RateLimitExceededException)
-                {
-                    Log.Logger()?.ReportError("Rate limit exceeded.", innerException);
-                    return new RepositoryResult(innerException, $"Rate limit exceeded.  HResult: {innerException.HResult}");
-                }
-            }
-            catch (Exception e)
-            {
-                Log.Logger()?.ReportError("Unspecified error.", e);
-                return new RepositoryResult(e, $"Unspecified error when cloning a repo.  HResult: {e.HResult}");
-            }
-
-            if (ocktokitRepo == null)
-            {
-                var exception = new ArgumentException("Repo is still null");
-                return new RepositoryResult(exception, $"{exception.Message} HResult: {exception.HResult}");
-            }
-            else
-            {
-                return new RepositoryResult(new DevHomeRepository(ocktokitRepo) as IRepository);
-            }
-        }).AsAsyncOperation();
+        return GetRepositoryFromUriAsync(uri, null);
     }
 
-    public IAsyncOperation<RepositoryResult> GetRepositoryFromUriAsync(Uri uri, IDeveloperId developerId)
+    public IAsyncOperation<RepositoryResult> GetRepositoryFromUriAsync(Uri uri, IDeveloperId? developerId)
     {
         return Task.Run(() =>
         {
@@ -258,8 +138,19 @@ public class RepositoryProvider : IRepositoryProvider
 
             try
             {
-                var loggedInDeveloperId = DeveloperId.DeveloperIdProvider.GetInstance().GetDeveloperIdInternal(developerId);
-                ocktokitRepo = loggedInDeveloperId.GitHubClient.Repository.Get(owner, repoName).Result;
+                GitHubClient gitHubClient;
+
+                if (developerId != null)
+                {
+                    var loggedInDeveloperId = DeveloperId.DeveloperIdProvider.GetInstance().GetDeveloperIdInternal(developerId);
+                    gitHubClient = loggedInDeveloperId.GitHubClient;
+                }
+                else
+                {
+                    gitHubClient = GitHubClientProvider.Instance.GetClient();
+                }
+
+                ocktokitRepo = gitHubClient.Repository.Get(owner, repoName).Result;
             }
             catch (AggregateException e)
             {
@@ -294,56 +185,17 @@ public class RepositoryProvider : IRepositoryProvider
             }
             else
             {
-                return new RepositoryResult(new DevHomeRepository(ocktokitRepo) as IRepository);
+                return new RepositoryResult(new DevHomeRepository(ocktokitRepo));
             }
         }).AsAsyncOperation();
     }
 
     public IAsyncOperation<ProviderOperationResult> CloneRepositoryAsync(IRepository repository, string cloneDestination)
     {
-        return Task.Run(() =>
-        {
-            var cloneOptions = new LibGit2Sharp.CloneOptions
-            {
-                Checkout = true,
-            };
-
-            try
-            {
-                // Exceptions happen.
-                LibGit2Sharp.Repository.Clone(repository.RepoUri.OriginalString, cloneDestination, cloneOptions);
-            }
-            catch (LibGit2Sharp.RecurseSubmodulesException recurseException)
-            {
-                Providers.Log.Logger()?.ReportError("DevHomeRepository", "Could not clone all sub modules", recurseException);
-                return new ProviderOperationResult(ProviderOperationStatus.Failure, recurseException, "Could not clone all modules", recurseException.Message);
-            }
-            catch (LibGit2Sharp.UserCancelledException userCancelledException)
-            {
-                Providers.Log.Logger()?.ReportError("DevHomeRepository", "The user stoped the clone operation", userCancelledException);
-                return new ProviderOperationResult(ProviderOperationStatus.Failure, userCancelledException, "User cancalled the operation", userCancelledException.Message);
-            }
-            catch (LibGit2Sharp.NameConflictException nameConflictException)
-            {
-                Providers.Log.Logger()?.ReportError("DevHomeRepository", nameConflictException);
-                return new ProviderOperationResult(ProviderOperationStatus.Failure, nameConflictException, "The location exists and is non-empty", nameConflictException.Message);
-            }
-            catch (LibGit2Sharp.LibGit2SharpException libGitTwoException)
-            {
-                Providers.Log.Logger()?.ReportError("DevHomeRepository", $"Either no logged in account has access to this repo, or the repo can't be found", libGitTwoException);
-                return new ProviderOperationResult(ProviderOperationStatus.Failure, libGitTwoException, "LigGit2 threw an exception", libGitTwoException.Message);
-            }
-            catch (Exception e)
-            {
-                Providers.Log.Logger()?.ReportError("DevHomeRepository", "Could not clone the repository", e);
-                return new ProviderOperationResult(ProviderOperationStatus.Failure, e, "Something happened when cloning the repo", e.Message);
-            }
-
-            return new ProviderOperationResult(ProviderOperationStatus.Success, new ArgumentException("Nothing wrong"), "Nothing wrong", "Nothing wrong");
-        }).AsAsyncOperation();
+        return CloneRepositoryAsync(repository, cloneDestination, null);
     }
 
-    public IAsyncOperation<ProviderOperationResult> CloneRepositoryAsync(Microsoft.Windows.DevHome.SDK.IRepository repository, string cloneDestination, IDeveloperId developerId)
+    public IAsyncOperation<ProviderOperationResult> CloneRepositoryAsync(IRepository repository, string cloneDestination, IDeveloperId? developerId)
     {
         return Task.Run(() =>
         {
@@ -352,14 +204,17 @@ public class RepositoryProvider : IRepositoryProvider
                 Checkout = true,
             };
 
-            var loggedInDeveloperId = DeveloperId.DeveloperIdProvider.GetInstance().GetDeveloperIdInternal(developerId);
-
-            cloneOptions.CredentialsProvider = (url, user, cred) => new LibGit2Sharp.UsernamePasswordCredentials
+            if (developerId != null)
             {
-                // Password is a PAT unique to GitHub.
-                Username = loggedInDeveloperId.GetCredential().Password,
-                Password = string.Empty,
-            };
+                var loggedInDeveloperId = DeveloperId.DeveloperIdProvider.GetInstance().GetDeveloperIdInternal(developerId);
+
+                cloneOptions.CredentialsProvider = (url, user, cred) => new LibGit2Sharp.UsernamePasswordCredentials
+                {
+                    // Password is a PAT unique to GitHub.
+                    Username = loggedInDeveloperId.GetCredential().Password,
+                    Password = string.Empty,
+                };
+            }
 
             try
             {
