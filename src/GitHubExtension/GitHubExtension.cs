@@ -11,7 +11,7 @@ namespace GitHubExtension;
 [ComVisible(true)]
 [Guid("6B5F1179-B2AE-4D5E-94FC-E5E119D1B8F0")]
 [ComDefaultInterface(typeof(IExtension))]
-public sealed class GitHubExtension : IExtension
+public sealed class GitHubPlugin : IExtension
 {
     private readonly ManualResetEvent _pluginDisposedEvent;
 
@@ -28,6 +28,10 @@ public sealed class GitHubExtension : IExtension
                 return DeveloperIdProvider.GetInstance();
             case ProviderType.Repository:
                 return new RepositoryProvider();
+            case ProviderType.Settings:
+                return new object();
+            case ProviderType.FeaturedApplications:
+                return new object();
             default:
                 Providers.Log.Logger()?.ReportInfo("Invalid provider");
                 return null;
