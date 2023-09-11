@@ -151,6 +151,11 @@ public class Notification
         {
             return false;
         }
+        else if (LocalSettings.ReadSettingAsync<string>("NotificationsEnabled").Result == "false")
+        {
+            Toasted = true;
+            return false;
+        }
 
         return Type switch
         {

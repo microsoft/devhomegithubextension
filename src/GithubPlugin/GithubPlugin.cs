@@ -29,7 +29,7 @@ public sealed class GitHubPlugin : IExtension
             case ProviderType.Repository:
                 return new RepositoryProvider();
             case ProviderType.Settings:
-                return new object();
+                return new SettingsProvider();
             case ProviderType.FeaturedApplications:
                 return new object();
             default:
