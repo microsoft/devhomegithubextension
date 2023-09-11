@@ -174,7 +174,7 @@ internal class GithubMentionedInWidget : GithubWidget
                 UsePublicClientAsFallback = true,
             };
 
-            SearchIssuesRequest request = new SearchIssuesRequest()
+            var request = new SearchIssuesRequest()
             {
                 Mentions = MentionedName,
             };
@@ -288,8 +288,11 @@ internal class GithubMentionedInWidget : GithubWidget
 
     public string GetConfigurationData()
     {
-        var configurationData = new JsonObject();
-        configurationData.Add("showCategory", EnumHelper.SearchCategoryToString(ShowCategory == SearchCategory.Unknown ? SearchCategory.IssuesAndPullRequests : ShowCategory));
+        var configurationData = new JsonObject
+        {
+            { "showCategory", EnumHelper.SearchCategoryToString(ShowCategory == SearchCategory.Unknown ? SearchCategory.IssuesAndPullRequests : ShowCategory) },
+            { "configuring", true },
+        };
         return configurationData.ToJsonString();
     }
 
