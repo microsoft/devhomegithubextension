@@ -193,7 +193,7 @@ internal class GithubAssignedWidget : GithubWidget
                 },
                 UsePublicClientAsFallback = true,
             };
-            SearchIssuesRequest request = new SearchIssuesRequest()
+            var request = new SearchIssuesRequest()
             {
                 Assignee = AssignedToName,
             };
@@ -233,7 +233,7 @@ internal class GithubAssignedWidget : GithubWidget
 
             // Next step: composing the item list, which will be sent to the widget
             // the assignedIssues and assignedPulls contain the items, the final list of items
-            // should be orderd by creation time. Both lists are ordered so in every step
+            // should be ordered by creation time. Both lists are ordered so in every step
             // check the first items (if there are any) and compare them. Repeat until both
             // lists are empty.
             foreach (var item in items)
@@ -312,8 +312,11 @@ internal class GithubAssignedWidget : GithubWidget
 
     public string GetConfigurationData()
     {
-        var configurationData = new JsonObject();
-        configurationData.Add("showCategory", EnumHelper.SearchCategoryToString(ShowCategory == SearchCategory.Unknown ? SearchCategory.IssuesAndPullRequests : ShowCategory));
+        var configurationData = new JsonObject
+        {
+            { "showCategory", EnumHelper.SearchCategoryToString(ShowCategory == SearchCategory.Unknown ? SearchCategory.IssuesAndPullRequests : ShowCategory) },
+            { "configuring", true },
+        };
         return configurationData.ToJsonString();
     }
 

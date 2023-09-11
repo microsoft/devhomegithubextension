@@ -3,28 +3,5 @@
     "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
     "version": "1.5",
     "body": [
-        {
-            "type": "Container",
-            "items": [
-                {
-                    "type": "TextBlock",
-                    "text": "%Widget_Template/ReviewRequestedTitle%",
-                    "wrap": true,
-                    "horizontalAlignment": "Center",
-                    "size": "Large",
-                    "weight": "Bolder"
-                },
-                {
-                    "type": "TextBlock",
-                    "text": "%Extension_Name/GitHub%",
-                    "wrap": true,
-                    "horizontalAlignment": "Center",
-                    "spacing": "None",
-                    "size": "Small",
-                    "isSubtle": true,
-                    "weight": "Lighter"
-                }
-            ]
-        }
     ]
 }
