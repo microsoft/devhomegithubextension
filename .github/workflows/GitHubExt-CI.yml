@@ -11,6 +11,7 @@ on:
 jobs:
   build-and-test:
     strategy:
+      maxParallel: 1
       matrix:
         configuration: [Release, Debug]
         platform: [x64, x86, arm64]
@@ -23,7 +24,6 @@ jobs:
           platform: x86
         - configuration: Debug
           platform: arm64
-      maxParallel: 1
     runs-on: ${{ matrix.os }}
     steps:
     - uses: actions/checkout@v3
