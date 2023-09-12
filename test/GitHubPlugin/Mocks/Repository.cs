@@ -15,6 +15,8 @@ public class MockRepository : IRepository
 
     public string OwningAccountName => "Local Microsoft";
 
+    public Uri RepoUri => throw new NotImplementedException();
+
     public IAsyncAction CloneRepositoryAsync(string cloneDestination, IDeveloperId developerId)
     {
         throw new NotImplementedException();

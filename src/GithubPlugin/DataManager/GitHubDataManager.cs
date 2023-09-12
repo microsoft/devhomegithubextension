@@ -265,20 +265,20 @@ public partial class GitHubDataManager : IGitHubDataManager, IDisposable
                     if (ex is Octokit.ForbiddenException)
                     {
                         // This can happen most commonly with SAML-enabled organizations.
-                        Log.Logger()?.ReportDebug(Name, $"DeveloperId {devId.LoginId()} was forbidden access to {parameters.Owner}/{parameters.RepositoryName}");
+                        Log.Logger()?.ReportDebug(Name, $"DeveloperId {devId.LoginId} was forbidden access to {parameters.Owner}/{parameters.RepositoryName}");
                         continue;
                     }
 
                     if (ex is Octokit.NotFoundException)
                     {
                         // A private repository can come back as "not found" by the GitHub API when an unauthorized account cannot even view it.
-                        Log.Logger()?.ReportDebug(Name, $"DeveloperId {devId.LoginId()} did not find {parameters.Owner}/{parameters.RepositoryName}");
+                        Log.Logger()?.ReportDebug(Name, $"DeveloperId {devId.LoginId} did not find {parameters.Owner}/{parameters.RepositoryName}");
                         continue;
                     }
 
                     if (ex is Octokit.RateLimitExceededException)
                     {
-                        Log.Logger()?.ReportError(Name, $"DeveloperId {devId.LoginId()} rate limit exceeded.", ex);
+                        Log.Logger()?.ReportError(Name, $"DeveloperId {devId.LoginId} rate limit exceeded.", ex);
                         throw;
                     }
 

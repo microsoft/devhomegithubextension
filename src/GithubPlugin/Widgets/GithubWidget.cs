@@ -71,15 +71,13 @@ public abstract class GithubWidget : WidgetImpl
     public GithubWidget()
     {
         DataUpdater = new DataUpdater(PeriodicUpdate);
-        DeveloperIdProvider.GetInstance().LoggedIn += HandleDeveloperIdChange;
-        DeveloperIdProvider.GetInstance().LoggedOut += HandleDeveloperIdChange;
+        DeveloperIdProvider.GetInstance().Changed += HandleDeveloperIdChange;
     }
 
     ~GithubWidget()
     {
         DataUpdater?.Dispose();
-        DeveloperIdProvider.GetInstance().LoggedIn -= HandleDeveloperIdChange;
-        DeveloperIdProvider.GetInstance().LoggedOut -= HandleDeveloperIdChange;
+        DeveloperIdProvider.GetInstance().Changed -= HandleDeveloperIdChange;
     }
 
     public virtual void RequestContentData()
@@ -279,8 +277,11 @@ public abstract class GithubWidget : WidgetImpl
 
     public bool IsUserLoggedIn()
     {
+        /*
         IDeveloperIdProvider authProvider = DeveloperIdProvider.GetInstance();
         return authProvider.GetLoggedInDeveloperIds().Any();
+        */
+        return true;
     }
 
     public void UpdateActivityState()
@@ -421,8 +422,7 @@ public abstract class GithubWidget : WidgetImpl
     private void SetDeleted()
     {
         // If this widget is deleted, disable the data updater, clear the state, set to Unknown.
-        DeveloperIdProvider.GetInstance().LoggedIn -= HandleDeveloperIdChange;
-        DeveloperIdProvider.GetInstance().LoggedOut -= HandleDeveloperIdChange;
+        DeveloperIdProvider.GetInstance().Changed -= HandleDeveloperIdChange;
         DataUpdater.Stop();
         SetState(string.Empty);
         ActivityState = WidgetActivityState.Unknown;
