@@ -17,11 +17,16 @@ public class SettingsProvider : ISettingsProvider
     {
     }
 
-    public string GetName() => Resources.GetResource(@"SettingsProviderDisplayName");
+    string ISettingsProvider.DisplayName => Resources.GetResource(@"SettingsProviderDisplayName");
 
-    public IPluginAdaptiveCardController GetAdaptiveCardController(string[] args)
+    public AdaptiveCardSessionResult GetSettingsAdaptiveCardSession()
     {
-        Log.Logger()?.ReportInfo($"GetAdaptiveCardController");
-        return new SettingsUIController();
+        Log.Logger()?.ReportInfo($"GetSettingsAdaptiveCardSession");
+        return new AdaptiveCardSessionResult(new SettingsUIController());
+    }
+
+    public void Dispose()
+    {
+        GC.SuppressFinalize(this);
     }
 }

@@ -96,8 +96,6 @@ internal class LoginUIController : IExtensionAdaptiveCardSession
         }).AsAsyncOperation();
     }
 
-    ProviderOperationResult IExtensionAdaptiveCardSession.OnAction(string action, string inputs) => throw new NotImplementedException();
-
     // Adaptive Card Templates for LoginUI.
     private class LoginUITemplate
     {

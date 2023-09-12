@@ -5,11 +5,12 @@ using GitHubPlugin.Helpers;
 using Microsoft.Windows.ApplicationModel.Resources;
 using Microsoft.Windows.DevHome.SDK;
 using Newtonsoft.Json.Linq;
+using Windows.Foundation;
 
 namespace GitHubPlugin.Providers;
-internal class SettingsUIController : IPluginAdaptiveCardController
+internal class SettingsUIController : IExtensionAdaptiveCardSession
 {
-    private IPluginAdaptiveCard? _settingsUI;
+    private IExtensionAdaptiveCard? _settingsUI;
     private static readonly SettingsUITemplate _settingsUITemplate = new ();
 
     public SettingsUIController()
@@ -22,38 +23,45 @@ internal class SettingsUIController : IPluginAdaptiveCardController
         _settingsUI?.Update(null, null, null);
     }
 
-    public void Initialize(IPluginAdaptiveCard pluginUI)
+    public ProviderOperationResult Initialize(IExtensionAdaptiveCard extensionUI)
     {
         Log.Logger()?.ReportDebug($"Initialize");
-        _settingsUI = pluginUI;
-        _settingsUI.Update(_settingsUITemplate.GetSettingsUITemplate(), null, "SettingsPage");
+        _settingsUI = extensionUI;
+        return _settingsUI.Update(_settingsUITemplate.GetSettingsUITemplate(), null, "SettingsPage");
     }
 
-    public void OnAction(string action, string inputs)
+    public IAsyncOperation<ProviderOperationResult> OnAction(string action, string inputs)
     {
-        Log.Logger()?.ReportInfo($"OnAction() called with state:{_settingsUI?.State}");
-        Log.Logger()?.ReportDebug($"action: {action}");
-
-        switch (_settingsUI?.State)
+        return Task.Run(async () =>
         {
-            case "SettingsPage":
+            ProviderOperationResult operationResult;
+            Log.Logger()?.ReportInfo($"OnAction() called with state:{_settingsUI?.State}");
+            Log.Logger()?.ReportDebug($"action: {action}");
+
+            switch (_settingsUI?.State)
             {
-                Log.Logger()?.ReportDebug($"inputs: {inputs}");
+                case "SettingsPage":
+                    {
+                        Log.Logger()?.ReportDebug($"inputs: {inputs}");
 
-                var currentNotificationsEnabled = LocalSettings.ReadSettingAsync<string>("NotificationsEnabled").Result ?? "true";
-                LocalSettings.SaveSettingAsync("NotificationsEnabled", currentNotificationsEnabled == "true" ? "false" : "true").Wait();
+                        var currentNotificationsEnabled = LocalSettings.ReadSettingAsync<string>("NotificationsEnabled").Result ?? "true";
+                        await LocalSettings.SaveSettingAsync("NotificationsEnabled", currentNotificationsEnabled == "true" ? "false" : "true");
 
-                _settingsUI.Update(_settingsUITemplate.GetSettingsUITemplate(), null, "SettingsPage");
+                        operationResult = _settingsUI.Update(_settingsUITemplate.GetSettingsUITemplate(), null, "SettingsPage");
 
-                break;
+                        break;
+                    }
+
+                default:
+                    {
+                        Log.Logger()?.ReportError($"Unexpected state:{_settingsUI?.State}");
+                        operationResult = new ProviderOperationResult(ProviderOperationStatus.Failure, null, "Something went wrong", $"Unexpected state:{_settingsUI?.State}");
+                        break;
+                    }
             }
 
-            default:
-            {
-                Log.Logger()?.ReportError($"Unexpected state:{_settingsUI?.State}");
-                break;
-            }
-        }
+            return operationResult;
+        }).AsAsyncOperation();
     }
 
     // Adaptive Card Templates for SettingsUI.
