@@ -4,6 +4,7 @@
 using DevHome.Logging.Helpers;
 using GitHubPlugin.DeveloperId;
 using Microsoft.Windows.DevHome.SDK;
+using Octokit;
 
 namespace GitHubPlugin.Client;
 
