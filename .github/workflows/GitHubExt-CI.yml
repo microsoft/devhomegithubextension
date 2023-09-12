@@ -23,6 +23,7 @@ jobs:
           platform: x86
         - configuration: Debug
           platform: arm64
+      maxParallel: 1
     runs-on: ${{ matrix.os }}
     steps:
     - uses: actions/checkout@v3
