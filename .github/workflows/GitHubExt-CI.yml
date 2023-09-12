@@ -11,7 +11,7 @@ on:
 jobs:
   build-and-test:
     strategy:
-      maxParallel: 1
+      max-parallel: 1
       matrix:
         configuration: [Release, Debug]
         platform: [x64, x86, arm64]
