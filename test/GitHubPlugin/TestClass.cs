@@ -54,7 +54,7 @@ public class TestClass : IDisposable
 
     public void AuthenticationEvent(object? sender, IDeveloperId developerId)
     {
-        if (developerId.LoginId() is not null)
+        if (developerId.LoginId is not null)
         {
             AuthenticationEventTriggered.Release();
         }
@@ -100,8 +100,8 @@ public class TestClass : IDisposable
         DeveloperIdProvider authProvider = DeveloperIdProvider.GetInstance();
 
         // Register for Login and Logout Events
-        authProvider.LoggedIn += AuthenticationEvent;
-        authProvider.LoggedOut += AuthenticationEvent;
+        authProvider.Changed += AuthenticationEvent;
+        authProvider.Changed += AuthenticationEvent;
 
         // Start a new login flow. Control flows to browser.
         Task.Run(async () => { await authProvider.LoginNewDeveloperIdAsync(); });

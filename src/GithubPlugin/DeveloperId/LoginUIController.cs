@@ -3,13 +3,14 @@
 
 using Microsoft.Windows.ApplicationModel.Resources;
 using Microsoft.Windows.DevHome.SDK;
+using Windows.Foundation;
 
 namespace GitHubPlugin.DeveloperId;
-internal class LoginUIController : IPluginAdaptiveCardController
+internal class LoginUIController : IExtensionAdaptiveCardSession
 {
     // _loginEntryPoint stores the calling component on Dev Home (like "Settings", "SetupTool" etc).
     private readonly string _loginEntryPoint;
-    private IPluginAdaptiveCard? _loginUI;
+    private IExtensionAdaptiveCard? _loginUI;
     private static readonly LoginUITemplate _loginUITemplate = new ();
 
     public LoginUIController(string loginEntryPoint)
@@ -23,66 +24,76 @@ internal class LoginUIController : IPluginAdaptiveCardController
         _loginUI?.Update(null, null, null);
     }
 
-    public void Initialize(IPluginAdaptiveCard pluginUI)
+    public ProviderOperationResult Initialize(IExtensionAdaptiveCard pluginUI)
     {
         Log.Logger()?.ReportDebug($"Initialize");
         _loginUI = pluginUI;
-        _loginUI.Update(_loginUITemplate.GetLoginUITemplate(LoginUIState.LoginPage), null, LoginUIState.LoginPage);
+        var operationResult = _loginUI.Update(_loginUITemplate.GetLoginUITemplate(LoginUIState.LoginPage), null, LoginUIState.LoginPage);
+        return operationResult;
     }
 
-    public async void OnAction(string action, string inputs)
+    public IAsyncOperation<ProviderOperationResult> OnAction(string action, string inputs)
     {
-        Log.Logger()?.ReportInfo($"OnAction() called with state:{_loginUI?.State}");
-        Log.Logger()?.ReportDebug($"action: {action}");
-
-        switch (_loginUI?.State)
+        return Task.Run(async () =>
         {
-            case LoginUIState.LoginPage:
-            {
-                // Inputs are validated at this point.
-                _loginUI.Update(_loginUITemplate.GetLoginUITemplate(LoginUIState.WaitingPage), null, LoginUIState.WaitingPage);
-                Log.Logger()?.ReportDebug($"inputs: {inputs}");
+            ProviderOperationResult operationResult;
+            Log.Logger()?.ReportInfo($"OnAction() called with state:{_loginUI?.State}");
+            Log.Logger()?.ReportDebug($"action: {action}");
 
-                try
+            switch (_loginUI?.State)
+            {
+                case LoginUIState.LoginPage:
                 {
-                    var devId = await (DeveloperIdProvider.GetInstance() as IDeveloperIdProvider).LoginNewDeveloperIdAsync();
-                    if (devId != null)
+                    // Inputs are validated at this point.
+                    _loginUI.Update(_loginUITemplate.GetLoginUITemplate(LoginUIState.WaitingPage), null, LoginUIState.WaitingPage);
+                    Log.Logger()?.ReportDebug($"inputs: {inputs}");
+
+                    try
                     {
-                        var resourceLoader = new ResourceLoader(ResourceLoader.GetDefaultResourceFilePath(), "GitHubPlugin/Resources");
-                        _loginUI.Update(_loginUITemplate.GetLoginUITemplate(LoginUIState.LoginSucceededPage).Replace("${message}", $"{devId.LoginId()} {resourceLoader.GetString("LoginUI_LoginSuccededPage_text")}"), null, LoginUIState.LoginSucceededPage);
+                        var devId = await (DeveloperIdProvider.GetInstance() as DeveloperIdProvider).LoginNewDeveloperIdAsync();
+                        if (devId != null)
+                        {
+                            var resourceLoader = new ResourceLoader(ResourceLoader.GetDefaultResourceFilePath(), "GitHubPlugin/Resources");
+                            operationResult = _loginUI.Update(_loginUITemplate.GetLoginUITemplate(LoginUIState.LoginSucceededPage).Replace("${message}", $"{devId.LoginId} {resourceLoader.GetString("LoginUI_LoginSuccededPage_text")}"), null, LoginUIState.LoginSucceededPage);
+                        }
+                        else
+                        {
+                            Log.Logger()?.ReportError($"Unable to create DeveloperId");
+                            operationResult = new ProviderOperationResult(ProviderOperationStatus.Failure, null, "Developer Id could not be created", "Developer Id could not be created");
+                            _loginUI.Update(_loginUITemplate.GetLoginUITemplate(LoginUIState.LoginFailedPage), null, LoginUIState.LoginFailedPage);
+                        }
                     }
-                    else
+                    catch (Exception ex)
                     {
-                        Log.Logger()?.ReportError($"Unable to create DevId");
+                        Log.Logger()?.ReportError($"Error: {ex}");
+                        operationResult = new ProviderOperationResult(ProviderOperationStatus.Failure, ex, "Error occurred in login page", ex.Message);
                         _loginUI.Update(_loginUITemplate.GetLoginUITemplate(LoginUIState.LoginFailedPage), null, LoginUIState.LoginFailedPage);
                     }
+
+                    break;
                 }
-                catch (Exception ex)
+
+                // These pages only have close actions.
+                case LoginUIState.LoginSucceededPage:
+                case LoginUIState.LoginFailedPage:
                 {
-                    Log.Logger()?.ReportError($"Error: {ex}");
-                    _loginUI.Update(_loginUITemplate.GetLoginUITemplate(LoginUIState.LoginFailedPage), null, LoginUIState.LoginFailedPage);
+                    Log.Logger()?.ReportInfo($"State:{_loginUI.State}");
+                    operationResult = _loginUI.Update(null, null, LoginUIState.End);
+                    break;
                 }
 
-                break;
+                // These pages do not have any actions. We should never be here.
+                case LoginUIState.WaitingPage:
+                default:
+                {
+                    Log.Logger()?.ReportError($"Unexpected state:{_loginUI?.State}");
+                    operationResult = new ProviderOperationResult(ProviderOperationStatus.Failure, null, $"Error occurred in :{_loginUI?.State}", $"Error occurred in :{_loginUI?.State}");
+                    break;
+                }
             }
 
-            // These pages only have close actions.
-            case LoginUIState.LoginSucceededPage:
-            case LoginUIState.LoginFailedPage:
-            {
-                Log.Logger()?.ReportInfo($"State:{_loginUI.State}");
-                _loginUI.Update(null, null, LoginUIState.End);
-                break;
-            }
-
-            // These pages do not have any actions. We should never be here.
-            case LoginUIState.WaitingPage:
-            default:
-            {
-                Log.Logger()?.ReportError($"Unexpected state:{_loginUI?.State}");
-                break;
-            }
-        }
+            return operationResult;
+        }).AsAsyncOperation();
     }
 
     // Adaptive Card Templates for LoginUI.
