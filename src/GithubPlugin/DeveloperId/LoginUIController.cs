@@ -209,7 +209,7 @@ internal class LoginUIController : IExtensionAdaptiveCardSession
                                         {
                                             ""type"": ""Action.ShowCard"",
                                             ""title"": """ + $"{loader.GetString("LoginUI_LoginPage_Button2Text")}" + @""",
-                                            ""isEnabled"": true,
+                                            ""isEnabled"": false,
                                             ""tooltip"": """ + $"{loader.GetString("LoginUI_LoginPage_Button2ToolTip")}" + @""",
                                             ""id"": ""Enterprise"",
                                             ""card"": {
@@ -232,8 +232,7 @@ internal class LoginUIController : IExtensionAdaptiveCardSession
                                                                 ""type"": ""Action.Submit"",
                                                                 ""title"": """ + $"{loader.GetString("LoginUI_LoginPage_Button2Flyout_Button")}" + @""",
                                                                 ""style"": ""positive"",
-                                                                ""associatedInputs"": ""auto"",
-                                                                ""id"": ""foobar""
+                                                                ""associatedInputs"": ""auto""
                                                             }
                                                         ]
                                                     }
