@@ -57,9 +57,6 @@ jobs:
     - name: Restore dependencies
       run: dotnet restore GITServices.sln -p:PublishReadyToRun=true
 
-    - name: Restore nuget packages
-      run: cmd /c "$env:VSDevCmd" "&" nuget restore GITServices.sln
-
     - name: Build_DevHomeGitHubExtension
       run: cmd /c "$env:VSDevCmd" "&" msbuild /m /p:Configuration=${{ matrix.configuration }},Platform=${{ matrix.platform }} /restore GITServices.sln
 
