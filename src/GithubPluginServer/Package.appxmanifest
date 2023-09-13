@@ -43,6 +43,7 @@
                 <SupportedInterfaces>
                   <DeveloperId />
                   <Repository />
+                  <Settings />
                 </SupportedInterfaces>
               </DevHomeProvider>
             </uap3:Properties>
