@@ -8,10 +8,6 @@ namespace GitHubPlugin.Providers;
 
 public class SettingsProvider : ISettingsProvider
 {
-    public SettingsProvider()
-    {
-    }
-
     string ISettingsProvider.DisplayName => Resources.GetResource(@"SettingsProviderDisplayName");
 
     public AdaptiveCardSessionResult GetSettingsAdaptiveCardSession()

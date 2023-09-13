@@ -15,10 +15,6 @@ internal class SettingsUIController : IExtensionAdaptiveCardSession
     private IExtensionAdaptiveCard? _settingsUI;
     private static readonly SettingsUITemplate _settingsUITemplate = new ();
 
-    public SettingsUIController()
-    {
-    }
-
     public void Dispose()
     {
         Log.Logger()?.ReportDebug($"Dispose");

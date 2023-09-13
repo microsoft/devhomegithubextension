@@ -14,9 +14,7 @@ public static class LocalSettings
     private static readonly string _applicationDataFolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "DevHome/ApplicationData");
     private static readonly string _localSettingsFile = "LocalSettings.json";
 
-#pragma warning disable IDE0044 // Add readonly modifier
     private static IDictionary<string, object>? _settings;
-#pragma warning restore IDE0044 // Add readonly modifier
 
     private static async Task InitializeAsync()
     {
