@@ -10,6 +10,8 @@ using Windows.Foundation;
 namespace GitHubPlugin.Providers;
 internal class SettingsUIController : IExtensionAdaptiveCardSession
 {
+    private static readonly string _notificationsEnabledString = "NotificationsEnabled";
+
     private IExtensionAdaptiveCard? _settingsUI;
     private static readonly SettingsUITemplate _settingsUITemplate = new ();
 
@@ -44,8 +46,8 @@ internal class SettingsUIController : IExtensionAdaptiveCardSession
                     {
                         Log.Logger()?.ReportDebug($"inputs: {inputs}");
 
-                        var currentNotificationsEnabled = LocalSettings.ReadSettingAsync<string>("NotificationsEnabled").Result ?? "true";
-                        await LocalSettings.SaveSettingAsync("NotificationsEnabled", currentNotificationsEnabled == "true" ? "false" : "true");
+                        var currentNotificationsEnabled = LocalSettings.ReadSettingAsync<string>(_notificationsEnabledString).Result ?? "true";
+                        await LocalSettings.SaveSettingAsync(_notificationsEnabledString, currentNotificationsEnabled == "true" ? "false" : "true");
 
                         operationResult = _settingsUI.Update(_settingsUITemplate.GetSettingsUITemplate(), null, "SettingsPage");
 
@@ -71,7 +73,7 @@ internal class SettingsUIController : IExtensionAdaptiveCardSession
         {
             var loader = new ResourceLoader(ResourceLoader.GetDefaultResourceFilePath(), "GitHubPlugin/Resources");
 
-            var notificationsEnabled = LocalSettings.ReadSettingAsync<string>("NotificationsEnabled").Result ?? "true";
+            var notificationsEnabled = LocalSettings.ReadSettingAsync<string>(_notificationsEnabledString).Result ?? "true";
             var notificationsEnabledString = (notificationsEnabled == "true") ? loader.GetString("Settings_NotificationsEnabled") : loader.GetString("Settings_NotificationsDisabled");
 
             var settingsUI = @"
