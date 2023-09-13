@@ -47,11 +47,6 @@ public class DeveloperId : IDeveloperId
         return;
     }
 
-    // IDeveloperId interface functions.
-    string IDeveloperId.LoginId() => LoginId;
-
-    string IDeveloperId.Url() => Url;
-
     // IDeveloperIdInternal interface.
     public Windows.Security.Credentials.PasswordCredential GetCredential(bool refreshIfExpired = false)
     {
