@@ -36,7 +36,7 @@ public class DeveloperIdProvider : IDeveloperIdProvider
 
     private readonly AuthenticationExperienceKind authenticationExperienceForGithubPlugin = AuthenticationExperienceKind.CardSession;
 
-    public string DisplayName => "Github";
+    public string DisplayName => "GitHub";
 
     // Private constructor for Singleton class.
     private DeveloperIdProvider()
