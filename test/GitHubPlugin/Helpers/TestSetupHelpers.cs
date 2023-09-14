@@ -12,7 +12,7 @@ public partial class TestHelpers
     private const string DataBaseFileName = "GitHubPlugin-Test.db";
     private const string LogFileName = "GitHubPlugin-{now}.log";
 
-    public static async void CleanupTempTestOptions(TestOptions options, TestContext context)
+    public static void CleanupTempTestOptions(TestOptions options, TestContext context)
     {
         // We put DataStore and Log into the same path.
         var path = options.DataStoreOptions.DataStoreFolderPath;
@@ -27,8 +27,6 @@ public partial class TestHelpers
 
         if (Directory.Exists(path))
         {
-            // Wait 10 seconds for all loggers to release the log locks.
-            await Task.Delay(10000);
             context?.WriteLine($"Cleanup: Deleting folder {path}");
             Directory.Delete(path, true);
         }
