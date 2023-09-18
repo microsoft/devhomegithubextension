@@ -22,7 +22,7 @@ public class LogFileListener : ListenerBase, IDisposable
                 Mode = FileMode.Append,
                 Share = FileShare.ReadWrite,
             };
-            writer = new StreamWriter(filename, options);
+            writer = TextWriter.Synchronized(new StreamWriter(filename, options));
         }
         catch (IOException)
         {
