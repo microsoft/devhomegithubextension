@@ -70,7 +70,7 @@ internal class OAuthRequest : IDisposable
 
         Task.Run(async () =>
         {
-            // Launch Github login page on Browser.
+            // Launch GitHub login page on Browser.
             browserLaunch = await Windows.System.Launcher.LaunchUriAsync(uri, options);
 
             if (browserLaunch)

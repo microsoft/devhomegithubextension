@@ -10,11 +10,11 @@ using Microsoft.Windows.Widgets.Providers;
 using Octokit;
 
 namespace GitHubPlugin.Widgets;
-internal class GithubReviewWidget : GithubWidget
+internal class GitHubReviewWidget : GitHubWidget
 {
     private static Dictionary<string, string> Templates { get; set; } = new ();
 
-    protected static readonly new string Name = nameof(GithubReviewWidget);
+    protected static readonly new string Name = nameof(GitHubReviewWidget);
 
     private string referredName = string.Empty;
 
@@ -39,13 +39,13 @@ internal class GithubReviewWidget : GithubWidget
         set => SetState(value);
     }
 
-    public GithubReviewWidget()
+    public GitHubReviewWidget()
         : base()
     {
         GitHubSearchManager.OnResultsAvailable += SearchManagerResultsAvailableHandler;
     }
 
-    ~GithubReviewWidget()
+    ~GitHubReviewWidget()
     {
         GitHubSearchManager.OnResultsAvailable -= SearchManagerResultsAvailableHandler;
     }
@@ -125,7 +125,7 @@ internal class GithubReviewWidget : GithubWidget
 
             SearchIssuesRequest request = new SearchIssuesRequest($"review-requested:{ReferredName}");
             var searchManager = GitHubSearchManager.CreateInstance();
-            searchManager?.SearchForGithubIssuesOrPRs(request, Name, SearchCategory.PullRequests, requestOptions);
+            searchManager?.SearchForGitHubIssuesOrPRs(request, Name, SearchCategory.PullRequests, requestOptions);
             Log.Logger()?.ReportInfo(Name, ShortId, $"Requested search for {referredName}");
             DataState = WidgetDataState.Requested;
         }
@@ -214,9 +214,9 @@ internal class GithubReviewWidget : GithubWidget
         return page switch
         {
             WidgetPageState.SignIn => @"Widgets\Templates\GitHubSignInTemplate.json",
-            WidgetPageState.Configure => @"Widgets\Templates\GithubReviewConfigurationTemplate.json",
+            WidgetPageState.Configure => @"Widgets\Templates\GitHubReviewConfigurationTemplate.json",
             WidgetPageState.Content => @"Widgets\Templates\GitHubReviewTemplate.json",
-            WidgetPageState.Loading => @"Widgets\Templates\GithubLoadingTemplate.json",
+            WidgetPageState.Loading => @"Widgets\Templates\GitHubLoadingTemplate.json",
             _ => throw new NotImplementedException(),
         };
     }

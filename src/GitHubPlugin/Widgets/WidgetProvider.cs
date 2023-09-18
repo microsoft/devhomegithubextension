@@ -14,11 +14,11 @@ public sealed class WidgetProvider : IWidgetProvider
     public WidgetProvider()
     {
         Log.Logger()?.ReportDebug("Provider Constructed");
-        widgetDefinitionRegistry.Add("GitHub_Issues", new WidgetImplFactory<GithubIssuesWidget>());
-        widgetDefinitionRegistry.Add("GitHub_PullRequests", new WidgetImplFactory<GithubPullsWidget>());
-        widgetDefinitionRegistry.Add("GitHub_MentionedIns", new WidgetImplFactory<GithubMentionedInWidget>());
-        widgetDefinitionRegistry.Add("GitHub_Assigneds", new WidgetImplFactory<GithubAssignedWidget>());
-        widgetDefinitionRegistry.Add("GitHub_Reviews", new WidgetImplFactory<GithubReviewWidget>());
+        widgetDefinitionRegistry.Add("GitHub_Issues", new WidgetImplFactory<GitHubIssuesWidget>());
+        widgetDefinitionRegistry.Add("GitHub_PullRequests", new WidgetImplFactory<GitHubPullsWidget>());
+        widgetDefinitionRegistry.Add("GitHub_MentionedIns", new WidgetImplFactory<GitHubMentionedInWidget>());
+        widgetDefinitionRegistry.Add("GitHub_Assigneds", new WidgetImplFactory<GitHubAssignedWidget>());
+        widgetDefinitionRegistry.Add("GitHub_Reviews", new WidgetImplFactory<GitHubReviewWidget>());
         RecoverRunningWidgets();
     }
 

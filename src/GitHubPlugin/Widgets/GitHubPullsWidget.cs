@@ -8,21 +8,21 @@ using GitHubPlugin.Helpers;
 using Octokit;
 
 namespace GitHubPlugin.Widgets;
-internal class GithubPullsWidget : GithubWidget
+internal class GitHubPullsWidget : GitHubWidget
 {
     private readonly string pullsIconData = IconLoader.GetIconAsBase64("pulls.png");
 
     private static Dictionary<string, string> Templates { get; set; } = new ();
 
-    protected static readonly new string Name = nameof(GithubPullsWidget);
+    protected static readonly new string Name = nameof(GitHubPullsWidget);
 
-    public GithubPullsWidget()
+    public GitHubPullsWidget()
         : base()
     {
         GitHubDataManager.OnUpdate += DataManagerUpdateHandler;
     }
 
-    ~GithubPullsWidget()
+    ~GitHubPullsWidget()
     {
         GitHubDataManager.OnUpdate -= DataManagerUpdateHandler;
     }
@@ -153,7 +153,7 @@ internal class GithubPullsWidget : GithubWidget
             WidgetPageState.SignIn => @"Widgets\Templates\GitHubSignInTemplate.json",
             WidgetPageState.Configure => @"Widgets\Templates\GitHubPullsConfigurationTemplate.json",
             WidgetPageState.Content => @"Widgets\Templates\GitHubPullsTemplate.json",
-            WidgetPageState.Loading => @"Widgets\Templates\GithubLoadingTemplate.json",
+            WidgetPageState.Loading => @"Widgets\Templates\GitHubLoadingTemplate.json",
             _ => throw new NotImplementedException(),
         };
     }

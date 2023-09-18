@@ -8,5 +8,5 @@ namespace GitHubPlugin;
 
 public interface IGitHubSearchManager : IDisposable
 {
-    Task SearchForGithubIssuesOrPRs(Octokit.SearchIssuesRequest request, string initiator, SearchCategory category, RequestOptions? options = null);
+    Task SearchForGitHubIssuesOrPRs(Octokit.SearchIssuesRequest request, string initiator, SearchCategory category, RequestOptions? options = null);
 }

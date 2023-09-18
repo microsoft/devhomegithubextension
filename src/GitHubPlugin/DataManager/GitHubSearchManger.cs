@@ -33,7 +33,7 @@ public partial class GitHubSearchManager : IGitHubSearchManager, IDisposable
         }
     }
 
-    public async Task SearchForGithubIssuesOrPRs(Octokit.SearchIssuesRequest request, string initiator, SearchCategory category, RequestOptions? options = null)
+    public async Task SearchForGitHubIssuesOrPRs(Octokit.SearchIssuesRequest request, string initiator, SearchCategory category, RequestOptions? options = null)
     {
         Log.Logger()?.ReportInfo(Name, $"Searching for issues or pull requests for widget {initiator}");
         request.State = Octokit.ItemState.Open;
