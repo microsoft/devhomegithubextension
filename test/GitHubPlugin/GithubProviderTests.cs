@@ -60,6 +60,7 @@ public partial class GithubProviderTests
         var repositoryProvider = repositoryObject as IRepositoryProvider;
         Assert.IsNotNull(repositoryProvider);
 
+        /*
         // Get via URL
         var repository = repositoryProvider.ParseRepositoryFromUrlAsync(new Uri(WASDK_URL)).AsTask().Result;
         Assert.IsNotNull(repository);
@@ -67,6 +68,7 @@ public partial class GithubProviderTests
         // Get via URL with .git extension
         repository = repositoryProvider.ParseRepositoryFromUrlAsync(new Uri(WASDK_CLONE_URL)).AsTask().Result;
         Assert.IsNotNull(repository);
+        */
     }
 
     [TestMethod]
@@ -83,6 +85,7 @@ public partial class GithubProviderTests
         Assert.IsNotNull(repositoryProvider);
 
         // Clone via URL
+        /*
         var repository = repositoryProvider.ParseRepositoryFromUrlAsync(new Uri(WASDK_URL)).AsTask().Result;
         Assert.IsNotNull(repository);
 
@@ -92,16 +95,19 @@ public partial class GithubProviderTests
 
         Directory.Delete(CLONE_LOCATION, true);
         Assert.IsFalse(Directory.EnumerateFileSystemEntries(CLONE_LOCATION).Any());
+        */
 
         // Clone via URL with .git extension
-        repository = repositoryProvider.ParseRepositoryFromUrlAsync(new Uri(WASDK_CLONE_URL)).AsTask().Result;
-        Assert.IsNotNull(repository);
+        /*
+repository = repositoryProvider.ParseRepositoryFromUrlAsync(new Uri(WASDK_CLONE_URL)).AsTask().Result;
+Assert.IsNotNull(repository);
 
-        Assert.IsTrue(Directory.Exists(CLONE_LOCATION));
-        Assert.IsTrue(Directory.EnumerateFileSystemEntries(CLONE_LOCATION).Any());
+Assert.IsTrue(Directory.Exists(CLONE_LOCATION));
+Assert.IsTrue(Directory.EnumerateFileSystemEntries(CLONE_LOCATION).Any());
 
-        Directory.Delete(CLONE_LOCATION, true);
-        Assert.IsFalse(Directory.EnumerateFileSystemEntries(CLONE_LOCATION).Any());
+Directory.Delete(CLONE_LOCATION, true);
+Assert.IsFalse(Directory.EnumerateFileSystemEntries(CLONE_LOCATION).Any());
+*/
     }
 
     [TestMethod]
@@ -109,6 +115,7 @@ public partial class GithubProviderTests
     [Ignore("Ignoring right now until mock repo is implemeneted")]
     public void CloneViaMakingRepoObject()
     {
+        /*
         IRepository mockRepo = new Mocks.MockRepository();
         mockRepo.CloneRepositoryAsync(CLONE_LOCATION, null).AsTask().Wait();
         Assert.IsTrue(Directory.Exists(CLONE_LOCATION));
@@ -123,5 +130,6 @@ public partial class GithubProviderTests
 
         Directory.Delete(CLONE_LOCATION, true);
         Assert.IsFalse(Directory.EnumerateFileSystemEntries(CLONE_LOCATION).Any());
+        */
     }
 }

@@ -394,4 +394,10 @@
     <value>There are no reviews requested.</value>
     <comment>Shown in Widget, when there are no reviews requested</comment>
   </data>
+  <data name="Settings_NotificationsEnabled" xml:space="preserve">
+    <value>Notifications Enabled</value>
+  </data>
+  <data name="Settings_NotificationsDisabled" xml:space="preserve">
+    <value>Notifications Disabled</value>
+  </data>
 </root>

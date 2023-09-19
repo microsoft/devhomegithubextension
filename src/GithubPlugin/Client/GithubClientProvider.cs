@@ -39,7 +39,7 @@ public class GitHubClientProvider
 
     public GitHubClient? GetClient(IDeveloperId devId)
     {
-        var devIdInternal = DeveloperIdProvider.GetInstance().GetDeveloperIdInternal(devId) ?? throw new ArgumentException(devId.LoginId());
+        var devIdInternal = DeveloperIdProvider.GetInstance().GetDeveloperIdInternal(devId) ?? throw new ArgumentException(devId.LoginId);
         return devIdInternal.GitHubClient;
     }
 
