@@ -1,3 +1,3 @@
-﻿# GitHubPlugin Test Console
+﻿# GitHubExtension Test Console
 
-This is a console project for interacting with the GitHubPlugin database and project.
+This is a console project for interacting with the GitHubExtension database and project.

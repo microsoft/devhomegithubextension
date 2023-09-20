@@ -16,7 +16,7 @@ Syntax:
       Test.cmd [options]
 
 Description:
-      Runs GITServices tests.
+      Runs GitHubExtension tests.
 
 Options:
 
@@ -68,25 +68,25 @@ Try {
     foreach ($configuration in $env:Build_Configuration.Split(",")) {
       # TODO: UI tests are currently disabled in pipeline until signing is solved
       if (-not($IsAzurePipelineBuild)) {
-        $Package = Get-AppPackage "GITServices"
+        $Package = Get-AppPackage "GitHubExtension"
         if ($Package) {
-          Write-Host "Uninstalling old GITServices"
+          Write-Host "Uninstalling old GitHubExtension"
           Remove-AppPackage -Package $Package.PackageFullName
         }
-        Write-Host "Installing GITServices"
-        Add-AppPackage "AppxPackages\$platform\$configuration\GITServices.msix"
+        Write-Host "Installing GitHubExtension"
+        Add-AppPackage "AppxPackages\$platform\$configuration\GitHubExtension.msix"
       }
 
       $vstestArgs = @(
           ("/Platform:$platform"),
-          ("/Logger:trx;LogFileName=GitHubPlugin.Test-$platform-$configuration.trx"),
+          ("/Logger:trx;LogFileName=GitHubExtension.Test-$platform-$configuration.trx"),
           ("/TestCaseFilter:""TestCategory=Unit"""),
-          ("BuildOutput\$configuration\$platform\GitHubPlugin.Test\GitHubPlugin.Test.dll")
+          ("BuildOutput\$configuration\$platform\GitHubExtension.Test\GitHubExtension.Test.dll")
       )
       $winAppTestArgs = @(
           ("/Platform:$platform"),
-          ("/Logger:trx;LogFileName=GITServices.UITest-$platform-$configuration.trx"),
-          ("BuildOutput\$configuration\$platform\GITServices.UITest\GITServices.UITest.dll")
+          ("/Logger:trx;LogFileName=GitHubExtension.UITest-$platform-$configuration.trx"),
+          ("BuildOutput\$configuration\$platform\GitHubExtension.UITest\GitHubExtension.UITest.dll")
       )
 
       & $vstestPath $vstestArgs

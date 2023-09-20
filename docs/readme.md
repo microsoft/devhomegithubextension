@@ -36,16 +36,16 @@ Once you've discussed your proposed feature/fix/etc. with a team member, and you
   - if it's not a code fix that effects the end user, the issue can be closed (for example a fix in the build or a code refactoring and so on).
     -->
 
-## Compiling GITServices
+## Compiling GitHubExtension
 
 ### Compiling Source Code
 
 There are two ways to compile locally.
 
 - Open the Developer Command Prompt for Visual Studio
-- Run `Build` from GITServices's root directory. You can pass in a list of platforms/configurations
-- The GITServices MSIX will be in your repo under `AppxPackages\x64\debug`
+- Run `Build` from GitHubExtension's root directory. You can pass in a list of platforms/configurations
+- The GitHubExtension MSIX will be in your repo under `AppxPackages\x64\debug`
 
 Alternatively
 
-- Open `GITServices.sln` in Visual Studio, in the `Solutions Configuration` drop-down menu select `Release` or `Debug`, from the `Build` menu choose `Build Solution`.
+- Open `GitHubExtension.sln` in Visual Studio, in the `Solutions Configuration` drop-down menu select `Release` or `Debug`, from the `Build` menu choose `Build Solution`.

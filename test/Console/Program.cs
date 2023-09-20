@@ -1,8 +1,8 @@
 ﻿// Copyright (c) Microsoft Corporation and Contributors
 // Licensed under the MIT license.
 
-using GitHubPlugin;
-using GitHubPlugin.DataModel;
+using GitHubExtension;
+using GitHubExtension.DataModel;
 
 internal class Program
 {
