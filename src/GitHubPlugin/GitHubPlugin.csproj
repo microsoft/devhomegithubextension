@@ -10,25 +10,25 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="Widgets\Templates\GithubAssignedConfigurationTemplate.json" />
-    <None Remove="Widgets\Templates\GithubAssignedTemplate.json" />
-    <None Remove="Widgets\Templates\GithubIssuesConfigurationTemplate.json" />
-    <None Remove="Widgets\Templates\GithubIssuesTemplate.json" />
-    <None Remove="Widgets\Templates\GithubLoadingTemplate.json" />
-    <None Remove="Widgets\Templates\GithubMentionedInConfigurationTemplate.json" />
-    <None Remove="Widgets\Templates\GithubMentionedInTemplate.json" />
-    <None Remove="Widgets\Templates\GithubPullsConfigurationTemplate.json" />
-    <None Remove="Widgets\Templates\GithubPullsTemplate.json" />
-    <None Remove="Widgets\Templates\GithubReviewConfigurationTemplate.json" />
-    <None Remove="Widgets\Templates\GithubReviewTemplate.json" />
-    <None Remove="Widgets\Templates\GithubSignInTemplate.json" />
+    <None Remove="Widgets\Templates\GitHubAssignedConfigurationTemplate.json" />
+    <None Remove="Widgets\Templates\GitHubAssignedTemplate.json" />
+    <None Remove="Widgets\Templates\GitHubIssuesConfigurationTemplate.json" />
+    <None Remove="Widgets\Templates\GitHubIssuesTemplate.json" />
+    <None Remove="Widgets\Templates\GitHubLoadingTemplate.json" />
+    <None Remove="Widgets\Templates\GitHubMentionedInConfigurationTemplate.json" />
+    <None Remove="Widgets\Templates\GitHubMentionedInTemplate.json" />
+    <None Remove="Widgets\Templates\GitHubPullsConfigurationTemplate.json" />
+    <None Remove="Widgets\Templates\GitHubPullsTemplate.json" />
+    <None Remove="Widgets\Templates\GitHubReviewConfigurationTemplate.json" />
+    <None Remove="Widgets\Templates\GitHubReviewTemplate.json" />
+    <None Remove="Widgets\Templates\GitHubSignInTemplate.json" />
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="Widgets\Templates\GithubAssignedConfigurationTemplate.json">
+    <Content Include="Widgets\Templates\GitHubAssignedConfigurationTemplate.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Widgets\Templates\GithubAssignedTemplate.json">
+    <Content Include="Widgets\Templates\GitHubAssignedTemplate.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Widgets\Templates\GitHubIssuesConfigurationTemplate.json">
@@ -37,25 +37,25 @@
     <Content Include="Widgets\Templates\GitHubIssuesTemplate.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Widgets\Templates\GithubLoadingTemplate.json">
+    <Content Include="Widgets\Templates\GitHubLoadingTemplate.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Widgets\Templates\GithubMentionedInConfigurationTemplate.json">
+    <Content Include="Widgets\Templates\GitHubMentionedInConfigurationTemplate.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Widgets\Templates\GithubMentionedInTemplate.json">
+    <Content Include="Widgets\Templates\GitHubMentionedInTemplate.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Widgets\Templates\GithubPullsConfigurationTemplate.json">
+    <Content Include="Widgets\Templates\GitHubPullsConfigurationTemplate.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Widgets\Templates\GitHubPullsTemplate.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Widgets\Templates\GithubReviewConfigurationTemplate.json">
+    <Content Include="Widgets\Templates\GitHubReviewConfigurationTemplate.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Widgets\Templates\GithubReviewTemplate.json">
+    <Content Include="Widgets\Templates\GitHubReviewTemplate.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Widgets\Templates\GitHubSignInTemplate.json">

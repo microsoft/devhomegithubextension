@@ -10,7 +10,7 @@ using Microsoft.Windows.Widgets.Providers;
 using Octokit;
 
 namespace GitHubPlugin.Widgets;
-internal class GithubAssignedWidget : GithubWidget
+internal class GitHubAssignedWidget : GitHubWidget
 {
     private static readonly string TitleIconData =
         "iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAABGdBTUEAALGPC/xhBQAAAAlwS" +
@@ -62,7 +62,7 @@ internal class GithubAssignedWidget : GithubWidget
 
     private static Dictionary<string, string> Templates { get; set; } = new ();
 
-    protected static readonly new string Name = nameof(GithubAssignedWidget);
+    protected static readonly new string Name = nameof(GitHubAssignedWidget);
 
     private SearchCategory ShowCategory
     {
@@ -87,7 +87,7 @@ internal class GithubAssignedWidget : GithubWidget
         set => assignedToName = value;
     }
 
-    public GithubAssignedWidget()
+    public GitHubAssignedWidget()
         : base()
     {
         GitHubSearchManager.OnResultsAvailable += SearchManagerResultsAvailableHandler;
@@ -95,7 +95,7 @@ internal class GithubAssignedWidget : GithubWidget
         AssignedToName = string.Empty;
     }
 
-    ~GithubAssignedWidget()
+    ~GitHubAssignedWidget()
     {
         GitHubSearchManager.OnResultsAvailable -= SearchManagerResultsAvailableHandler;
     }
@@ -198,7 +198,7 @@ internal class GithubAssignedWidget : GithubWidget
                 Assignee = AssignedToName,
             };
             var searchManager = GitHubSearchManager.CreateInstance();
-            searchManager?.SearchForGithubIssuesOrPRs(request, Name, ShowCategory, requestOptions);
+            searchManager?.SearchForGitHubIssuesOrPRs(request, Name, ShowCategory, requestOptions);
             Log.Logger()?.ReportInfo(Name, ShortId, $"Requested data update for Assigned to {AssignedToName}");
             DataState = WidgetDataState.Requested;
         }
@@ -293,7 +293,7 @@ internal class GithubAssignedWidget : GithubWidget
             WidgetPageState.SignIn => @"Widgets\Templates\GitHubSignInTemplate.json",
             WidgetPageState.Configure => @"Widgets\Templates\GitHubAssignedConfigurationTemplate.json",
             WidgetPageState.Content => @"Widgets\Templates\GitHubAssignedTemplate.json",
-            WidgetPageState.Loading => @"Widgets\Templates\GithubLoadingTemplate.json",
+            WidgetPageState.Loading => @"Widgets\Templates\GitHubLoadingTemplate.json",
             _ => throw new NotImplementedException(),
         };
     }

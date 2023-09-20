@@ -8,19 +8,19 @@ using GitHubPlugin.Helpers;
 using Octokit;
 
 namespace GitHubPlugin.Widgets;
-internal class GithubIssuesWidget : GithubWidget
+internal class GitHubIssuesWidget : GitHubWidget
 {
     private readonly string issuesIconData = IconLoader.GetIconAsBase64("issues.png");
 
-    protected static readonly new string Name = nameof(GithubIssuesWidget);
+    protected static readonly new string Name = nameof(GitHubIssuesWidget);
 
-    public GithubIssuesWidget()
+    public GitHubIssuesWidget()
     : base()
     {
         GitHubDataManager.OnUpdate += DataManagerUpdateHandler;
     }
 
-    ~GithubIssuesWidget()
+    ~GitHubIssuesWidget()
     {
         GitHubDataManager.OnUpdate -= DataManagerUpdateHandler;
     }
@@ -180,7 +180,7 @@ internal class GithubIssuesWidget : GithubWidget
             WidgetPageState.SignIn => @"Widgets\Templates\GitHubSignInTemplate.json",
             WidgetPageState.Configure => @"Widgets\Templates\GitHubIssuesConfigurationTemplate.json",
             WidgetPageState.Content => @"Widgets\Templates\GitHubIssuesTemplate.json",
-            WidgetPageState.Loading => @"Widgets\Templates\GithubLoadingTemplate.json",
+            WidgetPageState.Loading => @"Widgets\Templates\GitHubLoadingTemplate.json",
             _ => throw new NotImplementedException(),
         };
     }

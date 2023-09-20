@@ -13,7 +13,7 @@ public class Log
     {
         try
         {
-            _logger ??= new Logger("GithubPlugin", GetLoggingOptions());
+            _logger ??= new Logger("GitHubPlugin", GetLoggingOptions());
         }
         catch
         {
@@ -28,8 +28,8 @@ public class Log
         return new Options
         {
             LogFileFolderRoot = ApplicationData.Current.TemporaryFolder.Path,
-            LogFileName = "GithubPlugin_{now}.log",
-            LogFileFolderName = "GithubPlugin",
+            LogFileName = "GitHubPlugin_{now}.log",
+            LogFileFolderName = "GitHubPlugin",
             DebugListenerEnabled = true,
 #if DEBUG
             LogStdoutEnabled = true,

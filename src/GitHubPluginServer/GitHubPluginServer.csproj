@@ -29,7 +29,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\GithubPlugin\GitHubPlugin.csproj" />
+    <ProjectReference Include="..\GitHubPlugin\GitHubPlugin.csproj" />
     <ProjectReference Include="..\Logging\DevHome.Logging.csproj" />
   </ItemGroup>
 

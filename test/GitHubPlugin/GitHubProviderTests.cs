@@ -5,7 +5,7 @@ using Microsoft.Windows.DevHome.SDK;
 
 namespace GitHubPlugin.Test;
 [TestClass]
-public partial class GithubProviderTests
+public partial class GitHubProviderTests
 {
 #pragma warning disable SA1310 // Field names should not contain underscore
     private const string WASDK_URL = "https://github.com/microsoft/windowsappsdk";
