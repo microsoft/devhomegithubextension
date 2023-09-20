@@ -15,7 +15,7 @@ using Microsoft.Windows.Widgets.Providers;
 
 namespace GitHubPlugin.Widgets;
 
-public abstract class GithubWidget : WidgetImpl
+public abstract class GitHubWidget : WidgetImpl
 {
     protected static readonly TimeSpan WidgetDataRequestMinTime = TimeSpan.FromSeconds(30);
     protected static readonly TimeSpan WidgetRefreshRate = TimeSpan.FromMinutes(5);
@@ -23,7 +23,7 @@ public abstract class GithubWidget : WidgetImpl
 
     private DateTime lastUpdateRequest = DateTime.MinValue;
 
-    protected static readonly string Name = nameof(GithubWidget);
+    protected static readonly string Name = nameof(GitHubWidget);
 
     protected WidgetActivityState ActivityState { get; set; } = WidgetActivityState.Unknown;
 
@@ -68,13 +68,13 @@ public abstract class GithubWidget : WidgetImpl
         return Uri.UnescapeDataString(GetIssueQuery()).Replace('+', ' ');
     }
 
-    public GithubWidget()
+    public GitHubWidget()
     {
         DataUpdater = new DataUpdater(PeriodicUpdate);
         DeveloperIdProvider.GetInstance().Changed += HandleDeveloperIdChange;
     }
 
-    ~GithubWidget()
+    ~GitHubWidget()
     {
         DataUpdater?.Dispose();
         DeveloperIdProvider.GetInstance().Changed -= HandleDeveloperIdChange;

@@ -46,7 +46,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\GithubPlugin\GitHubPlugin.csproj" />
+    <ProjectReference Include="..\..\src\GitHubPlugin\GitHubPlugin.csproj" />
   </ItemGroup>
 
   <ItemGroup>

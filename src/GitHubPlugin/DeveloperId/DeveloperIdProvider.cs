@@ -34,7 +34,7 @@ public class DeveloperIdProvider : IDeveloperIdProvider
 
     public event TypedEventHandler<IDeveloperIdProvider, IDeveloperId>? Changed;
 
-    private readonly AuthenticationExperienceKind authenticationExperienceForGithubPlugin = AuthenticationExperienceKind.CardSession;
+    private readonly AuthenticationExperienceKind authenticationExperienceForGitHubPlugin = AuthenticationExperienceKind.CardSession;
 
     public string DisplayName => "GitHub";
 
@@ -289,7 +289,7 @@ public class DeveloperIdProvider : IDeveloperIdProvider
 
     public AuthenticationExperienceKind GetAuthenticationExperienceKind()
     {
-        return authenticationExperienceForGithubPlugin;
+        return authenticationExperienceForGitHubPlugin;
     }
 
     public AdaptiveCardSessionResult GetLoginAdaptiveCardSession()
