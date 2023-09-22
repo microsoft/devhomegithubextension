@@ -15,11 +15,11 @@ using System.Windows.Input;
 using Microsoft.Diagnostics.Telemetry;
 using Microsoft.Win32;
 
-namespace GITServices.Telemetry;
+namespace GitHubExtension.Telemetry;
 
 internal class Logger : ILogger
 {
-    private const string ProviderName = "Microsoft.GITServices";
+    private const string ProviderName = "Microsoft.GitHubExtension";
 
     /// <summary>
     /// Time Taken Event Name

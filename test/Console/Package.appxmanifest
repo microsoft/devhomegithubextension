@@ -15,7 +15,7 @@
       Version="1.0.0.0" />
 
     <Properties>
-        <DisplayName>GitHub Plugin Test</DisplayName>
+        <DisplayName>GitHub Extension Test</DisplayName>
         <PublisherDisplayName>Microsoft Corp</PublisherDisplayName>
         <Logo>Assets\StoreLogo.png</Logo>
     </Properties>
@@ -30,22 +30,22 @@
     </Resources>
 
     <Applications>
-        <Application Id="GitHubPlugin.TestConsole" Executable="GitHubPlugin.TestConsole.exe" EntryPoint="Windows.FullTrustApplication">
+        <Application Id="GitHubExtension.TestConsole" Executable="GitHubExtension.TestConsole.exe" EntryPoint="Windows.FullTrustApplication">
           <uap3:VisualElements
             BackgroundColor="transparent"
-            DisplayName="GitHubPlugin Test"
+            DisplayName="GitHubExtension Test"
             Square150x150Logo="Assets\Square150x150Logo.scale-200.png"
             Square44x44Logo="Assets\Square44x44Logo.scale-200.png"
-            Description="GitHubPlugin Test CommandLine"
+            Description="GitHubExtension Test CommandLine"
             AppListEntry="none"
-            VisualGroup="GitHubPlugin">
+            VisualGroup="GitHubExtension">
             <uap:SplashScreen BackgroundColor="transparent" Image="Assets\SplashScreen.scale-200.png" />
             <uap:DefaultTile/>
           </uap3:VisualElements>
           <Extensions>
             <uap3:Extension Category="windows.appExecutionAlias">
               <uap3:AppExecutionAlias>
-                <desktop:ExecutionAlias Alias="githubplugintest.exe"/>
+                <desktop:ExecutionAlias Alias="githubextensiontest.exe"/>
               </uap3:AppExecutionAlias>
             </uap3:Extension>
             <desktop:Extension Category="windows.toastNotificationActivation">
@@ -53,7 +53,7 @@
             </desktop:Extension>
             <com:Extension Category="windows.comServer">
               <com:ComServer>
-                <com:ExeServer Executable="GitHubPlugin.TestConsole.exe" Arguments="-ToastActivated" DisplayName="GitHub Extension Test App">
+                <com:ExeServer Executable="GitHubExtension.TestConsole.exe" Arguments="-ToastActivated" DisplayName="GitHub Extension Test App">
                   <com:Class Id="18672CE9-0EC6-4B52-AA7C-23F7307ECCBD" DisplayName="GitHub Extension Test App"/>
                 </com:ExeServer>
               </com:ComServer>

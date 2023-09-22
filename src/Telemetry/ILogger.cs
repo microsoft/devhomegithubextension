@@ -8,7 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace GITServices.Telemetry;
+namespace GitHubExtension.Telemetry;
 
 /// <summary>
 /// To create an instance call LoggerFactory.Get<ILogger>()
