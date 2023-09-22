@@ -9,7 +9,7 @@ function Invoke-SignPackage([string]$Path) {
         return
     }
 
-    $certName = "Microsoft.GITServices"
+    $certName = "Microsoft.GitHubExtension"
     $cert = Get-ChildItem 'Cert:\CurrentUser\My' | Where-Object {$_.FriendlyName -match $certName} | Select-Object -First 1
 
     if ($cert) {
@@ -31,14 +31,14 @@ function Invoke-SignPackage([string]$Path) {
     SignTool sign /fd SHA256 /sha1 $($cert.Thumbprint) $Path
 
     if (-not(Test-Path Cert:\LocalMachine\TrustedPeople\$($cert.Thumbprint))) {
-        Export-Certificate -Cert $cert -FilePath "$($PSScriptRoot)\Microsoft.GITServices.cer" -Type CERT
-        Import-Certificate -FilePath "$($PSScriptRoot)\Microsoft.GITServices.cer" -CertStoreLocation Cert:\LocalMachine\TrustedPeople    
-        Remove-Item -Path "$($PSScriptRoot)\Microsoft.GITServices.cer"
+        Export-Certificate -Cert $cert -FilePath "$($PSScriptRoot)\$($certName).cer" -Type CERT
+        Import-Certificate -FilePath "$($PSScriptRoot)\$($certName).cer" -CertStoreLocation Cert:\LocalMachine\TrustedPeople
+        Remove-Item -Path "$($PSScriptRoot)\$($certName).cer"
         (Get-ChildItem Cert:\LocalMachine\TrustedPeople\$($cert.Thumbprint)).FriendlyName = $certName
     }
 }
 
-function Remove-GITServiceseCertificates() {
-    Get-ChildItem 'Cert:\CurrentUser\My' | Where-Object {$_.FriendlyName -match 'Microsoft.GITServices'} | Remove-Item
-    Get-ChildItem 'Cert:\LocalMachine\TrustedPeople' | Where-Object {$_.FriendlyName -match 'Microsoft.GITServices'} | Remove-Item
+function Remove-GitHubExtensionCertificates() {
+    Get-ChildItem 'Cert:\CurrentUser\My' | Where-Object {$_.FriendlyName -match 'Microsoft.GitHubExtension'} | Remove-Item
+    Get-ChildItem 'Cert:\LocalMachine\TrustedPeople' | Where-Object {$_.FriendlyName -match 'Microsoft.GitHubExtension'} | Remove-Item
 }
