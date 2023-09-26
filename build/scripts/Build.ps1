@@ -21,7 +21,7 @@ Syntax:
       Build.cmd [options]
 
 Description:
-      Builds GIT services for Windows.
+      Builds GitHubExtension for Windows.
 
 Options:
 
@@ -58,7 +58,7 @@ $env:msix_version = build\Scripts\CreateBuildInfo.ps1 -Version $Version -IsAzure
 $isAdmin = ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole] 'Administrator')
 
 # Set GitHub OAuth Client App configuration if build-time parameters are present
-$OAuthConfigFilePath = (Join-Path $env:Build_RootDirectory "src\GithubPlugin\Configuration\OAuthConfiguration.cs")
+$OAuthConfigFilePath = (Join-Path $env:Build_RootDirectory "src\GitHubExtension\Configuration\OAuthConfiguration.cs")
 if (![string]::IsNullOrWhitespace($ClientId)) {
     (Get-Content $OAuthConfigFilePath).Replace("%BUILD_TIME_GITHUB_CLIENT_ID_PLACEHOLDER%", $ClientId) | Set-Content $OAuthConfigFilePath
 }
@@ -117,7 +117,7 @@ Try {
     $uapAppExtension = [System.Xml.Linq.XName]::Get("{http://schemas.microsoft.com/appx/manifest/uap/windows10/3}AppExtension");
 
     # Update the appxmanifest
-    $appxmanifestPath = (Join-Path $env:Build_RootDirectory "src\GithubPluginServer\Package.appxmanifest")
+    $appxmanifestPath = (Join-Path $env:Build_RootDirectory "src\GitHubExtensionServer\Package.appxmanifest")
     $appxmanifest = [System.Xml.Linq.XDocument]::Load($appxmanifestPath)
     $appxmanifest.Root.Element($xIdentity).Attribute("Version").Value = $env:msix_version
     if (-not ([string]::IsNullOrEmpty($newPackageName))) {
@@ -148,14 +148,14 @@ Try {
     foreach ($platform in $env:Build_Platform.Split(",")) {
       foreach ($configuration in $env:Build_Configuration.Split(",")) {
         $appxPackageDir = (Join-Path $env:Build_RootDirectory "AppxPackages\$configuration")
-        $solutionPath = (Join-Path $env:Build_RootDirectory "GITServices.sln")
+        $solutionPath = (Join-Path $env:Build_RootDirectory "GitHubExtension.sln")
         $msbuildArgs = @(
             ($solutionPath),
             ("/p:platform="+$platform),
             ("/p:configuration="+$configuration),
             ("/restore"),
-            ("/binaryLogger:GITServices.$platform.$configuration.binlog"),
-            ("/p:AppxPackageOutput=$appxPackageDir\GITServices-$platform.msix"),
+            ("/binaryLogger:GitHubExtension.$platform.$configuration.binlog"),
+            ("/p:AppxPackageOutput=$appxPackageDir\GitHubExtension-$platform.msix"),
             ("/p:AppxPackageSigningEnabled=false"),
             ("/p:GenerateAppxPackageOnBuild=true"),
             ("/p:BuildRing=$buildRing")
@@ -163,7 +163,7 @@ Try {
 
         & $msbuildPath $msbuildArgs
         if (-not($IsAzurePipelineBuild) -And $isAdmin) {
-          Invoke-SignPackage "$appxPackageDir\GITServices-$platform.msix"
+          Invoke-SignPackage "$appxPackageDir\GitHubExtension-$platform.msix"
         }
       }
     }
@@ -193,9 +193,9 @@ Try {
 
   if (($BuildStep -ieq "all") -Or ($BuildStep -ieq "msixbundle")) {
     foreach ($configuration in $env:Build_Configuration.Split(",")) {
-      .\build\scripts\Create-AppxBundle.ps1 -InputPath (Join-Path $env:Build_RootDirectory "AppxPackages\$configuration") -ProjectName GITServices -BundleVersion ([version]$env:msix_version) -OutputPath (Join-Path $env:Build_RootDirectory ("AppxBundles\$configuration\GITServices_" + $env:msix_version + "_8wekyb3d8bbwe.msixbundle"))
+      .\build\scripts\Create-AppxBundle.ps1 -InputPath (Join-Path $env:Build_RootDirectory "AppxPackages\$configuration") -ProjectName GitHubExtension -BundleVersion ([version]$env:msix_version) -OutputPath (Join-Path $env:Build_RootDirectory ("AppxBundles\$configuration\GitHubExtension_" + $env:msix_version + "_8wekyb3d8bbwe.msixbundle"))
       if (-not($IsAzurePipelineBuild) -And $isAdmin) {
-        Invoke-SignPackage ("AppxBundles\$configuration\GITServices_" + $env:msix_version + "_8wekyb3d8bbwe.msixbundle")
+        Invoke-SignPackage ("AppxBundles\$configuration\GitHubExtension_" + $env:msix_version + "_8wekyb3d8bbwe.msixbundle")
       }
     }
   }
@@ -219,7 +219,7 @@ WARNING: Cert signing requires admin privileges.  To sign, run the following in 
     foreach ($configuration in $env:Build_Configuration.Split(",")) {
       $appxPackageDir = (Join-Path $env:Build_RootDirectory "AppxPackages\$configuration")
         Write-Host @"
-powershell -command "& { . build\scripts\CertSignAndInstall.ps1; Invoke-SignPackage $appxPackageDir\GITServices-$platform.msix }"
+powershell -command "& { . build\scripts\CertSignAndInstall.ps1; Invoke-SignPackage $appxPackageDir\GitHubExtension-$platform.msix }"
 "@ -ForegroundColor GREEN
     }
   }
