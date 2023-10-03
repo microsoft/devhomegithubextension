@@ -5,32 +5,53 @@
   "body": [
     {
       "type": "Container",
+      "minHeight": "40px"
+    },
+    {
+      "type": "Container",
+      "spacing": "none",
       "items": [
         {
           "type": "TextBlock",
           "text": "${message}",
           "wrap": true,
-          "horizontalAlignment": "Center",
+          "horizontalAlignment": "center",
           "height": "stretch",
-          "size": "Default",
-          "weight": "Bolder"
+          "size": "medium",
+          "weight": "bolder"
         },
         {
-          "type": "ActionSet",
-          "actions": [
+          "type": "ColumnSet",
+          "spacing": "ExtraLarge",
+          "columns": [
             {
-              "type": "Action.Execute",
-              "title": "%Widget_Template_Button/SignIn%",
-              "verb": "SignIn",
-              "tooltip": "%Widget_Template_Tooltip/SignIn%"
+              "type": "Column",
+              "width": "stretch"
+            },
+            {
+              "type": "Column",
+              "width": "auto",
+              "items": [
+                {
+                  "type": "ActionSet",
+                  "actions": [
+                    {
+                      "type": "Action.Execute",
+                      "title": "%Widget_Template_Button/SignIn%",
+                      "verb": "SignIn",
+                      "tooltip": "%Widget_Template_Tooltip/SignIn%"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "Column",
+              "width": "stretch"
             }
-          ],
-          "horizontalAlignment": "center",
-          "spacing": "ExtraLarge"
+          ]
         }
-      ],
-      "horizontalAlignment": "center",
-      "spacing": "None"
+      ]
     }
   ]
 }

@@ -248,7 +248,7 @@
     <value>Waiting for browser...</value>
   </data>
   <data name="Widget_Template.SignInRequired" xml:space="preserve">
-    <value>You must sign in to view this widget's content.</value>
+    <value>Sign in to use this widget.</value>
     <comment>Shown in Widget when user is not logged in.</comment>
   </data>
   <data name="Widget_Template.Loading" xml:space="preserve">
