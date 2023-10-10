@@ -66,7 +66,7 @@ If you would like to ask a question that you feel doesn't warrant an issue (yet)
 
 * Kayla Cinnamon, Senior Product Manager: [@cinnamon_msft](https://twitter.com/cinnamon_msft)
 
-* Clint Rutkas, Principal Product Manager: [@crutkas](https://twitter.com/clintrutkas)
+* Clint Rutkas, Principal Product Manager: [@clintrutkas](https://twitter.com/clintrutkas)
 
 
 ## Developer guidance
