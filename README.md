@@ -1,7 +1,6 @@
-![image](https://github.com/microsoft/devhomegithubextension/blob/main/src/GithubPluginServer/Assets/StoreDisplay-150.png)
+![image](https://github.com/microsoft/devhomegithubextension/blob/main/src/GitHubExtensionServer/Assets/StoreDisplay-150.png)
 
 # Welcome to the Dev Home GitHub Extension repo
-
 
 This repository contains the source code for:
 
@@ -16,14 +15,12 @@ Related repositories include:
 
 > **Note**: The Dev Home GitHub Extension requires Dev Home. Dev Home requires Windows 11 21H2 (build 22000) or later.
 
-### Microsoft Store [Recommended]
+### Dev Home Extensions library [Recommended]
+You can install the Dev Home GitHub Extension from the Extensions library within Dev Home. This page can be found in the left-hand navigation pane. The list of available extensions will provide links to install from the store.
 
-Install [Dev Home from the Microsoft Store](https://aka.ms/devhome) and the Dev Home GitHub Extension will automatically be installed on first launch of Dev Home.
-This allows you to always be on the latest version when we release new builds with automatic upgrades.
+### Microsoft Store
 
-This is our preferred method.
-
-You can also install the Dev Home GitHub Extension from its own [Microsoft Store listing](https://aka.ms/devhomegithubextension).
+You can also install the Dev Home GitHub Extension directly from its [Microsoft Store listing](https://aka.ms/devhomegithubextension).
 
 ### Other install methods
 
@@ -39,11 +36,11 @@ Please take a few minutes to review the overview below before diving into the co
 
 ### Widgets
 
-The Dev Home GitHub Extension provides widgets for Dev Home's dashboard, which is built as a Windows widget renderer. These widgets are built using the Windows widget platform, which relies on Adaptive Cards.
+The Dev Home GitHub Extension provides widgets for Dev Home's dashboard, which is built as a Windows widget renderer. These widgets are built using the [Windows widget platform](https://learn.microsoft.com/windows/apps/design/widgets/), which relies on [Adaptive Cards](https://learn.microsoft.com/windows/apps/design/widgets/widgets-create-a-template).
 
 ### Machine configuration repository recommendations
 
-The machine configuration tool utilizes the Dev Home GitHub Extension to recommend repositories to clone, but isn't required to clone and install apps. The app installation tool is powered by winget.
+The machine configuration tool utilizes the Dev Home GitHub Extension to recommend repositories to clone, but isn't required to clone and install apps. The app installation tool is powered by [winget](https://learn.microsoft.com/windows/package-manager/winget).
 
 ---
 
@@ -69,7 +66,6 @@ If you would like to ask a question that you feel doesn't warrant an issue (yet)
 
 * Kayla Cinnamon, Product Manager: [@cinnamon_msft](https://twitter.com/cinnamon_msft)
 * Clint Rutkas, Senior Product Manager: [@crutkas](https://twitter.com/crutkas)
-* Ujjwal Chadha, Developer: [@ujjwalscript](https://twitter.com/ujjwalscript)
 
 ## Developer guidance
 
@@ -80,7 +76,7 @@ If you would like to ask a question that you feel doesn't warrant an issue (yet)
 
 * Clone the repository
 * Uninstall the Preview version of the Dev Home GitHub Extension (Dev Home has a hard time choosing which extension to use if two versions exist)
-* Open the GITServices.sln in Visual Studio 2022 or later, and build from the IDE, or run build.ps1 from a Visual Studio command prompt.
+* Open `GitHubExtension.sln` in Visual Studio 2022 or later and build from the IDE, or run `build\scripts\build.ps1` from a Visual Studio command prompt.
 
 ### OAuth App
 Since secrets cannot be checked in to the repository, developers must create their own test OAuth app for local tests.
@@ -88,8 +84,6 @@ Since secrets cannot be checked in to the repository, developers must create the
 Follow this link https://docs.github.com/en/developers/apps/building-oauth-apps/creating-an-oauth-app to create a Git OAuth app (with RedirectUri = "devhome://oauth_redirect_uri/").
 
 The OAuth App ClientId and ClientSecret can be added as environment variables using the following instructions:
-
-How to set the environment variables:
 
     On an elevated cmd window:
         setx GITHUB_CLIENT_ID "Your OAuth App's ClientId" /m
