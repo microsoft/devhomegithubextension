@@ -23,8 +23,8 @@ parameters:
     - release
 
 variables:
-  MSIXVersion: '0.501'
-  solution: '**/GITServices.sln'
+  MSIXVersion: '0.600'
+  solution: '**/GitHubExtension.sln'
   appxPackageDir: 'AppxPackages'
   testOutputArtifactDir: 'TestResults'
 
@@ -123,7 +123,7 @@ stages:
             ArtifactName: LocOutput
 
         - task: PowerShell@2
-          displayName: Build GITServices Extension
+          displayName: Build GitHub Extension
           retryCountOnTaskFailure: 2
           inputs:
             filePath: 'build/scripts/Build.ps1'

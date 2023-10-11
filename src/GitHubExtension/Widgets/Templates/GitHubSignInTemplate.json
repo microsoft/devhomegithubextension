@@ -1,0 +1,57 @@
+{
+  "type": "AdaptiveCard",
+  "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+  "version": "1.5",
+  "body": [
+    {
+      "type": "Container",
+      "minHeight": "40px"
+    },
+    {
+      "type": "Container",
+      "spacing": "none",
+      "items": [
+        {
+          "type": "TextBlock",
+          "text": "${message}",
+          "wrap": true,
+          "horizontalAlignment": "center",
+          "height": "stretch",
+          "size": "medium",
+          "weight": "bolder"
+        },
+        {
+          "type": "ColumnSet",
+          "spacing": "ExtraLarge",
+          "columns": [
+            {
+              "type": "Column",
+              "width": "stretch"
+            },
+            {
+              "type": "Column",
+              "width": "auto",
+              "items": [
+                {
+                  "type": "ActionSet",
+                  "actions": [
+                    {
+                      "type": "Action.Execute",
+                      "title": "%Widget_Template_Button/SignIn%",
+                      "verb": "SignIn",
+                      "tooltip": "%Widget_Template_Tooltip/SignIn%"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "Column",
+              "width": "stretch"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
