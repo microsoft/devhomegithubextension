@@ -84,7 +84,7 @@ public class RepositoryProvider : IRepositoryProvider
 
                 // Gets only public repos for the owned repos.
                 request.Visibility = RepositoryRequestVisibility.Public;
-                var getPublicReposTask = client.Repository.GetAllForUser(developerId.LoginId, apiOptions);
+                var getPublicReposTask = client.Repository.GetAllForCurrent(request, apiOptions);
 
                 // this is getting private org and user repos.
                 request.Visibility = RepositoryRequestVisibility.Private;
