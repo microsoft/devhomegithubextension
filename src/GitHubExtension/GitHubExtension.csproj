@@ -9,6 +9,13 @@
     <BuildRing Condition="'$(BuildRing)'==''">Dev</BuildRing>
   </PropertyGroup>
 
+  <ItemDefinitionGroup>
+    <ClCompile>
+      <ControlFlowGuard>Guard</ControlFlowGuard>
+      <SpectreMitigation>Spectre</SpectreMitigation>
+    </ClCompile>
+  </ItemDefinitionGroup>
+
   <ItemGroup>
     <None Remove="Widgets\Templates\GitHubAssignedConfigurationTemplate.json" />
     <None Remove="Widgets\Templates\GitHubAssignedTemplate.json" />
