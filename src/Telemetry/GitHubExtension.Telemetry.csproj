@@ -8,6 +8,13 @@
     <UseWinUI>true</UseWinUI>
   </PropertyGroup>
 
+  <ItemDefinitionGroup>
+    <ClCompile>
+      <ControlFlowGuard>Guard</ControlFlowGuard>
+      <SpectreMitigation>Spectre</SpectreMitigation>
+    </ClCompile>
+  </ItemDefinitionGroup>
+
   <ItemGroup>
       <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.3.230331000" />
   </ItemGroup>
