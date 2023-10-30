@@ -28,6 +28,13 @@
     <BuildRing Condition="'$(BuildRing)'==''">Dev</BuildRing>
   </PropertyGroup>
 
+  <ItemDefinitionGroup>
+    <ClCompile>
+      <ControlFlowGuard>Guard</ControlFlowGuard>
+      <SpectreMitigation>Spectre</SpectreMitigation>
+    </ClCompile>
+  </ItemDefinitionGroup>
+
   <ItemGroup>
     <ProjectReference Include="..\GitHubExtension\GitHubExtension.csproj" />
     <ProjectReference Include="..\Logging\DevHome.Logging.csproj" />
