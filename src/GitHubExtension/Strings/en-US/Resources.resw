@@ -218,22 +218,22 @@
     <value>Opens the browser to log you into GitHub</value>
   </data>
   <data name="LoginUI_LoginPage_Button2Flyout_Button" xml:space="preserve">
-    <value>Go</value>
+    <value>Next</value>
   </data>
   <data name="LoginUI_LoginPage_Button2Flyout_Text_ErrorMessage" xml:space="preserve">
-    <value>Please enter a valid GitHub enterprise server URL</value>
+    <value>Please enter a valid GitHub Enterprise Server URL</value>
   </data>
   <data name="LoginUI_LoginPage_Button2Flyout_Text_Label" xml:space="preserve">
-    <value>Server URL</value>
+    <value>GitHub Enterprise Server URL</value>
   </data>
   <data name="LoginUI_LoginPage_Button2Flyout_Text_PlaceHolder" xml:space="preserve">
-    <value>&lt;Enter the GitHub Server link&gt;</value>
+    <value>&lt;Enter the server address here&gt;</value>
   </data>
   <data name="LoginUI_LoginPage_Button2Text" xml:space="preserve">
-    <value>Sign in to GitHub Enterprise (Coming Soon!)</value>
+    <value>Sign in to GitHub Enterprise Server</value>
   </data>
   <data name="LoginUI_LoginPage_Button2ToolTip" xml:space="preserve">
-    <value>Coming soon!</value>
+    <value>Sign in to an on-premise GitHub Enterprise Server that is not hosted on github.com</value>
   </data>
   <data name="LoginUI_LoginPage_Heading" xml:space="preserve">
     <value>GitHub</value>
@@ -399,5 +399,17 @@
   </data>
   <data name="Settings_NotificationsDisabled" xml:space="preserve">
     <value>Notifications Disabled</value>
+  </data>
+  <data name="LoginUI_LoginPage_EnterpriseServer_ButtonText" xml:space="preserve">
+    <value>Connect to </value>
+  </data>
+  <data name="LoginUI_LoginPage_EnterpriseServer_Text" xml:space="preserve">
+    <value>Please enter your Personal Access Token(PAT) to connect to the GitHub Enterprise Server. To create a new PAT, </value>
+  </data>
+  <data name="LoginUI_LoginPage_EnterpriseServer_TextBox_Placeholder" xml:space="preserve">
+    <value>Enter Personal Access Token</value>
+  </data>
+  <data name="LoginUI_LoginPage_EnterpriseServer_TextWithLink" xml:space="preserve">
+    <value>click here.</value>
   </data>
 </root>
