@@ -84,6 +84,7 @@
   </ItemGroup>
 
   <ItemGroup>
+	<Folder Include="Assets\" />
 	<Folder Include="Widgets\Assets\" />
   </ItemGroup>
 
