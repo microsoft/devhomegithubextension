@@ -53,6 +53,8 @@ public class PullRequest
 
     public long TimeClosed { get; set; } = DataStore.NoForeignKey;
 
+    public long TimeLastObserved { get; set; } = DataStore.NoForeignKey;
+
     // Label IDs are a string concatenation of Label internalIds.
     // We need to duplicate this data in order to properly do inserts and
     // to compare two objects for changes in order to add/remove associations.
@@ -79,6 +81,10 @@ public class PullRequest
     [Write(false)]
     [Computed]
     public DateTime ClosedAt => TimeClosed.ToDateTime();
+
+    [Write(false)]
+    [Computed]
+    public DateTime LastObservedAt => TimeLastObserved.ToDateTime();
 
     // Derived Properties so consumers of these objects do not
     // need to do further queries of the datastore.
@@ -336,6 +342,7 @@ public class PullRequest
             TimeUpdated = okitPull.UpdatedAt.DateTime.ToDataStoreInteger(),
             TimeMerged = okitPull.MergedAt.HasValue ? okitPull.MergedAt.Value.DateTime.ToDataStoreInteger() : 0,
             TimeClosed = okitPull.ClosedAt.HasValue ? okitPull.ClosedAt.Value.DateTime.ToDataStoreInteger() : 0,
+            TimeLastObserved = DateTime.UtcNow.ToDataStoreInteger(),
         };
 
         // Labels are a string concat of label internal ids.
@@ -385,28 +392,22 @@ public class PullRequest
         var existingPull = GetByInternalId(dataStore, pull.InternalId);
         if (existingPull is not null)
         {
-            if (pull.TimeUpdated > existingPull.TimeUpdated)
+            // Existing pull requests must always be updated to update the LastObserved time.
+            pull.Id = existingPull.Id;
+            dataStore.Connection!.Update(pull);
+            pull.DataStore = dataStore;
+
+            if (pull.LabelIds != existingPull.LabelIds)
             {
-                pull.Id = existingPull.Id;
-                dataStore.Connection!.Update(pull);
-                pull.DataStore = dataStore;
-
-                if (pull.LabelIds != existingPull.LabelIds)
-                {
-                    UpdateLabelsForPullRequest(dataStore, pull);
-                }
-
-                if (pull.AssigneeIds != existingPull.AssigneeIds)
-                {
-                    UpdateAssigneesForPullRequest(dataStore, pull);
-                }
-
-                return pull;
+                UpdateLabelsForPullRequest(dataStore, pull);
             }
-            else
+
+            if (pull.AssigneeIds != existingPull.AssigneeIds)
             {
-                return existingPull;
+                UpdateAssigneesForPullRequest(dataStore, pull);
             }
+
+            return pull;
         }
 
         // No existing pull request, add it.
@@ -524,6 +525,47 @@ public class PullRequest
                     PullRequestAssign.AddUserToPullRequest(dataStore, pullRequest, userObj);
                 }
             }
+        }
+    }
+
+    // Delete records in a repository not observed before the specified date.
+    public static void DeleteLastObservedBefore(DataStore dataStore, long repositoryId, DateTime date)
+    {
+        // Delete pull requests older than the time specified for the given repository.
+        // This is intended to be run after updating a repository's Pull Requests so that non-observed
+        // records will be removed.
+        var sql = @"DELETE FROM PullRequest WHERE RepositoryId = $RepositoryId AND TimeLastObserved < $Time;";
+        var command = dataStore.Connection!.CreateCommand();
+        command.CommandText = sql;
+        command.Parameters.AddWithValue("$Time", date.ToDataStoreInteger());
+        command.Parameters.AddWithValue("$RepositoryId", repositoryId);
+        Log.Logger()?.ReportDebug(DataStore.GetCommandLogMessage(sql, command));
+        var rowsDeleted = command.ExecuteNonQuery();
+        Log.Logger()?.ReportDebug(DataStore.GetDeletedLogMessage(rowsDeleted));
+    }
+
+    // Delete all records from a particular user before the specified date.
+    // This is for removing developer pull requests across any repository that were not updated
+    // recently. This should remove non-open pull requests from the developer across all repositories.
+    public static void DeleteAllByDeveloperLoginAndLastObservedBefore(DataStore dataStore, string loginId, DateTime date)
+    {
+        var developerUsers = User.GetDeveloperUsers(dataStore);
+        foreach (var user in developerUsers)
+        {
+            if (user.Login != loginId)
+            {
+                continue;
+            }
+
+            var sql = @"DELETE FROM PullRequest WHERE AuthorId = $UserId AND TimeLastObserved < $Time;";
+            var command = dataStore.Connection!.CreateCommand();
+            command.CommandText = sql;
+            command.Parameters.AddWithValue("$Time", date.ToDataStoreInteger());
+            command.Parameters.AddWithValue("$UserId", user.Id);
+            Log.Logger()?.ReportDebug(DataStore.GetCommandLogMessage(sql, command));
+            var rowsDeleted = command.ExecuteNonQuery();
+            Log.Logger()?.ReportDebug(DataStore.GetDeletedLogMessage(rowsDeleted));
+            break;
         }
     }
 }
