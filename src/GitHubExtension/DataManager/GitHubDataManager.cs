@@ -22,7 +22,7 @@ public partial class GitHubDataManager : IGitHubDataManager, IDisposable
     // other clients which simply haven't been updated yet but will in the near future.
     // This is a conservative time period to check for pruning and give time for other
     // consumers using the data to update its freshness before we remove it.
-    private static readonly TimeSpan LastObservedDeleteSpan = TimeSpan.FromMinutes(15);
+    private static readonly TimeSpan LastObservedDeleteSpan = TimeSpan.FromMinutes(6);
     private static readonly long CheckSuiteIdDependabot = 29110;
 
     private static readonly string Name = nameof(GitHubDataManager);
