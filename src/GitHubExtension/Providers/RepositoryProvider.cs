@@ -229,7 +229,7 @@ public class RepositoryProvider : IRepositoryProvider
             catch (LibGit2Sharp.UserCancelledException userCancelledException)
             {
                 Providers.Log.Logger()?.ReportError("DevHomeRepository", "The user stoped the clone operation", userCancelledException);
-                return new ProviderOperationResult(ProviderOperationStatus.Failure, userCancelledException, "User cancalled the operation", userCancelledException.Message);
+                return new ProviderOperationResult(ProviderOperationStatus.Failure, userCancelledException, "User cancelled the operation", userCancelledException.Message);
             }
             catch (LibGit2Sharp.NameConflictException nameConflictException)
             {
@@ -239,12 +239,12 @@ public class RepositoryProvider : IRepositoryProvider
             catch (LibGit2Sharp.LibGit2SharpException libGitTwoException)
             {
                 Providers.Log.Logger()?.ReportError("DevHomeRepository", $"Either no logged in account has access to this repo, or the repo can't be found", libGitTwoException);
-                return new ProviderOperationResult(ProviderOperationStatus.Failure, libGitTwoException, "LigGit2 threw an exception", "LibGit2 Threw an exception");
+                return new ProviderOperationResult(ProviderOperationStatus.Failure, libGitTwoException, "LibGit2 threw an exception", "LibGit2 threw an exception");
             }
             catch (Exception e)
             {
                 Providers.Log.Logger()?.ReportError("DevHomeRepository", "Could not clone the repository", e);
-                return new ProviderOperationResult(ProviderOperationStatus.Failure, e, "Something happened when cloning the repo", "something happened when cloning the repo");
+                return new ProviderOperationResult(ProviderOperationStatus.Failure, e, "Something happened when cloning the repo", "Something happened when cloning the repo");
             }
 
             return new ProviderOperationResult(ProviderOperationStatus.Success, new ArgumentException("Nothing wrong"), "Nothing wrong", "Nothing wrong");
