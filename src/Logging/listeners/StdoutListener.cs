@@ -16,6 +16,10 @@ public class StdoutListener : ListenerBase
     private static readonly ConsoleColor CElapsedColor = ConsoleColor.Green;
     private static readonly ConsoleColor CSourceColor = ConsoleColor.Cyan;
 
+    // Static lock object so different instances of the Stdout listener do not simultaneously write
+    // to stdout and have interleaved tearing of messages.
+    private static readonly object _stdoutLock = new ();
+
     public StdoutListener(string name)
         : base(name)
     {
@@ -65,9 +69,19 @@ public class StdoutListener : ListenerBase
             line.Add(Tuple.Create(CDefaultColor, Environment.NewLine));
         }
 
-        WriteColor(line);
-        Console.ResetColor();
-        Console.Out.Flush();
+        // Do this in a static lock to prevent tearing.
+        lock (_stdoutLock)
+        {
+            try
+            {
+                WriteColor(line);
+                Console.ResetColor();
+                Console.Out.Flush();
+            }
+            catch
+            {
+            }
+        }
     }
 
     private bool MeetsFilter(LogEvent evt)
