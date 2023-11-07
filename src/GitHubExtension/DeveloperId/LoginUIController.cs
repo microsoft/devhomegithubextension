@@ -8,7 +8,6 @@ using Windows.Foundation;
 namespace GitHubExtension.DeveloperId;
 internal class LoginUIController : IExtensionAdaptiveCardSession
 {
-    // _loginEntryPoint stores the calling component on Dev Home (like "Settings", "SetupTool" etc).
     private IExtensionAdaptiveCard? _loginUI;
     private static readonly LoginUITemplate _loginUITemplate = new ();
 
