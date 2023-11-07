@@ -1,7 +1,6 @@
 ﻿// Copyright (c) Microsoft Corporation and Contributors
 // Licensed under the MIT license.
 
-using System.Threading.Tasks;
 using Newtonsoft.Json;
 
 namespace GitHubExtension.Helpers;

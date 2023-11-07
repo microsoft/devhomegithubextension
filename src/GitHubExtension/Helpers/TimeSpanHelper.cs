@@ -1,6 +1,6 @@
 ﻿// Copyright (c) Microsoft Corporation and Contributors
 // Licensed under the MIT license.
-using System.Text.Json.Nodes;
+
 using DevHome.Logging;
 using Jeffijoe.MessageFormat;
 

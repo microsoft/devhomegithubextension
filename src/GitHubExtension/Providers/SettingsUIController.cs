@@ -4,7 +4,6 @@
 using GitHubExtension.Helpers;
 using Microsoft.Windows.ApplicationModel.Resources;
 using Microsoft.Windows.DevHome.SDK;
-using Newtonsoft.Json.Linq;
 using Windows.Foundation;
 
 namespace GitHubExtension.Providers;

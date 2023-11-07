@@ -1,14 +1,12 @@
 ﻿// Copyright (c) Microsoft Corporation and Contributors
 // Licensed under the MIT license.
 
-using System.Xml.Linq;
 using GitHubExtension.Client;
 using GitHubExtension.DeveloperId;
 using GitHubExtension.Helpers;
 using Microsoft.Windows.DevHome.SDK;
 using Octokit;
 using Windows.Foundation;
-using Windows.Storage;
 using Windows.Storage.Streams;
 
 namespace GitHubExtension.Providers;

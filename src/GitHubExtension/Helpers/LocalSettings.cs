@@ -1,11 +1,7 @@
 ﻿// Copyright (c) Microsoft Corporation and Contributors
 // Licensed under the MIT license.
 
-using System.Runtime.CompilerServices;
 using DevHome.Common.Services;
-using DevHome.Logging;
-using Microsoft.Windows.ApplicationModel.Resources;
-using Newtonsoft.Json.Linq;
 using Windows.Storage;
 
 namespace GitHubExtension.Helpers;
