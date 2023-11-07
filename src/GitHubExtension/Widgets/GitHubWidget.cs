@@ -143,6 +143,8 @@ public abstract class GitHubWidget : WidgetImpl
         }
     }
 
+    public override void OnCustomizationRequested(WidgetCustomizationRequestedArgs customizationRequestedArgs) => throw new NotImplementedException();
+
     private void HandleCheckUrl(WidgetActionInvokedArgs args)
     {
         // Set loading page while we fetch data from GitHub.

@@ -96,6 +96,10 @@ public static class Resources
             "Widget_Template/PR_info",
             "Widget_Template/Updated",
             "Widget_Template/Query",
+            "Widget_Template_Button/Save",
+            "Widget_Template_Button/Cancel",
+            "Widget_Template_Tooltip/Save",
+            "Widget_Template_Tooltip/Cancel",
         };
     }
 }

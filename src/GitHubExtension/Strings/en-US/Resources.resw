@@ -400,4 +400,20 @@
   <data name="Settings_NotificationsDisabled" xml:space="preserve">
     <value>Notifications Disabled</value>
   </data>
+  <data name="Widget_Template_Button.Save" xml:space="preserve">
+    <value>Save</value>
+    <comment>Shown in Widget, Button text</comment>
+  </data>
+  <data name="Widget_Template_Button.Cancel" xml:space="preserve">
+    <value>Cancel</value>
+    <comment>Shown in Widget, Button text</comment>
+  </data>
+  <data name="Widget_Template_Tooltip.Save" xml:space="preserve">
+    <value>Save</value>
+    <comment>Shown in Widget, Button tooltip</comment>
+  </data>
+  <data name="Widget_Template_Tooltip.Cancel" xml:space="preserve">
+    <value>Cancel</value>
+    <comment>Shown in Widget, Button tooltip</comment>
+  </data>
 </root>
