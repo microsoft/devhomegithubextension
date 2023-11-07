@@ -221,28 +221,28 @@ public class RepositoryProvider : IRepositoryProvider
             }
             catch (LibGit2Sharp.RecurseSubmodulesException recurseException)
             {
-                Providers.Log.Logger()?.ReportError("DevHomeRepository", "Could not clone all sub modules", recurseException);
-                return new ProviderOperationResult(ProviderOperationStatus.Failure, recurseException, "Could not clone all modules", recurseException.Message);
+                Providers.Log.Logger()?.ReportError("DevHomeRepository", "Could not clone all submodules.", recurseException);
+                return new ProviderOperationResult(ProviderOperationStatus.Failure, recurseException, "Could not clone all submodules.", recurseException.Message);
             }
             catch (LibGit2Sharp.UserCancelledException userCancelledException)
             {
-                Providers.Log.Logger()?.ReportError("DevHomeRepository", "The user stopped the clone operation", userCancelledException);
-                return new ProviderOperationResult(ProviderOperationStatus.Failure, userCancelledException, "User cancelled the operation", userCancelledException.Message);
+                Providers.Log.Logger()?.ReportError("DevHomeRepository", "The user stopped the clone operation.", userCancelledException);
+                return new ProviderOperationResult(ProviderOperationStatus.Failure, userCancelledException, "User cancelled the clone operation.", userCancelledException.Message);
             }
             catch (LibGit2Sharp.NameConflictException nameConflictException)
             {
                 Providers.Log.Logger()?.ReportError("DevHomeRepository", nameConflictException);
-                return new ProviderOperationResult(ProviderOperationStatus.Failure, nameConflictException, "The location exists and is non-empty", nameConflictException.Message);
+                return new ProviderOperationResult(ProviderOperationStatus.Failure, nameConflictException, "The destination location is non-empty.", nameConflictException.Message);
             }
             catch (LibGit2Sharp.LibGit2SharpException libGitTwoException)
             {
-                Providers.Log.Logger()?.ReportError("DevHomeRepository", $"Either no logged in account has access to this repo, or the repo can't be found", libGitTwoException);
-                return new ProviderOperationResult(ProviderOperationStatus.Failure, libGitTwoException, "LigGit2 threw an exception", "LibGit2 Threw an exception");
+                Providers.Log.Logger()?.ReportError("DevHomeRepository", $"Either no logged in account has access to this repository, or the repository can't be found.", libGitTwoException);
+                return new ProviderOperationResult(ProviderOperationStatus.Failure, libGitTwoException, "LibGit2 library threw an exception.", "LibGit2 library threw an exception.");
             }
             catch (Exception e)
             {
-                Providers.Log.Logger()?.ReportError("DevHomeRepository", "Could not clone the repository", e);
-                return new ProviderOperationResult(ProviderOperationStatus.Failure, e, "Something happened when cloning the repo", "something happened when cloning the repo");
+                Providers.Log.Logger()?.ReportError("DevHomeRepository", "Could not clone the repository.", e);
+                return new ProviderOperationResult(ProviderOperationStatus.Failure, e, "Something happened when cloning the repository.", "Something happened when cloning the repository.");
             }
 
             return new ProviderOperationResult(ProviderOperationStatus.Success, new ArgumentException("Nothing wrong"), "Nothing wrong", "Nothing wrong");
