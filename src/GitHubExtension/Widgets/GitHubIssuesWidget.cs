@@ -5,6 +5,8 @@ using System.Text.Json.Nodes;
 using GitHubExtension.Client;
 using GitHubExtension.DataManager;
 using GitHubExtension.Helpers;
+using GitHubExtension.Widgets.Enums;
+using Microsoft.Windows.Widgets.Providers;
 using Octokit;
 
 namespace GitHubExtension.Widgets;
@@ -44,6 +46,11 @@ internal class GitHubIssuesWidget : GitHubWidget
         if (DateTime.Now - LastUpdated < WidgetDataRequestMinTime)
         {
             Log.Logger()?.ReportDebug(Name, ShortId, "Data request too soon, skipping.");
+        }
+
+        if (ActivityState == WidgetActivityState.Configure)
+        {
+            return;
         }
 
         try
@@ -210,5 +217,11 @@ internal class GitHubIssuesWidget : GitHubWidget
                 UpdateActivityState();
             }
         }
+    }
+
+    public override void OnCustomizationRequested(WidgetCustomizationRequestedArgs customizationRequestedArgs)
+    {
+        SavedRepositoryUrl = RepositoryUrl;
+        SetConfigure();
     }
 }

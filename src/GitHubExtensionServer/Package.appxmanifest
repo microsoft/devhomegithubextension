@@ -85,7 +85,7 @@
                   <CreateInstance ClassId="F23870B0-B391-4466-84E2-42A991078613" />
                 </Activation>
                 <Definitions>
-                  <Definition Id="GitHub_Issues" DisplayName="Issues" Description="List of issues in a GitHub repository.">
+                  <Definition Id="GitHub_Issues" DisplayName="Issues" Description="List of issues in a GitHub repository." IsCustomizable="true">
                     <Capabilities>
                       <Capability>
                         <Size Name="medium" />
@@ -119,7 +119,7 @@
                       </LightMode>
                     </ThemeResources>
                   </Definition>
-                  <Definition Id="GitHub_PullRequests" DisplayName="Pull requests" Description="List of open pull requests in a GitHub repository.">
+                  <Definition Id="GitHub_PullRequests" DisplayName="Pull requests" Description="List of open pull requests in a GitHub repository." IsCustomizable="true">
                     <Capabilities>
                       <Capability>
                         <Size Name="medium" />
@@ -153,7 +153,7 @@
                       </LightMode>
                     </ThemeResources>
                   </Definition>
-                  <Definition Id="GitHub_MentionedIns" DisplayName="Mentioned me" Description="List of issues and pull requests the user is mentioned in in a GitHub repository.">
+                  <Definition Id="GitHub_MentionedIns" DisplayName="Mentioned me" Description="List of issues and pull requests the user is mentioned in in a GitHub repository." IsCustomizable="true">
                     <Capabilities>
                       <Capability>
                         <Size Name="medium" />
@@ -187,7 +187,7 @@
                       </LightMode>
                     </ThemeResources>
                   </Definition>
-                  <Definition Id="GitHub_Assigneds" DisplayName="Assigned to me" Description="List of pull requests and issues assigned to the user in a GitHub repository.">
+                  <Definition Id="GitHub_Assigneds" DisplayName="Assigned to me" Description="List of pull requests and issues assigned to the user in a GitHub repository." IsCustomizable="true">
                     <Capabilities>
                       <Capability>
                         <Size Name="medium" />
