@@ -133,7 +133,7 @@ internal class OAuthRequest : IDisposable
         }
 
         var newUser = gitHubClient.User.Current().Result;
-        DeveloperId developerId = new (newUser.Login, newUser.Email, newUser.Url, newUser.Name, gitHubClient);
+        DeveloperId developerId = new (newUser.Login, newUser.Name, newUser.Email, newUser.Url, gitHubClient);
 
         return developerId;
     }

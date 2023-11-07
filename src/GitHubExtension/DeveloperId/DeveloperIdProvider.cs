@@ -269,7 +269,7 @@ public class DeveloperIdProvider : IDeveloperIdProvider
             };
             var user = gitHubClient.User.Current().Result;
 
-            DeveloperId developerId = new (user.Login, user.Email, user.Url, user.Name, gitHubClient);
+            DeveloperId developerId = new (user.Login, user.Name, user.Email, user.Url, gitHubClient);
 
             lock (DeveloperIdsLock)
             {

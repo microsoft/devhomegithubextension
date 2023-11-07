@@ -15,10 +15,29 @@ public static class Validation
 
     public static bool IsValidGitHubURL(Uri uri)
     {
+        return IsValidGitHubComURL(uri) || IsValidGitHubEnterpriseServerURL(uri);
+    }
+
+    public static bool IsValidGitHubComURL(Uri uri)
+    {
         // Valid GitHub URL has three segments.  The first is '/'.
         if (uri.Segments.Length < 3 || (!uri.Host.Equals("github.com", StringComparison.OrdinalIgnoreCase) && !uri.Host.Equals("www.github.com", StringComparison.OrdinalIgnoreCase)))
         {
             Log.Logger()?.ReportDebug($"{uri.OriginalString} is not a valid GitHub uri");
+            return false;
+        }
+
+        return true;
+    }
+
+    public static bool IsValidGitHubEnterpriseServerURL(Uri server)
+    {
+        // Valid GHES URL has three segments.
+        // There are no restrictions on the hostname, except what is covered in IsValidHttpUri()
+        // https://docs.github.com/en/enterprise-server@3.10/admin/configuration/configuring-network-settings/configuring-the-hostname-for-your-instance
+        if (server.Segments.Length < 3)
+        {
+            Log.Logger()?.ReportDebug($"{server.OriginalString} is not a valid GHES repo uri");
             return false;
         }
 
