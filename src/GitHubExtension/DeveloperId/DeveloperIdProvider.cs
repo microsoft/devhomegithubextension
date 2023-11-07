@@ -294,9 +294,8 @@ public class DeveloperIdProvider : IDeveloperIdProvider
 
     public AdaptiveCardSessionResult GetLoginAdaptiveCardSession()
     {
-        var loginEntryPoint = string.Empty;
         Log.Logger()?.ReportInfo($"GetAdaptiveCardController");
-        return new AdaptiveCardSessionResult(new LoginUIController(loginEntryPoint));
+        return new AdaptiveCardSessionResult(new LoginUIController());
     }
 
     public void Dispose()
