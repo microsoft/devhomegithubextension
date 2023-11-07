@@ -180,19 +180,19 @@ internal class GitHubPullsWidget : GitHubWidget
     private void DataManagerUpdateHandler(object? source, DataManagerUpdateEventArgs e)
     {
         Log.Logger()?.ReportDebug(Name, ShortId, $"Data Update Event: Kind={e.Kind} Info={e.Description} Context={string.Join(",", e.Context)}");
+
+        // Don't update if we're in configuration mode.
+        if (ActivityState == WidgetActivityState.Configure)
+        {
+            return;
+        }
+
         if (e.Kind == DataManagerUpdateKind.Repository && !string.IsNullOrEmpty(RepositoryUrl))
         {
             var fullName = Validation.ParseFullNameFromGitHubURL(RepositoryUrl);
             if (fullName == e.Description && e.Context.Contains("PullRequests"))
             {
                 Log.Logger()?.ReportInfo(Name, ShortId, $"Received matching repository update event.");
-
-                // Don't update if we're in configuration mode.
-                if (ActivityState == WidgetActivityState.Configure)
-                {
-                    return;
-                }
-
                 LoadContentData();
                 UpdateActivityState();
             }
