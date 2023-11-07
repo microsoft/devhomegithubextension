@@ -18,7 +18,7 @@ public static class Validation
         // Valid GitHub URL has three segments.  The first is '/'.
         if (uri.Segments.Length < 3 || (!uri.Host.Equals("github.com", StringComparison.OrdinalIgnoreCase) && !uri.Host.Equals("www.github.com", StringComparison.OrdinalIgnoreCase)))
         {
-            Log.Logger()?.ReportDebug($"{uri.OriginalString} is not a valid github uri");
+            Log.Logger()?.ReportDebug($"{uri.OriginalString} is not a valid GitHub uri");
             return false;
         }
 

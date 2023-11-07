@@ -1,14 +1,12 @@
 ﻿// Copyright (c) Microsoft Corporation and Contributors
 // Licensed under the MIT license.
 
-using System.Xml.Linq;
 using GitHubExtension.Client;
 using GitHubExtension.DeveloperId;
 using GitHubExtension.Helpers;
 using Microsoft.Windows.DevHome.SDK;
 using Octokit;
 using Windows.Foundation;
-using Windows.Storage;
 using Windows.Storage.Streams;
 
 namespace GitHubExtension.Providers;
@@ -228,8 +226,8 @@ public class RepositoryProvider : IRepositoryProvider
             }
             catch (LibGit2Sharp.UserCancelledException userCancelledException)
             {
-                Providers.Log.Logger()?.ReportError("DevHomeRepository", "The user stoped the clone operation", userCancelledException);
-                return new ProviderOperationResult(ProviderOperationStatus.Failure, userCancelledException, "User cancalled the operation", userCancelledException.Message);
+                Providers.Log.Logger()?.ReportError("DevHomeRepository", "The user stopped the clone operation", userCancelledException);
+                return new ProviderOperationResult(ProviderOperationStatus.Failure, userCancelledException, "User cancelled the operation", userCancelledException.Message);
             }
             catch (LibGit2Sharp.NameConflictException nameConflictException)
             {
