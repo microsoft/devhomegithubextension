@@ -1,8 +1,7 @@
 ﻿// Copyright (c) Microsoft Corporation and Contributors
 // Licensed under the MIT license.
-using System.Globalization;
+
 using GitHubExtension.DataManager;
-using GitHubExtension.Widgets.Enums;
 
 namespace GitHubExtension.Helpers;
 public class EnumHelper

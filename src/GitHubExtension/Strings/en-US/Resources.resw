@@ -241,7 +241,7 @@
   <data name="LoginUI_LoginPage_Subheading" xml:space="preserve">
     <value>Sign in</value>
   </data>
-  <data name="LoginUI_LoginSuccededPage_text" xml:space="preserve">
+  <data name="LoginUI_LoginSucceededPage_text" xml:space="preserve">
     <value>has logged in successfully! You may close this window.</value>
   </data>
   <data name="LoginUI_WaitingPage_Text" xml:space="preserve">

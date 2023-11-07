@@ -54,7 +54,7 @@ internal class LoginUIController : IExtensionAdaptiveCardSession
                         if (devId != null)
                         {
                             var resourceLoader = new ResourceLoader(ResourceLoader.GetDefaultResourceFilePath(), "GitHubExtension/Resources");
-                            operationResult = _loginUI.Update(_loginUITemplate.GetLoginUITemplate(LoginUIState.LoginSucceededPage).Replace("${message}", $"{devId.LoginId} {resourceLoader.GetString("LoginUI_LoginSuccededPage_text")}"), null, LoginUIState.LoginSucceededPage);
+                            operationResult = _loginUI.Update(_loginUITemplate.GetLoginUITemplate(LoginUIState.LoginSucceededPage).Replace("${message}", $"{devId.LoginId} {resourceLoader.GetString("LoginUI_LoginSucceededPage_text")}"), null, LoginUIState.LoginSucceededPage);
                         }
                         else
                         {
