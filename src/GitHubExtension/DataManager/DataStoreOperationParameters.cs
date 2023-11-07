@@ -1,7 +1,6 @@
 ﻿// Copyright (c) Microsoft Corporation and Contributors
 // Licensed under the MIT license.
 
-using GitHubExtension.DeveloperId;
 using Microsoft.Windows.DevHome.SDK;
 
 namespace GitHubExtension;

@@ -622,7 +622,7 @@ public partial class GitHubDataManager : IGitHubDataManager, IDisposable
         MetaData.AddOrUpdate(DataStore, LastUpdatedKeyName, DateTime.Now.ToDataStoreString());
     }
 
-    // Converts fullname -> owner, name.
+    // Converts fullName -> owner, name.
     private string[] GetOwnerAndRepositoryNameFromFullName(string fullName)
     {
         var nameSplit = fullName.Split(new[] { '/' });

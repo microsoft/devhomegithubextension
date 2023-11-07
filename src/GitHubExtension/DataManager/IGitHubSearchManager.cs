@@ -2,7 +2,6 @@
 // Licensed under the MIT license.
 
 using GitHubExtension.DataManager;
-using GitHubExtension.DataModel;
 
 namespace GitHubExtension;
 

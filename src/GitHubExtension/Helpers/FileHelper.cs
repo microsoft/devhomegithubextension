@@ -1,7 +1,6 @@
 ﻿// Copyright (c) Microsoft Corporation and Contributors
 // Licensed under the MIT license.
 
-using System.IO;
 using System.Text;
 using Newtonsoft.Json;
 
