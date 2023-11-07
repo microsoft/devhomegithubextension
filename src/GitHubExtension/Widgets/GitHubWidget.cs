@@ -222,6 +222,7 @@ public abstract class GitHubWidget : WidgetImpl
 
             configurationData.Add("configuration", repositoryData);
             configurationData.Add("savedRepositoryUrl", SavedRepositoryUrl);
+            configurationData.Add("saveEnabled", false);
 
             return configurationData.ToString();
         }
@@ -258,6 +259,7 @@ public abstract class GitHubWidget : WidgetImpl
                 configurationData.Add("hasConfiguration", true);
                 configurationData.Add("configuration", repositoryData);
                 configurationData.Add("savedRepositoryUrl", SavedRepositoryUrl);
+                configurationData.Add("saveEnabled", SavedRepositoryUrl != data);
             }
             catch (Exception ex)
             {
@@ -272,6 +274,7 @@ public abstract class GitHubWidget : WidgetImpl
 
                 configurationData.Add("errorMessage", ex.Message);
                 configurationData.Add("configuration", repositoryData);
+                configurationData.Add("saveEnabled", false);
 
                 return configurationData.ToString();
             }

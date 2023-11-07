@@ -136,7 +136,7 @@
                       "title": "%Widget_Template_Button/Save%",
                       "verb": "Save",
                       "tooltip": "%Widget_Template_Tooltip/Save%",
-                      "isEnabled": "${$root.hasConfiguration}"
+                      "isEnabled": "${$root.saveEnabled}"
                     },
                     {
                       "type": "Action.Execute",
