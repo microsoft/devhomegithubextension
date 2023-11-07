@@ -3,7 +3,7 @@
     "Provider on launch": {
       "commandName": "MsixPackage",
       "commandLineArgs": "-RegisterProcessAsComServer",
-      "doNotLaunchApp": false,
+      "doNotLaunchApp": true,
       "alwaysReinstallApp": true
     },
     "UI App": {

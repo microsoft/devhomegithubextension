@@ -67,4 +67,9 @@ public class DeveloperId : IDeveloperId
         GitHubClient.Credentials = new (credential.Password);
         return credential;
     }
+
+    public Uri GetHostAddress()
+    {
+        return new Uri(new Uri(Url).GetLeftPart(UriPartial.Authority));
+    }
 }

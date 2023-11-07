@@ -1,6 +1,10 @@
 ﻿// Copyright (c) Microsoft Corporation and Contributors
 // Licensed under the MIT license.
 
+using System.Text.Json;
+using System.Text.Json.Serialization;
+using GitHubExtension.Helpers;
+using GitHubExtension.Widgets;
 using Microsoft.Windows.ApplicationModel.Resources;
 using Microsoft.Windows.DevHome.SDK;
 using Windows.Foundation;
@@ -8,14 +12,11 @@ using Windows.Foundation;
 namespace GitHubExtension.DeveloperId;
 internal class LoginUIController : IExtensionAdaptiveCardSession
 {
-    // _loginEntryPoint stores the calling component on Dev Home (like "Settings", "SetupTool" etc).
-    private readonly string _loginEntryPoint;
     private IExtensionAdaptiveCard? _loginUI;
     private static readonly LoginUITemplate _loginUITemplate = new ();
 
-    public LoginUIController(string loginEntryPoint)
+    public LoginUIController()
     {
-        _loginEntryPoint = loginEntryPoint;
     }
 
     public void Dispose()
@@ -50,7 +51,37 @@ internal class LoginUIController : IExtensionAdaptiveCardSession
 
                     try
                     {
-                        var devId = await (DeveloperIdProvider.GetInstance() as DeveloperIdProvider).LoginNewDeveloperIdAsync();
+                        Uri? hostAddress = null;
+
+                        // Get Title from the action string to determine if login is for "github.com" or "Enterprise Server".
+                        var options = new JsonSerializerOptions
+                        {
+                            DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
+                            PropertyNameCaseInsensitive = true,
+                        };
+                        var actionPayload = JsonSerializer.Deserialize<LoginPageActionPayload>(action, options);
+                        var title = actionPayload?.Title;
+
+                        // TODO: Replace this Button title check with Button Id check.
+                        if (title != null && title == "Next")
+                        {
+                            var inputPayload = JsonSerializer.Deserialize<LoginPageInputPayload>(inputs, options);
+                            var server = inputPayload?.EnterpriseServer;
+                            if (Uri.TryCreate(server, UriKind.Absolute, out hostAddress))
+                            {
+                                Log.Logger()?.ReportInfo($"GHES Address: {hostAddress.AbsoluteUri}");
+                            }
+                            else
+                            {
+                                // Conversion unsuccessful
+                                Log.Logger()?.ReportError($"Unable to parse server url {server}");
+                                _loginUI.Update(_loginUITemplate.GetLoginUITemplate(LoginUIState.LoginFailedPage), null, LoginUIState.LoginFailedPage);
+                                operationResult = new ProviderOperationResult(ProviderOperationStatus.Failure, null, $"Unable to convert {server} to url ", $"Unable to convert {server} to url");
+                                break;
+                            }
+                        }
+
+                        var devId = await (DeveloperIdProvider.GetInstance() as DeveloperIdProvider).LoginNewDeveloperIdInternalAsync(hostAddress);
                         if (devId != null)
                         {
                             var resourceLoader = new ResourceLoader(ResourceLoader.GetDefaultResourceFilePath(), "GitHubExtension/Resources");
@@ -220,7 +251,7 @@ internal class LoginUIController : IExtensionAdaptiveCardSession
                                                         ""placeholder"": """ + $"{loader.GetString("LoginUI_LoginPage_Button2Flyout_Text_PlaceHolder")}" + @""",
                                                         ""style"": ""Url"",
                                                         ""isRequired"": true,
-                                                        ""id"": ""Enterprise.server"",
+                                                        ""id"": ""EnterpriseServer"",
                                                         ""label"": """ + $"{loader.GetString("LoginUI_LoginPage_Button2Flyout_Text_Label")}" + @""",
                                                         ""value"": ""<hostname>"",
                                                         ""errorMessage"": """ + $"{loader.GetString("LoginUI_LoginPage_Button2Flyout_Text_ErrorMessage")}" + @"""
@@ -392,5 +423,31 @@ internal class LoginUIController : IExtensionAdaptiveCardSession
         internal const string LoginFailedPage = "LoginFailedPage";
         internal const string LoginSucceededPage = "LoginSucceededPage";
         internal const string End = "End";
+    }
+
+    private class LoginPageActionPayload
+    {
+        public string? Style
+        {
+            get; set;
+        }
+
+        public string? Title
+        {
+            get; set;
+        }
+
+        public string? Type
+        {
+            get; set;
+        }
+    }
+
+    private class LoginPageInputPayload
+    {
+        public string? EnterpriseServer
+        {
+            get; set;
+        }
     }
 }

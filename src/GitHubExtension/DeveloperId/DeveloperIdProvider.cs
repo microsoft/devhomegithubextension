@@ -82,29 +82,45 @@ public class DeveloperIdProvider : IDeveloperIdProvider
 
     public IAsyncOperation<IDeveloperId> LoginNewDeveloperIdAsync()
     {
+        return LoginNewDeveloperIdInternalAsync();
+    }
+
+    public IAsyncOperation<IDeveloperId> LoginNewDeveloperIdInternalAsync(Uri? hostAddress = null)
+    {
         return Task.Run(() =>
         {
-            var oauthRequest = LoginNewDeveloperId();
-            if (oauthRequest is null)
+            if (hostAddress is null)
             {
-                Log.Logger()?.ReportError($"Invalid OAuthRequest");
-                throw new InvalidOperationException();
+                // This request is for GitHub.com. Trigger OAuth flow.
+                var oauthRequest = LoginNewDeveloperIdWithOAuth();
+                if (oauthRequest is null)
+                {
+                    Log.Logger()?.ReportError($"Invalid OAuthRequest");
+                    throw new InvalidOperationException();
+                }
+
+                oauthRequest.AwaitCompletion();
+
+                if (CreateOrUpdateDeveloperId(oauthRequest) is not IDeveloperId developerId)
+                {
+                    Log.Logger()?.ReportError($"Invalid DeveloperId");
+                    throw new InvalidOperationException();
+                }
+
+                Log.Logger()?.ReportInfo($"New DeveloperId {developerId.LoginId} logged in");
+                oauthRequest.Dispose();
+                return developerId;
             }
-
-            oauthRequest.AwaitCompletion();
-
-            var devId = CreateOrUpdateDeveloperId(oauthRequest);
-            oauthRequest.Dispose();
-
-            Log.Logger()?.ReportInfo($"New DeveloperId logged in");
-
-            return devId as IDeveloperId;
+            else
+            {
+                return LoginNewDeveloperIdWithPAT(hostAddress);
+            }
         }).AsAsyncOperation();
     }
 
-    private OAuthRequest? LoginNewDeveloperId()
+    private OAuthRequest? LoginNewDeveloperIdWithOAuth(Uri? hostAddress = null)
     {
-        OAuthRequest oauthRequest = new ();
+        OAuthRequest oauthRequest = new (hostAddress);
 
         lock (OAuthRequestsLock)
         {
@@ -122,6 +138,32 @@ public class DeveloperIdProvider : IDeveloperIdProvider
         }
 
         return null;
+    }
+
+    private DeveloperId LoginNewDeveloperIdWithPAT(Uri? hostAddress)
+    {
+        // TODO: Remove these
+        hostAddress = hostAddress is null ? new Uri("https://github.com/") : new Uri("https://vscghes6.westus3.cloudapp.azure.com/");
+
+        GitHubClient gitHubClient = new (new ProductHeaderValue(Constants.DEV_HOME_APPLICATION_NAME), hostAddress);
+        var credentials = new Credentials(pat);
+        gitHubClient.Credentials = credentials;
+        var newUser = gitHubClient.User.Current().Result;
+        DeveloperId developerId = new (newUser.Login, newUser.Name, newUser.Email, newUser.Url, gitHubClient);
+        Log.Logger()?.ReportInfo($"{developerId.LoginId} logged in with PAT flow to {developerId.GetHostAddress()}");
+
+        if (developerId is null)
+        {
+            Log.Logger()?.ReportError($"Invalid DeveloperId");
+            throw new InvalidOperationException();
+        }
+
+        lock (DeveloperIdsLock)
+        {
+            DeveloperIds.Add(developerId);
+        }
+
+        return developerId;
     }
 
     public ProviderOperationResult LogoutDeveloperId(IDeveloperId developerId)
@@ -294,9 +336,8 @@ public class DeveloperIdProvider : IDeveloperIdProvider
 
     public AdaptiveCardSessionResult GetLoginAdaptiveCardSession()
     {
-        var loginEntryPoint = string.Empty;
         Log.Logger()?.ReportInfo($"GetAdaptiveCardController");
-        return new AdaptiveCardSessionResult(new LoginUIController(loginEntryPoint));
+        return new AdaptiveCardSessionResult(new LoginUIController());
     }
 
     public void Dispose()
