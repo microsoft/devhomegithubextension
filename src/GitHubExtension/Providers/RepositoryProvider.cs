@@ -20,14 +20,9 @@ public class RepositoryProvider : IRepositoryProvider
         get; private set;
     }
 
-    public RepositoryProvider(IRandomAccessStreamReference icon)
-    {
-        Icon = icon;
-    }
-
     public RepositoryProvider()
     {
-        Icon = RandomAccessStreamReference.CreateFromUri(new Uri("https://www.GitHub.com/microsoft/devhome"));
+        Icon = RandomAccessStreamReference.CreateFromUri(new Uri("ms-appx:///GitHubExtension/Assets/GitHubLogo_Dark.png"));
     }
 
     public IAsyncOperation<RepositoryUriSupportResult> IsUriSupportedAsync(Uri uri)
