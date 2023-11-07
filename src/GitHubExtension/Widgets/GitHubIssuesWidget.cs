@@ -213,6 +213,13 @@ internal class GitHubIssuesWidget : GitHubWidget
             if (fullName == e.Description && e.Context.Contains("Issues"))
             {
                 Log.Logger()?.ReportInfo(Name, ShortId, $"Received matching repository update event.");
+
+                // Don't update if we're in configuration mode.
+                if (ActivityState == WidgetActivityState.Configure)
+                {
+                    return;
+                }
+
                 LoadContentData();
                 UpdateActivityState();
             }
