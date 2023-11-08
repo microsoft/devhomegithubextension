@@ -5,6 +5,8 @@ using System.Text.Json.Nodes;
 using GitHubExtension.Client;
 using GitHubExtension.DataManager;
 using GitHubExtension.Helpers;
+using GitHubExtension.Widgets.Enums;
+using Microsoft.Windows.Widgets.Providers;
 using Octokit;
 
 namespace GitHubExtension.Widgets;
@@ -46,6 +48,11 @@ internal class GitHubPullsWidget : GitHubWidget
         if (DateTime.Now - LastUpdated < WidgetDataRequestMinTime)
         {
             Log.Logger()?.ReportDebug(Name, ShortId, "Data request too soon, skipping.");
+        }
+
+        if (ActivityState == WidgetActivityState.Configure)
+        {
+            return;
         }
 
         try
@@ -173,6 +180,13 @@ internal class GitHubPullsWidget : GitHubWidget
     private void DataManagerUpdateHandler(object? source, DataManagerUpdateEventArgs e)
     {
         Log.Logger()?.ReportDebug(Name, ShortId, $"Data Update Event: Kind={e.Kind} Info={e.Description} Context={string.Join(",", e.Context)}");
+
+        // Don't update if we're in configuration mode.
+        if (ActivityState == WidgetActivityState.Configure)
+        {
+            return;
+        }
+
         if (e.Kind == DataManagerUpdateKind.Repository && !string.IsNullOrEmpty(RepositoryUrl))
         {
             var fullName = Validation.ParseFullNameFromGitHubURL(RepositoryUrl);
@@ -183,5 +197,11 @@ internal class GitHubPullsWidget : GitHubWidget
                 UpdateActivityState();
             }
         }
+    }
+
+    public override void OnCustomizationRequested(WidgetCustomizationRequestedArgs customizationRequestedArgs)
+    {
+        SavedRepositoryUrl = RepositoryUrl;
+        SetConfigure();
     }
 }

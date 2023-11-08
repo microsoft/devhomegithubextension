@@ -9,7 +9,7 @@ namespace GitHubExtension.Widgets;
 [ComVisible(true)]
 [ClassInterface(ClassInterfaceType.None)]
 [Guid("F23870B0-B391-4466-84E2-42A991078613")]
-public sealed class WidgetProvider : IWidgetProvider
+public sealed class WidgetProvider : IWidgetProvider, IWidgetProvider2
 {
     public WidgetProvider()
     {
@@ -137,6 +137,17 @@ public sealed class WidgetProvider : IWidgetProvider
         if (runningWidgets.ContainsKey(widgetId))
         {
             runningWidgets[widgetId].OnActionInvoked(actionInvokedArgs);
+        }
+    }
+
+    public void OnCustomizationRequested(WidgetCustomizationRequestedArgs customizationRequestedArgs)
+    {
+        Log.Logger()?.ReportDebug($"OnCustomizationRequested id: {customizationRequestedArgs.WidgetContext.Id} definitionId: {customizationRequestedArgs.WidgetContext.DefinitionId}");
+        var widgetContext = customizationRequestedArgs.WidgetContext;
+        var widgetId = widgetContext.Id;
+        if (runningWidgets.ContainsKey(widgetId))
+        {
+            runningWidgets[widgetId].OnCustomizationRequested(customizationRequestedArgs);
         }
     }
 

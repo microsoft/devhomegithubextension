@@ -111,6 +111,50 @@
       "$when": "${$root.hasConfiguration}",
       "horizontalAlignment": "Left",
       "bleed": true
+    },
+    {
+      "type": "ColumnSet",
+      "spacing": "Medium",
+      "$when": "${$root.savedRepositoryUrl != \"\"}",
+      "columns": [
+        {
+          "type": "Column",
+          "width": "stretch"
+        },
+        {
+          "type": "Column",
+          "width": "auto",
+          "items": [
+            {
+              "type": "Container",
+              "items": [
+                {
+                  "type": "ActionSet",
+                  "actions": [
+                    {
+                      "type": "Action.Execute",
+                      "title": "%Widget_Template_Button/Save%",
+                      "verb": "Save",
+                      "tooltip": "%Widget_Template_Tooltip/Save%",
+                      "isEnabled": "${$root.saveEnabled}"
+                    },
+                    {
+                      "type": "Action.Execute",
+                      "title": "%Widget_Template_Button/Cancel%",
+                      "verb": "Cancel",
+                      "tooltip": "%Widget_Template_Tooltip/Cancel%"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "Column",
+          "width": "stretch"
+        }
+      ]
     }
   ]
 }
