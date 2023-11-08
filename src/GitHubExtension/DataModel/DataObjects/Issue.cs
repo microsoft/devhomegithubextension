@@ -40,6 +40,8 @@ public class Issue
 
     public long TimeClosed { get; set; } = DataStore.NoForeignKey;
 
+    public long TimeLastObserved { get; set; } = DataStore.NoForeignKey;
+
     // Label IDs are a string concatenation of Label internalIds.
     // We need to duplicate this data in order to properly do inserts and
     // to compare two objects for changes in order to add/remove associations.
@@ -65,6 +67,10 @@ public class Issue
     [Write(false)]
     [Computed]
     public DateTime ClosedAt => TimeClosed.ToDateTime();
+
+    [Write(false)]
+    [Computed]
+    public DateTime LastObservedAt => TimeLastObserved.ToDateTime();
 
     // Derived Properties so consumers of these objects do not
     // need to do further queries of the datastore.
@@ -155,6 +161,7 @@ public class Issue
             TimeCreated = okitIssue.CreatedAt.DateTime.ToDataStoreInteger(),
             TimeUpdated = okitIssue.UpdatedAt.HasValue ? okitIssue.UpdatedAt.Value.DateTime.ToDataStoreInteger() : 0,
             TimeClosed = okitIssue.ClosedAt.HasValue ? okitIssue.ClosedAt.Value.DateTime.ToDataStoreInteger() : 0,
+            TimeLastObserved = DateTime.UtcNow.ToDataStoreInteger(),
         };
 
         // Labels are a string concat of label internal ids.
@@ -207,28 +214,22 @@ public class Issue
         var existing = GetByInternalId(dataStore, issue.InternalId);
         if (existing is not null)
         {
-            if (issue.TimeUpdated > existing.TimeUpdated)
+            // Existing issues must be updated and always marked observed.
+            issue.Id = existing.Id;
+            dataStore.Connection!.Update(issue);
+            issue.DataStore = dataStore;
+
+            if (issue.LabelIds != existing.LabelIds)
             {
-                issue.Id = existing.Id;
-                dataStore.Connection!.Update(issue);
-                issue.DataStore = dataStore;
-
-                if (issue.LabelIds != existing.LabelIds)
-                {
-                    UpdateLabelsForIssue(dataStore, issue);
-                }
-
-                if (issue.AssigneeIds != existing.AssigneeIds)
-                {
-                    UpdateAssigneesForIssue(dataStore, issue);
-                }
-
-                return issue;
+                UpdateLabelsForIssue(dataStore, issue);
             }
-            else
+
+            if (issue.AssigneeIds != existing.AssigneeIds)
             {
-                return existing;
+                UpdateAssigneesForIssue(dataStore, issue);
             }
+
+            return issue;
         }
 
         // No existing issue, add it.
@@ -352,5 +353,21 @@ public class Issue
                 }
             }
         }
+    }
+
+    // Delete records in a repository not observed before the specified date.
+    public static void DeleteLastObservedBefore(DataStore dataStore, long repositoryId, DateTime date)
+    {
+        // Delete issues older than the time specified for the given repository.
+        // This is intended to be run after updating a repository's issues so that non-observed
+        // records will be removed.
+        var sql = @"DELETE FROM Issue WHERE RepositoryId = $RepositoryId AND TimeLastObserved < $Time;";
+        var command = dataStore.Connection!.CreateCommand();
+        command.CommandText = sql;
+        command.Parameters.AddWithValue("$Time", date.ToDataStoreInteger());
+        command.Parameters.AddWithValue("$RepositoryId", repositoryId);
+        Log.Logger()?.ReportDebug(DataStore.GetCommandLogMessage(sql, command));
+        var rowsDeleted = command.ExecuteNonQuery();
+        Log.Logger()?.ReportDebug(DataStore.GetDeletedLogMessage(rowsDeleted));
     }
 }
