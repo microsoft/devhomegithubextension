@@ -150,6 +150,11 @@ public abstract class GitHubWidget : WidgetImpl
 
                 SavedRepositoryUrl = string.Empty;
                 LoadContentData();
+
+                // Reset the throttle time and force an immediate data update request.
+                LastUpdated = DateTime.MinValue;
+                RequestContentData();
+
                 SetActive();
                 break;
 
