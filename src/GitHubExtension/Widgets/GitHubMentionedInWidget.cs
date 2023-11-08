@@ -146,6 +146,10 @@ internal class GitHubMentionedInWidget : GitHubWidget
             if (dataObject != null && dataObject.ShowCategory != null)
             {
                 ShowCategory = EnumHelper.StringToSearchCategory(dataObject.ShowCategory);
+
+                // If we got here during the customization flow, we need to LoadContentData again
+                // so we can show the loading page rather than stale data.
+                LoadContentData();
                 UpdateActivityState();
             }
         }

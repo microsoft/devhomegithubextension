@@ -140,7 +140,21 @@ public abstract class GitHubWidget : WidgetImpl
                 break;
 
             case WidgetAction.Save:
+                // Set loading page while we swap out the data.
+                Page = WidgetPageState.Loading;
+
+                // It might take some time to get the new data, so
+                // set data state to "unknown" so that loading page is shown.
+                DataState = WidgetDataState.Unknown;
+                UpdateWidget();
+
                 SavedRepositoryUrl = string.Empty;
+                LoadContentData();
+
+                // Reset the throttle time and force an immediate data update request.
+                LastUpdated = DateTime.MinValue;
+                RequestContentData();
+
                 SetActive();
                 break;
 
