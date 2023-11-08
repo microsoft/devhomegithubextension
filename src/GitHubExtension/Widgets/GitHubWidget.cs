@@ -44,6 +44,8 @@ public abstract class GitHubWidget : WidgetImpl
         set => SetState(value);
     }
 
+    protected string SavedRepositoryUrl { get; set; } = string.Empty;
+
     protected DateTime LastUpdated { get; set; } = DateTime.MinValue;
 
     protected DataUpdater DataUpdater { get; set; }
@@ -137,11 +139,23 @@ public abstract class GitHubWidget : WidgetImpl
                 _ = HandleSignIn();
                 break;
 
+            case WidgetAction.Save:
+                SavedRepositoryUrl = string.Empty;
+                SetActive();
+                break;
+
+            case WidgetAction.Cancel:
+                RepositoryUrl = SavedRepositoryUrl;
+                SetActive();
+                break;
+
             case WidgetAction.Unknown:
                 Log.Logger()?.ReportError(Name, ShortId, $"Unknown verb: {actionInvokedArgs.Verb}");
                 break;
         }
     }
+
+    public override void OnCustomizationRequested(WidgetCustomizationRequestedArgs customizationRequestedArgs) => throw new NotImplementedException();
 
     private void HandleCheckUrl(WidgetActionInvokedArgs args)
     {
@@ -207,6 +221,8 @@ public abstract class GitHubWidget : WidgetImpl
             };
 
             configurationData.Add("configuration", repositoryData);
+            configurationData.Add("savedRepositoryUrl", SavedRepositoryUrl);
+            configurationData.Add("saveEnabled", false);
 
             return configurationData.ToString();
         }
@@ -242,6 +258,8 @@ public abstract class GitHubWidget : WidgetImpl
 
                 configurationData.Add("hasConfiguration", true);
                 configurationData.Add("configuration", repositoryData);
+                configurationData.Add("savedRepositoryUrl", SavedRepositoryUrl);
+                configurationData.Add("saveEnabled", SavedRepositoryUrl != data);
             }
             catch (Exception ex)
             {
@@ -256,6 +274,7 @@ public abstract class GitHubWidget : WidgetImpl
 
                 configurationData.Add("errorMessage", ex.Message);
                 configurationData.Add("configuration", repositoryData);
+                configurationData.Add("saveEnabled", false);
 
                 return configurationData.ToString();
             }
@@ -433,6 +452,11 @@ public abstract class GitHubWidget : WidgetImpl
         // Only update per the update interval.
         // This is intended to be dynamic in the future.
         if (DateTime.Now - lastUpdateRequest < WidgetRefreshRate)
+        {
+            return;
+        }
+
+        if (ActivityState == WidgetActivityState.Configure)
         {
             return;
         }
