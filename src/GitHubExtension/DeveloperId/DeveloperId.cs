@@ -70,6 +70,6 @@ public class DeveloperId : IDeveloperId
 
     public Uri GetHostAddress()
     {
-        return new Uri(new Uri(Url).GetLeftPart(UriPartial.Authority));
+        return GitHubClient.BaseAddress;
     }
 }
