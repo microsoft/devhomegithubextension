@@ -119,7 +119,7 @@ public class DeveloperIdProvider : IDeveloperIdProvider
             if (developerId is null)
             {
                 Log.Logger()?.ReportError($"Invalid DeveloperId");
-                throw new InvalidOperationException();
+                throw new InvalidOperationException("Invalid DeveloperId");
             }
 
             lock (DeveloperIdsLock)
@@ -132,7 +132,7 @@ public class DeveloperIdProvider : IDeveloperIdProvider
         catch (Exception ex)
         {
             Log.Logger()?.ReportError($"Error while logging in with PAT to {hostAddress.AbsoluteUri} : {ex.Message}");
-            throw new InvalidOperationException();
+            throw;
         }
     }
 
