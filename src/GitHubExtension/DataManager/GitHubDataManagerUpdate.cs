@@ -8,7 +8,7 @@ namespace GitHubExtension;
 public partial class GitHubDataManager
 {
     // This is how frequently the DataStore update occurs.
-    private static readonly TimeSpan UpdateInterval = TimeSpan.FromMinutes(2);
+    private static readonly TimeSpan UpdateInterval = TimeSpan.FromMinutes(5);
     private static DateTime lastUpdateTime = DateTime.MinValue;
 
     public static async Task Update()

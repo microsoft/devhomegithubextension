@@ -13,7 +13,7 @@ public class GitHubDataStoreSchema : IDataStoreSchema
     }
 
     // Update this anytime incompatible changes happen with a released version.
-    private const long SchemaVersionValue = 0x0004;
+    private const long SchemaVersionValue = 0x0005;
 
     private static readonly string Metadata =
     @"CREATE TABLE Metadata (" +
@@ -79,6 +79,7 @@ public class GitHubDataStoreSchema : IDataStoreSchema
         "TimeCreated INTEGER NOT NULL," +
         "TimeUpdated INTEGER NOT NULL," +
         "TimeClosed INTEGER NOT NULL," +
+        "TimeLastObserved INTEGER NOT NULL," +
         "HtmlUrl TEXT NULL COLLATE NOCASE," +
         "Locked INTEGER NOT NULL," +
         "AssigneeIds TEXT NULL COLLATE NOCASE," +
@@ -116,6 +117,7 @@ public class GitHubDataStoreSchema : IDataStoreSchema
         "TimeUpdated INTEGER NOT NULL," +
         "TimeMerged INTEGER NOT NULL," +
         "TimeClosed INTEGER NOT NULL," +
+        "TimeLastObserved INTEGER NOT NULL," +
         "HtmlUrl TEXT NULL COLLATE NOCASE," +
         "Locked INTEGER NOT NULL," +
         "Draft INTEGER NOT NULL," +
