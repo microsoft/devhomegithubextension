@@ -64,19 +64,23 @@ public class RepositoryProvider : IRepositoryProvider
             var repositoryList = new List<IRepository>();
             try
             {
-                ApiOptions apiOptions = new ();
-                apiOptions.PageSize = 50;
-                apiOptions.PageCount = 1;
+                ApiOptions apiOptions = new ()
+                {
+                    PageSize = 50,
+                    PageCount = 1,
+                };
 
                 // Authenticate as the specified developer Id.
                 var client = DeveloperIdProvider.GetInstance().GetDeveloperIdInternal(developerId).GitHubClient;
-                RepositoryRequest request = new RepositoryRequest();
-                request.Sort = RepositorySort.Updated;
-                request.Direction = SortDirection.Descending;
-                request.Affiliation = RepositoryAffiliation.Owner;
+                var request = new RepositoryRequest
+                {
+                    Sort = RepositorySort.Updated,
+                    Direction = SortDirection.Descending,
+                    Affiliation = RepositoryAffiliation.Owner,
 
-                // Gets only public repos for the owned repos.
-                request.Visibility = RepositoryRequestVisibility.Public;
+                    // Gets only public repos for the owned repos.
+                    Visibility = RepositoryRequestVisibility.Public,
+                };
                 var getPublicReposTask = client.Repository.GetAllForCurrent(request, apiOptions);
 
                 // this is getting private org and user repos.
