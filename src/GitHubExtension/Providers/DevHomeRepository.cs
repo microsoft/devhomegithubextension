@@ -2,10 +2,6 @@
 // Licensed under the MIT license.
 
 using GitHubExtension.Client;
-using GitHubExtension.DeveloperId;
-using LibGit2Sharp;
-using Microsoft.Windows.DevHome.SDK;
-using Windows.Foundation;
 
 namespace GitHubExtension.Providers;
 
@@ -33,7 +29,7 @@ public class DevHomeRepository : Microsoft.Windows.DevHome.SDK.IRepository
     /// <summary>
     /// Initializes a new instance of the <see cref="DevHomeRepository"/> class.
     /// </summary>
-    /// <param name="ocktokitRepository">The repository recived from ocktokit</param>
+    /// <param name="ocktokitRepository">The repository received from ocktokit</param>
     public DevHomeRepository(Octokit.Repository ocktokitRepository)
     {
         this.name = ocktokitRepository.Name;

@@ -20,7 +20,7 @@ internal static class CredentialVault
     internal static void SaveAccessTokenToVault(string loginId, SecureString? accessToken)
     {
         // Initialize a credential object.
-        CREDENTIAL credential = new CREDENTIAL
+        var credential = new CREDENTIAL
         {
             Type = CRED_TYPE.GENERIC,
             TargetName = CredentialVaultConfiguration.CredResourceName + ": " + loginId,
@@ -75,7 +75,7 @@ internal static class CredentialVault
     internal static PasswordCredential GetCredentialFromLocker(string loginId)
     {
         var credentialNameToRetrieve = CredentialVaultConfiguration.CredResourceName + ": " + loginId;
-        IntPtr ptrToCredential = IntPtr.Zero;
+        var ptrToCredential = IntPtr.Zero;
 
         try
         {
@@ -103,7 +103,7 @@ internal static class CredentialVault
             var accessTokenInChars = new char[credentialObject.CredentialBlobSize / 2];
             Marshal.Copy(credentialObject.CredentialBlob, accessTokenInChars, 0, accessTokenInChars.Length);
 
-            SecureString accessToken = new SecureString();
+            var accessToken = new SecureString();
             for (var i = 0; i < accessTokenInChars.Length; i++)
             {
                 accessToken.AppendChar(accessTokenInChars[i]);
@@ -114,7 +114,7 @@ internal static class CredentialVault
 
             accessToken.MakeReadOnly();
 
-            PasswordCredential credential = new PasswordCredential(CredentialVaultConfiguration.CredResourceName, loginId, new NetworkCredential(string.Empty, accessToken).Password);
+            var credential = new PasswordCredential(CredentialVaultConfiguration.CredResourceName, loginId, new NetworkCredential(string.Empty, accessToken).Password);
             return credential;
         }
         finally
@@ -128,7 +128,7 @@ internal static class CredentialVault
 
     public static IEnumerable<string> GetAllSavedLoginIds()
     {
-        IntPtr ptrToCredential = IntPtr.Zero;
+        var ptrToCredential = IntPtr.Zero;
 
         try
         {
@@ -164,7 +164,7 @@ internal static class CredentialVault
             for (var i = 0; i < allCredentials.Length; i++)
             {
 #pragma warning disable CS8605 // Unboxing a possibly null value.
-                CREDENTIAL credential = (CREDENTIAL)Marshal.PtrToStructure(allCredentials[i], typeof(CREDENTIAL));
+                var credential = (CREDENTIAL)Marshal.PtrToStructure(allCredentials[i], typeof(CREDENTIAL));
 #pragma warning restore CS8605 // Unboxing a possibly null value.
                 allLoginIds.Add(credential.UserName);
             }

@@ -146,7 +146,7 @@ public class DeveloperIdProvider : IDeveloperIdProvider
         }
         catch (Exception error)
         {
-            Log.Logger()?.ReportError($"LoggedOut event signalling failed: {error}");
+            Log.Logger()?.ReportError($"LoggedOut event signaling failed: {error}");
         }
 
         return new ProviderOperationResult(ProviderOperationStatus.Success, null, "The developer account has been logged out successfully", "LogoutDeveloperId succeeded");
@@ -228,7 +228,7 @@ public class DeveloperIdProvider : IDeveloperIdProvider
                 }
                 catch (Exception error)
                 {
-                    Log.Logger()?.ReportError($"Updated event signalling failed: {error}");
+                    Log.Logger()?.ReportError($"Updated event signaling failed: {error}");
                 }
             }
             catch (InvalidOperationException)
@@ -252,7 +252,7 @@ public class DeveloperIdProvider : IDeveloperIdProvider
             }
             catch (Exception error)
             {
-                Log.Logger()?.ReportError($"LoggedIn event signalling failed: {error}");
+                Log.Logger()?.ReportError($"LoggedIn event signaling failed: {error}");
             }
         }
 
@@ -269,7 +269,7 @@ public class DeveloperIdProvider : IDeveloperIdProvider
             };
             var user = gitHubClient.User.Current().Result;
 
-            DeveloperId developerId = new (user.Login, user.Email, user.Url, user.Name, gitHubClient);
+            DeveloperId developerId = new (user.Login, user.Name, user.Email, user.Url, gitHubClient);
 
             lock (DeveloperIdsLock)
             {
@@ -294,9 +294,8 @@ public class DeveloperIdProvider : IDeveloperIdProvider
 
     public AdaptiveCardSessionResult GetLoginAdaptiveCardSession()
     {
-        var loginEntryPoint = string.Empty;
         Log.Logger()?.ReportInfo($"GetAdaptiveCardController");
-        return new AdaptiveCardSessionResult(new LoginUIController(loginEntryPoint));
+        return new AdaptiveCardSessionResult(new LoginUIController());
     }
 
     public void Dispose()

@@ -8,14 +8,11 @@ using Windows.Foundation;
 namespace GitHubExtension.DeveloperId;
 internal class LoginUIController : IExtensionAdaptiveCardSession
 {
-    // _loginEntryPoint stores the calling component on Dev Home (like "Settings", "SetupTool" etc).
-    private readonly string _loginEntryPoint;
     private IExtensionAdaptiveCard? _loginUI;
     private static readonly LoginUITemplate _loginUITemplate = new ();
 
-    public LoginUIController(string loginEntryPoint)
+    public LoginUIController()
     {
-        _loginEntryPoint = loginEntryPoint;
     }
 
     public void Dispose()
@@ -54,7 +51,7 @@ internal class LoginUIController : IExtensionAdaptiveCardSession
                         if (devId != null)
                         {
                             var resourceLoader = new ResourceLoader(ResourceLoader.GetDefaultResourceFilePath(), "GitHubExtension/Resources");
-                            operationResult = _loginUI.Update(_loginUITemplate.GetLoginUITemplate(LoginUIState.LoginSucceededPage).Replace("${message}", $"{devId.LoginId} {resourceLoader.GetString("LoginUI_LoginSuccededPage_text")}"), null, LoginUIState.LoginSucceededPage);
+                            operationResult = _loginUI.Update(_loginUITemplate.GetLoginUITemplate(LoginUIState.LoginSucceededPage).Replace("${message}", $"{devId.LoginId} {resourceLoader.GetString("LoginUI_LoginSucceededPage_text")}"), null, LoginUIState.LoginSucceededPage);
                         }
                         else
                         {

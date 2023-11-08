@@ -6,6 +6,7 @@ using System.Text.Json.Nodes;
 using System.Text.Json.Serialization;
 using GitHubExtension.DataManager;
 using GitHubExtension.Helpers;
+using GitHubExtension.Widgets.Enums;
 using Microsoft.Windows.Widgets.Providers;
 using Octokit;
 
@@ -107,6 +108,11 @@ internal class GitHubReviewWidget : GitHubWidget
         if (DateTime.Now - LastUpdated < WidgetDataRequestMinTime)
         {
             Log.Logger()?.ReportDebug(Name, ShortId, "Data request too soon, skipping.");
+        }
+
+        if (ActivityState == WidgetActivityState.Configure)
+        {
+            return;
         }
 
         try

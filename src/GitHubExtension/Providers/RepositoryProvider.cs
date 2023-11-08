@@ -1,14 +1,12 @@
 ﻿// Copyright (c) Microsoft Corporation and Contributors
 // Licensed under the MIT license.
 
-using System.Xml.Linq;
 using GitHubExtension.Client;
 using GitHubExtension.DeveloperId;
 using GitHubExtension.Helpers;
 using Microsoft.Windows.DevHome.SDK;
 using Octokit;
 using Windows.Foundation;
-using Windows.Storage;
 using Windows.Storage.Streams;
 
 namespace GitHubExtension.Providers;
@@ -22,14 +20,9 @@ public class RepositoryProvider : IRepositoryProvider
         get; private set;
     }
 
-    public RepositoryProvider(IRandomAccessStreamReference icon)
-    {
-        Icon = icon;
-    }
-
     public RepositoryProvider()
     {
-        Icon = RandomAccessStreamReference.CreateFromUri(new Uri("https://www.GitHub.com/microsoft/devhome"));
+        Icon = RandomAccessStreamReference.CreateFromUri(new Uri("ms-appx:///GitHubExtension/Assets/GitHubLogo_Dark.png"));
     }
 
     public IAsyncOperation<RepositoryUriSupportResult> IsUriSupportedAsync(Uri uri)
@@ -71,19 +64,23 @@ public class RepositoryProvider : IRepositoryProvider
             var repositoryList = new List<IRepository>();
             try
             {
-                ApiOptions apiOptions = new ();
-                apiOptions.PageSize = 50;
-                apiOptions.PageCount = 1;
+                ApiOptions apiOptions = new ()
+                {
+                    PageSize = 50,
+                    PageCount = 1,
+                };
 
                 // Authenticate as the specified developer Id.
                 var client = DeveloperIdProvider.GetInstance().GetDeveloperIdInternal(developerId).GitHubClient;
-                RepositoryRequest request = new RepositoryRequest();
-                request.Sort = RepositorySort.Updated;
-                request.Direction = SortDirection.Descending;
-                request.Affiliation = RepositoryAffiliation.Owner;
+                var request = new RepositoryRequest
+                {
+                    Sort = RepositorySort.Updated,
+                    Direction = SortDirection.Descending,
+                    Affiliation = RepositoryAffiliation.Owner,
 
-                // Gets only public repos for the owned repos.
-                request.Visibility = RepositoryRequestVisibility.Public;
+                    // Gets only public repos for the owned repos.
+                    Visibility = RepositoryRequestVisibility.Public,
+                };
                 var getPublicReposTask = client.Repository.GetAllForCurrent(request, apiOptions);
 
                 // this is getting private org and user repos.
@@ -223,28 +220,28 @@ public class RepositoryProvider : IRepositoryProvider
             }
             catch (LibGit2Sharp.RecurseSubmodulesException recurseException)
             {
-                Providers.Log.Logger()?.ReportError("DevHomeRepository", "Could not clone all sub modules", recurseException);
-                return new ProviderOperationResult(ProviderOperationStatus.Failure, recurseException, "Could not clone all modules", recurseException.Message);
+                Providers.Log.Logger()?.ReportError("DevHomeRepository", "Could not clone all submodules.", recurseException);
+                return new ProviderOperationResult(ProviderOperationStatus.Failure, recurseException, "Could not clone all submodules.", recurseException.Message);
             }
             catch (LibGit2Sharp.UserCancelledException userCancelledException)
             {
-                Providers.Log.Logger()?.ReportError("DevHomeRepository", "The user stoped the clone operation", userCancelledException);
-                return new ProviderOperationResult(ProviderOperationStatus.Failure, userCancelledException, "User cancalled the operation", userCancelledException.Message);
+                Providers.Log.Logger()?.ReportError("DevHomeRepository", "The user stopped the clone operation.", userCancelledException);
+                return new ProviderOperationResult(ProviderOperationStatus.Failure, userCancelledException, "User cancelled the clone operation.", userCancelledException.Message);
             }
             catch (LibGit2Sharp.NameConflictException nameConflictException)
             {
                 Providers.Log.Logger()?.ReportError("DevHomeRepository", nameConflictException);
-                return new ProviderOperationResult(ProviderOperationStatus.Failure, nameConflictException, "The location exists and is non-empty", nameConflictException.Message);
+                return new ProviderOperationResult(ProviderOperationStatus.Failure, nameConflictException, "The destination location is non-empty.", nameConflictException.Message);
             }
             catch (LibGit2Sharp.LibGit2SharpException libGitTwoException)
             {
-                Providers.Log.Logger()?.ReportError("DevHomeRepository", $"Either no logged in account has access to this repo, or the repo can't be found", libGitTwoException);
-                return new ProviderOperationResult(ProviderOperationStatus.Failure, libGitTwoException, "LigGit2 threw an exception", "LibGit2 Threw an exception");
+                Providers.Log.Logger()?.ReportError("DevHomeRepository", $"Either no logged in account has access to this repository, or the repository can't be found.", libGitTwoException);
+                return new ProviderOperationResult(ProviderOperationStatus.Failure, libGitTwoException, "LibGit2 library threw an exception.", "LibGit2 library threw an exception.");
             }
             catch (Exception e)
             {
-                Providers.Log.Logger()?.ReportError("DevHomeRepository", "Could not clone the repository", e);
-                return new ProviderOperationResult(ProviderOperationStatus.Failure, e, "Something happened when cloning the repo", "something happened when cloning the repo");
+                Providers.Log.Logger()?.ReportError("DevHomeRepository", "Could not clone the repository.", e);
+                return new ProviderOperationResult(ProviderOperationStatus.Failure, e, "Something happened when cloning the repository.", "Something happened when cloning the repository.");
             }
 
             return new ProviderOperationResult(ProviderOperationStatus.Success, new ArgumentException("Nothing wrong"), "Nothing wrong", "Nothing wrong");

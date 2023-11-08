@@ -18,4 +18,14 @@ public enum WidgetAction
     /// Action to initiate the user Sign-In.
     /// </summary>
     SignIn,
+
+    /// <summary>
+    /// Action to save after configuration.
+    /// </summary>
+    Save,
+
+    /// <summary>
+    /// Action to discard configuration changes and leave configuration flow.
+    /// </summary>
+    Cancel,
 }

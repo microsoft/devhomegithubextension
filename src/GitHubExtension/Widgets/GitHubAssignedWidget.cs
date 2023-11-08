@@ -6,6 +6,7 @@ using System.Text.Json.Nodes;
 using System.Text.Json.Serialization;
 using GitHubExtension.DataManager;
 using GitHubExtension.Helpers;
+using GitHubExtension.Widgets.Enums;
 using Microsoft.Windows.Widgets.Providers;
 using Octokit;
 
@@ -71,6 +72,8 @@ internal class GitHubAssignedWidget : GitHubWidget
         set => SetState(EnumHelper.SearchCategoryToString(value));
     }
 
+    private SearchCategory? savedShowCategory;
+
     private string assignedToName = string.Empty;
 
     private string AssignedToName
@@ -123,6 +126,10 @@ internal class GitHubAssignedWidget : GitHubWidget
             if (dataObject != null && dataObject.ShowCategory != null)
             {
                 ShowCategory = EnumHelper.StringToSearchCategory(dataObject.ShowCategory);
+
+                // If we got here during the customization flow, we need to LoadContentData again
+                // so we can show the loading page rather than stale data.
+                LoadContentData();
                 UpdateActivityState();
             }
         }
@@ -178,6 +185,11 @@ internal class GitHubAssignedWidget : GitHubWidget
         if (DateTime.Now - LastUpdated < WidgetDataRequestMinTime)
         {
             Log.Logger()?.ReportDebug(Name, ShortId, "Data request too soon, skipping.");
+        }
+
+        if (ActivityState == WidgetActivityState.Configure)
+        {
+            return;
         }
 
         try
@@ -315,6 +327,7 @@ internal class GitHubAssignedWidget : GitHubWidget
         var configurationData = new JsonObject
         {
             { "showCategory", EnumHelper.SearchCategoryToString(ShowCategory == SearchCategory.Unknown ? SearchCategory.IssuesAndPullRequests : ShowCategory) },
+            { "savedShowCategory", savedShowCategory != null ? "savedShowCategory" : string.Empty },
             { "configuring", true },
         };
         return configurationData.ToJsonString();
@@ -329,6 +342,12 @@ internal class GitHubAssignedWidget : GitHubWidget
             LoadContentData(results);
             UpdateActivityState();
         }
+    }
+
+    public override void OnCustomizationRequested(WidgetCustomizationRequestedArgs customizationRequestedArgs)
+    {
+        savedShowCategory = ShowCategory;
+        SetConfigure();
     }
 }
 

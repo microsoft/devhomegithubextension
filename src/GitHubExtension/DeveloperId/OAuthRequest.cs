@@ -90,7 +90,7 @@ internal class OAuthRequest : IDisposable
         var queryString = authorizationResponse.Query;
 
         // Parse the query string variables into a NameValueCollection.
-        NameValueCollection queryStringCollection = HttpUtility.ParseQueryString(queryString);
+        var queryStringCollection = HttpUtility.ParseQueryString(queryString);
 
         if (!string.IsNullOrEmpty(queryStringCollection.Get("error")))
         {
@@ -133,7 +133,7 @@ internal class OAuthRequest : IDisposable
         }
 
         var newUser = gitHubClient.User.Current().Result;
-        DeveloperId developerId = new (newUser.Login, newUser.Email, newUser.Url, newUser.Name, gitHubClient);
+        DeveloperId developerId = new (newUser.Login, newUser.Name, newUser.Email, newUser.Url, gitHubClient);
 
         return developerId;
     }
@@ -144,7 +144,7 @@ internal class OAuthRequest : IDisposable
         var queryString = authorizationResponse.Query;
 
         // Parse the query string variables into a NameValueCollection.
-        NameValueCollection queryStringCollection = HttpUtility.ParseQueryString(queryString);
+        var queryStringCollection = HttpUtility.ParseQueryString(queryString);
 
         var state = queryStringCollection.Get("state");
 
