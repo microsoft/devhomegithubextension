@@ -116,17 +116,6 @@ public class DeveloperIdProvider : IDeveloperIdProvider
 
             Log.Logger()?.ReportInfo($"{developerId.LoginId} logged in with PAT flow to {developerId.GetHostAddress()}");
 
-            if (developerId is null)
-            {
-                Log.Logger()?.ReportError($"Invalid DeveloperId");
-                throw new InvalidOperationException("Invalid DeveloperId");
-            }
-
-            lock (DeveloperIdsLock)
-            {
-                DeveloperIds.Add(developerId);
-            }
-
             return developerId;
         }
         catch (Exception ex)
@@ -301,6 +290,8 @@ public class DeveloperIdProvider : IDeveloperIdProvider
         }
 
         SaveOrOverwriteDeveloperId(newDeveloperId, accessToken);
+
+        Log.Logger()?.ReportInfo($"{newDeveloperId.LoginId} logged in with OAuth flow to {newDeveloperId.GetHostAddress()}");
 
         return newDeveloperId;
     }
