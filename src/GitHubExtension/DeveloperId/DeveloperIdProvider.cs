@@ -52,9 +52,15 @@ public class DeveloperIdProvider : IDeveloperIdProvider
         lock (DeveloperIdsLock)
         {
             DeveloperIds ??= new List<DeveloperId>();
-
-            // Retrieve and populate Logged in DeveloperIds from previous launch.
-            RestoreDeveloperIds(CredentialVault.GetAllSavedLoginIds());
+            try
+            {
+                // Retrieve and populate Logged in DeveloperIds from previous launch.
+                RestoreDeveloperIds(CredentialVault.GetAllSavedLoginIds());
+            }
+            catch (Exception error)
+            {
+                Log.Logger()?.ReportError($"Error while restoring DeveloperIds: {error.Message}. Proceeding without restoring.");
+            }
         }
     }
 
