@@ -83,8 +83,15 @@ public class GitHubClientProvider
 
         if (logRateLimit)
         {
-            var miscRateLimit = await client.RateLimit.GetRateLimits();
-            Log.Logger()?.ReportInfo($"Rate Limit:  Remaining: {miscRateLimit.Resources.Core.Remaining}  Total: {miscRateLimit.Resources.Core.Limit}  Resets: {miscRateLimit.Resources.Core.Reset.ToStringInvariant()}");
+            try
+            {
+                var miscRateLimit = await client.RateLimit.GetRateLimits();
+                Log.Logger()?.ReportInfo($"Rate Limit:  Remaining: {miscRateLimit.Resources.Core.Remaining}  Total: {miscRateLimit.Resources.Core.Limit}  Resets: {miscRateLimit.Resources.Core.Reset.ToStringInvariant()}");
+            }
+            catch (Exception ex)
+            {
+                Log.Logger()?.ReportInfo($"Rate limiting not enabled for server: {ex.Message}");
+            }
         }
 
         return client;

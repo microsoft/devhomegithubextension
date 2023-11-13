@@ -1,6 +1,7 @@
 ﻿// Copyright (c) Microsoft Corporation and Contributors
 // Licensed under the MIT license.
 
+using System.Net;
 using System.Security;
 using Microsoft.UI;
 using Microsoft.Windows.DevHome.SDK;
@@ -55,7 +56,7 @@ public class DeveloperIdProvider : IDeveloperIdProvider
             try
             {
                 // Retrieve and populate Logged in DeveloperIds from previous launch.
-                RestoreDeveloperIds(CredentialVault.GetAllSavedLoginIds());
+                RestoreDeveloperIds(CredentialVault.GetAllSavedLoginIdsOrUrls());
             }
             catch (Exception error)
             {
@@ -109,7 +110,7 @@ public class DeveloperIdProvider : IDeveloperIdProvider
         }).AsAsyncOperation();
     }
 
-    private DeveloperId LoginNewDeveloperIdWithPAT(Uri hostAddress, SecureString personalAccessToken)
+    public DeveloperId LoginNewDeveloperIdWithPAT(Uri hostAddress, SecureString personalAccessToken)
     {
         try
         {
@@ -247,7 +248,7 @@ public class DeveloperIdProvider : IDeveloperIdProvider
             try
             {
                 // Save the credential to Credential Vault.
-                CredentialVault.SaveAccessTokenToVault(duplicateDeveloperIds.Single().LoginId, accessToken);
+                CredentialVault.SaveAccessTokenToVault(duplicateDeveloperIds.Single().Url, accessToken);
 
                 try
                 {
@@ -302,14 +303,20 @@ public class DeveloperIdProvider : IDeveloperIdProvider
         return newDeveloperId;
     }
 
-    private void RestoreDeveloperIds(IEnumerable<string> loginIds)
+    private void RestoreDeveloperIds(IEnumerable<string> loginIdsAndUrls)
     {
-        foreach (var loginId in loginIds)
+        foreach (var loginIdOrUrl in loginIdsAndUrls)
         {
-            var gitHubClient = new GitHubClient(new ProductHeaderValue(Constants.DEV_HOME_APPLICATION_NAME))
+            var isUrl = loginIdOrUrl.Contains('/');
+
+            // For loginIds without URL, use GitHub.com as default.
+            var hostAddress = isUrl ? new Uri(loginIdOrUrl) : new Uri(Constants.GITHUB_COM_URL);
+
+            GitHubClient gitHubClient = new (new ProductHeaderValue(Constants.DEV_HOME_APPLICATION_NAME), hostAddress)
             {
-                Credentials = new Credentials(CredentialVault.GetCredentialFromLocker(loginId).Password),
+                Credentials = new (CredentialVault.GetCredentialFromLocker(loginIdOrUrl).Password),
             };
+
             var user = gitHubClient.User.Current().Result;
 
             DeveloperId developerId = new (user.Login, user.Name, user.Email, user.Url, gitHubClient);
@@ -319,7 +326,24 @@ public class DeveloperIdProvider : IDeveloperIdProvider
                 DeveloperIds.Add(developerId);
             }
 
-            Log.Logger()?.ReportInfo($"Restored DeveloperId");
+            Log.Logger()?.ReportInfo($"Restored DeveloperId {user.Url}");
+
+            // If loginId is currently used to save credential, remove it, and use URL instead.
+            if (!isUrl)
+            {
+                try
+                {
+                    CredentialVault.SaveAccessTokenToVault(
+                        user.Url,
+                        new NetworkCredential(string.Empty, CredentialVault.GetCredentialFromLocker(loginIdOrUrl).Password).SecurePassword);
+                    CredentialVault.RemoveAccessTokenFromVault(loginIdOrUrl);
+                    Log.Logger()?.ReportInfo($"Replaced {loginIdOrUrl} with {user.Url} in CredentialManager");
+                }
+                catch (Exception error)
+                {
+                    Log.Logger()?.ReportError($"Error while replacing {loginIdOrUrl} with {user.Url} in CredentialManager: {error.Message}");
+                }
+            }
         }
 
         return;

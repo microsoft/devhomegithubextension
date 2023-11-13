@@ -126,7 +126,7 @@ internal static class CredentialVault
         }
     }
 
-    public static IEnumerable<string> GetAllSavedLoginIds()
+    public static IEnumerable<string> GetAllSavedLoginIdsOrUrls()
     {
         var ptrToCredential = IntPtr.Zero;
 
