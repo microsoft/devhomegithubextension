@@ -41,13 +41,22 @@ internal class LoginUIController : IExtensionAdaptiveCardSession
             {
                 case LoginUIState.LoginPage:
                 {
-                    // Inputs are validated at this point.
-                    _loginUI.Update(_loginUITemplate.GetLoginUITemplate(LoginUIState.WaitingPage), null, LoginUIState.WaitingPage);
-                    Log.Logger()?.ReportDebug($"inputs: {inputs}");
-
                     try
                     {
-                        var devId = await (DeveloperIdProvider.GetInstance() as DeveloperIdProvider).LoginNewDeveloperIdAsync();
+                        // If there is already a developer id, we should block another login.
+                        if (DeveloperIdProvider.GetInstance().GetLoggedInDeveloperIdsInternal().Any())
+                        {
+                            Log.Logger()?.ReportInfo($"DeveloperId {DeveloperIdProvider.GetInstance().GetLoggedInDeveloperIdsInternal().First().LoginId} already exists. Blocking login.");
+                            _loginUI.Update(_loginUITemplate.GetLoginUITemplate(LoginUIState.LoginFailedPage), null, LoginUIState.LoginFailedPage);
+                            operationResult = new ProviderOperationResult(ProviderOperationStatus.Failure, null, "Only one DeveloperId can be logged in at a time", "One DeveloperId already exists");
+                            break;
+                        }
+
+                        // Inputs are validated at this point.
+                        _loginUI.Update(_loginUITemplate.GetLoginUITemplate(LoginUIState.WaitingPage), null, LoginUIState.WaitingPage);
+                        Log.Logger()?.ReportDebug($"inputs: {inputs}");
+
+                        var devId = await DeveloperIdProvider.GetInstance().LoginNewDeveloperIdAsync();
                         if (devId != null)
                         {
                             var resourceLoader = new ResourceLoader(ResourceLoader.GetDefaultResourceFilePath(), "GitHubExtension/Resources");
