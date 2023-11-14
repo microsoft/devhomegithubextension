@@ -1,6 +1,8 @@
 ﻿// Copyright (c) Microsoft Corporation and Contributors
 // Licensed under the MIT license.
 
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using Microsoft.Windows.ApplicationModel.Resources;
 using Microsoft.Windows.DevHome.SDK;
 using Windows.Foundation;
@@ -277,6 +279,238 @@ internal class LoginUIController : IExtensionAdaptiveCardSession
 }
 ";
 
+            var enterpriseServerPage = @"
+{
+    ""type"": ""AdaptiveCard"",
+    ""body"": [
+        {
+            ""type"": ""ColumnSet"",
+            ""spacing"": ""Large"",
+            ""columns"": [
+                {
+                    ""type"": ""Column"",
+                    ""items"": [
+                        {
+                            ""type"": ""Image"",
+                            ""style"": ""Person"",
+                            ""url"": ""https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png"",
+                            ""size"": ""Small"",
+                            ""horizontalAlignment"": ""Center"",
+                            ""spacing"": ""None""
+                        },
+                        {
+                            ""type"": ""TextBlock"",
+                            ""weight"": ""Bolder"",
+                            ""text"": ""GitHub"",
+                            ""wrap"": true,
+                            ""horizontalAlignment"": ""Center"",
+                            ""spacing"": ""Small"",
+                            ""size"": ""Large""
+                        },
+                        {
+                            ""type"": ""TextBlock"",
+                            ""text"": ""Enterprise Server"",
+                            ""wrap"": true,
+                            ""horizontalAlignment"": ""Center"",
+                            ""spacing"": ""None"",
+                            ""size"": ""Small""
+                        },
+                        {
+                            ""type"": ""TextBlock"",
+                            ""text"": """",
+                            ""wrap"": true,
+                            ""spacing"": ""Large"",
+                            ""horizontalAlignment"": ""Center"",
+                            ""isSubtle"": true
+                        }
+                    ],
+                    ""width"": ""stretch"",
+                    ""separator"": true,
+                    ""spacing"": ""Medium""
+                }
+            ]
+        },
+        {
+            ""type"": ""Input.Text"",
+            ""placeholder"": ""Enter server address here"",
+            ""id"": ""EnterpriseServer"",
+            ""style"": ""Url"",
+            ""isRequired"": true,
+            ""spacing"": ""ExtraLarge""
+        },
+        {
+            ""type"": ""ColumnSet"",
+            ""horizontalAlignment"": ""Center"",
+            ""height"": ""stretch"",
+            ""columns"": [
+                {
+                    ""type"": ""Column"",
+                    ""width"": ""stretch"",
+                    ""items"": [
+                        {
+                            ""type"": ""ActionSet"",
+                            ""actions"": [
+                                {
+                                    ""type"": ""Action.Submit"",
+                                    ""title"": ""Cancel"",
+                                    ""id"": ""Cancel"",
+                                    ""role"": ""Button""
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    ""type"": ""Column"",
+                    ""width"": ""stretch"",
+                    ""items"": [
+                        {
+                            ""type"": ""ActionSet"",
+                            ""actions"": [
+                                {
+                                    ""type"": ""Action.Submit"",
+                                    ""title"": ""Next"",
+                                    ""id"": ""Next"",
+                                    ""style"": ""positive"",
+                                    ""role"": ""Button""
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ],
+            ""spacing"": ""Small""
+        }
+    ],
+    ""$schema"": ""http://adaptivecards.io/schemas/adaptive-card.json"",
+    ""version"": ""1.5"",
+    ""minHeight"": ""350px"",
+    ""verticalContentAlignment"": ""Top"",
+    ""rtl"": false
+}
+";
+
+            var enterpriseServerPATPage = @"
+{
+    ""type"": ""AdaptiveCard"",
+    ""body"": [
+        {
+            ""type"": ""ColumnSet"",
+            ""spacing"": ""Large"",
+            ""columns"": [
+                {
+                    ""type"": ""Column"",
+                    ""items"": [
+                        {
+                            ""type"": ""Image"",
+                            ""style"": ""Person"",
+                            ""url"": ""https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png"",
+                            ""size"": ""Small"",
+                            ""horizontalAlignment"": ""Center"",
+                            ""spacing"": ""None""
+                        },
+                        {
+                            ""type"": ""TextBlock"",
+                            ""weight"": ""Bolder"",
+                            ""text"": ""GitHub"",
+                            ""wrap"": true,
+                            ""horizontalAlignment"": ""Center"",
+                            ""spacing"": ""Small"",
+                            ""size"": ""Large""
+                        },
+                        {
+                            ""type"": ""TextBlock"",
+                            ""text"": ""Enterprise Server"",
+                            ""wrap"": true,
+                            ""horizontalAlignment"": ""Center"",
+                            ""spacing"": ""None"",
+                            ""size"": ""Small""
+                        }
+                    ],
+                    ""width"": ""stretch"",
+                    ""separator"": true,
+                    ""spacing"": ""Medium""
+                }
+            ]
+        },
+        {
+            ""type"": ""RichTextBlock"",
+            ""inlines"": [
+                {
+                    ""type"": ""TextRun"",
+                    ""text"": ""Please enter your Personal Access Token (PAT) to connect to <server>. To create a new PAT, ""
+                },
+                {
+                    ""type"": ""TextRun"",
+                    ""text"": ""click here."",
+                    ""selectAction"": {
+                        ""type"": ""Action.OpenUrl"",
+                        ""url"": ""https://adaptivecards.io""
+                    }
+                }
+            ]
+        },
+        {
+            ""type"": ""Input.Text"",
+            ""placeholder"": ""Enter personal access token"",
+            ""id"": ""EnterpriseServer"",
+            ""style"": ""Url"",
+            ""isRequired"": true,
+            ""spacing"": ""Large"",
+            ""errorMessage"": ""Invalid Url""
+        },
+        {
+            ""type"": ""ColumnSet"",
+            ""horizontalAlignment"": ""Center"",
+            ""height"": ""stretch"",
+            ""columns"": [
+                {
+                    ""type"": ""Column"",
+                    ""width"": ""stretch"",
+                    ""items"": [
+                        {
+                            ""type"": ""ActionSet"",
+                            ""actions"": [
+                                {
+                                    ""type"": ""Action.Submit"",
+                                    ""title"": ""Cancel"",
+                                    ""id"": ""Cancel"",
+                                    ""role"": ""Button""
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    ""type"": ""Column"",
+                    ""width"": ""stretch"",
+                    ""items"": [
+                        {
+                            ""type"": ""ActionSet"",
+                            ""actions"": [
+                                {
+                                    ""type"": ""Action.Submit"",
+                                    ""title"": ""Connect"",
+                                    ""id"": ""Connect"",
+                                    ""style"": ""positive"",
+                                    ""role"": ""Button""
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ],
+            ""spacing"": ""Small""
+        }
+    ],
+    ""$schema"": ""http://adaptivecards.io/schemas/adaptive-card.json"",
+    ""version"": ""1.5"",
+    ""minHeight"": ""350px"",
+    ""verticalContentAlignment"": ""Top"",
+    ""rtl"": false
+}
+";
+
             var waitingPage = @"
 {
     ""type"": ""AdaptiveCard"",
@@ -367,6 +601,16 @@ internal class LoginUIController : IExtensionAdaptiveCardSession
                     return loginPage;
                 }
 
+                case LoginUIState.EnterpriseServerPage:
+                {
+                    return enterpriseServerPage;
+                }
+
+                case LoginUIState.EnterpriseServerPATPage:
+                {
+                    return enterpriseServerPATPage;
+                }
+
                 case LoginUIState.WaitingPage:
                 {
                     return waitingPage;
@@ -390,10 +634,38 @@ internal class LoginUIController : IExtensionAdaptiveCardSession
         }
     }
 
+    private class LoginPageActionPayload
+    {
+        public string? Style
+        {
+            get; set;
+        }
+
+        public string? Title
+        {
+            get; set;
+        }
+
+        public string? Type
+        {
+            get; set;
+        }
+    }
+
+    private class LoginPageInputPayload
+    {
+        public string? EnterpriseServer
+        {
+            get; set;
+        }
+    }
+
     // This class cannot be an enum, since we are passing this to the core app as State parameter.
     private class LoginUIState
     {
         internal const string LoginPage = "LoginPage";
+        internal const string EnterpriseServerPage = "EnterpriseServerPage";
+        internal const string EnterpriseServerPATPage = "EnterpriseServerPATPage";
         internal const string WaitingPage = "WaitingPage";
         internal const string LoginFailedPage = "LoginFailedPage";
         internal const string LoginSucceededPage = "LoginSucceededPage";
