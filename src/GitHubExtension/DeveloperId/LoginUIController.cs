@@ -1,8 +1,10 @@
 ﻿// Copyright (c) Microsoft Corporation and Contributors
 // Licensed under the MIT license.
 
+using System.Net;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using GitHubExtension.Helpers;
 using Microsoft.Windows.ApplicationModel.Resources;
 using Microsoft.Windows.DevHome.SDK;
 using Windows.Foundation;
@@ -12,6 +14,7 @@ internal class LoginUIController : IExtensionAdaptiveCardSession
 {
     private IExtensionAdaptiveCard? _loginUI;
     private static readonly LoginUITemplate _loginUITemplate = new ();
+    private Uri? _hostAddress;
 
     public LoginUIController()
     {
@@ -46,17 +49,29 @@ internal class LoginUIController : IExtensionAdaptiveCardSession
                     try
                     {
                         // If there is already a developer id, we should block another login.
-                        if (DeveloperIdProvider.GetInstance().GetLoggedInDeveloperIdsInternal().Any())
+                        /*if (DeveloperIdProvider.GetInstance().GetLoggedInDeveloperIdsInternal().Any())
                         {
                             Log.Logger()?.ReportInfo($"DeveloperId {DeveloperIdProvider.GetInstance().GetLoggedInDeveloperIdsInternal().First().LoginId} already exists. Blocking login.");
                             _loginUI.Update(_loginUITemplate.GetLoginUITemplate(LoginUIState.LoginFailedPage), null, LoginUIState.LoginFailedPage);
                             operationResult = new ProviderOperationResult(ProviderOperationStatus.Failure, null, "Only one DeveloperId can be logged in at a time", "One DeveloperId already exists");
                             break;
-                        }
+                        }*/
 
                         // Inputs are validated at this point.
                         _loginUI.Update(_loginUITemplate.GetLoginUITemplate(LoginUIState.WaitingPage), null, LoginUIState.WaitingPage);
-                        Log.Logger()?.ReportDebug($"inputs: {inputs}");
+                        var loginPageActionPayload = JsonSerializer.Deserialize<LoginPageActionPayload>(action, new JsonSerializerOptions
+                        {
+                            PropertyNameCaseInsensitive = true,
+                        }) ?? throw new InvalidOperationException("Invalid action");
+
+                        if (loginPageActionPayload?.Id == "Enterprise")
+                        {
+                            Log.Logger()?.ReportInfo($"Show Enterprise Page");
+
+                            // Update UI with Enterprise Server page and return.
+                            operationResult = _loginUI.Update(_loginUITemplate.GetLoginUITemplate(LoginUIState.EnterpriseServerPage), null, LoginUIState.EnterpriseServerPage);
+                            break;
+                        }
 
                         var devId = await DeveloperIdProvider.GetInstance().LoginNewDeveloperIdAsync();
                         if (devId != null)
@@ -75,6 +90,84 @@ internal class LoginUIController : IExtensionAdaptiveCardSession
                     {
                         Log.Logger()?.ReportError($"Error: {ex}");
                         operationResult = new ProviderOperationResult(ProviderOperationStatus.Failure, ex, "Error occurred in login page", ex.Message);
+                        _loginUI.Update(_loginUITemplate.GetLoginUITemplate(LoginUIState.LoginFailedPage), null, LoginUIState.LoginFailedPage);
+                    }
+
+                    break;
+                }
+
+                case LoginUIState.EnterpriseServerPage:
+                {
+                    Log.Logger()?.ReportDebug($"inputs: {inputs}");
+                    var enterprisePageInputPayload = JsonSerializer.Deserialize<EnterprisePageInputPayload>(inputs, new JsonSerializerOptions
+                    {
+                        PropertyNameCaseInsensitive = true,
+                    }) ?? throw new InvalidOperationException("Invalid inputs");
+                    Log.Logger()?.ReportInfo($"EnterpriseServer: {enterprisePageInputPayload?.EnterpriseServer}");
+
+                    // TODO: Validate inputs. Check that server is reachable
+                    if (enterprisePageInputPayload?.EnterpriseServer == null)
+                    {
+                        Log.Logger()?.ReportError($"EnterpriseServer is null");
+                        operationResult = new ProviderOperationResult(ProviderOperationStatus.Failure, null, "EnterpriseServer is null", "EnterpriseServer is null");
+                        break;
+                    }
+
+                    _hostAddress = new Uri(enterprisePageInputPayload.EnterpriseServer);
+
+                    if (false/* server unreachable using Octokit */)
+                    {
+#pragma warning disable CS0162 // Unreachable code detected
+                        Log.Logger()?.ReportError($"{enterprisePageInputPayload?.EnterpriseServer} isn't a valid GHES endpoint");
+#pragma warning restore CS0162 // Unreachable code detected
+                    }
+                    else
+                    {
+                        // Update the PAT page with the server input
+                        operationResult = _loginUI.Update(_loginUITemplate.GetLoginUITemplate(LoginUIState.EnterpriseServerPATPage), null, LoginUIState.EnterpriseServerPATPage);
+                    }
+
+                    break;
+                }
+
+                case LoginUIState.EnterpriseServerPATPage:
+                {
+                    Log.Logger()?.ReportDebug($"inputs: {inputs}");
+                    var enterprisePATPageInputPayload = JsonSerializer.Deserialize<EnterprisePATPageInputPayload>(inputs, new JsonSerializerOptions
+                    {
+                        PropertyNameCaseInsensitive = true,
+                    }) ?? throw new InvalidOperationException("Invalid inputs");
+                    Log.Logger()?.ReportInfo($"PAT Received");
+
+                    if (enterprisePATPageInputPayload?.PAT == null)
+                    {
+                        Log.Logger()?.ReportError($"PAT is null");
+                        operationResult = new ProviderOperationResult(ProviderOperationStatus.Failure, null, "PAT is null", "PAT is null");
+                        break;
+                    }
+
+                    // TODO: Call login with PAT
+                    if (_hostAddress == null)
+                    {
+                        Log.Logger()?.ReportError($"Host address is null");
+                        operationResult = new ProviderOperationResult(ProviderOperationStatus.Failure, null, "Host address is null", "Host address is null");
+                        break;
+                    }
+
+                    var securePAT = new NetworkCredential(null, enterprisePATPageInputPayload?.PAT).SecurePassword;
+                    var devId = DeveloperIdProvider.GetInstance().LoginNewDeveloperIdWithPAT(_hostAddress, securePAT);
+
+                    if (devId != null)
+                    {
+                        var resourceLoader = new ResourceLoader(ResourceLoader.GetDefaultResourceFilePath(), "GitHubExtension/Resources");
+                        operationResult = _loginUI.Update(_loginUITemplate.GetLoginUITemplate(LoginUIState.LoginSucceededPage).Replace("${message}", $"{devId.LoginId} {resourceLoader.GetString("LoginUI_LoginSucceededPage_text")}"), null, LoginUIState.LoginSucceededPage);
+                    }
+                    else
+                    {
+                        Log.Logger()?.ReportError($"PAT doesn't work for the given GHES endpoint");
+                        operationResult = new ProviderOperationResult(ProviderOperationStatus.Failure, null, "Developer Id could not be created", "Developer Id could not be created");
+
+                        // TODO: replace this with UI Update within PAT page
                         _loginUI.Update(_loginUITemplate.GetLoginUITemplate(LoginUIState.LoginFailedPage), null, LoginUIState.LoginFailedPage);
                     }
 
@@ -215,37 +308,11 @@ internal class LoginUIController : IExtensionAdaptiveCardSession
                                     ""type"": ""ActionSet"",
                                     ""actions"": [
                                         {
-                                            ""type"": ""Action.ShowCard"",
+                                            ""type"": ""Action.Submit"",
                                             ""title"": """ + $"{loader.GetString("LoginUI_LoginPage_Button2Text")}" + @""",
-                                            ""isEnabled"": false,
+                                            ""isEnabled"": true,
                                             ""tooltip"": """ + $"{loader.GetString("LoginUI_LoginPage_Button2ToolTip")}" + @""",
-                                            ""id"": ""Enterprise"",
-                                            ""card"": {
-                                                ""type"": ""AdaptiveCard"",
-                                                ""body"": [
-                                                    {
-                                                        ""type"": ""Input.Text"",
-                                                        ""placeholder"": """ + $"{loader.GetString("LoginUI_LoginPage_Button2Flyout_Text_PlaceHolder")}" + @""",
-                                                        ""style"": ""Url"",
-                                                        ""isRequired"": true,
-                                                        ""id"": ""Enterprise.server"",
-                                                        ""label"": """ + $"{loader.GetString("LoginUI_LoginPage_Button2Flyout_Text_Label")}" + @""",
-                                                        ""value"": ""github.com"",
-                                                        ""errorMessage"": """ + $"{loader.GetString("LoginUI_LoginPage_Button2Flyout_Text_ErrorMessage")}" + @"""
-                                                    },
-                                                    {
-                                                        ""type"": ""ActionSet"",
-                                                        ""actions"": [
-                                                            {
-                                                                ""type"": ""Action.Submit"",
-                                                                ""title"": """ + $"{loader.GetString("LoginUI_LoginPage_Button2Flyout_Button")}" + @""",
-                                                                ""style"": ""positive"",
-                                                                ""associatedInputs"": ""auto""
-                                                            }
-                                                        ]
-                                                    }
-                                                ]
-                                            }
+                                            ""id"": ""Enterprise""
                                         }
                                     ],
                                     ""spacing"": ""None"",
@@ -453,7 +520,7 @@ internal class LoginUIController : IExtensionAdaptiveCardSession
         {
             ""type"": ""Input.Text"",
             ""placeholder"": ""Enter personal access token"",
-            ""id"": ""EnterpriseServer"",
+            ""id"": ""PAT"",
             ""style"": ""Url"",
             ""isRequired"": true,
             ""spacing"": ""Large"",
@@ -634,9 +701,19 @@ internal class LoginUIController : IExtensionAdaptiveCardSession
         }
     }
 
-    private class LoginPageActionPayload
+    private class ButtonClickActionPayload
     {
+        public string? Id
+        {
+            get; set;
+        }
+
         public string? Style
+        {
+            get; set;
+        }
+
+        public string? ToolTip
         {
             get; set;
         }
@@ -652,9 +729,25 @@ internal class LoginUIController : IExtensionAdaptiveCardSession
         }
     }
 
-    private class LoginPageInputPayload
+    private class LoginPageActionPayload : ButtonClickActionPayload
+    {
+    }
+
+    private class EnterprisePageActionPayload : ButtonClickActionPayload
+    {
+    }
+
+    private class EnterprisePageInputPayload
     {
         public string? EnterpriseServer
+        {
+            get; set;
+        }
+    }
+
+    private class EnterprisePATPageInputPayload
+    {
+        public string? PAT
         {
             get; set;
         }
