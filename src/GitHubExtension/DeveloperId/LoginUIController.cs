@@ -7,6 +7,7 @@ using System.Text.Json.Serialization;
 using GitHubExtension.Helpers;
 using Microsoft.Windows.ApplicationModel.Resources;
 using Microsoft.Windows.DevHome.SDK;
+using Octokit;
 using Windows.Foundation;
 
 namespace GitHubExtension.DeveloperId;
@@ -98,6 +99,20 @@ internal class LoginUIController : IExtensionAdaptiveCardSession
 
                 case LoginUIState.EnterpriseServerPage:
                 {
+                    // Check if the user clicked on Cancel button.
+                    var enterprisePageActionPayload = JsonSerializer.Deserialize<EnterprisePageActionPayload>(action, new JsonSerializerOptions
+                    {
+                        PropertyNameCaseInsensitive = true,
+                    }) ?? throw new InvalidOperationException("Invalid action");
+
+                    if (enterprisePageActionPayload?.Id == "Cancel")
+                    {
+                        Log.Logger()?.ReportInfo($"Cancel clicked");
+                        operationResult = _loginUI.Update(_loginUITemplate.GetLoginUITemplate(LoginUIState.LoginPage), null, LoginUIState.LoginPage);
+                        break;
+                    }
+
+                    // Otherwise user clicked on Next button. We should validate the inputs and update the UI with PAT page.
                     Log.Logger()?.ReportDebug($"inputs: {inputs}");
                     var enterprisePageInputPayload = JsonSerializer.Deserialize<EnterprisePageInputPayload>(inputs, new JsonSerializerOptions
                     {
@@ -105,33 +120,69 @@ internal class LoginUIController : IExtensionAdaptiveCardSession
                     }) ?? throw new InvalidOperationException("Invalid inputs");
                     Log.Logger()?.ReportInfo($"EnterpriseServer: {enterprisePageInputPayload?.EnterpriseServer}");
 
-                    // TODO: Validate inputs. Check that server is reachable
                     if (enterprisePageInputPayload?.EnterpriseServer == null)
                     {
                         Log.Logger()?.ReportError($"EnterpriseServer is null");
                         operationResult = new ProviderOperationResult(ProviderOperationStatus.Failure, null, "EnterpriseServer is null", "EnterpriseServer is null");
+
+                        // TODO: replace this with UI Update within Enterprise page
                         break;
                     }
 
-                    _hostAddress = new Uri(enterprisePageInputPayload.EnterpriseServer);
-
-                    if (false/* server unreachable using Octokit */)
+                    try
                     {
-#pragma warning disable CS0162 // Unreachable code detected
-                        Log.Logger()?.ReportError($"{enterprisePageInputPayload?.EnterpriseServer} isn't a valid GHES endpoint");
-#pragma warning restore CS0162 // Unreachable code detected
+                        _hostAddress = new Uri(enterprisePageInputPayload.EnterpriseServer);
+                        var gitHubClient = new GitHubClient(new ProductHeaderValue(Constants.DEV_HOME_APPLICATION_NAME), _hostAddress);
+
+                        // set timeout to 1 second
+                        gitHubClient.Connection.SetRequestTimeout(System.TimeSpan.FromSeconds(1));
+                        var enterpriseVersion = (await gitHubClient.Meta.GetMetadata()).InstalledVersion ?? throw new InvalidOperationException();
+
+                        // If we are able to get the version, we can assume that the endpoint is valid.
+                        Log.Logger()?.ReportInfo($"Enterprise Server version: {enterpriseVersion}");
                     }
-                    else
+                    catch (Octokit.NotFoundException nfe)
                     {
-                        // Update the PAT page with the server input
-                        operationResult = _loginUI.Update(_loginUITemplate.GetLoginUITemplate(LoginUIState.EnterpriseServerPATPage), null, LoginUIState.EnterpriseServerPATPage);
+                        Log.Logger()?.ReportError($"{_hostAddress?.OriginalString} isn't a valid GHES endpoint");
+                        operationResult = new ProviderOperationResult(ProviderOperationStatus.Failure, nfe, $"Octokit client could not be created with {_hostAddress?.OriginalString}", nfe.Message);
+
+                        // TODO: replace this with UI Update within Enterprise page
+                        break;
+                    }
+                    catch (UriFormatException ufe)
+                    {
+                        Log.Logger()?.ReportError($"Error: {ufe}");
+                        operationResult = new ProviderOperationResult(ProviderOperationStatus.Failure, ufe, $"{enterprisePageInputPayload.EnterpriseServer} isn't a valid URI", ufe.Message);
+
+                        // TODO: replace this with UI Update within Enterprise page
+                        break;
+                    }
+                    catch (Exception ex)
+                    {
+                        Log.Logger()?.ReportError($"Error: {ex}");
+                        operationResult = new ProviderOperationResult(ProviderOperationStatus.Failure, ex, $"Octokit client could not be created with {_hostAddress?.OriginalString}", ex.Message);
+                        break;
                     }
 
+                    operationResult = _loginUI.Update(_loginUITemplate.GetLoginUITemplate(LoginUIState.EnterpriseServerPATPage), null, LoginUIState.EnterpriseServerPATPage);
                     break;
                 }
 
                 case LoginUIState.EnterpriseServerPATPage:
                 {
+                    // Check if the user clicked on Cancel button.
+                    var enterprisePATPageActionPayload = JsonSerializer.Deserialize<EnterprisePATPageActionPayload>(action, new JsonSerializerOptions
+                    {
+                        PropertyNameCaseInsensitive = true,
+                    }) ?? throw new InvalidOperationException("Invalid action");
+
+                    if (enterprisePATPageActionPayload?.Id == "Cancel")
+                    {
+                        Log.Logger()?.ReportInfo($"Cancel clicked");
+                        operationResult = _loginUI.Update(_loginUITemplate.GetLoginUITemplate(LoginUIState.EnterpriseServerPage), null, LoginUIState.EnterpriseServerPage);
+                        break;
+                    }
+
                     Log.Logger()?.ReportDebug($"inputs: {inputs}");
                     var enterprisePATPageInputPayload = JsonSerializer.Deserialize<EnterprisePATPageInputPayload>(inputs, new JsonSerializerOptions
                     {
@@ -143,32 +194,45 @@ internal class LoginUIController : IExtensionAdaptiveCardSession
                     {
                         Log.Logger()?.ReportError($"PAT is null");
                         operationResult = new ProviderOperationResult(ProviderOperationStatus.Failure, null, "PAT is null", "PAT is null");
+
+                        // TODO: replace this with UI Update within Enterprise page
                         break;
                     }
 
-                    // TODO: Call login with PAT
                     if (_hostAddress == null)
                     {
+                        // This should never happen.
                         Log.Logger()?.ReportError($"Host address is null");
                         operationResult = new ProviderOperationResult(ProviderOperationStatus.Failure, null, "Host address is null", "Host address is null");
                         break;
                     }
 
                     var securePAT = new NetworkCredential(null, enterprisePATPageInputPayload?.PAT).SecurePassword;
-                    var devId = DeveloperIdProvider.GetInstance().LoginNewDeveloperIdWithPAT(_hostAddress, securePAT);
 
-                    if (devId != null)
+                    try
                     {
-                        var resourceLoader = new ResourceLoader(ResourceLoader.GetDefaultResourceFilePath(), "GitHubExtension/Resources");
-                        operationResult = _loginUI.Update(_loginUITemplate.GetLoginUITemplate(LoginUIState.LoginSucceededPage).Replace("${message}", $"{devId.LoginId} {resourceLoader.GetString("LoginUI_LoginSucceededPage_text")}"), null, LoginUIState.LoginSucceededPage);
+                        var devId = DeveloperIdProvider.GetInstance().LoginNewDeveloperIdWithPAT(_hostAddress, securePAT);
+
+                        if (devId != null)
+                        {
+                            var resourceLoader = new ResourceLoader(ResourceLoader.GetDefaultResourceFilePath(), "GitHubExtension/Resources");
+                            operationResult = _loginUI.Update(_loginUITemplate.GetLoginUITemplate(LoginUIState.LoginSucceededPage).Replace("${message}", $"{devId.LoginId} {resourceLoader.GetString("LoginUI_LoginSucceededPage_text")}"), null, LoginUIState.LoginSucceededPage);
+                        }
+                        else
+                        {
+                            Log.Logger()?.ReportError($"PAT doesn't work for GHES endpoint {_hostAddress}");
+                            operationResult = new ProviderOperationResult(ProviderOperationStatus.Failure, null, "Developer Id could not be created", "Developer Id could not be created");
+
+                            // TODO: replace this with UI Update within PAT page
+                            _loginUI.Update(_loginUITemplate.GetLoginUITemplate(LoginUIState.LoginFailedPage), null, LoginUIState.LoginFailedPage);
+                        }
                     }
-                    else
+                    catch (Exception ex)
                     {
-                        Log.Logger()?.ReportError($"PAT doesn't work for the given GHES endpoint");
-                        operationResult = new ProviderOperationResult(ProviderOperationStatus.Failure, null, "Developer Id could not be created", "Developer Id could not be created");
+                        Log.Logger()?.ReportError($"Error: {ex}");
+                        operationResult = new ProviderOperationResult(ProviderOperationStatus.Failure, ex, "Error occurred in login page", ex.Message);
 
                         // TODO: replace this with UI Update within PAT page
-                        _loginUI.Update(_loginUITemplate.GetLoginUITemplate(LoginUIState.LoginFailedPage), null, LoginUIState.LoginFailedPage);
                     }
 
                     break;
@@ -734,6 +798,10 @@ internal class LoginUIController : IExtensionAdaptiveCardSession
     }
 
     private class EnterprisePageActionPayload : ButtonClickActionPayload
+    {
+    }
+
+    private class EnterprisePATPageActionPayload : ButtonClickActionPayload
     {
     }
 
