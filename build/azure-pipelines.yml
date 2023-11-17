@@ -235,11 +235,8 @@ extends:
             - task: PublishSymbols@2
               displayName: Publish Symbols
               inputs:
-                SearchPattern: >-
-                  $(Build.SourcesDirectory)\BuildOutput\**\*.pdb
-
-                  $(Build.SourcesDirectory)\obj\**\*.r2r.ni.pdb
-                IndexSources: true
+                SearchPattern: '**/BuildOutput/**/*.pdb'
+                IndexSources: false
                 SymbolServerType: TeamServices
                 SymbolsProduct: DevHomeGitHubExtension
 
