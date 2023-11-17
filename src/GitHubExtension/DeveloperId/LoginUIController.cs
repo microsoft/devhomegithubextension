@@ -39,11 +39,17 @@ internal class LoginUIController : IExtensionAdaptiveCardSession
     {
         return Task.Run(async () =>
         {
+            if (_loginUI == null)
+            {
+                Log.Logger()?.ReportError($"_loginUI is null");
+                return new ProviderOperationResult(ProviderOperationStatus.Failure, null, "_loginUI is null", "_loginUI is null");
+            }
+
             ProviderOperationResult operationResult;
-            Log.Logger()?.ReportInfo($"OnAction() called with state:{_loginUI?.State}");
+            Log.Logger()?.ReportInfo($"OnAction() called with state:{_loginUI.State}");
             Log.Logger()?.ReportDebug($"action: {action}");
 
-            switch (_loginUI?.State)
+            switch (_loginUI.State)
             {
                 case LoginUIState.LoginPage:
                 {
@@ -179,6 +185,8 @@ internal class LoginUIController : IExtensionAdaptiveCardSession
                     if (enterprisePATPageActionPayload?.Id == "Cancel")
                     {
                         Log.Logger()?.ReportInfo($"Cancel clicked");
+
+                        // TODO: Replace Hostaddress in template with the one entered by user in Enterprise page already
                         operationResult = _loginUI.Update(_loginUITemplate.GetLoginUITemplate(LoginUIState.EnterpriseServerPage), null, LoginUIState.EnterpriseServerPage);
                         break;
                     }
@@ -251,8 +259,8 @@ internal class LoginUIController : IExtensionAdaptiveCardSession
                 case LoginUIState.WaitingPage:
                 default:
                 {
-                    Log.Logger()?.ReportError($"Unexpected state:{_loginUI?.State}");
-                    operationResult = new ProviderOperationResult(ProviderOperationStatus.Failure, null, $"Error occurred in :{_loginUI?.State}", $"Error occurred in :{_loginUI?.State}");
+                    Log.Logger()?.ReportError($"Unexpected state:{_loginUI.State}");
+                    operationResult = new ProviderOperationResult(ProviderOperationStatus.Failure, null, $"Error occurred in :{_loginUI.State}", $"Error occurred in :{_loginUI.State}");
                     break;
                 }
             }
