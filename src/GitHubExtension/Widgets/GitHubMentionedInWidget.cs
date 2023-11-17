@@ -7,6 +7,7 @@ using System.Text.Json.Serialization;
 using GitHubExtension.DataManager;
 using GitHubExtension.Helpers;
 using GitHubExtension.Widgets.Enums;
+using Microsoft.Windows.DevHome.SDK;
 using Microsoft.Windows.Widgets.Providers;
 using Octokit;
 
@@ -46,6 +47,8 @@ internal class GitHubMentionedInWidget : GitHubWidget
 
     protected static readonly new string Name = nameof(GitHubMentionedInWidget);
 
+    private readonly IDeveloperId? mentionedDeveloperId = DeveloperId.DeveloperIdProvider.GetInstance().GetLoggedInDeveloperIds().DeveloperIds.Last();
+
     private SearchCategory ShowCategory
     {
         get => EnumHelper.StringToSearchCategory(State());
@@ -55,21 +58,7 @@ internal class GitHubMentionedInWidget : GitHubWidget
 
     private SearchCategory? savedShowCategory;
 
-    private string mentionedName = string.Empty;
-
-    private string MentionedName
-    {
-        get
-        {
-            if (string.IsNullOrEmpty(mentionedName))
-            {
-                GetMentionedName();
-            }
-
-            return mentionedName;
-        }
-        set => mentionedName = value;
-    }
+    private string MentionedName => (mentionedDeveloperId != null) ? mentionedDeveloperId.LoginId : string.Empty;
 
     public GitHubMentionedInWidget()
         : base()
@@ -81,15 +70,6 @@ internal class GitHubMentionedInWidget : GitHubWidget
     ~GitHubMentionedInWidget()
     {
         GitHubSearchManager.OnResultsAvailable -= SearchManagerResultsAvailableHandler;
-    }
-
-    private void GetMentionedName()
-    {
-        var devIds = DeveloperId.DeveloperIdProvider.GetInstance().GetLoggedInDeveloperIdsInternal();
-        if ((devIds != null) && devIds.Any())
-        {
-            mentionedName = devIds.First().LoginId;
-        }
     }
 
     public override void DeleteWidget(string widgetId, string customState)
@@ -174,7 +154,13 @@ internal class GitHubMentionedInWidget : GitHubWidget
 
         try
         {
-            Log.Logger()?.ReportInfo(Name, ShortId, $"Requesting search for mentioned user {mentionedName}");
+            if (mentionedDeveloperId == null)
+            {
+                Log.Logger()?.ReportError($"MentionedDeveloperId is null");
+                return;
+            }
+
+            Log.Logger()?.ReportInfo(Name, ShortId, $"Requesting search for mentioned user {mentionedDeveloperId.LoginId}");
             var requestOptions = new RequestOptions
             {
                 ApiOptions = new ApiOptions
@@ -192,8 +178,8 @@ internal class GitHubMentionedInWidget : GitHubWidget
             };
 
             var searchManager = GitHubSearchManager.CreateInstance();
-            searchManager?.SearchForGitHubIssuesOrPRs(request, Name, ShowCategory, requestOptions);
-            Log.Logger()?.ReportInfo(Name, ShortId, $"Requested search for {mentionedName}");
+            searchManager?.SearchForGitHubIssuesOrPRs(request, Name, ShowCategory, mentionedDeveloperId, requestOptions);
+            Log.Logger()?.ReportInfo(Name, ShortId, $"Requested search for {mentionedDeveloperId?.LoginId}");
             DataState = WidgetDataState.Requested;
         }
         catch (Exception ex)
