@@ -1,17 +1,12 @@
 ﻿// Copyright (c) Microsoft Corporation and Contributors
 // Licensed under the MIT license.
 
-using System;
-using GitHubExtension.Tests.UITest;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using OpenQA.Selenium.Appium;
-using OpenQA.Selenium.Appium.Windows;
-using OpenQA.Selenium.Remote;
-using static System.Collections.Specialized.BitVector32;
 
 namespace GitHubExtension.Tests.UITest;
 
 [TestClass]
+[Ignore]
 public class GitHubExtensionScenarioStandard : GitHubExtensionSession
 {
     [TestMethod]

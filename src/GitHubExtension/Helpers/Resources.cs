@@ -32,7 +32,7 @@ public static class Resources
     // Replaces all identifiers in the provided list in the target string. Assumes all identifiers
     // are wrapped with '%' to prevent sub-string replacement errors. This is intended for strings
     // such as a JSON string with resource identifiers embedded.
-    public static string ReplaceIdentifers(string str, string[] resourceIdentifiers, Logger? log = null)
+    public static string ReplaceIdentifiers(string str, string[] resourceIdentifiers, Logger? log = null)
     {
         var start = DateTime.Now;
         foreach (var identifier in resourceIdentifiers)
@@ -96,6 +96,10 @@ public static class Resources
             "Widget_Template/PR_info",
             "Widget_Template/Updated",
             "Widget_Template/Query",
+            "Widget_Template_Button/Save",
+            "Widget_Template_Button/Cancel",
+            "Widget_Template_Tooltip/Save",
+            "Widget_Template_Tooltip/Cancel",
         };
     }
 }

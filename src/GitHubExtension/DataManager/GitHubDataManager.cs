@@ -16,6 +16,13 @@ public partial class GitHubDataManager : IGitHubDataManager, IDisposable
     private static readonly TimeSpan NotificationRetentionTime = TimeSpan.FromDays(7);
     private static readonly TimeSpan SearchRetentionTime = TimeSpan.FromDays(7);
     private static readonly TimeSpan PullRequestStaleTime = TimeSpan.FromDays(1);
+
+    // It is possible different widgets have queries which touch the same pull requests.
+    // We want to keep this window large enough that we don't delete data being used by
+    // other clients which simply haven't been updated yet but will in the near future.
+    // This is a conservative time period to check for pruning and give time for other
+    // consumers using the data to update its freshness before we remove it.
+    private static readonly TimeSpan LastObservedDeleteSpan = TimeSpan.FromMinutes(6);
     private static readonly long CheckSuiteIdDependabot = 29110;
 
     private static readonly string Name = nameof(GitHubDataManager);
@@ -417,6 +424,10 @@ public partial class GitHubDataManager : IGitHubDataManager, IDisposable
 
                 Log.Logger()?.ReportDebug(Name, $"Updated developer pull requests for {repoFullName}.");
             }
+
+            // After we update for this developer, remove all pull requests for this developer that
+            // were not observed recently.
+            PullRequest.DeleteAllByDeveloperLoginAndLastObservedBefore(DataStore, devId.LoginId, DateTime.UtcNow - LastObservedDeleteSpan);
         }
     }
 
@@ -467,6 +478,9 @@ public partial class GitHubDataManager : IGitHubDataManager, IDisposable
 
             CreatePullRequestStatus(dsPullRequest);
         }
+
+        // Remove unobserved pull requests from this repository.
+        PullRequest.DeleteLastObservedBefore(DataStore, repository.Id, DateTime.UtcNow - LastObservedDeleteSpan);
     }
 
     private void CreatePullRequestStatus(PullRequest pullRequest)
@@ -602,6 +616,9 @@ public partial class GitHubDataManager : IGitHubDataManager, IDisposable
             // were not recently updated (within the last minute), remove them from the search result.
             SearchIssue.DeleteBefore(DataStore, search, DateTime.Now - TimeSpan.FromMinutes(1));
         }
+
+        // Remove issues from this repository that were not observed recently.
+        Issue.DeleteLastObservedBefore(DataStore, repository.Id, DateTime.UtcNow - LastObservedDeleteSpan);
     }
 
     // Removes unused data from the datastore.
@@ -622,7 +639,7 @@ public partial class GitHubDataManager : IGitHubDataManager, IDisposable
         MetaData.AddOrUpdate(DataStore, LastUpdatedKeyName, DateTime.Now.ToDataStoreString());
     }
 
-    // Converts fullname -> owner, name.
+    // Converts fullName -> owner, name.
     private string[] GetOwnerAndRepositoryNameFromFullName(string fullName)
     {
         var nameSplit = fullName.Split(new[] { '/' });

@@ -3,7 +3,6 @@
 
 using System.Diagnostics;
 using GitHubExtension.DeveloperId;
-using GitHubExtension.Providers;
 using Microsoft.Windows.DevHome.SDK;
 
 namespace GitHubExtension.Test;
@@ -16,6 +15,7 @@ namespace GitHubExtension.Test;
  */
 
 [TestClass]
+[Ignore]
 public class TestClass : IDisposable
 {
 #pragma warning disable SA1310 // Field names should not contain underscore

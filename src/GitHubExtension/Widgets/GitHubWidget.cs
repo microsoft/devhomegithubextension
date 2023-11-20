@@ -44,6 +44,8 @@ public abstract class GitHubWidget : WidgetImpl
         set => SetState(value);
     }
 
+    protected string SavedRepositoryUrl { get; set; } = string.Empty;
+
     protected DateTime LastUpdated { get; set; } = DateTime.MinValue;
 
     protected DataUpdater DataUpdater { get; set; }
@@ -137,11 +139,37 @@ public abstract class GitHubWidget : WidgetImpl
                 _ = HandleSignIn();
                 break;
 
+            case WidgetAction.Save:
+                // Set loading page while we swap out the data.
+                Page = WidgetPageState.Loading;
+
+                // It might take some time to get the new data, so
+                // set data state to "unknown" so that loading page is shown.
+                DataState = WidgetDataState.Unknown;
+                UpdateWidget();
+
+                SavedRepositoryUrl = string.Empty;
+                LoadContentData();
+
+                // Reset the throttle time and force an immediate data update request.
+                LastUpdated = DateTime.MinValue;
+                RequestContentData();
+
+                SetActive();
+                break;
+
+            case WidgetAction.Cancel:
+                RepositoryUrl = SavedRepositoryUrl;
+                SetActive();
+                break;
+
             case WidgetAction.Unknown:
                 Log.Logger()?.ReportError(Name, ShortId, $"Unknown verb: {actionInvokedArgs.Verb}");
                 break;
         }
     }
+
+    public override void OnCustomizationRequested(WidgetCustomizationRequestedArgs customizationRequestedArgs) => throw new NotImplementedException();
 
     private void HandleCheckUrl(WidgetActionInvokedArgs args)
     {
@@ -207,6 +235,8 @@ public abstract class GitHubWidget : WidgetImpl
             };
 
             configurationData.Add("configuration", repositoryData);
+            configurationData.Add("savedRepositoryUrl", SavedRepositoryUrl);
+            configurationData.Add("saveEnabled", false);
 
             return configurationData.ToString();
         }
@@ -242,6 +272,8 @@ public abstract class GitHubWidget : WidgetImpl
 
                 configurationData.Add("hasConfiguration", true);
                 configurationData.Add("configuration", repositoryData);
+                configurationData.Add("savedRepositoryUrl", SavedRepositoryUrl);
+                configurationData.Add("saveEnabled", SavedRepositoryUrl != data);
             }
             catch (Exception ex)
             {
@@ -256,6 +288,7 @@ public abstract class GitHubWidget : WidgetImpl
 
                 configurationData.Add("errorMessage", ex.Message);
                 configurationData.Add("configuration", repositoryData);
+                configurationData.Add("saveEnabled", false);
 
                 return configurationData.ToString();
             }
@@ -341,7 +374,7 @@ public abstract class GitHubWidget : WidgetImpl
         {
             var path = Path.Combine(AppContext.BaseDirectory, GetTemplatePath(page));
             var template = File.ReadAllText(path, Encoding.Default) ?? throw new FileNotFoundException(path);
-            template = Resources.ReplaceIdentifers(template, Resources.GetWidgetResourceIdentifiers(), Log.Logger());
+            template = Resources.ReplaceIdentifiers(template, Resources.GetWidgetResourceIdentifiers(), Log.Logger());
             Log.Logger()?.ReportDebug(Name, ShortId, $"Caching template for {page}");
             Template[page] = template;
             return template;
@@ -433,6 +466,11 @@ public abstract class GitHubWidget : WidgetImpl
         // Only update per the update interval.
         // This is intended to be dynamic in the future.
         if (DateTime.Now - lastUpdateRequest < WidgetRefreshRate)
+        {
+            return;
+        }
+
+        if (ActivityState == WidgetActivityState.Configure)
         {
             return;
         }
