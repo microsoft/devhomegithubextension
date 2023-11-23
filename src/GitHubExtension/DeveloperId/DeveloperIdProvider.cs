@@ -166,7 +166,7 @@ public class DeveloperIdProvider : IDeveloperIdProvider
                 return new ProviderOperationResult(ProviderOperationStatus.Failure, new ArgumentNullException(nameof(developerId)), "The developer account to log out does not exist", "Unable to find DeveloperId to logout");
             }
 
-            CredentialVault.RemoveAccessTokenFromVault(developerIdToLogout.LoginId);
+            CredentialVault.RemoveAccessTokenFromVault(developerIdToLogout.Url);
             DeveloperIds?.Remove(developerIdToLogout);
         }
 
@@ -272,7 +272,7 @@ public class DeveloperIdProvider : IDeveloperIdProvider
                 DeveloperIds.Add(newDeveloperId);
             }
 
-            CredentialVault.SaveAccessTokenToVault(newDeveloperId.LoginId, accessToken);
+            CredentialVault.SaveAccessTokenToVault(newDeveloperId.Url, accessToken);
 
             try
             {

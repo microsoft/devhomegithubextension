@@ -1,6 +1,7 @@
 ﻿// Copyright (c) Microsoft Corporation and Contributors
 // Licensed under the MIT license.
 using GitHubExtension.DataModel;
+using Octokit;
 
 namespace GitHubExtension.Client;
 
@@ -216,5 +217,15 @@ public static class Validation
         }
 
         return n;
+    }
+
+    public static bool IsReachableGitHubEnterpriseServerURL(Uri server)
+    {
+        if (new EnterpriseProbe(new ProductHeaderValue(Constants.DEV_HOME_APPLICATION_NAME)).Probe(server).Result != EnterpriseProbeResult.Ok)
+        {
+            return false;
+        }
+
+        return true;
     }
 }

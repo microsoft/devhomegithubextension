@@ -207,15 +207,19 @@
   </data>
   <data name="LoginUI_LoginFailedPage_text1" xml:space="preserve">
     <value>Something went wrong :(</value>
+    <comment>Generic error text shown in LoginUI failure page</comment>
   </data>
   <data name="LoginUI_LoginFailedPage_text2" xml:space="preserve">
     <value>Please consider filing feedback</value>
+    <comment>Generic error text shown in LoginUI failure page</comment>
   </data>
   <data name="LoginUI_LoginPage_Button1Text" xml:space="preserve">
     <value>Sign in to github.com</value>
+    <comment>Button name to login to GitHub.com</comment>
   </data>
   <data name="LoginUI_LoginPage_Button1ToolTip" xml:space="preserve">
     <value>Opens the browser to log you into GitHub</value>
+    <comment>Tooltip text on mouse hover over login button</comment>
   </data>
   <data name="LoginUI_LoginPage_Button2Flyout_Button" xml:space="preserve">
     <value>Go</value>
@@ -230,22 +234,28 @@
     <value>&lt;Enter the GitHub Server link&gt;</value>
   </data>
   <data name="LoginUI_LoginPage_Button2Text" xml:space="preserve">
-    <value>Sign in to GitHub Enterprise (Coming Soon!)</value>
+    <value>Sign in to GitHub Enterprise Server</value>
+    <comment>Button name to login to GHES</comment>
   </data>
   <data name="LoginUI_LoginPage_Button2ToolTip" xml:space="preserve">
-    <value>Coming soon!</value>
+    <value>Lets you enter the host address of your GitHub Enterprise Server</value>
+    <comment>Tooltip text on mouse hover over GHES button</comment>
   </data>
   <data name="LoginUI_LoginPage_Heading" xml:space="preserve">
     <value>GitHub</value>
+    <comment>Page title</comment>
   </data>
   <data name="LoginUI_LoginPage_Subheading" xml:space="preserve">
     <value>Sign in</value>
+    <comment>Page subtitle</comment>
   </data>
   <data name="LoginUI_LoginSucceededPage_text" xml:space="preserve">
     <value>has logged in successfully! You may close this window.</value>
+    <comment>Partial text for when a user signs in successfully</comment>
   </data>
   <data name="LoginUI_WaitingPage_Text" xml:space="preserve">
     <value>Waiting for browser...</value>
+    <comment>Shown in Waiting page</comment>
   </data>
   <data name="Widget_Template.SignInRequired" xml:space="preserve">
     <value>Sign in to use this widget.</value>
@@ -365,6 +375,7 @@
   </data>
   <data name="LoginUI_WaitingPageBrowserLaunch_Text" xml:space="preserve">
     <value>Note: Browser may have launched in the background.</value>
+    <comment>Shown in Waiting page</comment>
   </data>
   <data name="WidgetTemplate_UnknownTime" xml:space="preserve">
     <value>not known</value>
@@ -415,5 +426,53 @@
   <data name="Widget_Template_Tooltip.Cancel" xml:space="preserve">
     <value>Cancel</value>
     <comment>Shown in Widget, Button tooltip</comment>
+  </data>
+  <data name="LoginUI_EnterprisePage_Button_Cancel" xml:space="preserve">
+    <value>Cancel</value>
+    <comment>LoginUI Button text</comment>
+  </data>
+  <data name="LoginUI_EnterprisePage_Button_Next" xml:space="preserve">
+    <value>Next</value>
+    <comment>LoginUI Button text</comment>
+  </data>
+  <data name="LoginUI_EnterprisePage_ErrorText" xml:space="preserve">
+    <value>Enterprise Server is not valid</value>
+    <comment>LoginUI Error text</comment>
+  </data>
+  <data name="LoginUI_EnterprisePage_Heading" xml:space="preserve">
+    <value>GitHub</value>
+    <comment>LoginUI Page Title</comment>
+  </data>
+  <data name="LoginUI_EnterprisePage_InputText_PlaceHolder" xml:space="preserve">
+    <value>Enter server address here</value>
+    <comment>LoginUI placeholder text</comment>
+  </data>
+  <data name="LoginUI_EnterprisePage_Subheading" xml:space="preserve">
+    <value>Enterprise Server</value>
+    <comment>LoginUI Page subtitle</comment>
+  </data>
+  <data name="LoginUI_EnterprisePATPage_Button_Cancel" xml:space="preserve">
+    <value>Cancel</value>
+    <comment>LoginUI Button text</comment>
+  </data>
+  <data name="LoginUI_EnterprisePATPage_Button_Connect" xml:space="preserve">
+    <value>Connect</value>
+    <comment>LoginUI Button text</comment>
+  </data>
+  <data name="LoginUI_EnterprisePATPage_ErrorText" xml:space="preserve">
+    <value>Unable to connect to the Enterprise Server</value>
+    <comment>LoginUI Button text</comment>
+  </data>
+  <data name="LoginUI_EnterprisePATPage_HighlightedText" xml:space="preserve">
+    <value>click here.</value>
+    <comment>LoginUI Instructional text with hyperlink</comment>
+  </data>
+  <data name="LoginUI_EnterprisePATPage_InputText_PlaceHolder" xml:space="preserve">
+    <value>Enter personal access token</value>
+    <comment>LoginUI placeholder text</comment>
+  </data>
+  <data name="LoginUI_EnterprisePATPage_Text" xml:space="preserve">
+    <value>Enter your Personal Access Token (PAT) to connect to ${EnterpriseServerPATPageServerUrlValue}. To create a new PAT,</value>
+    <comment>LoginUI Instructional text</comment>
   </data>
 </root>
