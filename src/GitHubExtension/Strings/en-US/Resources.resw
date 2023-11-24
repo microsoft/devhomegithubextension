@@ -435,7 +435,7 @@
     <value>Next</value>
     <comment>LoginUI Button text</comment>
   </data>
-  <data name="LoginUI_EnterprisePage_ErrorText" xml:space="preserve">
+  <data name="LoginUI_EnterprisePage_NullErrorText" xml:space="preserve">
     <value>Enterprise Server is not valid</value>
     <comment>LoginUI Error text</comment>
   </data>
@@ -459,9 +459,13 @@
     <value>Connect</value>
     <comment>LoginUI Button text</comment>
   </data>
-  <data name="LoginUI_EnterprisePATPage_ErrorText" xml:space="preserve">
-    <value>Unable to connect to the Enterprise Server</value>
-    <comment>LoginUI Button text</comment>
+  <data name="LoginUI_EnterprisePage_UriErrorText" xml:space="preserve">
+    <value>URL is invalid</value>
+    <comment>LoginUI Error text</comment>
+  </data>
+  <data name="LoginUI_EnterprisePage_UnreachableErrorText" xml:space="preserve">
+    <value>Enterprise Server is not reachable</value>
+    <comment>LoginUI Error text</comment>
   </data>
   <data name="LoginUI_EnterprisePATPage_HighlightedText" xml:space="preserve">
     <value>click here.</value>
@@ -474,5 +478,21 @@
   <data name="LoginUI_EnterprisePATPage_Text" xml:space="preserve">
     <value>Enter your Personal Access Token (PAT) to connect to ${EnterpriseServerPATPageServerUrlValue}. To create a new PAT,</value>
     <comment>LoginUI Instructional text</comment>
+  </data>
+  <data name="LoginUI_EnterprisePage_GenericErrorText" xml:space="preserve">
+    <value>Something went wrong</value>
+    <comment>LoginUI Error text</comment>
+  </data>
+  <data name="LoginUI_EnterprisePATPage_BadCredentialsErrorText" xml:space="preserve">
+    <value>PAT doesn't work for GHES endpoint</value>
+    <comment>LoginUI Error text</comment>
+  </data>
+  <data name="LoginUI_EnterprisePATPage_GenericErrorText" xml:space="preserve">
+    <value>Error:</value>
+    <comment>LoginUI Error text</comment>
+  </data>
+  <data name="LoginUI_EnterprisePATPage_NullErrorText" xml:space="preserve">
+    <value>Please enter the PAT</value>
+    <comment>LoginUI Error text</comment>
   </data>
 </root>
