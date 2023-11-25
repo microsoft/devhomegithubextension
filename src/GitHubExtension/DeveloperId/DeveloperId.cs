@@ -55,7 +55,8 @@ public class DeveloperId : IDeveloperId
             return RefreshDeveloperId();
         }
 
-        return CredentialVault.GetCredentialFromLocker(Url);
+        var credential = CredentialVault.GetInstance().GetCredentials(Url) ?? throw new InvalidOperationException("Invalid credential present for valid DeveloperId");
+        return credential;
     }
 
     public Windows.Security.Credentials.PasswordCredential RefreshDeveloperId()
@@ -63,7 +64,7 @@ public class DeveloperId : IDeveloperId
         // Setting to MaxValue, since GitHub doesn't forcibly expire tokens currently.
         CredentialExpiryTime = DateTime.MaxValue;
         DeveloperIdProvider.GetInstance().RefreshDeveloperId(this);
-        var credential = CredentialVault.GetCredentialFromLocker(Url);
+        var credential = CredentialVault.GetInstance().GetCredentials(Url) ?? throw new InvalidOperationException("Invalid credential present for valid DeveloperId");
         GitHubClient.Credentials = new (credential.Password);
         return credential;
     }

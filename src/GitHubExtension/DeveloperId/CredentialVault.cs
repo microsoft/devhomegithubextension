@@ -10,14 +10,29 @@ using Windows.Security.Credentials;
 using static GitHubExtension.DeveloperId.CredentialManager;
 
 namespace GitHubExtension.DeveloperId;
-internal static class CredentialVault
+public class CredentialVault : ICredentialVault
 {
+    private static readonly object CredentialVaultLock = new ();
+
+    // CredentialVault uses singleton pattern.
+    private static CredentialVault? singletonCredentialVault;
+
+    public static CredentialVault GetInstance()
+    {
+        lock (CredentialVaultLock)
+        {
+            singletonCredentialVault ??= new CredentialVault();
+        }
+
+        return singletonCredentialVault;
+    }
+
     private static class CredentialVaultConfiguration
     {
         public const string CredResourceName = "GitHubDevHomeExtension";
     }
 
-    internal static void SaveAccessTokenToVault(string loginId, SecureString? accessToken)
+    public void SaveCredentials(string loginId, SecureString? accessToken)
     {
         // Initialize a credential object.
         var credential = new CREDENTIAL
@@ -61,18 +76,7 @@ internal static class CredentialVault
         }
     }
 
-    internal static void RemoveAccessTokenFromVault(string loginId)
-    {
-        var targetCredentialToDelete = CredentialVaultConfiguration.CredResourceName + ": " + loginId;
-        var isCredentialDeleted = CredDelete(targetCredentialToDelete, CRED_TYPE.GENERIC, 0);
-        if (!isCredentialDeleted)
-        {
-            Log.Logger()?.ReportInfo($"Deleting credentials from Credential Manager has failed");
-            throw new Win32Exception(Marshal.GetLastWin32Error());
-        }
-    }
-
-    internal static PasswordCredential GetCredentialFromLocker(string loginId)
+    public PasswordCredential? GetCredentials(string loginId)
     {
         var credentialNameToRetrieve = CredentialVaultConfiguration.CredResourceName + ": " + loginId;
         var ptrToCredential = IntPtr.Zero;
@@ -83,7 +87,7 @@ internal static class CredentialVault
             if (!isCredentialRetrieved)
             {
                 Log.Logger()?.ReportInfo($"Retrieving credentials from Credential Manager has failed");
-                throw new Win32Exception(Marshal.GetLastWin32Error());
+                return null;
             }
 
             CREDENTIAL credentialObject;
@@ -97,25 +101,28 @@ internal static class CredentialVault
             else
             {
                 Log.Logger()?.ReportInfo("No credentials found for this DeveloperId");
-                throw new ArgumentOutOfRangeException(loginId);
+                return null;
             }
 
             var accessTokenInChars = new char[credentialObject.CredentialBlobSize / 2];
             Marshal.Copy(credentialObject.CredentialBlob, accessTokenInChars, 0, accessTokenInChars.Length);
 
-            var accessToken = new SecureString();
+            // convert accessTokenInChars to string
+            string accessTokenString = new (accessTokenInChars);
+
             for (var i = 0; i < accessTokenInChars.Length; i++)
             {
-                accessToken.AppendChar(accessTokenInChars[i]);
-
                 // Zero out characters after they are copied over from an unmanaged to managed type.
                 accessTokenInChars[i] = '\0';
             }
 
-            accessToken.MakeReadOnly();
-
-            var credential = new PasswordCredential(CredentialVaultConfiguration.CredResourceName, loginId, new NetworkCredential(string.Empty, accessToken).Password);
+            var credential = new PasswordCredential(CredentialVaultConfiguration.CredResourceName, loginId, accessTokenString);
             return credential;
+        }
+        catch (Exception)
+        {
+            Log.Logger()?.ReportInfo($"Retrieving credentials from Credential Manager has failed unexpectedly");
+            throw new Win32Exception(Marshal.GetLastWin32Error());
         }
         finally
         {
@@ -126,7 +133,18 @@ internal static class CredentialVault
         }
     }
 
-    public static IEnumerable<string> GetAllSavedLoginIdsOrUrls()
+    public void RemoveCredentials(string loginId)
+    {
+        var targetCredentialToDelete = CredentialVaultConfiguration.CredResourceName + ": " + loginId;
+        var isCredentialDeleted = CredDelete(targetCredentialToDelete, CRED_TYPE.GENERIC, 0);
+        if (!isCredentialDeleted)
+        {
+            Log.Logger()?.ReportInfo($"Deleting credentials from Credential Manager has failed");
+            throw new Win32Exception(Marshal.GetLastWin32Error());
+        }
+    }
+
+    public IEnumerable<string> GetAllCredentials()
     {
         var ptrToCredential = IntPtr.Zero;
 
@@ -177,6 +195,15 @@ internal static class CredentialVault
             {
                 CredFree(ptrToCredential);
             }
+        }
+    }
+
+    public void RemoveAllCredentials()
+    {
+        var allCredentials = GetAllCredentials();
+        foreach (var credential in allCredentials)
+        {
+            RemoveCredentials(credential);
         }
     }
 }
