@@ -1,19 +1,28 @@
 ﻿// Copyright (c) Microsoft Corporation and Contributors
 // Licensed under the MIT license.
 
+using System.Linq;
 using System.Net;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using GitHubExtension.Client;
 using GitHubExtension.DeveloperId.LoginUI;
+using GitHubExtension.Helpers;
 using Microsoft.Windows.DevHome.SDK;
 using Windows.Foundation;
 using ResourceLoader = Microsoft.Windows.ApplicationModel.Resources.ResourceLoader;
 
 namespace GitHubExtension.DeveloperId;
-internal class LoginUIController : IExtensionAdaptiveCardSession
+public class LoginUIController : IExtensionAdaptiveCardSession
 {
     private IExtensionAdaptiveCard? _loginUI;
     private Uri? _hostAddress;
+
+    public Uri HostAddress
+    {
+        get => _hostAddress ?? throw new InvalidOperationException("HostAddress is null");
+        set => _hostAddress = value;
+    }
 
     public LoginUIController()
     {
@@ -45,7 +54,6 @@ internal class LoginUIController : IExtensionAdaptiveCardSession
             ProviderOperationResult operationResult;
             Log.Logger()?.ReportInfo($"OnAction() called with state:{_loginUI.State}");
             Log.Logger()?.ReportDebug($"action: {action}");
-            var resourceLoader = new ResourceLoader(ResourceLoader.GetDefaultResourceFilePath(), "GitHubExtension/Resources");
 
             switch (_loginUI.State)
             {
@@ -63,16 +71,11 @@ internal class LoginUIController : IExtensionAdaptiveCardSession
                             }*/
 
                             // Inputs are validated at this point.
-                            var loginPageActionPayload = JsonSerializer.Deserialize<LoginPage.ActionPayload>(action, new JsonSerializerOptions
-                            {
-                                PropertyNameCaseInsensitive = true,
-                            }) ?? throw new InvalidOperationException("Invalid action");
+                            var loginPageActionPayload = CreateFromJson<LoginPage.ActionPayload>(action) ?? throw new InvalidOperationException("Invalid action");
 
-                            if (loginPageActionPayload?.Id == "Enterprise")
+                            if (loginPageActionPayload.IsEnterprise())
                             {
                                 Log.Logger()?.ReportInfo($"Show Enterprise Page");
-
-                                // Update UI with Enterprise Server page and return.
                                 operationResult = new EnterpriseServerPage(hostAddress: string.Empty, errorText: string.Empty).UpdateExtensionAdaptiveCard(_loginUI);
                                 break;
                             }
@@ -104,12 +107,10 @@ internal class LoginUIController : IExtensionAdaptiveCardSession
                 case nameof(LoginUIState.EnterpriseServerPage):
                     {
                         // Check if the user clicked on Cancel button.
-                        var enterprisePageActionPayload = JsonSerializer.Deserialize<EnterpriseServerPage.ActionPayload>(action, new JsonSerializerOptions
-                        {
-                            PropertyNameCaseInsensitive = true,
-                        }) ?? throw new InvalidOperationException("Invalid action");
+                        var enterprisePageActionPayload = CreateFromJson<EnterpriseServerPage.ActionPayload>(action)
+                                                    ?? throw new InvalidOperationException("Invalid action");
 
-                        if (enterprisePageActionPayload?.Id == "Cancel")
+                        if (enterprisePageActionPayload.IsCancelAction())
                         {
                             Log.Logger()?.ReportInfo($"Cancel clicked");
                             operationResult = new LoginPage().UpdateExtensionAdaptiveCard(_loginUI);
@@ -118,16 +119,13 @@ internal class LoginUIController : IExtensionAdaptiveCardSession
 
                         // Otherwise user clicked on Next button. We should validate the inputs and update the UI with PAT page.
                         Log.Logger()?.ReportDebug($"inputs: {inputs}");
-                        var enterprisePageInputPayload = JsonSerializer.Deserialize<EnterpriseServerPage.InputPayload>(inputs, new JsonSerializerOptions
-                        {
-                            PropertyNameCaseInsensitive = true,
-                        }) ?? throw new InvalidOperationException("Invalid inputs");
+                        var enterprisePageInputPayload = CreateFromJson<EnterpriseServerPage.InputPayload>(inputs) ?? throw new InvalidOperationException("Invalid inputs");
                         Log.Logger()?.ReportInfo($"EnterpriseServer: {enterprisePageInputPayload?.EnterpriseServer}");
 
                         if (enterprisePageInputPayload?.EnterpriseServer == null)
                         {
                             Log.Logger()?.ReportError($"EnterpriseServer is null");
-                            operationResult = new EnterpriseServerPage(hostAddress: string.Empty, errorText: $"{resourceLoader.GetString("LoginUI_EnterprisePage_NullErrorText")}").UpdateExtensionAdaptiveCard(_loginUI);
+                            operationResult = new EnterpriseServerPage(hostAddress: string.Empty, errorText: $"{Resources.GetResource("LoginUI_EnterprisePage_NullErrorText")}").UpdateExtensionAdaptiveCard(_loginUI);
                             break;
                         }
 
@@ -137,20 +135,20 @@ internal class LoginUIController : IExtensionAdaptiveCardSession
                             _hostAddress = new Uri(enterprisePageInputPayload.EnterpriseServer);
                             if (!Validation.IsReachableGitHubEnterpriseServerURL(_hostAddress))
                             {
-                                operationResult = new EnterpriseServerPage(hostAddress: _hostAddress, errorText: $"{resourceLoader.GetString("LoginUI_EnterprisePage_UnreachableErrorText")}").UpdateExtensionAdaptiveCard(_loginUI);
+                                operationResult = new EnterpriseServerPage(hostAddress: _hostAddress, errorText: $"{Resources.GetResource("LoginUI_EnterprisePage_UnreachableErrorText")}").UpdateExtensionAdaptiveCard(_loginUI);
                                 break;
                             }
                         }
                         catch (UriFormatException ufe)
                         {
                             Log.Logger()?.ReportError($"Error: {ufe}");
-                            operationResult = new EnterpriseServerPage(hostAddress: enterprisePageInputPayload.EnterpriseServer, errorText: $"{resourceLoader.GetString("LoginUI_EnterprisePage_UriErrorText")}").UpdateExtensionAdaptiveCard(_loginUI);
+                            operationResult = new EnterpriseServerPage(hostAddress: enterprisePageInputPayload.EnterpriseServer, errorText: $"{Resources.GetResource("LoginUI_EnterprisePage_UriErrorText")}").UpdateExtensionAdaptiveCard(_loginUI);
                             break;
                         }
                         catch (Exception ex)
                         {
                             Log.Logger()?.ReportError($"Error: {ex}");
-                            operationResult = new EnterpriseServerPage(hostAddress: enterprisePageInputPayload.EnterpriseServer, errorText: $"{resourceLoader.GetString("LoginUI_EnterprisePage_GenericErrorText")} : {ex}").UpdateExtensionAdaptiveCard(_loginUI);
+                            operationResult = new EnterpriseServerPage(hostAddress: enterprisePageInputPayload.EnterpriseServer, errorText: $"{Resources.GetResource("LoginUI_EnterprisePage_GenericErrorText")} : {ex}").UpdateExtensionAdaptiveCard(_loginUI);
                             break;
                         }
 
@@ -178,19 +176,16 @@ internal class LoginUIController : IExtensionAdaptiveCardSession
                         }
 
                         // Check if the user clicked on Cancel button.
-                        var enterprisePATPageActionPayload = JsonSerializer.Deserialize<EnterpriseServerPATPage.ActionPayload>(action, new JsonSerializerOptions
-                        {
-                            PropertyNameCaseInsensitive = true,
-                        }) ?? throw new InvalidOperationException("Invalid action");
+                        var enterprisePATPageActionPayload = CreateFromJson<EnterpriseServerPATPage.ActionPayload>(action) ?? throw new InvalidOperationException("Invalid action");
 
-                        if (enterprisePATPageActionPayload?.Id == "Cancel")
+                        if (enterprisePATPageActionPayload.IsCancelAction())
                         {
                             Log.Logger()?.ReportInfo($"Cancel clicked");
                             operationResult = new EnterpriseServerPage(hostAddress: _hostAddress, errorText: string.Empty).UpdateExtensionAdaptiveCard(_loginUI);
                             break;
                         }
 
-                        if (enterprisePATPageActionPayload?.Type == "Action.OpenUrl")
+                        if (enterprisePATPageActionPayload.IsUrlAction())
                         {
                             Log.Logger()?.ReportInfo($"Create PAT Link clicked");
 
@@ -234,16 +229,13 @@ internal class LoginUIController : IExtensionAdaptiveCardSession
 
                         // Otherwise user clicked on Next button. We should validate the inputs and update the UI with PAT page.
                         Log.Logger()?.ReportDebug($"inputs: {inputs}");
-                        var enterprisePATPageInputPayload = JsonSerializer.Deserialize<EnterpriseServerPATPage.InputPayload>(inputs, new JsonSerializerOptions
-                        {
-                            PropertyNameCaseInsensitive = true,
-                        }) ?? throw new InvalidOperationException("Invalid inputs");
+                        var enterprisePATPageInputPayload = CreateFromJson<EnterpriseServerPATPage.InputPayload>(inputs) ?? throw new InvalidOperationException("Invalid inputs");
                         Log.Logger()?.ReportInfo($"PAT Received");
 
                         if (enterprisePATPageInputPayload?.PAT == null)
                         {
                             Log.Logger()?.ReportError($"PAT is null");
-                            operationResult = new EnterpriseServerPATPage(hostAddress: _hostAddress, errorText: $"{resourceLoader.GetString("LoginUI_EnterprisePATPage_NullErrorText")}", inputPAT: enterprisePATPageInputPayload?.PAT).UpdateExtensionAdaptiveCard(_loginUI);
+                            operationResult = new EnterpriseServerPATPage(hostAddress: _hostAddress, errorText: $"{Resources.GetResource("LoginUI_EnterprisePATPage_NullErrorText")}", inputPAT: enterprisePATPageInputPayload?.PAT).UpdateExtensionAdaptiveCard(_loginUI);
                             break;
                         }
 
@@ -261,21 +253,21 @@ internal class LoginUIController : IExtensionAdaptiveCardSession
                             else
                             {
                                 Log.Logger()?.ReportError($"PAT doesn't work for GHES endpoint {_hostAddress.OriginalString}");
-                                operationResult = new EnterpriseServerPATPage(hostAddress: _hostAddress, errorText: $"{resourceLoader.GetString("LoginUI_EnterprisePATPage_NullErrorText")} {_hostAddress.OriginalString}", inputPAT: enterprisePATPageInputPayload?.PAT).UpdateExtensionAdaptiveCard(_loginUI);
+                                operationResult = new EnterpriseServerPATPage(hostAddress: _hostAddress, errorText: $"{Resources.GetResource("LoginUI_EnterprisePATPage_NullErrorText")} {_hostAddress.OriginalString}", inputPAT: enterprisePATPageInputPayload?.PAT).UpdateExtensionAdaptiveCard(_loginUI);
                                 break;
                             }
                         }
                         catch (Exception ex)
                         {
-                            if (ex.Message.Contains("Bad credentials"))
+                            if (ex.Message.Contains("Bad credentials") || ex.Message.Contains("Not Found"))
                             {
                                 Log.Logger()?.ReportError($"Unauthorized Error: {ex}");
-                                operationResult = new EnterpriseServerPATPage(hostAddress: _hostAddress, errorText: $"{resourceLoader.GetString("LoginUI_EnterprisePATPage_BadCredentialsErrorText")}", inputPAT: enterprisePATPageInputPayload?.PAT).UpdateExtensionAdaptiveCard(_loginUI);
+                                operationResult = new EnterpriseServerPATPage(hostAddress: _hostAddress, errorText: $"{Resources.GetResource("LoginUI_EnterprisePATPage_BadCredentialsErrorText")}", inputPAT: enterprisePATPageInputPayload?.PAT).UpdateExtensionAdaptiveCard(_loginUI);
                                 break;
                             }
 
                             Log.Logger()?.ReportError($"Error: {ex}");
-                            operationResult = new EnterpriseServerPATPage(hostAddress: _hostAddress, errorText: $"{resourceLoader.GetString("LoginUI_EnterprisePATPage_GenericErrorText")} {ex}", inputPAT: enterprisePATPageInputPayload?.PAT).UpdateExtensionAdaptiveCard(_loginUI);
+                            operationResult = new EnterpriseServerPATPage(hostAddress: _hostAddress, errorText: $"{Resources.GetResource("LoginUI_EnterprisePATPage_GenericErrorText")} {ex}", inputPAT: enterprisePATPageInputPayload?.PAT).UpdateExtensionAdaptiveCard(_loginUI);
                             break;
                         }
                     }
@@ -301,5 +293,15 @@ internal class LoginUIController : IExtensionAdaptiveCardSession
 
             return operationResult;
         }).AsAsyncOperation();
+    }
+
+    private T? CreateFromJson<T>(string json)
+    {
+        return JsonSerializer.Deserialize<T>(json, new JsonSerializerOptions
+        {
+            PropertyNameCaseInsensitive = true,
+            DefaultIgnoreCondition = JsonIgnoreCondition.Never,
+            IncludeFields = true,
+        });
     }
 }

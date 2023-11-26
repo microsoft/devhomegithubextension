@@ -31,5 +31,9 @@ internal class LoginPage : LoginUIPage
 
     internal class ActionPayload : SubmitActionPayload
     {
+        public bool IsEnterprise()
+        {
+            return this.Id == "Enterprise";
+        }
     }
 }

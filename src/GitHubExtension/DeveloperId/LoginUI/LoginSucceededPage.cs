@@ -3,6 +3,7 @@
 
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using GitHubExtension.Helpers;
 using Microsoft.Windows.DevHome.SDK;
 using ResourceLoader = Microsoft.Windows.ApplicationModel.Resources.ResourceLoader;
 
@@ -13,10 +14,9 @@ internal class LoginSucceededPage : LoginUIPage
     public LoginSucceededPage(IDeveloperId developerId)
         : base(LoginUIState.LoginSucceededPage)
     {
-        var resourceLoader = new ResourceLoader(ResourceLoader.GetDefaultResourceFilePath(), "GitHubExtension/Resources");
         Data = new LoginSucceededPageData()
         {
-            Message = $"{developerId.LoginId} {resourceLoader.GetString("LoginUI_LoginSucceededPage_text")}",
+            Message = $"{developerId.LoginId} {Resources.GetResource("LoginUI_LoginSucceededPage_text")}",
         };
     }
 

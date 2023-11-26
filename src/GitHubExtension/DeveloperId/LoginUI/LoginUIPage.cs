@@ -1,9 +1,7 @@
 ﻿// Copyright (c) Microsoft Corporation and Contributors
 // Licensed under the MIT license.
 
-using System.Text.Json;
-using System.Text.Json.Serialization;
-using GitHubExtension.DeveloperId.LoginUI;
+using GitHubExtension.Helpers;
 using Microsoft.Windows.DevHome.SDK;
 using ResourceLoader = Microsoft.Windows.ApplicationModel.Resources.ResourceLoader;
 
@@ -39,14 +37,11 @@ internal class LoginUIPage
             throw new ArgumentNullException(nameof(adaptiveCard));
         }
 
-        var x = _data?.GetJson();
-        return adaptiveCard.Update(_template, x, Enum.GetName(typeof(LoginUIState), _state));
+        return adaptiveCard.Update(_template, _data?.GetJson(), Enum.GetName(typeof(LoginUIState), _state));
     }
 
     private string GetTemplate(LoginUIState loginUIState)
     {
-        var loader = new ResourceLoader(ResourceLoader.GetDefaultResourceFilePath(), "GitHubExtension/Resources");
-
         var loginPage = @"
 {
     ""type"": ""AdaptiveCard"",
@@ -69,7 +64,7 @@ internal class LoginUIPage
                         {
                             ""type"": ""TextBlock"",
                             ""weight"": ""Bolder"",
-                            ""text"": """ + $"{loader.GetString("LoginUI_LoginPage_Heading")}" + @""",
+                            ""text"": """ + $"{Resources.GetResource("LoginUI_LoginPage_Heading")}" + @""",
                             ""wrap"": true,
                             ""horizontalAlignment"": ""Center"",
                             ""spacing"": ""Small"",
@@ -77,7 +72,7 @@ internal class LoginUIPage
                         },
                         {
                             ""type"": ""TextBlock"",
-                            ""text"": """ + $"{loader.GetString("LoginUI_LoginPage_Subheading")}" + @""",
+                            ""text"": """ + $"{Resources.GetResource("LoginUI_LoginPage_Subheading")}" + @""",
                             ""wrap"": true,
                             ""horizontalAlignment"": ""Center"",
                             ""spacing"": ""None"",
@@ -117,8 +112,8 @@ internal class LoginUIPage
                                     ""actions"": [
                                         {
                                             ""type"": ""Action.Submit"",
-                                            ""title"": """ + $"{loader.GetString("LoginUI_LoginPage_Button1Text")}" + @""",
-                                            ""tooltip"": """ + $"{loader.GetString("LoginUI_LoginPage_Button1ToolTip")}" + @""",
+                                            ""title"": """ + $"{Resources.GetResource("LoginUI_LoginPage_Button1Text")}" + @""",
+                                            ""tooltip"": """ + $"{Resources.GetResource("LoginUI_LoginPage_Button1ToolTip")}" + @""",
                                             ""style"": ""positive"",
                                             ""isEnabled"": true,
                                             ""id"": ""Personal""
@@ -151,9 +146,9 @@ internal class LoginUIPage
                                     ""actions"": [
                                         {
                                             ""type"": ""Action.Submit"",
-                                            ""title"": """ + $"{loader.GetString("LoginUI_LoginPage_Button2Text")}" + @""",
+                                            ""title"": """ + $"{Resources.GetResource("LoginUI_LoginPage_Button2Text")}" + @""",
                                             ""isEnabled"": true,
-                                            ""tooltip"": """ + $"{loader.GetString("LoginUI_LoginPage_Button2ToolTip")}" + @""",
+                                            ""tooltip"": """ + $"{Resources.GetResource("LoginUI_LoginPage_Button2ToolTip")}" + @""",
                                             ""id"": ""Enterprise""
                                         }
                                     ],
@@ -210,7 +205,7 @@ internal class LoginUIPage
                         {
                             ""type"": ""TextBlock"",
                             ""weight"": ""Bolder"",
-                            ""text"": """ + $"{loader.GetString("LoginUI_EnterprisePage_Heading")}" + @""",
+                            ""text"": """ + $"{Resources.GetResource("LoginUI_EnterprisePage_Heading")}" + @""",
                             ""wrap"": true,
                             ""horizontalAlignment"": ""Center"",
                             ""spacing"": ""Small"",
@@ -218,7 +213,7 @@ internal class LoginUIPage
                         },
                         {
                             ""type"": ""TextBlock"",
-                            ""text"": """ + $"{loader.GetString("LoginUI_EnterprisePage_Subheading")}" + @""",
+                            ""text"": """ + $"{Resources.GetResource("LoginUI_EnterprisePage_Subheading")}" + @""",
                             ""wrap"": true,
                             ""horizontalAlignment"": ""Center"",
                             ""spacing"": ""None"",
@@ -241,7 +236,7 @@ internal class LoginUIPage
         },
         {
             ""type"": ""Input.Text"",
-            ""placeholder"": """ + $"{loader.GetString("LoginUI_EnterprisePage_InputText_PlaceHolder")}" + @""",
+            ""placeholder"": """ + $"{Resources.GetResource("LoginUI_EnterprisePage_InputText_PlaceHolder")}" + @""",
             ""id"": ""EnterpriseServer"",
             ""style"": ""Url"",
             ""spacing"": ""ExtraLarge"",
@@ -271,7 +266,7 @@ internal class LoginUIPage
                             ""actions"": [
                                 {
                                     ""type"": ""Action.Submit"",
-                                    ""title"": """ + $"{loader.GetString("LoginUI_EnterprisePage_Button_Cancel")}" + @""",
+                                    ""title"": """ + $"{Resources.GetResource("LoginUI_EnterprisePage_Button_Cancel")}" + @""",
                                     ""id"": ""Cancel"",
                                     ""role"": ""Button""
                                 }
@@ -288,7 +283,7 @@ internal class LoginUIPage
                             ""actions"": [
                                 {
                                     ""type"": ""Action.Submit"",
-                                    ""title"": """ + $"{loader.GetString("LoginUI_EnterprisePage_Button_Next")}" + @""",
+                                    ""title"": """ + $"{Resources.GetResource("LoginUI_EnterprisePage_Button_Next")}" + @""",
                                     ""id"": ""Next"",
                                     ""style"": ""positive"",
                                     ""role"": ""Button""
@@ -331,7 +326,7 @@ internal class LoginUIPage
                         {
                             ""type"": ""TextBlock"",
                             ""weight"": ""Bolder"",
-                            ""text"": """ + $"{loader.GetString("LoginUI_EnterprisePage_Heading")}" + @""",
+                            ""text"": """ + $"{Resources.GetResource("LoginUI_EnterprisePage_Heading")}" + @""",
                             ""wrap"": true,
                             ""horizontalAlignment"": ""Center"",
                             ""spacing"": ""Small"",
@@ -339,7 +334,7 @@ internal class LoginUIPage
                         },
                         {
                             ""type"": ""TextBlock"",
-                            ""text"": """ + $"{loader.GetString("LoginUI_EnterprisePage_Subheading")}" + @""",
+                            ""text"": """ + $"{Resources.GetResource("LoginUI_EnterprisePage_Subheading")}" + @""",
                             ""wrap"": true,
                             ""horizontalAlignment"": ""Center"",
                             ""spacing"": ""None"",
@@ -357,11 +352,11 @@ internal class LoginUIPage
             ""inlines"": [
                 {
                     ""type"": ""TextRun"",
-                    ""text"": """ + $"{loader.GetString("LoginUI_EnterprisePATPage_Text")} " + @"""
+                    ""text"": """ + $"{Resources.GetResource("LoginUI_EnterprisePATPage_Text")} " + @"""
                 },
                 {
                     ""type"": ""TextRun"",
-                    ""text"": """ + $"{loader.GetString("LoginUI_EnterprisePATPage_HighlightedText")}" + @""",
+                    ""text"": """ + $"{Resources.GetResource("LoginUI_EnterprisePATPage_HighlightedText")}" + @""",
                     ""selectAction"": {
                         ""type"": ""Action.OpenUrl"",
                         ""url"": ""${EnterpriseServerPATPageCreatePATUrlValue}""
@@ -371,7 +366,7 @@ internal class LoginUIPage
         },
         {
             ""type"": ""Input.Text"",
-            ""placeholder"": """ + $"{loader.GetString("LoginUI_EnterprisePATPage_InputText_PlaceHolder")}" + @""",
+            ""placeholder"": """ + $"{Resources.GetResource("LoginUI_EnterprisePATPage_InputText_PlaceHolder")}" + @""",
             ""id"": ""PAT"",
             ""spacing"": ""Large"",
             ""value"": ""${EnterpriseServerPATPageInputValue}""
@@ -400,7 +395,7 @@ internal class LoginUIPage
                             ""actions"": [
                                 {
                                     ""type"": ""Action.Submit"",
-                                    ""title"": """ + $"{loader.GetString("LoginUI_EnterprisePATPage_Button_Cancel")}" + @""",
+                                    ""title"": """ + $"{Resources.GetResource("LoginUI_EnterprisePATPage_Button_Cancel")}" + @""",
                                     ""id"": ""Cancel"",
                                     ""role"": ""Button""
                                 }
@@ -417,7 +412,7 @@ internal class LoginUIPage
                             ""actions"": [
                                 {
                                     ""type"": ""Action.Submit"",
-                                    ""title"": """ + $"{loader.GetString("LoginUI_EnterprisePATPage_Button_Connect")}" + @""",
+                                    ""title"": """ + $"{Resources.GetResource("LoginUI_EnterprisePATPage_Button_Connect")}" + @""",
                                     ""id"": ""Connect"",
                                     ""style"": ""positive"",
                                     ""role"": ""Button""
@@ -444,7 +439,7 @@ internal class LoginUIPage
     ""body"": [
         {
             ""type"": ""TextBlock"",
-            ""text"": """ + $"{loader.GetString("LoginUI_WaitingPage_Text")}" + @""",
+            ""text"": """ + $"{Resources.GetResource("LoginUI_WaitingPage_Text")}" + @""",
             ""isSubtle"": false,
             ""wrap"": true,
             ""horizontalAlignment"": ""Center"",
@@ -456,7 +451,7 @@ internal class LoginUIPage
         },
         {
             ""type"" : ""TextBlock"",
-            ""text"": """ + $"{loader.GetString("LoginUI_WaitingPageBrowserLaunch_Text")}" + @""",
+            ""text"": """ + $"{Resources.GetResource("LoginUI_WaitingPageBrowserLaunch_Text")}" + @""",
             ""isSubtle"": false,
             ""horizontalAlignment"": ""Center"",
             ""weight"": ""Lighter""
@@ -496,7 +491,7 @@ internal class LoginUIPage
     ""body"": [
         {
             ""type"": ""TextBlock"",
-            ""text"": """ + $"{loader.GetString("LoginUI_LoginFailedPage_text1")}" + @""",
+            ""text"": """ + $"{Resources.GetResource("LoginUI_LoginFailedPage_text1")}" + @""",
             ""isSubtle"": false,
             ""wrap"": true,
             ""horizontalAlignment"": ""Center"",
@@ -507,7 +502,7 @@ internal class LoginUIPage
         },
         {
             ""type"": ""TextBlock"",
-            ""text"": """ + $"{loader.GetString("LoginUI_LoginFailedPage_text2")}" + @""",
+            ""text"": """ + $"{Resources.GetResource("LoginUI_LoginFailedPage_text2")}" + @""",
             ""isSubtle"": true,
             ""wrap"": true,
             ""horizontalAlignment"": ""Center"",
@@ -585,6 +580,16 @@ internal class LoginUIPage
         public string? Type
         {
             get; set;
+        }
+
+        public bool IsCancelAction()
+        {
+            return this.Id == "Cancel";
+        }
+
+        public bool IsUrlAction()
+        {
+            return this.Type == "Action.OpenUrl";
         }
     }
 }
