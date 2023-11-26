@@ -3,7 +3,6 @@
 
 using GitHubExtension.Helpers;
 using Microsoft.Windows.DevHome.SDK;
-using ResourceLoader = Microsoft.Windows.ApplicationModel.Resources.ResourceLoader;
 
 namespace GitHubExtension.DeveloperId;
 

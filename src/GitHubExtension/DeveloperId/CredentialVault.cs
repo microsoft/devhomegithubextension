@@ -2,34 +2,24 @@
 // Licensed under the MIT license.
 
 using System.ComponentModel;
-using System.Net;
 using System.Runtime.InteropServices;
 using System.Security;
-using Octokit;
 using Windows.Security.Credentials;
 using static GitHubExtension.DeveloperId.CredentialManager;
 
 namespace GitHubExtension.DeveloperId;
 public class CredentialVault : ICredentialVault
 {
-    private static readonly object CredentialVaultLock = new ();
-
-    // CredentialVault uses singleton pattern.
-    private static CredentialVault? singletonCredentialVault;
-
-    public static CredentialVault GetInstance()
-    {
-        lock (CredentialVaultLock)
-        {
-            singletonCredentialVault ??= new CredentialVault();
-        }
-
-        return singletonCredentialVault;
-    }
+    private readonly string credentialResourceName;
 
     private static class CredentialVaultConfiguration
     {
         public const string CredResourceName = "GitHubDevHomeExtension";
+    }
+
+    public CredentialVault(string applicationName = "")
+    {
+        credentialResourceName = string.IsNullOrEmpty(applicationName) ? CredentialVaultConfiguration.CredResourceName : applicationName;
     }
 
     public void SaveCredentials(string loginId, SecureString? accessToken)
@@ -38,7 +28,7 @@ public class CredentialVault : ICredentialVault
         var credential = new CREDENTIAL
         {
             Type = CRED_TYPE.GENERIC,
-            TargetName = CredentialVaultConfiguration.CredResourceName + ": " + loginId,
+            TargetName = credentialResourceName + ": " + loginId,
             UserName = loginId,
             Persist = (int)CRED_PERSIST.LocalMachine,
             AttributeCount = 0,
@@ -78,7 +68,7 @@ public class CredentialVault : ICredentialVault
 
     public PasswordCredential? GetCredentials(string loginId)
     {
-        var credentialNameToRetrieve = CredentialVaultConfiguration.CredResourceName + ": " + loginId;
+        var credentialNameToRetrieve = credentialResourceName + ": " + loginId;
         var ptrToCredential = IntPtr.Zero;
 
         try
@@ -116,7 +106,7 @@ public class CredentialVault : ICredentialVault
                 accessTokenInChars[i] = '\0';
             }
 
-            var credential = new PasswordCredential(CredentialVaultConfiguration.CredResourceName, loginId, accessTokenString);
+            var credential = new PasswordCredential(credentialResourceName, loginId, accessTokenString);
             return credential;
         }
         catch (Exception)
@@ -135,7 +125,7 @@ public class CredentialVault : ICredentialVault
 
     public void RemoveCredentials(string loginId)
     {
-        var targetCredentialToDelete = CredentialVaultConfiguration.CredResourceName + ": " + loginId;
+        var targetCredentialToDelete = credentialResourceName + ": " + loginId;
         var isCredentialDeleted = CredDelete(targetCredentialToDelete, CRED_TYPE.GENERIC, 0);
         if (!isCredentialDeleted)
         {
@@ -153,7 +143,7 @@ public class CredentialVault : ICredentialVault
             IntPtr[] allCredentials;
             uint count;
 
-            if (CredEnumerate(CredentialVaultConfiguration.CredResourceName + "*", 0, out count, out ptrToCredential) != false)
+            if (CredEnumerate(credentialResourceName + "*", 0, out count, out ptrToCredential) != false)
             {
                 allCredentials = new IntPtr[count];
                 Marshal.Copy(ptrToCredential, allCredentials, 0, (int)count);

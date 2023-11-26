@@ -7,15 +7,18 @@ using Microsoft.UI;
 using Microsoft.Windows.DevHome.SDK;
 using Octokit;
 using Windows.Foundation;
+using Windows.Security.Credentials;
 
 namespace GitHubExtension.DeveloperId;
 
-public class DeveloperIdProvider : IDeveloperIdProvider
+public class DeveloperIdProvider : IDeveloperIdProviderInternal
 {
     // Locks to control access to Singleton class members.
     private static readonly object DeveloperIdsLock = new ();
 
     private static readonly object OAuthRequestsLock = new ();
+
+    private static readonly object CredentialVaultLock = new ();
 
     private static readonly object AuthenticationProviderLock = new ();
 
@@ -31,6 +34,8 @@ public class DeveloperIdProvider : IDeveloperIdProvider
         get; set;
     }
 
+    private readonly CredentialVault credentialVault;
+
     // DeveloperIdProvider uses singleton pattern.
     private static DeveloperIdProvider? singletonDeveloperIdProvider;
 
@@ -45,6 +50,11 @@ public class DeveloperIdProvider : IDeveloperIdProvider
     {
         Log.Logger()?.ReportInfo($"Creating DeveloperIdProvider singleton instance");
 
+        lock (CredentialVaultLock)
+        {
+            credentialVault ??= new CredentialVault();
+        }
+
         lock (OAuthRequestsLock)
         {
             OAuthRequests ??= new List<OAuthRequest>();
@@ -56,7 +66,7 @@ public class DeveloperIdProvider : IDeveloperIdProvider
             try
             {
                 // Retrieve and populate Logged in DeveloperIds from previous launch.
-                RestoreDeveloperIds(CredentialVault.GetInstance().GetAllCredentials());
+                RestoreDeveloperIds(credentialVault.GetAllCredentials());
             }
             catch (Exception error)
             {
@@ -166,7 +176,7 @@ public class DeveloperIdProvider : IDeveloperIdProvider
                 return new ProviderOperationResult(ProviderOperationStatus.Failure, new ArgumentNullException(nameof(developerId)), "The developer account to log out does not exist", "Unable to find DeveloperId to logout");
             }
 
-            CredentialVault.GetInstance().RemoveCredentials(developerIdToLogout.Url);
+            credentialVault.RemoveCredentials(developerIdToLogout.Url);
             DeveloperIds?.Remove(developerIdToLogout);
         }
 
@@ -248,7 +258,7 @@ public class DeveloperIdProvider : IDeveloperIdProvider
             try
             {
                 // Save the credential to Credential Vault.
-                CredentialVault.GetInstance().SaveCredentials(duplicateDeveloperIds.Single().Url, accessToken);
+                credentialVault.SaveCredentials(duplicateDeveloperIds.Single().Url, accessToken);
 
                 try
                 {
@@ -272,7 +282,7 @@ public class DeveloperIdProvider : IDeveloperIdProvider
                 DeveloperIds.Add(newDeveloperId);
             }
 
-            CredentialVault.GetInstance().SaveCredentials(newDeveloperId.Url, accessToken);
+            credentialVault.SaveCredentials(newDeveloperId.Url, accessToken);
 
             try
             {
@@ -314,7 +324,7 @@ public class DeveloperIdProvider : IDeveloperIdProvider
 
             GitHubClient gitHubClient = new (new ProductHeaderValue(Constants.DEV_HOME_APPLICATION_NAME), hostAddress)
             {
-                Credentials = new (CredentialVault.GetInstance().GetCredentials(loginIdOrUrl)?.Password),
+                Credentials = new (credentialVault.GetCredentials(loginIdOrUrl)?.Password),
             };
 
             var user = gitHubClient.User.Current().Result;
@@ -333,10 +343,10 @@ public class DeveloperIdProvider : IDeveloperIdProvider
             {
                 try
                 {
-                    CredentialVault.GetInstance().SaveCredentials(
+                    credentialVault.SaveCredentials(
                         user.Url,
-                        new NetworkCredential(string.Empty, CredentialVault.GetInstance().GetCredentials(loginIdOrUrl)?.Password).SecurePassword);
-                    CredentialVault.GetInstance().RemoveCredentials(loginIdOrUrl);
+                        new NetworkCredential(string.Empty, credentialVault.GetCredentials(loginIdOrUrl)?.Password).SecurePassword);
+                    credentialVault.RemoveCredentials(loginIdOrUrl);
                     Log.Logger()?.ReportInfo($"Replaced {loginIdOrUrl} with {user.Url} in CredentialManager");
                 }
                 catch (Exception error)
@@ -362,7 +372,7 @@ public class DeveloperIdProvider : IDeveloperIdProvider
     public AdaptiveCardSessionResult GetLoginAdaptiveCardSession()
     {
         Log.Logger()?.ReportInfo($"GetAdaptiveCardController");
-        return new AdaptiveCardSessionResult(new LoginUIController());
+        return new AdaptiveCardSessionResult(new LoginUIController(this));
     }
 
     public void Dispose()
@@ -388,4 +398,6 @@ public class DeveloperIdProvider : IDeveloperIdProvider
             }
         }
     }
+
+    internal PasswordCredential? GetCredentials(IDeveloperId developerId) => credentialVault.GetCredentials(developerId.Url);
 }

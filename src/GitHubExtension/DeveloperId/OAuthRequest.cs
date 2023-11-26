@@ -1,7 +1,6 @@
 ﻿// Copyright (c) Microsoft Corporation and Contributors
 // Licensed under the MIT license.
 
-using System.Collections.Specialized;
 using System.Net;
 using System.Security;
 using System.Security.Cryptography;

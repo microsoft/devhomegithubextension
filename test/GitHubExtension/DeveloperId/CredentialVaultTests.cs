@@ -13,13 +13,13 @@ public partial class DeveloperIdTests
     [TestCategory("Unit")]
     public void CredentialVault_CreateSingleton()
     {
-        var credentialVault1 = CredentialVault.GetInstance();
+        var credentialVault1 = new CredentialVault("DevHomeGitHubExtensionTest");
         Assert.IsNotNull(credentialVault1);
 
-        var credentialVault2 = CredentialVault.GetInstance();
+        var credentialVault2 = new CredentialVault("DevHomeGitHubExtensionTest");
         Assert.IsNotNull(credentialVault2);
 
-        Assert.AreEqual(credentialVault1, credentialVault2);
+        Assert.AreNotEqual(credentialVault1, credentialVault2);
 
         credentialVault1.RemoveAllCredentials();
         Assert.AreEqual(0, credentialVault1.GetAllCredentials().Count());
@@ -32,7 +32,7 @@ public partial class DeveloperIdTests
     [DataRow("https://RandomWebServer.example/testuser3")]
     public void CredentialVault_SaveAndRetrieveCredential(string loginId)
     {
-        var credentialVault = CredentialVault.GetInstance();
+        var credentialVault = new CredentialVault("DevHomeGitHubExtensionTest");
         Assert.IsNotNull(credentialVault);
         Assert.AreEqual(0, credentialVault.GetAllCredentials().Count());
 
@@ -59,7 +59,7 @@ public partial class DeveloperIdTests
     [DataRow("https://RandomWebServer.example/testuser3")]
     public void CredentialVault_RemoveAndRetrieveCredential(string loginId)
     {
-        var credentialVault = CredentialVault.GetInstance();
+        var credentialVault = new CredentialVault("DevHomeGitHubExtensionTest");
         Assert.IsNotNull(credentialVault);
 
         var testPassword = "testpassword";
@@ -83,7 +83,7 @@ public partial class DeveloperIdTests
     [TestCategory("Unit")]
     public void CredentialVault_GetAllCredentials()
     {
-        var credentialVault = CredentialVault.GetInstance();
+        var credentialVault = new CredentialVault("DevHomeGitHubExtensionTest");
         Assert.IsNotNull(credentialVault);
 
         Assert.AreEqual(0, credentialVault.GetAllCredentials().Count());

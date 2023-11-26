@@ -2,7 +2,6 @@
 // Licensed under the MIT license.
 
 using GitHubExtension.DeveloperId;
-using Microsoft.Windows.DevHome.SDK;
 
 namespace GitHubExtension.Test;
 
@@ -34,61 +33,19 @@ public partial class DeveloperIdTests
         public const string ConnectButtonAction = "{\"id\":\"Connect\",\"style\":\"positive\",\"title\":\"Connect\",\"type\":\"Action.Submit\"}";
         public const string NullPATInput = "{\"PAT\":\"\"}";
         public const string BadPATInput = "{\"PAT\":\"Enterprise\"}";
-        public static readonly string GoodPATEnterpriseServerInput = "{\"PAT\":\"" + Environment.GetEnvironmentVariable("DEV_HOME_TEST_GITHUB_ENTERPRISE_SERVER_PAT") + "\"}";
-        public static readonly string GoodPATGithubComInput = "{\"PAT\":\"" + Environment.GetEnvironmentVariable("DEV_HOME_TEST_GITHUB_COM_PAT") + "\"}";
-    }
-
-    public class TestExtensionAdaptiveCard : IExtensionAdaptiveCard
-    {
-        private int updateCount;
-
-        public int UpdateCount
-        {
-            get => updateCount;
-            set => updateCount = value;
-        }
-
-        public TestExtensionAdaptiveCard(string templateJson, string dataJson, string state)
-        {
-            TemplateJson = templateJson;
-            DataJson = dataJson;
-            State = state;
-        }
-
-        public string DataJson
-        {
-            get; set;
-        }
-
-        public string State
-        {
-            get; set;
-        }
-
-        public string TemplateJson
-        {
-            get; set;
-        }
-
-        public ProviderOperationResult Update(string templateJson, string dataJson, string state)
-        {
-            UpdateCount++;
-            TemplateJson = templateJson;
-            DataJson = dataJson;
-            State = state;
-            return new ProviderOperationResult(ProviderOperationStatus.Success, null, "Update() succeeded", "Update() succeeded");
-        }
+        public static readonly string GoodPATEnterpriseServerPATInput = "{\"PAT\":\"" + Environment.GetEnvironmentVariable("DEV_HOME_TEST_GITHUB_ENTERPRISE_SERVER_PAT") + "\"}";
+        public static readonly string GoodPATGithubComPATInput = "{\"PAT\":\"" + Environment.GetEnvironmentVariable("DEV_HOME_TEST_GITHUB_COM_PAT") + "\"}";
     }
 
     [TestMethod]
     [TestCategory("Unit")]
     public void LoginUIControllerInitializeTest()
     {
-        var testExtensionAdaptiveCard = new TestExtensionAdaptiveCard(string.Empty, string.Empty, string.Empty);
+        var testExtensionAdaptiveCard = new MockExtensionAdaptiveCard(string.Empty, string.Empty, string.Empty);
         Assert.AreEqual(0, testExtensionAdaptiveCard.UpdateCount);
 
         // Create a LoginUIController and initialize it with the testExtensionAdaptiveCard.
-        var controller = new LoginUIController();
+        var controller = new LoginUIController(MockDeveloperIdProvider.GetInstance());
         controller.Initialize(testExtensionAdaptiveCard);
 
         // Verify that the initial state is the login page.
@@ -100,6 +57,7 @@ public partial class DeveloperIdTests
 
     [TestMethod]
     [TestCategory("Unit")]
+    [DataRow("LoginPage", LoginUITestData.GithubButtonAction, LoginUITestData.GithubButtonInput, "LoginSucceededPage", 3)]
     [DataRow("LoginPage", LoginUITestData.GithubEnterpriseButtonAction, LoginUITestData.GithubEnterpriseButtonInput, "EnterpriseServerPage")]
     [DataRow("LoginPage", LoginUITestData.GithubEnterpriseButtonAction, LoginUITestData.GithubEnterpriseButtonInput, "EnterpriseServerPage")]
     [DataRow("EnterpriseServerPage", LoginUITestData.NextButtonAction, LoginUITestData.BadUrlEnterpriseServerInput, "EnterpriseServerPage")]
@@ -109,17 +67,14 @@ public partial class DeveloperIdTests
     [DataRow("EnterpriseServerPATPage", LoginUITestData.ClickHereUrlAction, LoginUITestData.ClickHereUrlInput, "EnterpriseServerPATPage", 1)]
     [DataRow("EnterpriseServerPATPage", LoginUITestData.ConnectButtonAction, LoginUITestData.NullPATInput, "EnterpriseServerPATPage")]
     [DataRow("EnterpriseServerPATPage", LoginUITestData.ConnectButtonAction, LoginUITestData.BadPATInput, "EnterpriseServerPATPage")]
-
-    // Cannot test with LoginPAge since that launches browser
-    // [DataRow("LoginPage", LoginUITestData.GithubButtonAction, LoginUITestData.GithubButtonInput, "WaitingPage", 2)]
     public async Task LoginUIControllerTest(
         string initialState, string actions, string inputs, string finalState, int numOfFinalUpdates = 2)
     {
-        var testExtensionAdaptiveCard = new TestExtensionAdaptiveCard(string.Empty, string.Empty, string.Empty);
+        var testExtensionAdaptiveCard = new MockExtensionAdaptiveCard(string.Empty, string.Empty, string.Empty);
         Assert.AreEqual(0, testExtensionAdaptiveCard.UpdateCount);
 
         // Create a LoginUIController and initialize it with the testExtensionAdaptiveCard.
-        var controller = new LoginUIController();
+        var controller = new LoginUIController(MockDeveloperIdProvider.GetInstance());
         controller.Initialize(testExtensionAdaptiveCard);
         Assert.AreEqual(1, testExtensionAdaptiveCard.UpdateCount);
 
@@ -142,5 +97,68 @@ public partial class DeveloperIdTests
         Assert.AreEqual(numOfFinalUpdates, testExtensionAdaptiveCard.UpdateCount);
 
         controller.Dispose();
+    }
+
+    /* This test requires the following environment variables to be set:
+     * DEV_HOME_TEST_GITHUB_ENTERPRISE_SERVER : The host address of the GitHub Enterprise Server to test against
+     * DEV_HOME_TEST_GITHUB_COM_PAT : A valid Personal Access Token for GitHub.com (with at least repo_public permissions)
+     * DEV_HOME_TEST_GITHUB_ENTERPRISE_SERVER_PAT : A valid Personal Access Token for the GitHub Enterprise Server set in DEV_HOME_TEST_GITHUB_ENTERPRISE_SERVER (with at least repo_public permissions)
+     */
+    [TestMethod]
+    [TestCategory("Unit")]
+    public async Task LoginUI_PATLoginTest_Success()
+    {
+        // Create DataRows during Runtime since these need Env vars
+        RuntimeDataRow[] dataRows =
+                                {
+                                    new RuntimeDataRow()
+                                    {
+                                        InitialState = "EnterpriseServerPATPage",
+                                        Actions = LoginUITestData.ConnectButtonAction,
+                                        Inputs = LoginUITestData.GoodPATEnterpriseServerPATInput,
+                                        FinalState = "LoginSucceededPage",
+                                        HostAddress = Environment.GetEnvironmentVariable("DEV_HOME_TEST_GITHUB_ENTERPRISE_SERVER"),
+                                    },
+                                    new RuntimeDataRow()
+                                    {
+                                        InitialState = "EnterpriseServerPATPage",
+                                        Actions = LoginUITestData.ConnectButtonAction,
+                                        Inputs = LoginUITestData.GoodPATGithubComPATInput,
+                                        FinalState = "LoginSucceededPage",
+                                        HostAddress = "https://api.github.com",
+                                    },
+                                }
+            ;
+
+        foreach (RuntimeDataRow dataRow in dataRows)
+        {
+            var testExtensionAdaptiveCard = new MockExtensionAdaptiveCard(string.Empty, string.Empty, string.Empty);
+            Assert.AreEqual(0, testExtensionAdaptiveCard.UpdateCount);
+
+            // Create a LoginUIController and initialize it with the testExtensionAdaptiveCard.
+            var controller = new LoginUIController(MockDeveloperIdProvider.GetInstance());
+            controller.Initialize(testExtensionAdaptiveCard);
+            Assert.AreEqual(1, testExtensionAdaptiveCard.UpdateCount);
+
+            // Set the initial state.
+            testExtensionAdaptiveCard.State = dataRow.InitialState ?? string.Empty;
+            Assert.AreEqual(dataRow.InitialState, testExtensionAdaptiveCard.State);
+
+            // Set HostAddress for EnterpriseServerPATPage to make this a valid state
+            if (dataRow.InitialState == "EnterpriseServerPATPage")
+            {
+                controller.HostAddress = new Uri(dataRow.HostAddress ?? string.Empty);
+                Assert.AreEqual(dataRow.HostAddress, controller.HostAddress.OriginalString);
+            }
+
+            // Call OnAction() with the actions and inputs.
+            await controller.OnAction(dataRow.Actions ?? string.Empty, dataRow.Inputs ?? string.Empty);
+
+            // Verify the final state
+            Assert.AreEqual(dataRow.FinalState, testExtensionAdaptiveCard.State);
+            Assert.AreEqual(2, testExtensionAdaptiveCard.UpdateCount);
+
+            controller.Dispose();
+        }
     }
 }

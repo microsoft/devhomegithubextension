@@ -2,7 +2,6 @@
 // Licensed under the MIT license.
 
 using GitHubExtension;
-using GitHubExtension.DataModel;
 
 internal class Program
 {

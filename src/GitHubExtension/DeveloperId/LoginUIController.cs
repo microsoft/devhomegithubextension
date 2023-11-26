@@ -1,7 +1,6 @@
 ﻿// Copyright (c) Microsoft Corporation and Contributors
 // Licensed under the MIT license.
 
-using System.Linq;
 using System.Net;
 using System.Text.Json;
 using System.Text.Json.Serialization;
@@ -10,11 +9,11 @@ using GitHubExtension.DeveloperId.LoginUI;
 using GitHubExtension.Helpers;
 using Microsoft.Windows.DevHome.SDK;
 using Windows.Foundation;
-using ResourceLoader = Microsoft.Windows.ApplicationModel.Resources.ResourceLoader;
 
 namespace GitHubExtension.DeveloperId;
 public class LoginUIController : IExtensionAdaptiveCardSession
 {
+    private readonly IDeveloperIdProviderInternal _developerIdProvider;
     private IExtensionAdaptiveCard? _loginUI;
     private Uri? _hostAddress;
 
@@ -24,8 +23,9 @@ public class LoginUIController : IExtensionAdaptiveCardSession
         set => _hostAddress = value;
     }
 
-    public LoginUIController()
+    public LoginUIController(IDeveloperIdProviderInternal developerIdProvider)
     {
+        _developerIdProvider = developerIdProvider;
     }
 
     public void Dispose()
@@ -62,9 +62,9 @@ public class LoginUIController : IExtensionAdaptiveCardSession
                         try
                         {
                             // If there is already a developer id, we should block another login.
-                            /*if (DeveloperIdProvider.GetInstance().GetLoggedInDeveloperIdsInternal().Any())
+                            /*if (_developerIdProvider.GetLoggedInDeveloperIdsInternal().Any())
                             {
-                                Log.Logger()?.ReportInfo($"DeveloperId {DeveloperIdProvider.GetInstance().GetLoggedInDeveloperIdsInternal().First().LoginId} already exists. Blocking login.");
+                                Log.Logger()?.ReportInfo($"DeveloperId {_developerIdProvider.GetLoggedInDeveloperIdsInternal().First().LoginId} already exists. Blocking login.");
                                 new LoginFailedPage().UpdateExtensionAdaptiveCard(_loginUI);
                                 operationResult = new ProviderOperationResult(ProviderOperationStatus.Failure, null, "Only one DeveloperId can be logged in at a time", "One DeveloperId already exists");
                                 break;
@@ -82,7 +82,7 @@ public class LoginUIController : IExtensionAdaptiveCardSession
 
                             // Display Waiting page before Browser launch in LoginNewDeveloperIdAsync()
                             new WaitingPage().UpdateExtensionAdaptiveCard(_loginUI);
-                            var devId = await DeveloperIdProvider.GetInstance().LoginNewDeveloperIdAsync();
+                            var devId = await _developerIdProvider.LoginNewDeveloperIdAsync();
                             if (devId != null)
                             {
                                 operationResult = new LoginSucceededPage(devId).UpdateExtensionAdaptiveCard(_loginUI);
@@ -118,7 +118,6 @@ public class LoginUIController : IExtensionAdaptiveCardSession
                         }
 
                         // Otherwise user clicked on Next button. We should validate the inputs and update the UI with PAT page.
-                        Log.Logger()?.ReportDebug($"inputs: {inputs}");
                         var enterprisePageInputPayload = CreateFromJson<EnterpriseServerPage.InputPayload>(inputs) ?? throw new InvalidOperationException("Invalid inputs");
                         Log.Logger()?.ReportInfo($"EnterpriseServer: {enterprisePageInputPayload?.EnterpriseServer}");
 
@@ -228,7 +227,6 @@ public class LoginUIController : IExtensionAdaptiveCardSession
                         }
 
                         // Otherwise user clicked on Next button. We should validate the inputs and update the UI with PAT page.
-                        Log.Logger()?.ReportDebug($"inputs: {inputs}");
                         var enterprisePATPageInputPayload = CreateFromJson<EnterpriseServerPATPage.InputPayload>(inputs) ?? throw new InvalidOperationException("Invalid inputs");
                         Log.Logger()?.ReportInfo($"PAT Received");
 
@@ -243,7 +241,7 @@ public class LoginUIController : IExtensionAdaptiveCardSession
 
                         try
                         {
-                            var devId = DeveloperIdProvider.GetInstance().LoginNewDeveloperIdWithPAT(_hostAddress, securePAT);
+                            var devId = _developerIdProvider.LoginNewDeveloperIdWithPAT(_hostAddress, securePAT);
 
                             if (devId != null)
                             {
