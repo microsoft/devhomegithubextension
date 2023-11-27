@@ -70,8 +70,14 @@ public class LoginUIController : IExtensionAdaptiveCardSession
                                 break;
                             }*/
 
-                            // Inputs are validated at this point.
                             var loginPageActionPayload = CreateFromJson<LoginPage.ActionPayload>(action) ?? throw new InvalidOperationException("Invalid action");
+
+                            if (!loginPageActionPayload.IsSubmitAction())
+                            {
+                                Log.Logger()?.ReportError($"Invalid action");
+                                operationResult = new ProviderOperationResult(ProviderOperationStatus.Failure, null, "Invalid action", "Invalid action");
+                                break;
+                            }
 
                             if (loginPageActionPayload.IsEnterprise())
                             {
@@ -114,6 +120,13 @@ public class LoginUIController : IExtensionAdaptiveCardSession
                         {
                             Log.Logger()?.ReportInfo($"Cancel clicked");
                             operationResult = new LoginPage().UpdateExtensionAdaptiveCard(_loginUI);
+                            break;
+                        }
+
+                        if (!enterprisePageActionPayload.IsSubmitAction())
+                        {
+                            Log.Logger()?.ReportError($"Invalid action");
+                            operationResult = new ProviderOperationResult(ProviderOperationStatus.Failure, null, "Invalid action", "Invalid action");
                             break;
                         }
 
@@ -226,17 +239,24 @@ public class LoginUIController : IExtensionAdaptiveCardSession
                             break;
                         }
 
+                        if (!enterprisePATPageActionPayload.IsSubmitAction())
+                        {
+                            Log.Logger()?.ReportError($"Invalid action");
+                            operationResult = new ProviderOperationResult(ProviderOperationStatus.Failure, null, "Invalid action", "Invalid action");
+                            break;
+                        }
+
                         // Otherwise user clicked on Next button. We should validate the inputs and update the UI with PAT page.
                         var enterprisePATPageInputPayload = CreateFromJson<EnterpriseServerPATPage.InputPayload>(inputs) ?? throw new InvalidOperationException("Invalid inputs");
-                        Log.Logger()?.ReportInfo($"PAT Received");
 
-                        if (enterprisePATPageInputPayload?.PAT == null)
+                        if (string.IsNullOrEmpty(enterprisePATPageInputPayload?.PAT))
                         {
                             Log.Logger()?.ReportError($"PAT is null");
                             operationResult = new EnterpriseServerPATPage(hostAddress: _hostAddress, errorText: $"{Resources.GetResource("LoginUI_EnterprisePATPage_NullErrorText")}", inputPAT: enterprisePATPageInputPayload?.PAT).UpdateExtensionAdaptiveCard(_loginUI);
                             break;
                         }
 
+                        Log.Logger()?.ReportInfo($"PAT Received");
                         var securePAT = new NetworkCredential(null, enterprisePATPageInputPayload?.PAT).SecurePassword;
 
                         try
@@ -251,7 +271,7 @@ public class LoginUIController : IExtensionAdaptiveCardSession
                             else
                             {
                                 Log.Logger()?.ReportError($"PAT doesn't work for GHES endpoint {_hostAddress.OriginalString}");
-                                operationResult = new EnterpriseServerPATPage(hostAddress: _hostAddress, errorText: $"{Resources.GetResource("LoginUI_EnterprisePATPage_NullErrorText")} {_hostAddress.OriginalString}", inputPAT: enterprisePATPageInputPayload?.PAT).UpdateExtensionAdaptiveCard(_loginUI);
+                                operationResult = new EnterpriseServerPATPage(hostAddress: _hostAddress, errorText: $"{Resources.GetResource("LoginUI_EnterprisePATPage_BadCredentialsErrorText")} {_hostAddress.OriginalString}", inputPAT: enterprisePATPageInputPayload?.PAT).UpdateExtensionAdaptiveCard(_loginUI);
                                 break;
                             }
                         }
@@ -260,7 +280,7 @@ public class LoginUIController : IExtensionAdaptiveCardSession
                             if (ex.Message.Contains("Bad credentials") || ex.Message.Contains("Not Found"))
                             {
                                 Log.Logger()?.ReportError($"Unauthorized Error: {ex}");
-                                operationResult = new EnterpriseServerPATPage(hostAddress: _hostAddress, errorText: $"{Resources.GetResource("LoginUI_EnterprisePATPage_BadCredentialsErrorText")}", inputPAT: enterprisePATPageInputPayload?.PAT).UpdateExtensionAdaptiveCard(_loginUI);
+                                operationResult = new EnterpriseServerPATPage(hostAddress: _hostAddress, errorText: $"{Resources.GetResource("LoginUI_EnterprisePATPage_BadCredentialsErrorText")} {_hostAddress.OriginalString}", inputPAT: enterprisePATPageInputPayload?.PAT).UpdateExtensionAdaptiveCard(_loginUI);
                                 break;
                             }
 

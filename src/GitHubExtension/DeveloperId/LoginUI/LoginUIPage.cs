@@ -590,5 +590,10 @@ internal class LoginUIPage
         {
             return this.Type == "Action.OpenUrl";
         }
+
+        public bool IsSubmitAction()
+        {
+            return this.Type == "Action.Submit";
+        }
     }
 }

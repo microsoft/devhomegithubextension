@@ -2,7 +2,6 @@
 // Licensed under the MIT license.
 
 using GitHubExtension.DataManager;
-using Microsoft.Windows.DevHome.SDK;
 
 namespace GitHubExtension;
 
