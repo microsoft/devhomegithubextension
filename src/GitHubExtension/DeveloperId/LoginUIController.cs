@@ -62,13 +62,13 @@ public class LoginUIController : IExtensionAdaptiveCardSession
                         try
                         {
                             // If there is already a developer id, we should block another login.
-                            /*if (_developerIdProvider.GetLoggedInDeveloperIdsInternal().Any())
+                            if (_developerIdProvider.GetLoggedInDeveloperIdsInternal().Any())
                             {
                                 Log.Logger()?.ReportInfo($"DeveloperId {_developerIdProvider.GetLoggedInDeveloperIdsInternal().First().LoginId} already exists. Blocking login.");
                                 new LoginFailedPage().UpdateExtensionAdaptiveCard(_loginUI);
                                 operationResult = new ProviderOperationResult(ProviderOperationStatus.Failure, null, "Only one DeveloperId can be logged in at a time", "One DeveloperId already exists");
                                 break;
-                            }*/
+                            }
 
                             var loginPageActionPayload = CreateFromJson<LoginPage.ActionPayload>(action) ?? throw new InvalidOperationException("Invalid action");
 
