@@ -70,7 +70,3 @@ jobs:
     - name: DevHome UnitTests
       if: ${{ matrix.platform != 'arm64' }}
       run: cmd /c "$env:VSDevTestCmd" /Platform:${{ matrix.platform }} /TestCaseFilter:"TestCategory!=LiveData" BuildOutput\\${{ matrix.configuration }}\\${{ matrix.platform }}\\GitHubExtension.Test\\GitHubExtension.Test.dll
-      env:
-        DEV_HOME_TEST_GITHUB_ENTERPRISE_SERVER: ${{ secrets.DEV_HOME_TEST_GITHUB_ENTERPRISE_SERVER }}
-        DEV_HOME_TEST_GITHUB_ENTERPRISE_SERVER_PAT: ${{ secrets.DEV_HOME_TEST_GITHUB_ENTERPRISE_SERVER_PAT }}
-        DEV_HOME_TEST_GITHUB_ENTERPRISE_SERVER_USER: ${{ secrets.DEV_HOME_TEST_GITHUB_ENTERPRISE_SERVER_USER }}
