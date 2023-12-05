@@ -1,11 +1,10 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-
+  <Import Project="$(SolutionDir)ToolingVersions.props" />
+  
   <PropertyGroup>
     <OutputType>Library</OutputType>
-    <TargetFramework>net6.0-windows10.0.22000.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-    <SupportedOSPlatformVersion>10.0.22000.0</SupportedOSPlatformVersion>
     <BuildRing Condition="'$(BuildRing)'==''">Dev</BuildRing>
   </PropertyGroup>
 
