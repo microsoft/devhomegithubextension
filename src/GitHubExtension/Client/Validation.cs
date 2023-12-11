@@ -223,6 +223,7 @@ public static class Validation
     {
         if (new EnterpriseProbe(new ProductHeaderValue(Constants.DEV_HOME_APPLICATION_NAME)).Probe(server).Result != EnterpriseProbeResult.Ok)
         {
+            Log.Logger()?.ReportError($"EnterpriseServer {server.AbsoluteUri} is not reachable");
             return false;
         }
 
