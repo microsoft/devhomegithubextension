@@ -1,6 +1,7 @@
 ﻿// Copyright (c) Microsoft Corporation and Contributors
 // Licensed under the MIT license.
 
+using System.Security;
 using Microsoft.UI;
 using Microsoft.Windows.DevHome.SDK;
 using Octokit;
@@ -93,13 +94,35 @@ public class DeveloperIdProvider : IDeveloperIdProvider
 
             oauthRequest.AwaitCompletion();
 
-            var devId = CreateOrUpdateDeveloperId(oauthRequest);
+            var devId = CreateOrUpdateDeveloperIdFromOauthRequest(oauthRequest);
             oauthRequest.Dispose();
 
             Log.Logger()?.ReportInfo($"New DeveloperId logged in");
 
             return devId as IDeveloperId;
         }).AsAsyncOperation();
+    }
+
+    private DeveloperId LoginNewDeveloperIdWithPAT(Uri hostAddress, SecureString personalAccessToken)
+    {
+        try
+        {
+            GitHubClient gitHubClient = new (new ProductHeaderValue(Constants.DEV_HOME_APPLICATION_NAME), hostAddress);
+            var credentials = new Credentials(new System.Net.NetworkCredential(string.Empty, personalAccessToken).Password);
+            gitHubClient.Credentials = credentials;
+            var newUser = gitHubClient.User.Current().Result;
+            DeveloperId developerId = new (newUser.Login, newUser.Name, newUser.Email, newUser.Url, gitHubClient);
+            SaveOrOverwriteDeveloperId(developerId, personalAccessToken);
+
+            Log.Logger()?.ReportInfo($"{developerId.LoginId} logged in with PAT flow to {developerId.GetHostAddress()}");
+
+            return developerId;
+        }
+        catch (Exception ex)
+        {
+            Log.Logger()?.ReportError($"Error while logging in with PAT to {hostAddress.AbsoluteUri} : {ex.Message}");
+            throw;
+        }
     }
 
     private OAuthRequest? LoginNewDeveloperId()
@@ -208,10 +231,8 @@ public class DeveloperIdProvider : IDeveloperIdProvider
     }
 
     // Internal Functions.
-    private DeveloperId CreateOrUpdateDeveloperId(OAuthRequest oauthRequest)
+    private void SaveOrOverwriteDeveloperId(DeveloperId newDeveloperId, SecureString accessToken)
     {
-        // Query necessary data and populate Developer Id.
-        var newDeveloperId = oauthRequest.RetrieveDeveloperId();
         var duplicateDeveloperIds = DeveloperIds.Where(d => d.Url.Equals(newDeveloperId.Url, StringComparison.OrdinalIgnoreCase));
 
         if (duplicateDeveloperIds.Any())
@@ -220,7 +241,7 @@ public class DeveloperIdProvider : IDeveloperIdProvider
             try
             {
                 // Save the credential to Credential Vault.
-                CredentialVault.SaveAccessTokenToVault(duplicateDeveloperIds.Single().LoginId, oauthRequest.AccessToken);
+                CredentialVault.SaveAccessTokenToVault(duplicateDeveloperIds.Single().LoginId, accessToken);
 
                 try
                 {
@@ -244,7 +265,7 @@ public class DeveloperIdProvider : IDeveloperIdProvider
                 DeveloperIds.Add(newDeveloperId);
             }
 
-            CredentialVault.SaveAccessTokenToVault(newDeveloperId.LoginId, oauthRequest.AccessToken);
+            CredentialVault.SaveAccessTokenToVault(newDeveloperId.LoginId, accessToken);
 
             try
             {
@@ -255,6 +276,22 @@ public class DeveloperIdProvider : IDeveloperIdProvider
                 Log.Logger()?.ReportError($"LoggedIn event signaling failed: {error}");
             }
         }
+    }
+
+    private DeveloperId CreateOrUpdateDeveloperIdFromOauthRequest(OAuthRequest oauthRequest)
+    {
+        // Query necessary data and populate Developer Id.
+        var newDeveloperId = oauthRequest.RetrieveDeveloperId();
+        var accessToken = oauthRequest.AccessToken;
+        if (accessToken is null)
+        {
+            Log.Logger()?.ReportError($"Invalid AccessToken");
+            throw new InvalidOperationException();
+        }
+
+        SaveOrOverwriteDeveloperId(newDeveloperId, accessToken);
+
+        Log.Logger()?.ReportInfo($"{newDeveloperId.LoginId} logged in with OAuth flow to {newDeveloperId.GetHostAddress()}");
 
         return newDeveloperId;
     }

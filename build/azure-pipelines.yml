@@ -20,7 +20,7 @@ parameters:
     - release
 
 variables:
-  MSIXVersion: '0.700'
+  MSIXVersion: '0.800'
   solution: '**/GitHubExtension.sln'
   appxPackageDir: 'AppxPackages'
   testOutputArtifactDir: 'TestResults'
@@ -235,8 +235,11 @@ extends:
             - task: PublishSymbols@2
               displayName: Publish Symbols
               inputs:
-                SearchPattern: '**/BuildOutput/**/*.pdb'
-                IndexSources: false
+                SearchPattern: >-
+                  $(Build.SourcesDirectory)\BuildOutput\**\*.pdb
+
+                  $(Build.SourcesDirectory)\obj\**\*.r2r.ni.pdb
+                IndexSources: true
                 SymbolServerType: TeamServices
                 SymbolsProduct: DevHomeGitHubExtension
 
