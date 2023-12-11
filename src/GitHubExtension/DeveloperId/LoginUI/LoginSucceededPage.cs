@@ -25,14 +25,7 @@ internal class LoginSucceededPage : LoginUIPage
 
         public string GetJson()
         {
-            return JsonSerializer.Serialize(
-            this,
-            new JsonSerializerOptions
-            {
-                PropertyNameCaseInsensitive = true,
-                DefaultIgnoreCondition = JsonIgnoreCondition.Never,
-                IncludeFields = true,
-            });
+            return Json.Stringify(this);
         }
     }
 }

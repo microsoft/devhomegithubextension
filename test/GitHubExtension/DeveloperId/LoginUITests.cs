@@ -62,7 +62,6 @@ public partial class DeveloperIdTests
     [TestCategory("Unit")]
     [DataRow("LoginPage", LoginUITestData.GithubButtonAction, LoginUITestData.GithubButtonInput, "LoginSucceededPage", 3)]
     [DataRow("LoginPage", LoginUITestData.GithubEnterpriseButtonAction, LoginUITestData.GithubEnterpriseButtonInput, "EnterpriseServerPage")]
-    [DataRow("LoginPage", LoginUITestData.GithubEnterpriseButtonAction, LoginUITestData.GithubEnterpriseButtonInput, "EnterpriseServerPage")]
     [DataRow("EnterpriseServerPage", LoginUITestData.NextButtonAction, LoginUITestData.BadUrlEnterpriseServerInput, "EnterpriseServerPage")]
     [DataRow("EnterpriseServerPage", LoginUITestData.NextButtonAction, LoginUITestData.UnreachableUrlEnterpriseServerInput, "EnterpriseServerPage")]
     [DataRow("EnterpriseServerPage", LoginUITestData.CancelButtonAction, LoginUITestData.CancelButtonInput, "LoginPage")]
@@ -148,7 +147,7 @@ public partial class DeveloperIdTests
      * DEV_HOME_TEST_GITHUB_ENTERPRISE_SERVER_PAT : A valid Personal Access Token for the GitHub Enterprise Server set in DEV_HOME_TEST_GITHUB_ENTERPRISE_SERVER (with at least repo_public permissions)
      */
     [TestMethod]
-    [TestCategory("Unit")]
+    [TestCategory("LiveData")]
     public async Task LoginUI_ControllerPATLoginTest_Success()
     {
         // Create DataRows during Runtime since these need Env vars

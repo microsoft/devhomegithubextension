@@ -14,6 +14,9 @@ public partial class DeveloperIdTests
         Assert.IsNotNull(credentialVault);
         credentialVault.RemoveAllCredentials();
         Assert.AreEqual(0, credentialVault.GetAllCredentials().Count());
+
+        // Ensure that the DeveloperIdProvider is deleted and recreated on the next GetInstance() call
+        DeveloperIdProvider.GetInstance().Dispose();
         return credentialVault;
     }
 
@@ -104,7 +107,7 @@ public partial class DeveloperIdTests
     }
 
     [TestMethod]
-    [TestCategory("Unit")]
+    [TestCategory("LiveData")]
     public void DeveloperIdProvider_RestoreAndGetDeveloperIds()
     {
         // Setup CredentialVault with a dummy testuser and valid PAT for Github.com
@@ -213,7 +216,7 @@ public partial class DeveloperIdTests
     }
 
     [TestMethod]
-    [TestCategory("Unit")]
+    [TestCategory("LiveData")]
     public void DeveloperIdProvider_LogoutDeveloperId_Success()
     {
         // Setup CredentialVault with a dummy testuser and valid PAT for Github.com
@@ -240,7 +243,7 @@ public partial class DeveloperIdTests
     }
 
     [TestMethod]
-    [TestCategory("Unit")]
+    [TestCategory("LiveData")]
     public void DeveloperIdProvider_LogoutDeveloperId_GHES_Success()
     {
         // Setup CredentialVault with a dummy testuser and valid PAT for Github Enterprise Server

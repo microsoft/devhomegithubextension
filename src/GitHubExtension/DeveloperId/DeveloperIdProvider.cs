@@ -315,6 +315,10 @@ public class DeveloperIdProvider : IDeveloperIdProviderInternal
 
     private void RestoreDeveloperIds(IEnumerable<string> loginIdsAndUrls)
     {
+        // We take loginIds or Urls here because in older versions of DevHome, we used loginIds to save credentials.
+        // In newer versions, we use Urls to save credentials.
+        // So, we need to check if loginId is currently used to save credential, and if so, replace it with URL.
+        // This is a temporary fix, and we should replace this logic once we are sure that most users have updated to newer versions of DevHome.
         foreach (var loginIdOrUrl in loginIdsAndUrls)
         {
             var isUrl = loginIdOrUrl.Contains('/');
@@ -378,6 +382,10 @@ public class DeveloperIdProvider : IDeveloperIdProviderInternal
     public void Dispose()
     {
         GC.SuppressFinalize(this);
+        lock (AuthenticationProviderLock)
+        {
+            singletonDeveloperIdProvider = null;
+        }
     }
 
     public IAsyncOperation<DeveloperIdResult> ShowLogonSession(WindowId windowHandle) => throw new NotImplementedException();

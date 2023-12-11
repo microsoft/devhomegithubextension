@@ -8,7 +8,7 @@ namespace GitHubExtension.Test;
 public partial class DeveloperIdTests
 {
     [TestMethod]
-    [TestCategory("Functional")]
+    [TestCategory("LiveData")]
     public async Task FunctionalTest_RestoreAndRetrieveRepositoriesAsync()
     {
         var credentialVault = SetupCredentialVaultWithTestUser();
@@ -42,7 +42,7 @@ public partial class DeveloperIdTests
     }
 
     [TestMethod]
-    [TestCategory("Functional")]
+    [TestCategory("LiveData")]
     public async Task FunctionalTest_GHES_RestoreAndRetrieveRepositoriesAsync()
     {
         var credentialVault = SetupCredentialVaultWithGHESTestUser();

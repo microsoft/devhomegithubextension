@@ -1,6 +1,8 @@
 ﻿// Copyright (c) Microsoft Corporation and Contributors
 // Licensed under the MIT license.
 
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using GitHubExtension.Helpers;
 using Microsoft.Windows.DevHome.SDK;
 
@@ -39,7 +41,7 @@ internal class LoginUIPage
         return adaptiveCard.Update(_template, _data?.GetJson(), Enum.GetName(typeof(LoginUIState), _state));
     }
 
-    private string GetTemplate(LoginUIState loginUIState)
+    private static string GetTemplate(LoginUIState loginUIState)
     {
         var loginPage = @"
 {

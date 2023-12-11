@@ -17,6 +17,7 @@ public class LoginUIController : IExtensionAdaptiveCardSession
     private IExtensionAdaptiveCard? _loginUI;
     private Uri? _hostAddress;
 
+    // This variable is used to store the host address from EnterpriseServerPage. It is used in EnterpriseServerPATPage.
     public Uri HostAddress
     {
         get => _hostAddress ?? throw new InvalidOperationException("HostAddress is null");
@@ -70,7 +71,7 @@ public class LoginUIController : IExtensionAdaptiveCardSession
                                 break;
                             }
 
-                            var loginPageActionPayload = CreateFromJson<LoginPage.ActionPayload>(action) ?? throw new InvalidOperationException("Invalid action");
+                            var loginPageActionPayload = Json.ToObject<LoginPage.ActionPayload>(action) ?? throw new InvalidOperationException("Invalid action");
 
                             if (!loginPageActionPayload.IsSubmitAction())
                             {
@@ -113,7 +114,7 @@ public class LoginUIController : IExtensionAdaptiveCardSession
                 case nameof(LoginUIState.EnterpriseServerPage):
                     {
                         // Check if the user clicked on Cancel button.
-                        var enterprisePageActionPayload = CreateFromJson<EnterpriseServerPage.ActionPayload>(action)
+                        var enterprisePageActionPayload = Json.ToObject<EnterpriseServerPage.ActionPayload>(action)
                                                     ?? throw new InvalidOperationException("Invalid action");
 
                         if (enterprisePageActionPayload.IsCancelAction())
@@ -131,7 +132,7 @@ public class LoginUIController : IExtensionAdaptiveCardSession
                         }
 
                         // Otherwise user clicked on Next button. We should validate the inputs and update the UI with PAT page.
-                        var enterprisePageInputPayload = CreateFromJson<EnterpriseServerPage.InputPayload>(inputs) ?? throw new InvalidOperationException("Invalid inputs");
+                        var enterprisePageInputPayload = Json.ToObject<EnterpriseServerPage.InputPayload>(inputs) ?? throw new InvalidOperationException("Invalid inputs");
                         Log.Logger()?.ReportInfo($"EnterpriseServer: {enterprisePageInputPayload?.EnterpriseServer}");
 
                         if (enterprisePageInputPayload?.EnterpriseServer == null)
@@ -188,7 +189,7 @@ public class LoginUIController : IExtensionAdaptiveCardSession
                         }
 
                         // Check if the user clicked on Cancel button.
-                        var enterprisePATPageActionPayload = CreateFromJson<EnterpriseServerPATPage.ActionPayload>(action) ?? throw new InvalidOperationException("Invalid action");
+                        var enterprisePATPageActionPayload = Json.ToObject<EnterpriseServerPATPage.ActionPayload>(action) ?? throw new InvalidOperationException("Invalid action");
 
                         if (enterprisePATPageActionPayload.IsCancelAction())
                         {
@@ -247,7 +248,7 @@ public class LoginUIController : IExtensionAdaptiveCardSession
                         }
 
                         // Otherwise user clicked on Next button. We should validate the inputs and update the UI with PAT page.
-                        var enterprisePATPageInputPayload = CreateFromJson<EnterpriseServerPATPage.InputPayload>(inputs) ?? throw new InvalidOperationException("Invalid inputs");
+                        var enterprisePATPageInputPayload = Json.ToObject<EnterpriseServerPATPage.InputPayload>(inputs) ?? throw new InvalidOperationException("Invalid inputs");
 
                         if (string.IsNullOrEmpty(enterprisePATPageInputPayload?.PAT))
                         {
@@ -311,15 +312,5 @@ public class LoginUIController : IExtensionAdaptiveCardSession
 
             return operationResult;
         }).AsAsyncOperation();
-    }
-
-    private T? CreateFromJson<T>(string json)
-    {
-        return JsonSerializer.Deserialize<T>(json, new JsonSerializerOptions
-        {
-            PropertyNameCaseInsensitive = true,
-            DefaultIgnoreCondition = JsonIgnoreCondition.Never,
-            IncludeFields = true,
-        });
     }
 }

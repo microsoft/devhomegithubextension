@@ -3,6 +3,7 @@
 
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using GitHubExtension.Helpers;
 
 namespace GitHubExtension.DeveloperId.LoginUI;
 
@@ -35,14 +36,7 @@ internal class EnterpriseServerPATPage : LoginUIPage
 
         public string GetJson()
         {
-            return JsonSerializer.Serialize(
-            this,
-            new JsonSerializerOptions
-            {
-                PropertyNameCaseInsensitive = true,
-                DefaultIgnoreCondition = JsonIgnoreCondition.Never,
-                IncludeFields = true,
-            });
+            return Json.Stringify(this);
         }
     }
 

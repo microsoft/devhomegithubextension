@@ -27,7 +27,7 @@ public class MockDeveloperIdProvider : IDeveloperIdProviderInternal
 
     public AuthenticationState GetDeveloperIdState(IDeveloperId developerId) => throw new NotImplementedException();
 
-    public DeveloperIdsResult GetLoggedInDeveloperIds() => throw new NotImplementedException();
+    public DeveloperIdsResult GetLoggedInDeveloperIds() => new (new List<DeveloperId.DeveloperId>());
 
     public AdaptiveCardSessionResult GetLoginAdaptiveCardSession() => throw new NotImplementedException();
 
@@ -67,7 +67,7 @@ public class MockDeveloperIdProvider : IDeveloperIdProviderInternal
         return instance;
     }
 
-    public IEnumerable<DeveloperId.DeveloperId> GetLoggedInDeveloperIdsInternal() => throw new NotImplementedException();
+    public IEnumerable<DeveloperId.DeveloperId> GetLoggedInDeveloperIdsInternal() => new List<DeveloperId.DeveloperId>();
 }
 
 public class MockExtensionAdaptiveCard : IExtensionAdaptiveCard
