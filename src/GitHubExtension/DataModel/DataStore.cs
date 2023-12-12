@@ -5,7 +5,7 @@ using System.Globalization;
 using System.Reflection;
 using System.Text;
 using GitHubExtension.Helpers;
-using Microsoft.Data.Sqlite;
+using Microsoft.Data.Sqlite
 
 namespace GitHubExtension.DataModel;
 
