@@ -5,7 +5,7 @@
   "body": [
     {
       "type": "Input.Text",
-      "id": "Repo",
+      "id": "url",
       "label": "%Widget_Template_Label/Url%",
       "inlineAction": {
         "type": "Action.Execute",

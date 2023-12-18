@@ -201,7 +201,7 @@ internal class GitHubPullsWidget : GitHubWidget
 
     public override void OnCustomizationRequested(WidgetCustomizationRequestedArgs customizationRequestedArgs)
     {
-        SavedRepositoryUrl = RepositoryUrl;
+        SavedConfigurationData = ConfigurationData;
         SetConfigure();
     }
 }
