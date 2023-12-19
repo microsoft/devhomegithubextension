@@ -54,7 +54,15 @@ public class DeveloperIdProvider : IDeveloperIdProvider
             DeveloperIds ??= new List<DeveloperId>();
 
             // Retrieve and populate Logged in DeveloperIds from previous launch.
-            RestoreDeveloperIds(CredentialVault.GetAllSavedLoginIds());
+            try
+            {
+                RestoreDeveloperIds(CredentialVault.GetAllSavedLoginIds());
+            }
+            catch (Exception ex)
+            {
+                // Log error and continue even if Restore of previously logged in DevIds failed.
+                Log.Logger()?.ReportError($"Error while restoring DeveloperIds : {ex.Message}");
+            }
         }
     }
 
@@ -300,17 +308,25 @@ public class DeveloperIdProvider : IDeveloperIdProvider
     {
         foreach (var loginId in loginIds)
         {
-            var gitHubClient = new GitHubClient(new ProductHeaderValue(Constants.DEV_HOME_APPLICATION_NAME))
+            try
             {
-                Credentials = new Credentials(CredentialVault.GetCredentialFromLocker(loginId).Password),
-            };
-            var user = gitHubClient.User.Current().Result;
+                var gitHubClient = new GitHubClient(new ProductHeaderValue(Constants.DEV_HOME_APPLICATION_NAME))
+                {
+                    Credentials = new Credentials(CredentialVault.GetCredentialFromLocker(loginId).Password),
+                };
+                var user = gitHubClient.User.Current().Result;
 
-            DeveloperId developerId = new (user.Login, user.Name, user.Email, user.Url, gitHubClient);
+                DeveloperId developerId = new (user.Login, user.Name, user.Email, user.Url, gitHubClient);
 
-            lock (DeveloperIdsLock)
+                lock (DeveloperIdsLock)
+                {
+                    DeveloperIds.Add(developerId);
+                }
+            }
+            catch (Exception ex)
             {
-                DeveloperIds.Add(developerId);
+                // Log error and proceed to next loginId.
+                Log.Logger()?.ReportError($"Error while restoring DeveloperId {loginId} : {ex.Message}");
             }
 
             Log.Logger()?.ReportInfo($"Restored DeveloperId");
