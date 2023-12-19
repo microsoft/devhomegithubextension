@@ -1,17 +1,10 @@
 ﻿// Copyright (c) Microsoft Corporation and Contributors
 // Licensed under the MIT license.
 
-using System.Text.Json;
-using System.Text.Json.Nodes;
-using System.Text.Json.Serialization;
-using GitHubExtension.DataManager;
-using GitHubExtension.Helpers;
-using GitHubExtension.Widgets.Enums;
-using Microsoft.Windows.Widgets.Providers;
 using Octokit;
 
 namespace GitHubExtension.Widgets;
-internal class GitHubMentionedInWidget : GitHubWidget
+internal class GitHubMentionedInWidget : GitHubCategoryWidget
 {
     private static readonly string TitleIconData =
         "iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAABGdBTUEAALGPC/xhBQAAAA" +
@@ -42,236 +35,21 @@ internal class GitHubMentionedInWidget : GitHubWidget
         "W2+XsCNN5MdnNZw38ksp1Odyag9m4AD1g0f1QBnmA2WUN5HPim5V7jiPIsneZsCMdjHvmn" +
         "ZBE9QJ5KFrH0dFXqxnYisOz0HtBybqufmgwMDAwMDFWCmpq/ANfVYnfzsINAAAAAAElFTkSuQmCC";
 
-    private static Dictionary<string, string> Templates { get; set; } = new ();
-
     protected static readonly new string Name = nameof(GitHubMentionedInWidget);
 
-    private SearchCategory ShowCategory
+    protected override string GetTitleIconData()
     {
-        get => EnumHelper.StringToSearchCategory(State());
-
-        set => SetState(EnumHelper.SearchCategoryToString(value));
-    }
-
-    private SearchCategory? savedShowCategory;
-
-    private string mentionedName = string.Empty;
-
-    private string MentionedName
-    {
-        get
-        {
-            if (string.IsNullOrEmpty(mentionedName))
-            {
-                GetMentionedName();
-            }
-
-            return mentionedName;
-        }
-        set => mentionedName = value;
-    }
-
-    public GitHubMentionedInWidget()
-        : base()
-    {
-        GitHubSearchManager.OnResultsAvailable += SearchManagerResultsAvailableHandler;
-        ShowCategory = SearchCategory.IssuesAndPullRequests;
-    }
-
-    ~GitHubMentionedInWidget()
-    {
-        GitHubSearchManager.OnResultsAvailable -= SearchManagerResultsAvailableHandler;
-    }
-
-    private void GetMentionedName()
-    {
-        var devIds = DeveloperId.DeveloperIdProvider.GetInstance().GetLoggedInDeveloperIdsInternal();
-        if ((devIds != null) && devIds.Any())
-        {
-            mentionedName = devIds.First().LoginId;
-        }
-    }
-
-    public override void DeleteWidget(string widgetId, string customState)
-    {
-        // Remove event handler.
-        GitHubSearchManager.OnResultsAvailable -= SearchManagerResultsAvailableHandler;
-        base.DeleteWidget(widgetId, customState);
-    }
-
-    public override void OnWidgetContextChanged(WidgetContextChangedArgs contextChangedArgs)
-    {
-        Enabled = contextChangedArgs.WidgetContext.IsActive;
-        UpdateActivityState();
-    }
-
-    public new void UpdateActivityState()
-    {
-        // State logic for the Widget:
-        // Signed in -> Configure -> Active / Inactive per widget host.
-        if (!IsUserLoggedIn())
-        {
-            SetSignIn();
-            return;
-        }
-
-        if (ShowCategory == SearchCategory.Unknown)
-        {
-            SetConfigure();
-            return;
-        }
-
-        if (Enabled)
-        {
-            if (ContentData == EmptyJson)
-            {
-                SetLoading();
-            }
-            else
-            {
-                SetActive();
-            }
-
-            return;
-        }
-
-        SetInactive();
-    }
-
-    public override void OnActionInvoked(WidgetActionInvokedArgs actionInvokedArgs)
-    {
-        if (actionInvokedArgs.Verb == "Submit")
-        {
-            var dataObject = JsonSerializer.Deserialize(actionInvokedArgs.Data, SourceGenerationContextMentionedWidget.Default.DataPayloadMentionedWidget);
-            if (dataObject != null && dataObject.ShowCategory != null)
-            {
-                ShowCategory = EnumHelper.StringToSearchCategory(dataObject.ShowCategory);
-
-                // If we got here during the customization flow, we need to LoadContentData again
-                // so we can show the loading page rather than stale data.
-                LoadContentData();
-                UpdateActivityState();
-            }
-        }
-        else
-        {
-            base.OnActionInvoked(actionInvokedArgs);
-        }
+        return TitleIconData;
     }
 
     public override void RequestContentData()
     {
-        // Throttle protection against a widget trigging rapid data updates.
-        if (DateTime.Now - LastUpdated < WidgetDataRequestMinTime)
+        var request = new SearchIssuesRequest()
         {
-            Log.Logger()?.ReportDebug(Name, ShortId, "Data request too soon, skipping.");
-        }
-
-        if (ActivityState == WidgetActivityState.Configure)
-        {
-            return;
-        }
-
-        try
-        {
-            Log.Logger()?.ReportInfo(Name, ShortId, $"Requesting search for mentioned user {mentionedName}");
-            var requestOptions = new RequestOptions
-            {
-                ApiOptions = new ApiOptions
-                {
-                    PageSize = 10,
-                    PageCount = 1,
-                    StartPage = 1,
-                },
-                UsePublicClientAsFallback = true,
-            };
-
-            var request = new SearchIssuesRequest()
-            {
-                Mentions = MentionedName,
-            };
-
-            var searchManager = GitHubSearchManager.CreateInstance();
-            searchManager?.SearchForGitHubIssuesOrPRs(request, Name, ShowCategory, requestOptions);
-            Log.Logger()?.ReportInfo(Name, ShortId, $"Requested search for {mentionedName}");
-            DataState = WidgetDataState.Requested;
-        }
-        catch (Exception ex)
-        {
-            Log.Logger()?.ReportError(Name, ShortId, "Failed requesting search.", ex);
-        }
-    }
-
-    public override void LoadContentData()
-    {
-        var issuesData = new JsonObject
-        {
-            { "openCount", 0 },
-            { "items", new JsonArray() },
-            { "mentionedName", MentionedName },
-            { "titleIconUrl", TitleIconData },
-            { "is_loading_data", true },
+            Mentions = UserName,
         };
-        ContentData = issuesData.ToJsonString();
-    }
 
-    public void LoadContentData(IEnumerable<Octokit.Issue> items)
-    {
-        Log.Logger()?.ReportDebug(Name, ShortId, "Getting Data for Mentioned in Widget");
-
-        try
-        {
-            var issuesData = new JsonObject();
-            var issuesArray = new JsonArray();
-            issuesData.Add("openCount", items.Count());
-            foreach (var item in items)
-            {
-                var issue = new JsonObject
-                {
-                    { "title", item.Title },
-                    { "url", item.HtmlUrl },
-                    { "number", item.Number },
-                    { "date", TimeSpanHelper.DateTimeOffsetToDisplayString(item.UpdatedAt, Log.Logger()) },
-                    { "user", item.User.Login },
-                    { "avatar", item.User.AvatarUrl },
-                    { "iconUrl", IconLoader.GetIconAsBase64(item.PullRequest == null ? "issues.png" : "pulls.png") },
-                };
-
-                var issueLabels = new JsonArray();
-                foreach (var label in item.Labels)
-                {
-                    var issueLabel = new JsonObject
-                    {
-                        { "name", label.Name },
-                        { "color", label.Color },
-                    };
-
-                    ((IList<JsonNode?>)issueLabels).Add(issueLabel);
-                }
-
-                issue.Add("labels", issueLabels);
-
-                ((IList<JsonNode?>)issuesArray).Add(issue);
-
-                var parsedUrl = item.HtmlUrl.Split('/');
-                var repo = parsedUrl[3] + '/' + parsedUrl[4];
-                issue.Add("repo", repo);
-            }
-
-            issuesData.Add("items", issuesArray);
-            issuesData.Add("mentionedName", MentionedName);
-            issuesData.Add("titleIconUrl", TitleIconData);
-
-            LastUpdated = DateTime.Now;
-            ContentData = issuesData.ToJsonString();
-            DataState = WidgetDataState.Okay;
-        }
-        catch (Exception e)
-        {
-            Log.Logger()?.ReportError(Name, ShortId, "Error retrieving data.", e);
-            DataState = WidgetDataState.Failed;
-            return;
-        }
+        RequestContentData(request);
     }
 
     public override string GetTemplatePath(WidgetPageState page)
@@ -285,58 +63,4 @@ internal class GitHubMentionedInWidget : GitHubWidget
             _ => throw new NotImplementedException(),
         };
     }
-
-    public override string GetData(WidgetPageState page)
-    {
-        return page switch
-        {
-            WidgetPageState.SignIn => new JsonObject { { "message", Resources.GetResource(@"Widget_Template/SignInRequired", Log.Logger()) } }.ToJsonString(),
-            WidgetPageState.Configure => GetConfigurationData(),
-            WidgetPageState.Content => ContentData,
-            WidgetPageState.Loading => EmptyJson,
-            _ => throw new NotImplementedException(Page.GetType().Name),
-        };
-    }
-
-    public string GetConfigurationData()
-    {
-        var configurationData = new JsonObject
-        {
-            { "showCategory", EnumHelper.SearchCategoryToString(ShowCategory == SearchCategory.Unknown ? SearchCategory.IssuesAndPullRequests : ShowCategory) },
-            { "savedShowCategory", savedShowCategory != null ? "savedShowCategory" : string.Empty },
-            { "configuring", true },
-        };
-        return configurationData.ToJsonString();
-    }
-
-    private void SearchManagerResultsAvailableHandler(IEnumerable<Octokit.Issue> results, string resultType)
-    {
-        Log.Logger()?.ReportDebug(Name, ShortId, $"Results Available Event: Type={resultType}");
-        if (resultType == Name)
-        {
-            Log.Logger()?.ReportInfo(Name, ShortId, $"Received matching repository update event.");
-            LoadContentData(results);
-            UpdateActivityState();
-        }
-    }
-
-    public override void OnCustomizationRequested(WidgetCustomizationRequestedArgs customizationRequestedArgs)
-    {
-        savedShowCategory = ShowCategory;
-        SetConfigure();
-    }
-}
-
-internal class DataPayloadMentionedWidget
-{
-    public string? ShowCategory
-    {
-        get; set;
-    }
-}
-
-[JsonSourceGenerationOptions(WriteIndented = true)]
-[JsonSerializable(typeof(DataPayloadMentionedWidget))]
-internal partial class SourceGenerationContextMentionedWidget : JsonSerializerContext
-{
 }

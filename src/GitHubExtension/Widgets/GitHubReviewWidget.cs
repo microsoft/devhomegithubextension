@@ -131,7 +131,7 @@ internal class GitHubReviewWidget : GitHubWidget
 
             SearchIssuesRequest request = new SearchIssuesRequest($"review-requested:{ReferredName}");
             var searchManager = GitHubSearchManager.CreateInstance();
-            searchManager?.SearchForGitHubIssuesOrPRs(request, Name, SearchCategory.PullRequests, requestOptions);
+            searchManager?.SearchForGitHubIssuesOrPRs(request, Id, SearchCategory.PullRequests, requestOptions);
             Log.Logger()?.ReportInfo(Name, ShortId, $"Requested search for {referredName}");
             DataState = WidgetDataState.Requested;
         }
@@ -239,10 +239,10 @@ internal class GitHubReviewWidget : GitHubWidget
         };
     }
 
-    private void SearchManagerResultsAvailableHandler(IEnumerable<Octokit.Issue> results, string resultType)
+    private void SearchManagerResultsAvailableHandler(IEnumerable<Octokit.Issue> results, string widgetId)
     {
-        Log.Logger()?.ReportDebug(Name, ShortId, $"Results Available Event: Type={resultType}");
-        if (resultType == Name)
+        Log.Logger()?.ReportDebug(Name, ShortId, $"Results Available Event: ID={widgetId}");
+        if (widgetId == Id)
         {
             Log.Logger()?.ReportInfo(Name, ShortId, $"Received matching repository update event.");
             LoadContentData(results);

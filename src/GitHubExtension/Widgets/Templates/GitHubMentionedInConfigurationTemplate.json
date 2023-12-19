@@ -12,7 +12,7 @@
                     "items": [
                         {
                             "type": "Input.ChoiceSet",
-                            "id": "ShowCategory",
+                            "id": "showCategory",
                             "isMultiSelect": false,
                             "value": "${showCategory}",
                             "choices": [
