@@ -80,7 +80,7 @@ public sealed class Program
             var d = activationArgs.Data as IProtocolActivatedEventArgs;
             if (d is not null)
             {
-                Log.Logger()?.ReportInfo($"Protocol Activation redirected from: {d.Uri.Host} host");
+                Log.Logger()?.ReportInfo($"Protocol Activation redirected from: {d.Uri.GetComponents(UriComponents.SchemeAndServer, UriFormat.SafeUnescaped)}");
                 HandleProtocolActivation(d.Uri);
             }
         }
