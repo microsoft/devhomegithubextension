@@ -196,8 +196,9 @@ public class DeveloperIdProvider : IDeveloperIdProvider
 
             if (OAuthRequests.Count is 0)
             {
+                // This could happen if the user refreshes the redirected browser window causing the OAuth response to be received again.
                 Log.Logger()?.ReportWarn($"No saved OAuth requests to match OAuth response");
-                throw new InvalidOperationException();
+                return;
             }
 
             var state = OAuthRequest.RetrieveState(authorizationResponse);
@@ -206,6 +207,8 @@ public class DeveloperIdProvider : IDeveloperIdProvider
 
             if (oAuthRequest == null)
             {
+                // This could happen if the user refreshes a previously redirected browser window instead of using
+                // the new browser window for the response. Log the warning and return.
                 Log.Logger()?.ReportWarn($"Unable to find valid request for received OAuth response");
                 return;
             }
@@ -322,17 +325,15 @@ public class DeveloperIdProvider : IDeveloperIdProvider
                 {
                     DeveloperIds.Add(developerId);
                 }
+
+                Log.Logger()?.ReportInfo($"Restored DeveloperId {loginId}");
             }
             catch (Exception ex)
             {
                 // Log error and proceed to next loginId.
                 Log.Logger()?.ReportError($"Error while restoring DeveloperId {loginId} : {ex.Message}");
             }
-
-            Log.Logger()?.ReportInfo($"Restored DeveloperId");
         }
-
-        return;
     }
 
     internal void RefreshDeveloperId(IDeveloperId developerIdInternal)
