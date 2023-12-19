@@ -198,17 +198,24 @@ public abstract class GitHubWidget : WidgetImpl
         }
     }
 
-    private void ResetWidgetInfoFromState()
+    protected virtual void ResetWidgetInfoFromState()
     {
         var dataObject = JsonObject.Parse(ConfigurationData);
-        if (dataObject != null && dataObject["url"] != null)
+
+        if (dataObject == null)
         {
-            RepositoryUrl = dataObject["url"]?.GetValue<string>() ?? string.Empty;
-            DeveloperLoginId = dataObject["account"]?.GetValue<string>() ?? string.Empty;
+            return;
         }
+
+        RepositoryUrl = dataObject["url"]?.GetValue<string>() ?? string.Empty;
+        DeveloperLoginId = dataObject["account"]?.GetValue<string>() ?? string.Empty;
     }
 
-    public override void OnCustomizationRequested(WidgetCustomizationRequestedArgs customizationRequestedArgs) => throw new NotImplementedException();
+    public override void OnCustomizationRequested(WidgetCustomizationRequestedArgs customizationRequestedArgs)
+    {
+        SavedConfigurationData = ConfigurationData;
+        SetConfigure();
+    }
 
     private void HandleCheckUrl(WidgetActionInvokedArgs args)
     {
@@ -268,6 +275,19 @@ public abstract class GitHubWidget : WidgetImpl
         {
             { "submitIcon", IconLoader.GetIconAsBase64("arrow.png") },
         };
+
+        var developerIdsData = new JsonArray();
+
+        foreach (var developerId in DeveloperIdProvider.GetInstance().GetLoggedInDeveloperIds().DeveloperIds)
+        {
+            Log.Logger()?.ReportInfo(developerId.LoginId);
+            developerIdsData.Add(new JsonObject
+            {
+                { "devId", developerId.LoginId },
+            });
+        }
+
+        configurationData.Add("accounts", developerIdsData);
 
         if (dataUrl == string.Empty)
         {

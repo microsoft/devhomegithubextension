@@ -4,6 +4,19 @@
   "version": "1.5",
   "body": [
     {
+      "type": "Input.ChoiceSet",
+      "id": "account",
+      "placeholder": "%Widget_Template/ChooseAccountPlaceholder%",
+      "value": "${selectedDevId}",
+      "choices": [
+        {
+          "$data": "${accounts}",
+          "title": "${devid}",
+          "value": "${devid}"
+        }
+      ]
+    },
+    {
       "type": "Input.Text",
       "id": "url",
       "label": "%Widget_Template_Label/Url%",

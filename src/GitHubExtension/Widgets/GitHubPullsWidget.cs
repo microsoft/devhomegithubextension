@@ -198,10 +198,4 @@ internal class GitHubPullsWidget : GitHubWidget
             }
         }
     }
-
-    public override void OnCustomizationRequested(WidgetCustomizationRequestedArgs customizationRequestedArgs)
-    {
-        SavedConfigurationData = ConfigurationData;
-        SetConfigure();
-    }
 }

@@ -225,10 +225,4 @@ internal class GitHubIssuesWidget : GitHubWidget
             }
         }
     }
-
-    public override void OnCustomizationRequested(WidgetCustomizationRequestedArgs customizationRequestedArgs)
-    {
-        SavedConfigurationData = ConfigurationData;
-        SetConfigure();
-    }
 }

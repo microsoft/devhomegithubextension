@@ -65,14 +65,7 @@ internal class GitHubAssignedWidget : GitHubWidget
 
     protected static readonly new string Name = nameof(GitHubAssignedWidget);
 
-    private SearchCategory ShowCategory
-    {
-        get => EnumHelper.StringToSearchCategory(State());
-
-        set => SetState(EnumHelper.SearchCategoryToString(value));
-    }
-
-    private SearchCategory? savedShowCategory;
+    private SearchCategory ShowCategory { get; set; } = SearchCategory.Unknown;
 
     private string assignedToName = string.Empty;
 
@@ -118,20 +111,44 @@ internal class GitHubAssignedWidget : GitHubWidget
         UpdateActivityState();
     }
 
+    protected override void ResetWidgetInfoFromState()
+    {
+        var dataObject = JsonObject.Parse(ConfigurationData);
+
+        if (dataObject == null)
+        {
+            return;
+        }
+
+        ShowCategory = EnumHelper.StringToSearchCategory(dataObject["showCategory"]?.GetValue<string>() ?? string.Empty);
+
+        base.ResetWidgetInfoFromState();
+    }
+
+    public override void OnCustomizationRequested(WidgetCustomizationRequestedArgs customizationRequestedArgs)
+    {
+        ShowCategory = SearchCategory.Unknown;
+        base.OnCustomizationRequested(customizationRequestedArgs);
+    }
+
     public override void OnActionInvoked(WidgetActionInvokedArgs actionInvokedArgs)
     {
         if (actionInvokedArgs.Verb == "Submit")
         {
-            var dataObject = JsonSerializer.Deserialize(actionInvokedArgs.Data, SourceGenerationContextAssignedWidget.Default.DataPayloadAssignedWidget);
-            if (dataObject != null && dataObject.ShowCategory != null)
-            {
-                ShowCategory = EnumHelper.StringToSearchCategory(dataObject.ShowCategory);
+            var data = actionInvokedArgs.Data;
+            var dataObject = JsonObject.Parse(data);
 
-                // If we got here during the customization flow, we need to LoadContentData again
-                // so we can show the loading page rather than stale data.
-                LoadContentData();
-                UpdateActivityState();
+            if (dataObject == null)
+            {
+                return;
             }
+
+            ShowCategory = EnumHelper.StringToSearchCategory(dataObject["showCategory"]?.GetValue<string>() ?? string.Empty);
+
+            // If we got here during the customization flow, we need to LoadContentData again
+            // so we can show the loading page rather than stale data.
+            LoadContentData();
+            UpdateActivityState();
         }
         else
         {
@@ -327,7 +344,7 @@ internal class GitHubAssignedWidget : GitHubWidget
         var configurationData = new JsonObject
         {
             { "showCategory", EnumHelper.SearchCategoryToString(ShowCategory == SearchCategory.Unknown ? SearchCategory.IssuesAndPullRequests : ShowCategory) },
-            { "savedShowCategory", savedShowCategory != null ? "savedShowCategory" : string.Empty },
+            { "savedShowCategory", SavedConfigurationData },
             { "configuring", true },
         };
         return configurationData.ToJsonString();
@@ -343,24 +360,4 @@ internal class GitHubAssignedWidget : GitHubWidget
             UpdateActivityState();
         }
     }
-
-    public override void OnCustomizationRequested(WidgetCustomizationRequestedArgs customizationRequestedArgs)
-    {
-        savedShowCategory = ShowCategory;
-        SetConfigure();
-    }
-}
-
-internal class DataPayloadAssignedWidget
-{
-    public string? ShowCategory
-    {
-        get; set;
-    }
-}
-
-[JsonSourceGenerationOptions(WriteIndented = true)]
-[JsonSerializable(typeof(DataPayloadAssignedWidget))]
-internal partial class SourceGenerationContextAssignedWidget : JsonSerializerContext
-{
 }
