@@ -276,6 +276,9 @@ internal abstract class GitHubCategoryWidget : GitHubWidget
             { "savedShowCategory", SavedConfigurationData },
             { "configuring", true },
         };
+
+        AddDevIds(ref configurationData);
+
         return configurationData.ToJsonString();
     }
 

@@ -269,13 +269,8 @@ public abstract class GitHubWidget : WidgetImpl
         }
     }
 
-    public string GetConfiguration(string dataUrl)
+    protected void AddDevIds(ref JsonObject configurationData)
     {
-        var configurationData = new JsonObject
-        {
-            { "submitIcon", IconLoader.GetIconAsBase64("arrow.png") },
-        };
-
         var developerIdsData = new JsonArray();
 
         foreach (var developerId in DeveloperIdProvider.GetInstance().GetLoggedInDeveloperIds().DeveloperIds)
@@ -288,6 +283,16 @@ public abstract class GitHubWidget : WidgetImpl
         }
 
         configurationData.Add("accounts", developerIdsData);
+    }
+
+    public string GetConfiguration(string dataUrl)
+    {
+        var configurationData = new JsonObject
+        {
+            { "submitIcon", IconLoader.GetIconAsBase64("arrow.png") },
+        };
+
+        AddDevIds(ref configurationData);
 
         if (dataUrl == string.Empty)
         {
