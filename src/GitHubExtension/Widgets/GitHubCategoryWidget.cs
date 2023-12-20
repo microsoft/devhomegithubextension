@@ -6,6 +6,7 @@ using GitHubExtension.DataManager;
 using GitHubExtension.DeveloperId;
 using GitHubExtension.Helpers;
 using GitHubExtension.Widgets.Enums;
+using Microsoft.Windows.DevHome.SDK;
 using Microsoft.Windows.Widgets.Providers;
 using Octokit;
 
@@ -13,6 +14,8 @@ namespace GitHubExtension.Widgets;
 internal abstract class GitHubCategoryWidget : GitHubWidget
 {
     protected static readonly new string Name = nameof(GitHubCategoryWidget);
+
+    protected string DeveloperLoginId { get; set; } = string.Empty;
 
     protected SearchCategory ShowCategory { get; set; } = SearchCategory.Unknown;
 
@@ -78,9 +81,8 @@ internal abstract class GitHubCategoryWidget : GitHubWidget
             return;
         }
 
-        Log.Logger()?.ReportInfo(ConfigurationData);
-
         ShowCategory = EnumHelper.StringToSearchCategory(dataObject["showCategory"]?.GetValue<string>() ?? string.Empty);
+        DeveloperLoginId = dataObject["account"]?.GetValue<string>() ?? string.Empty;
 
         base.ResetWidgetInfoFromState();
     }
@@ -279,6 +281,35 @@ internal abstract class GitHubCategoryWidget : GitHubWidget
             WidgetPageState.Loading => EmptyJson,
             _ => throw new NotImplementedException(Page.GetType().Name),
         };
+    }
+
+    protected IDeveloperId? GetWidgetDeveloperId()
+    {
+        foreach (var devid in DeveloperIdProvider.GetInstance().GetLoggedInDeveloperIds().DeveloperIds)
+        {
+            if (devid.LoginId == DeveloperLoginId)
+            {
+                return devid;
+            }
+        }
+
+        return null;
+    }
+
+    protected void AddDevIds(ref JsonObject configurationData)
+    {
+        var developerIdsData = new JsonArray();
+
+        foreach (var developerId in DeveloperIdProvider.GetInstance().GetLoggedInDeveloperIds().DeveloperIds)
+        {
+            Log.Logger()?.ReportInfo(developerId.LoginId);
+            developerIdsData.Add(new JsonObject
+            {
+                { "devId", developerId.LoginId },
+            });
+        }
+
+        configurationData.Add("accounts", developerIdsData);
     }
 
     public string GetConfigurationData()
