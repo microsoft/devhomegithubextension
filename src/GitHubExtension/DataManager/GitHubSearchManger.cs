@@ -4,6 +4,8 @@
 using GitHubExtension.Client;
 using GitHubExtension.DataManager;
 using GitHubExtension.DataModel;
+using Microsoft.Windows.DevHome.SDK;
+using Octokit;
 
 namespace GitHubExtension;
 
@@ -33,7 +35,21 @@ public partial class GitHubSearchManager : IGitHubSearchManager, IDisposable
         }
     }
 
+    public async Task SearchForGitHubIssuesOrPRs(Octokit.SearchIssuesRequest request, string initiator, SearchCategory category, IDeveloperId developerId, RequestOptions? options = null)
+    {
+        var client = GitHubClientProvider.Instance.GetClient(developerId.Url) ?? throw new InvalidOperationException($"Client does not exist for {developerId.Url}");
+
+        await SearchForGitHubIssuesOrPRs(request, initiator, category, client, options);
+    }
+
     public async Task SearchForGitHubIssuesOrPRs(Octokit.SearchIssuesRequest request, string initiator, SearchCategory category, RequestOptions? options = null)
+    {
+        var client = await GitHubClientProvider.Instance.GetClientForLoggedInDeveloper(true);
+
+        await SearchForGitHubIssuesOrPRs(request, initiator, category, client, options);
+    }
+
+    private async Task SearchForGitHubIssuesOrPRs(Octokit.SearchIssuesRequest request, string initiator, SearchCategory category, GitHubClient client, RequestOptions? options = null)
     {
         Log.Logger()?.ReportInfo(Name, $"Searching for issues or pull requests for widget {initiator}");
         request.State = Octokit.ItemState.Open;
@@ -41,8 +57,6 @@ public partial class GitHubSearchManager : IGitHubSearchManager, IDisposable
         request.PerPage = 10;
         request.SortField = Octokit.IssueSearchSort.Updated;
         request.Order = Octokit.SortDirection.Descending;
-
-        var client = await GitHubClientProvider.Instance.GetClientForLoggedInDeveloper(true);
 
         // Set is: parameter according to the search category.
         // For the case we are searching for both we don't have to set the parameter

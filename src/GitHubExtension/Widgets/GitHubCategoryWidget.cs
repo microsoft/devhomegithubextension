@@ -3,6 +3,7 @@
 
 using System.Text.Json.Nodes;
 using GitHubExtension.DataManager;
+using GitHubExtension.DeveloperId;
 using GitHubExtension.Helpers;
 using GitHubExtension.Widgets.Enums;
 using Microsoft.Windows.Widgets.Providers;
@@ -101,6 +102,7 @@ internal abstract class GitHubCategoryWidget : GitHubWidget
             }
 
             ShowCategory = EnumHelper.StringToSearchCategory(dataObject["showCategory"]?.GetValue<string>() ?? string.Empty);
+            DeveloperLoginId = dataObject["account"]?.GetValue<string>() ?? string.Empty;
 
             // If we got here during the customization flow, we need to LoadContentData again
             // so we can show the loading page rather than stale data.
@@ -174,7 +176,14 @@ internal abstract class GitHubCategoryWidget : GitHubWidget
             };
 
             var searchManager = GitHubSearchManager.CreateInstance();
-            searchManager?.SearchForGitHubIssuesOrPRs(request, Id, ShowCategory, requestOptions);
+            var devId = GetWidgetDeveloperId();
+
+            if (devId == null)
+            {
+                throw new InvalidOperationException($"DevID does not exist for login id: {DeveloperLoginId}");
+            }
+
+            searchManager?.SearchForGitHubIssuesOrPRs(request, Id, ShowCategory, devId, requestOptions);
             Log.Logger()?.ReportInfo(Name, ShortId, $"Requested data update for {UserName}");
             DataState = WidgetDataState.Requested;
         }
@@ -276,6 +285,15 @@ internal abstract class GitHubCategoryWidget : GitHubWidget
             { "savedShowCategory", SavedConfigurationData },
             { "configuring", true },
         };
+
+        if (!string.IsNullOrEmpty(DeveloperLoginId))
+        {
+            configurationData.Add("selectedDevId", DeveloperLoginId);
+        }
+        else if (DeveloperIdProvider.GetInstance().GetLoggedInDeveloperIds().DeveloperIds.Count() == 1)
+        {
+            configurationData.Add("selectedDevId", DeveloperIdProvider.GetInstance().GetLoggedInDeveloperIds().DeveloperIds.First().LoginId);
+        }
 
         AddDevIds(ref configurationData);
 

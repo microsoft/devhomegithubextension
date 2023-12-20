@@ -2,9 +2,7 @@
 // Licensed under the MIT license.
 
 using System.Text;
-using System.Text.Json;
 using System.Text.Json.Nodes;
-using System.Text.Json.Serialization;
 using GitHubExtension.Client;
 using GitHubExtension.DataManager;
 using GitHubExtension.DeveloperId;
@@ -381,6 +379,19 @@ public abstract class GitHubWidget : WidgetImpl
     {
         IDeveloperIdProvider authProvider = DeveloperIdProvider.GetInstance();
         return authProvider.GetLoggedInDeveloperIds().DeveloperIds.Any();
+    }
+
+    protected IDeveloperId? GetWidgetDeveloperId()
+    {
+        foreach (var devid in DeveloperIdProvider.GetInstance().GetLoggedInDeveloperIds().DeveloperIds)
+        {
+            if (devid.LoginId == DeveloperLoginId)
+            {
+                return devid;
+            }
+        }
+
+        return null;
     }
 
     public void UpdateActivityState()
