@@ -4,7 +4,7 @@
 using Octokit;
 
 namespace GitHubExtension.Widgets;
-internal class GitHubAssignedWidget : GitHubCategoryWidget
+internal class GitHubAssignedWidget : GitHubUserWidget
 {
     private static readonly string TitleIconData =
         "iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAABGdBTUEAALGPC/xhBQAAAAlwS" +

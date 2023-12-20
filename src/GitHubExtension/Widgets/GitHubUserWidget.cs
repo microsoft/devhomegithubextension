@@ -11,9 +11,9 @@ using Microsoft.Windows.Widgets.Providers;
 using Octokit;
 
 namespace GitHubExtension.Widgets;
-internal abstract class GitHubCategoryWidget : GitHubWidget
+internal abstract class GitHubUserWidget : GitHubWidget
 {
-    protected static readonly new string Name = nameof(GitHubCategoryWidget);
+    protected static readonly new string Name = nameof(GitHubUserWidget);
 
     protected string DeveloperLoginId { get; set; } = string.Empty;
 
@@ -35,7 +35,7 @@ internal abstract class GitHubCategoryWidget : GitHubWidget
         set => userName = value;
     }
 
-    public GitHubCategoryWidget()
+    public GitHubUserWidget()
         : base()
     {
         GitHubSearchManager.OnResultsAvailable += SearchManagerResultsAvailableHandler;
@@ -43,7 +43,7 @@ internal abstract class GitHubCategoryWidget : GitHubWidget
         UserName = string.Empty;
     }
 
-    ~GitHubCategoryWidget()
+    ~GitHubUserWidget()
     {
         GitHubSearchManager.OnResultsAvailable -= SearchManagerResultsAvailableHandler;
     }

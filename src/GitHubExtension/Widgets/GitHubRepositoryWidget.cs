@@ -19,6 +19,17 @@ public abstract class GitHubRepositoryWidget : GitHubWidget
 
     protected string RepositoryUrl { get; set; } = string.Empty;
 
+    public GitHubRepositoryWidget()
+        : base()
+    {
+        GitHubDataManager.OnUpdate += DataManagerUpdateHandler;
+    }
+
+    ~GitHubRepositoryWidget()
+    {
+        GitHubDataManager.OnUpdate -= DataManagerUpdateHandler;
+    }
+
     public string GetOwner()
     {
         return Validation.ParseOwnerFromGitHubURL(RepositoryUrl);
@@ -183,8 +194,22 @@ public abstract class GitHubRepositoryWidget : GitHubWidget
         }
     }
 
+    public override string GetData(WidgetPageState page)
+    {
+        return page switch
+        {
+            WidgetPageState.SignIn => GetSignIn(),
+            WidgetPageState.Configure => GetConfiguration(RepositoryUrl),
+            WidgetPageState.Content => ContentData,
+            WidgetPageState.Loading => new JsonObject { { "configuring", true } }.ToJsonString(),
+            _ => throw new NotImplementedException(Page.GetType().Name),
+        };
+    }
+
     protected new string GetCurrentState()
     {
         return $"State: {ActivityState}  Page: {Page}  Data: {DataState}  Repository: {RepositoryUrl}";
     }
+
+    protected abstract void DataManagerUpdateHandler(object? source, DataManagerUpdateEventArgs e);
 }

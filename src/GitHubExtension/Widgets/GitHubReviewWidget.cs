@@ -8,7 +8,7 @@ using Microsoft.Windows.Widgets.Providers;
 using Octokit;
 
 namespace GitHubExtension.Widgets;
-internal class GitHubReviewWidget : GitHubCategoryWidget
+internal class GitHubReviewWidget : GitHubUserWidget
 {
     protected static readonly new string Name = nameof(GitHubReviewWidget);
 
