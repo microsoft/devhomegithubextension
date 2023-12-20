@@ -1,217 +1,60 @@
 ﻿// Copyright (c) Microsoft Corporation and Contributors
 // Licensed under the MIT license.
 
-using System.Text.Json;
 using System.Text.Json.Nodes;
-using System.Text.Json.Serialization;
 using GitHubExtension.DataManager;
 using GitHubExtension.Helpers;
-using GitHubExtension.Widgets.Enums;
 using Microsoft.Windows.Widgets.Providers;
 using Octokit;
 
 namespace GitHubExtension.Widgets;
-internal class GitHubReviewWidget : GitHubWidget
+internal class GitHubReviewWidget : GitHubCategoryWidget
 {
-    private static Dictionary<string, string> Templates { get; set; } = new ();
-
     protected static readonly new string Name = nameof(GitHubReviewWidget);
-
-    private string referredName = string.Empty;
-
-    private string ReferredName
-    {
-        get
-        {
-            if (string.IsNullOrEmpty(referredName))
-            {
-                GetReferredName();
-            }
-
-            return referredName;
-        }
-        set => referredName = value;
-    }
-
-    private string ConfigurationState
-    {
-        get => State();
-
-        set => SetState(value);
-    }
 
     public GitHubReviewWidget()
         : base()
     {
-        GitHubSearchManager.OnResultsAvailable += SearchManagerResultsAvailableHandler;
-    }
-
-    ~GitHubReviewWidget()
-    {
-        GitHubSearchManager.OnResultsAvailable -= SearchManagerResultsAvailableHandler;
-    }
-
-    private void GetReferredName()
-    {
-        var devIds = DeveloperId.DeveloperIdProvider.GetInstance().GetLoggedInDeveloperIdsInternal();
-        if ((devIds != null) && devIds.Any())
-        {
-            referredName = devIds.First().LoginId;
-        }
-    }
-
-    public override void DeleteWidget(string widgetId, string customState)
-    {
-        // Remove event handler.
-        GitHubSearchManager.OnResultsAvailable -= SearchManagerResultsAvailableHandler;
-        base.DeleteWidget(widgetId, customState);
-    }
-
-    public override void OnWidgetContextChanged(WidgetContextChangedArgs contextChangedArgs)
-    {
-        Enabled = contextChangedArgs.WidgetContext.IsActive;
-        UpdateActivityState();
-    }
-
-    public new void UpdateActivityState()
-    {
-        // State logic for the Widget: (no configuration is needed)
-        // Signed in -> Active / Inactive per widget host.
-        if (!IsUserLoggedIn())
-        {
-            SetSignIn();
-            return;
-        }
-
-        ConfigurationState = "Activated";
-
-        if (Enabled)
-        {
-            if (ContentData == EmptyJson)
-            {
-                SetLoading();
-            }
-            else
-            {
-                SetActive();
-            }
-
-            return;
-        }
-
-        SetInactive();
+        ShowCategory = SearchCategory.PullRequests;
     }
 
     public override void RequestContentData()
     {
-        // Throttle protection against a widget trigging rapid data updates.
-        if (DateTime.Now - LastUpdated < WidgetDataRequestMinTime)
-        {
-            Log.Logger()?.ReportDebug(Name, ShortId, "Data request too soon, skipping.");
-        }
+        SearchIssuesRequest request = new SearchIssuesRequest($"review-requested:{UserName}");
 
-        if (ActivityState == WidgetActivityState.Configure)
-        {
-            return;
-        }
-
-        try
-        {
-            Log.Logger()?.ReportInfo(Name, ShortId, $"Requesting search for mentioned user {referredName}");
-            var requestOptions = new RequestOptions
-            {
-                ApiOptions = new ApiOptions
-                {
-                    PageSize = 10,
-                    PageCount = 1,
-                    StartPage = 1,
-                },
-                UsePublicClientAsFallback = true,
-            };
-
-            SearchIssuesRequest request = new SearchIssuesRequest($"review-requested:{ReferredName}");
-            var searchManager = GitHubSearchManager.CreateInstance();
-            searchManager?.SearchForGitHubIssuesOrPRs(request, Id, SearchCategory.PullRequests, requestOptions);
-            Log.Logger()?.ReportInfo(Name, ShortId, $"Requested search for {referredName}");
-            DataState = WidgetDataState.Requested;
-        }
-        catch (Exception ex)
-        {
-            Log.Logger()?.ReportError(Name, ShortId, "Failed requesting search.", ex);
-        }
+        RequestContentData(request);
     }
 
-    public override void LoadContentData()
+    protected override string GetTitleIconData()
     {
-        var issuesData = new JsonObject
-        {
-            { "openCount", 0 },
-            { "items", new JsonArray() },
-            { "referredName", ReferredName },
-            { "titleIconUrl", IconLoader.GetIconAsBase64("pulls.png") },
-            { "is_loading_data", true },
-        };
-        ContentData = issuesData.ToJsonString();
+        return IconLoader.GetIconAsBase64("pulls.png");
     }
 
-    public void LoadContentData(IEnumerable<Octokit.Issue> items)
+    // Overriding this method because this widget only cares about the account.
+    public override void OnActionInvoked(WidgetActionInvokedArgs actionInvokedArgs)
     {
-        Log.Logger()?.ReportDebug(Name, ShortId, "Getting Data for Mentioned in Widget");
-
-        try
+        if (actionInvokedArgs.Verb == "Submit")
         {
-            using var dataManager = GitHubDataManager.CreateInstance();
+            var data = actionInvokedArgs.Data;
+            var dataObject = JsonNode.Parse(data);
 
-            var issuesData = new JsonObject();
-            var issuesArray = new JsonArray();
-            issuesData.Add("openCount", items.Count());
-            foreach (var item in items)
+            if (dataObject == null)
             {
-                var issue = new JsonObject
-                {
-                    { "title", item.Title },
-                    { "url", item.HtmlUrl },
-                    { "number", item.Number },
-                    { "date", TimeSpanHelper.DateTimeOffsetToDisplayString(item.UpdatedAt, Log.Logger()) },
-                    { "user", item.User.Login },
-                    { "avatar", item.User.AvatarUrl },
-                    { "iconUrl", IconLoader.GetIconAsBase64("pulls.png") },
-                };
-
-                var issueLabels = new JsonArray();
-                foreach (var label in item.Labels)
-                {
-                    var issueLabel = new JsonObject
-                    {
-                        { "name", label.Name },
-                        { "color", label.Color },
-                    };
-
-                    ((IList<JsonNode?>)issueLabels).Add(issueLabel);
-                }
-
-                issue.Add("labels", issueLabels);
-
-                ((IList<JsonNode?>)issuesArray).Add(issue);
-
-                var parsedUrl = item.HtmlUrl.Split('/');
-                var repo = parsedUrl[3] + '/' + parsedUrl[4];
-                issue.Add("repo", repo);
+                return;
             }
 
-            issuesData.Add("items", issuesArray);
-            issuesData.Add("referredName", ReferredName);
-            issuesData.Add("titleIconUrl", IconLoader.GetIconAsBase64("pulls.png"));
+            DeveloperLoginId = dataObject["account"]?.GetValue<string>() ?? string.Empty;
 
-            LastUpdated = DateTime.Now;
-            ContentData = issuesData.ToJsonString();
-            DataState = WidgetDataState.Okay;
+            ConfigurationData = data;
+
+            // If we got here during the customization flow, we need to LoadContentData again
+            // so we can show the loading page rather than stale data.
+            LoadContentData();
+            UpdateActivityState();
         }
-        catch (Exception e)
+        else
         {
-            Log.Logger()?.ReportError(Name, ShortId, "Error retrieving data.", e);
-            DataState = WidgetDataState.Failed;
-            return;
+            base.OnActionInvoked(actionInvokedArgs);
         }
     }
 
@@ -225,28 +68,5 @@ internal class GitHubReviewWidget : GitHubWidget
             WidgetPageState.Loading => @"Widgets\Templates\GitHubLoadingTemplate.json",
             _ => throw new NotImplementedException(),
         };
-    }
-
-    public override string GetData(WidgetPageState page)
-    {
-        return page switch
-        {
-            WidgetPageState.SignIn => new JsonObject { { "message", Resources.GetResource(@"Widget_Template/SignInRequired", Log.Logger()) } }.ToJsonString(),
-            WidgetPageState.Configure => EmptyJson,
-            WidgetPageState.Content => ContentData,
-            WidgetPageState.Loading => EmptyJson,
-            _ => throw new NotImplementedException(Page.GetType().Name),
-        };
-    }
-
-    private void SearchManagerResultsAvailableHandler(IEnumerable<Octokit.Issue> results, string widgetId)
-    {
-        Log.Logger()?.ReportDebug(Name, ShortId, $"Results Available Event: ID={widgetId}");
-        if (widgetId == Id)
-        {
-            Log.Logger()?.ReportInfo(Name, ShortId, $"Received matching repository update event.");
-            LoadContentData(results);
-            UpdateActivityState();
-        }
     }
 }

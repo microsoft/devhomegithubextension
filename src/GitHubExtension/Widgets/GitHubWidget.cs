@@ -198,7 +198,7 @@ public abstract class GitHubWidget : WidgetImpl
 
     protected virtual void ResetWidgetInfoFromState()
     {
-        var dataObject = JsonObject.Parse(ConfigurationData);
+        var dataObject = JsonNode.Parse(ConfigurationData);
 
         if (dataObject == null)
         {

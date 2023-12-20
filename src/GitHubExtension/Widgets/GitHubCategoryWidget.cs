@@ -49,7 +49,7 @@ internal abstract class GitHubCategoryWidget : GitHubWidget
 
     private void GetUserName()
     {
-        var devIds = DeveloperId.DeveloperIdProvider.GetInstance().GetLoggedInDeveloperIdsInternal();
+        var devIds = DeveloperIdProvider.GetInstance().GetLoggedInDeveloperIdsInternal();
         if ((devIds != null) && devIds.Any())
         {
             userName = devIds.First().LoginId;
@@ -71,12 +71,14 @@ internal abstract class GitHubCategoryWidget : GitHubWidget
 
     protected override void ResetWidgetInfoFromState()
     {
-        var dataObject = JsonObject.Parse(ConfigurationData);
+        var dataObject = JsonNode.Parse(ConfigurationData);
 
         if (dataObject == null)
         {
             return;
         }
+
+        Log.Logger()?.ReportInfo(ConfigurationData);
 
         ShowCategory = EnumHelper.StringToSearchCategory(dataObject["showCategory"]?.GetValue<string>() ?? string.Empty);
 
@@ -94,7 +96,7 @@ internal abstract class GitHubCategoryWidget : GitHubWidget
         if (actionInvokedArgs.Verb == "Submit")
         {
             var data = actionInvokedArgs.Data;
-            var dataObject = JsonObject.Parse(data);
+            var dataObject = JsonNode.Parse(data);
 
             if (dataObject == null)
             {
@@ -103,6 +105,8 @@ internal abstract class GitHubCategoryWidget : GitHubWidget
 
             ShowCategory = EnumHelper.StringToSearchCategory(dataObject["showCategory"]?.GetValue<string>() ?? string.Empty);
             DeveloperLoginId = dataObject["account"]?.GetValue<string>() ?? string.Empty;
+
+            ConfigurationData = data;
 
             // If we got here during the customization flow, we need to LoadContentData again
             // so we can show the loading page rather than stale data.
@@ -125,7 +129,7 @@ internal abstract class GitHubCategoryWidget : GitHubWidget
             return;
         }
 
-        if (ShowCategory == SearchCategory.Unknown)
+        if (ShowCategory == SearchCategory.Unknown || string.IsNullOrEmpty(DeveloperLoginId))
         {
             SetConfigure();
             return;
