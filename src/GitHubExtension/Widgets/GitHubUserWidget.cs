@@ -165,14 +165,14 @@ internal abstract class GitHubUserWidget : GitHubWidget
             };
 
             var searchManager = GitHubSearchManager.CreateInstance();
-            var devId = GetWidgetDeveloperId();
+            var developerId = GetWidgetDeveloperId();
 
-            if (devId == null)
+            if (developerId == null)
             {
                 throw new InvalidOperationException($"DevID does not exist for login id: {DeveloperLoginId}");
             }
 
-            searchManager?.SearchForGitHubIssuesOrPRs(request, Id, ShowCategory, devId, requestOptions);
+            searchManager?.SearchForGitHubIssuesOrPRs(request, Id, ShowCategory, developerId, requestOptions);
             Log.Logger()?.ReportInfo(Name, ShortId, $"Requested data update for {UserName}");
             DataState = WidgetDataState.Requested;
         }
