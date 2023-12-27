@@ -23,15 +23,7 @@ internal abstract class GitHubUserWidget : GitHubWidget
 
     protected string UserName
     {
-        get
-        {
-            if (string.IsNullOrEmpty(userName))
-            {
-                GetUserName();
-            }
-
-            return userName;
-        }
+        get => userName = DeveloperLoginId;
         set => userName = value;
     }
 
@@ -49,15 +41,6 @@ internal abstract class GitHubUserWidget : GitHubWidget
     }
 
     protected abstract string GetTitleIconData();
-
-    private void GetUserName()
-    {
-        var devIds = DeveloperIdProvider.GetInstance().GetLoggedInDeveloperIdsInternal();
-        if ((devIds != null) && devIds.Any())
-        {
-            userName = devIds.First().LoginId;
-        }
-    }
 
     public override void DeleteWidget(string widgetId, string customState)
     {
