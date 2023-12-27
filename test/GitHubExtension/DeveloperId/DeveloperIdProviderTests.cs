@@ -130,7 +130,7 @@ public partial class DeveloperIdTests
     }
 
     [TestMethod]
-    [TestCategory("Unit")]
+    [TestCategory("LiveData")]
     public void DeveloperIdProvider_GetDeveloperIds_InvalidPAT()
     {
         // Setup CredentialVault with a dummy testuser and invalid PAT for Github.com

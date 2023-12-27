@@ -26,7 +26,7 @@ public partial class DeveloperIdTests
     }
 
     [TestMethod]
-    [TestCategory("Unit")]
+    [TestCategory("LiveData")]
     [DataRow("testuser1")]
     [DataRow("https://github.com/testuser2")]
     [DataRow("https://RandomWebServer.example/testuser3")]
@@ -53,7 +53,7 @@ public partial class DeveloperIdTests
     }
 
     [TestMethod]
-    [TestCategory("Unit")]
+    [TestCategory("LiveData")]
     [DataRow("testuser1")]
     [DataRow("https://github.com/testuser2")]
     [DataRow("https://RandomWebServer.example/testuser3")]
@@ -80,7 +80,7 @@ public partial class DeveloperIdTests
     }
 
     [TestMethod]
-    [TestCategory("Unit")]
+    [TestCategory("LiveData")]
     public void CredentialVault_GetAllCredentials()
     {
         var credentialVault = new CredentialVault("DevHomeGitHubExtensionTest");
