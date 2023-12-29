@@ -168,15 +168,7 @@ public abstract class GitHubWidget : WidgetImpl
         }
     }
 
-    protected virtual void ResetWidgetInfoFromState()
-    {
-        var dataObject = JsonNode.Parse(ConfigurationData);
-
-        if (dataObject == null)
-        {
-            return;
-        }
-    }
+    protected abstract void ResetWidgetInfoFromState();
 
     public override void OnCustomizationRequested(WidgetCustomizationRequestedArgs customizationRequestedArgs)
     {

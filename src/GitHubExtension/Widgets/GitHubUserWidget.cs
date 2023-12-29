@@ -66,8 +66,6 @@ internal abstract class GitHubUserWidget : GitHubWidget
 
         ShowCategory = EnumHelper.StringToSearchCategory(dataObject["showCategory"]?.GetValue<string>() ?? string.Empty);
         DeveloperLoginId = dataObject["account"]?.GetValue<string>() ?? string.Empty;
-
-        base.ResetWidgetInfoFromState();
     }
 
     public override void OnCustomizationRequested(WidgetCustomizationRequestedArgs customizationRequestedArgs)

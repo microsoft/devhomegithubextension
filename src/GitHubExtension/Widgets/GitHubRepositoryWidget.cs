@@ -77,8 +77,6 @@ public abstract class GitHubRepositoryWidget : GitHubWidget
         }
 
         RepositoryUrl = dataObject["url"]?.GetValue<string>() ?? string.Empty;
-
-        base.ResetWidgetInfoFromState();
     }
 
     public override void OnCustomizationRequested(WidgetCustomizationRequestedArgs customizationRequestedArgs)

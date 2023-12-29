@@ -31,6 +31,14 @@ internal class GitHubReviewWidget : GitHubUserWidget
         return IconLoader.GetIconAsBase64("pulls.png");
     }
 
+    // This widget does not have "ShowCategory" as a variable.
+    // So we override this method to not care about this data.
+    protected override void ResetWidgetInfoFromState()
+    {
+        base.ResetWidgetInfoFromState();
+        ShowCategory = SearchCategory.PullRequests;
+    }
+
     // Overriding this method because this widget only cares about the account.
     public override void OnActionInvoked(WidgetActionInvokedArgs actionInvokedArgs)
     {
