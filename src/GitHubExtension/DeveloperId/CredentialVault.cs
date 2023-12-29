@@ -76,8 +76,8 @@ public class CredentialVault : ICredentialVault
             var isCredentialRetrieved = CredRead(credentialNameToRetrieve, CRED_TYPE.GENERIC, 0, out ptrToCredential);
             if (!isCredentialRetrieved)
             {
-                Log.Logger()?.ReportInfo($"Retrieving credentials from Credential Manager has failed");
-                return null;
+                Log.Logger()?.ReportError($"Retrieving credentials from Credential Manager has failed for {loginId}");
+                throw new Win32Exception(Marshal.GetLastWin32Error());
             }
 
             CREDENTIAL credentialObject;
@@ -90,7 +90,7 @@ public class CredentialVault : ICredentialVault
             }
             else
             {
-                Log.Logger()?.ReportInfo("No credentials found for this DeveloperId");
+                Log.Logger()?.ReportError($"No credentials found for this DeveloperId : {loginId}");
                 return null;
             }
 
@@ -109,10 +109,10 @@ public class CredentialVault : ICredentialVault
             var credential = new PasswordCredential(credentialResourceName, loginId, accessTokenString);
             return credential;
         }
-        catch (Exception)
+        catch (Exception ex)
         {
-            Log.Logger()?.ReportInfo($"Retrieving credentials from Credential Manager has failed unexpectedly");
-            throw new Win32Exception(Marshal.GetLastWin32Error());
+            Log.Logger()?.ReportError($"Retrieving credentials from Credential Manager has failed unexpectedly: {loginId} : {ex.Message}");
+            throw;
         }
         finally
         {
@@ -129,7 +129,7 @@ public class CredentialVault : ICredentialVault
         var isCredentialDeleted = CredDelete(targetCredentialToDelete, CRED_TYPE.GENERIC, 0);
         if (!isCredentialDeleted)
         {
-            Log.Logger()?.ReportInfo($"Deleting credentials from Credential Manager has failed");
+            Log.Logger()?.ReportError($"Deleting credentials from Credential Manager has failed for {loginId}");
             throw new Win32Exception(Marshal.GetLastWin32Error());
         }
     }
@@ -193,7 +193,14 @@ public class CredentialVault : ICredentialVault
         var allCredentials = GetAllCredentials();
         foreach (var credential in allCredentials)
         {
-            RemoveCredentials(credential);
+            try
+            {
+                RemoveCredentials(credential);
+            }
+            catch (Exception ex)
+            {
+                Log.Logger()?.ReportError($"Deleting credentials from Credential Manager has failed unexpectedly: {credential} : {ex.Message}");
+            }
         }
     }
 }

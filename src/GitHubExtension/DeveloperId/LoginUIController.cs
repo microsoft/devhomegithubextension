@@ -48,7 +48,7 @@ public class LoginUIController : IExtensionAdaptiveCardSession
         {
             if (_loginUI == null)
             {
-                Log.Logger()?.ReportError($"_loginUI is null");
+                Log.Logger()?.ReportError($"OnAction() called with invalid state of LoginUI");
                 return new ProviderOperationResult(ProviderOperationStatus.Failure, null, "_loginUI is null", "_loginUI is null");
             }
 
@@ -75,7 +75,7 @@ public class LoginUIController : IExtensionAdaptiveCardSession
 
                             if (!loginPageActionPayload.IsSubmitAction())
                             {
-                                Log.Logger()?.ReportError($"Invalid action");
+                                Log.Logger()?.ReportError($"Invalid action performed on LoginUI: {loginPageActionPayload.Id}");
                                 operationResult = new ProviderOperationResult(ProviderOperationStatus.Failure, null, "Invalid action", "Invalid action");
                                 break;
                             }
@@ -119,14 +119,14 @@ public class LoginUIController : IExtensionAdaptiveCardSession
 
                         if (enterprisePageActionPayload.IsCancelAction())
                         {
-                            Log.Logger()?.ReportInfo($"Cancel clicked");
+                            Log.Logger()?.ReportInfo($"Cancel clicked on EnterpriseServerPage");
                             operationResult = new LoginPage().UpdateExtensionAdaptiveCard(_loginUI);
                             break;
                         }
 
                         if (!enterprisePageActionPayload.IsSubmitAction())
                         {
-                            Log.Logger()?.ReportError($"Invalid action");
+                            Log.Logger()?.ReportError($"Invalid action performed on LoginUI: {enterprisePageActionPayload.Id}");
                             operationResult = new ProviderOperationResult(ProviderOperationStatus.Failure, null, "Invalid action", "Invalid action");
                             break;
                         }

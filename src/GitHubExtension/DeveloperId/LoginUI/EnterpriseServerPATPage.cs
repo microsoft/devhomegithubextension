@@ -17,7 +17,7 @@ internal class EnterpriseServerPATPage : LoginUIPage
             EnterpriseServerPATPageInputValue = inputPAT ?? string.Empty,
             EnterpriseServerPATPageErrorValue = errorText ?? string.Empty,
             EnterpriseServerPATPageErrorVisible = !string.IsNullOrEmpty(errorText),
-            EnterpriseServerPATPageCreatePATUrlValue = hostAddress?.GetComponents(UriComponents.SchemeAndServer, UriFormat.UriEscaped) + $"/settings/tokens/new?scopes=read:user,notifications,repo,read:org&description=DevHomePAT",
+            EnterpriseServerPATPageCreatePATUrlValue = hostAddress?.GetComponents(UriComponents.SchemeAndServer, UriFormat.UriEscaped) + $"/settings/tokens/new?scopes=read:user,notifications,repo,read:org&description=DevHomeGitHubExtension",
             EnterpriseServerPATPageServerUrlValue = hostAddress?.OriginalString ?? string.Empty,
         };
     }
