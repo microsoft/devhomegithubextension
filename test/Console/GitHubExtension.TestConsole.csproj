@@ -40,11 +40,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.Toolkit.Uwp.Notifications" Version="7.1.3" />
-    <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.4.231008000" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\..\src\GitHubExtension\GitHubExtension.csproj" />
   </ItemGroup>
 </Project>

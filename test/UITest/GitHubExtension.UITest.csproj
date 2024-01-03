@@ -10,17 +10,18 @@
     <WindowsAppSDKSelfContained>true</WindowsAppSDKSelfContained>
     <ProjectPriFileName>resources.pri</ProjectPriFileName>
   </PropertyGroup>
+
   <ItemGroup>
     <PackageReference Include="coverlet.collector" Version="3.2.0">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.5.0" />
-    <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.4.231008000" />
     <PackageReference Include="MSTest.TestAdapter" Version="3.0.2" />
     <PackageReference Include="MSTest.TestFramework" Version="3.0.2" />
     <PackageReference Include="Appium.WebDriver" Version="4.4.5" />
   </ItemGroup>
+
   <ItemGroup>
     <ProjectReference Include="..\..\src\GitHubExtension\GitHubExtension.csproj" />
   </ItemGroup>
