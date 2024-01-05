@@ -215,7 +215,7 @@
   </data>
   <data name="LoginUI_LoginPage_Button1Text" xml:space="preserve">
     <value>Sign in to github.com</value>
-    <comment>Button name to login to GitHub.com</comment>
+    <comment>Button name to login to GitHub.com. "github.com" should not be localized.</comment>
   </data>
   <data name="LoginUI_LoginPage_Button1ToolTip" xml:space="preserve">
     <value>Opens the browser to log you into GitHub</value>
