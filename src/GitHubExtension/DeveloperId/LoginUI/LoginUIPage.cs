@@ -353,7 +353,7 @@ internal class LoginUIPage
             ""inlines"": [
                 {
                     ""type"": ""TextRun"",
-                    ""text"": """ + $"{Resources.GetResource("LoginUI_EnterprisePATPage_Text")} " + @"""
+                    ""text"": """ + $"{Resources.GetResource("LoginUI_EnterprisePATPage_Text1")} " + @"""
                 },
                 {
                     ""type"": ""TextRun"",
@@ -362,6 +362,10 @@ internal class LoginUIPage
                         ""type"": ""Action.OpenUrl"",
                         ""url"": ""${EnterpriseServerPATPageCreatePATUrlValue}""
                     }
+                },
+                {
+                    ""type"": ""TextRun"",
+                    ""text"": """ + $"{Resources.GetResource("LoginUI_EnterprisePATPage_Text2")} " + @"""
                 }
             ]
         },

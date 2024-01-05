@@ -286,7 +286,7 @@ public class LoginUIController : IExtensionAdaptiveCardSession
                             }
 
                             Log.Logger()?.ReportError($"Error: {ex}");
-                            operationResult = new EnterpriseServerPATPage(hostAddress: _hostAddress, errorText: $"{Resources.GetResource("LoginUI_EnterprisePATPage_GenericErrorText")} {ex}", inputPAT: enterprisePATPageInputPayload?.PAT).UpdateExtensionAdaptiveCard(_loginUI);
+                            operationResult = new EnterpriseServerPATPage(hostAddress: _hostAddress, errorText: $"{Resources.GetResource("LoginUI_EnterprisePATPage_GenericErrorPrefix")} {ex}", inputPAT: enterprisePATPageInputPayload?.PAT).UpdateExtensionAdaptiveCard(_loginUI);
                             break;
                         }
                     }

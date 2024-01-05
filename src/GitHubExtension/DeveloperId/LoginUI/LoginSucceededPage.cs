@@ -15,7 +15,7 @@ internal class LoginSucceededPage : LoginUIPage
     {
         Data = new LoginSucceededPageData()
         {
-            Message = $"{developerId.LoginId} {Resources.GetResource("LoginUI_LoginSucceededPage_text")}",
+            Message = $"{Resources.GetResource("LoginUI_LoginSucceededPage_text").Replace("{User}", developerId.LoginId)}",
         };
     }
 
