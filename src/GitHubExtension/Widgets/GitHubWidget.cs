@@ -228,7 +228,6 @@ public abstract class GitHubWidget : WidgetImpl
         if (data == string.Empty)
         {
             configurationData.Add("hasConfiguration", false);
-            configurationData.Add("configuring", true);
             var repositoryData = new JsonObject
             {
                 { "url", string.Empty },
@@ -279,7 +278,6 @@ public abstract class GitHubWidget : WidgetImpl
             {
                 Log.Logger()?.ReportError(Name, ShortId, $"Failed getting configuration information for input url: {data}", ex);
                 configurationData.Add("hasConfiguration", false);
-                configurationData.Add("configuring", true);
 
                 var repositoryData = new JsonObject
                 {
@@ -302,7 +300,6 @@ public abstract class GitHubWidget : WidgetImpl
         var signInData = new JsonObject
         {
             { "message", Resources.GetResource(@"Widget_Template/SignInRequired", Log.Logger()) },
-            { "configuring", true },
         };
 
         return signInData.ToString();
@@ -314,7 +311,7 @@ public abstract class GitHubWidget : WidgetImpl
         return authProvider.GetLoggedInDeveloperIds().DeveloperIds.Any();
     }
 
-    public void UpdateActivityState()
+    public override void UpdateActivityState()
     {
         // State logic for the Widget:
         // Signed in -> Valid Repository Url -> Active / Inactive per widget host.

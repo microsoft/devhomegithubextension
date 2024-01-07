@@ -139,7 +139,7 @@ internal class GitHubAssignedWidget : GitHubWidget
         }
     }
 
-    public new void UpdateActivityState()
+    public override void UpdateActivityState()
     {
         // State logic for the Widget:
         // Signed in -> Configure -> Active / Inactive per widget host.
@@ -235,7 +235,7 @@ internal class GitHubAssignedWidget : GitHubWidget
 
     public void LoadContentData(IEnumerable<Octokit.Issue> items)
     {
-        Log.Logger()?.ReportDebug(Name, ShortId, "Getting Data for Assigned in Widget");
+        Log.Logger()?.ReportDebug(Name, ShortId, "Getting Data for Assigned to Widget");
 
         try
         {
@@ -328,7 +328,6 @@ internal class GitHubAssignedWidget : GitHubWidget
         {
             { "showCategory", EnumHelper.SearchCategoryToString(ShowCategory == SearchCategory.Unknown ? SearchCategory.IssuesAndPullRequests : ShowCategory) },
             { "savedShowCategory", savedShowCategory != null ? "savedShowCategory" : string.Empty },
-            { "configuring", true },
         };
         return configurationData.ToJsonString();
     }

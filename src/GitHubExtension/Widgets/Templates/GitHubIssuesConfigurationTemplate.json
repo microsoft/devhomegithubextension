@@ -115,7 +115,6 @@
     {
       "type": "ColumnSet",
       "spacing": "Medium",
-      "$when": "${$root.savedRepositoryUrl != \"\"}",
       "columns": [
         {
           "type": "Column",
@@ -142,7 +141,8 @@
                       "type": "Action.Execute",
                       "title": "%Widget_Template_Button/Cancel%",
                       "verb": "Cancel",
-                      "tooltip": "%Widget_Template_Tooltip/Cancel%"
+                      "tooltip": "%Widget_Template_Tooltip/Cancel%",
+                      "isEnabled": "${$root.savedRepositoryUrl != \"\"}"
                     }
                   ]
                 }
