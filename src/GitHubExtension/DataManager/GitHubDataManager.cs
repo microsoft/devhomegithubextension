@@ -402,18 +402,25 @@ public partial class GitHubDataManager : IGitHubDataManager, IDisposable
                         CheckRun.GetOrCreateByOctokitCheckRun(DataStore, run);
                     }
 
-                    CheckSuite.DeleteAllForPullRequest(DataStore, dsPullRequest);
-                    var octoCheckSuiteResponse = await devId.GitHubClient.Check.Suite.GetAllForReference(repoName[0], repoName[1], dsPullRequest.HeadSha);
-                    foreach (var suite in octoCheckSuiteResponse.CheckSuites)
+                    try
                     {
-                        // Skip Dependabot, as it is not part of a pull request's blocking suites.
-                        if (suite.App.Id == CheckSuiteIdDependabot)
+                        CheckSuite.DeleteAllForPullRequest(DataStore, dsPullRequest);
+                        var octoCheckSuiteResponse = await devId.GitHubClient.Check.Suite.GetAllForReference(repoName[0], repoName[1], dsPullRequest.HeadSha);
+                        foreach (var suite in octoCheckSuiteResponse.CheckSuites)
                         {
-                            continue;
-                        }
+                            // Skip Dependabot, as it is not part of a pull request's blocking suites.
+                            if (suite.App.Id == CheckSuiteIdDependabot)
+                            {
+                                continue;
+                            }
 
-                        Log.Logger()?.ReportDebug($"Suite: {suite.App.Name} - {suite.App.Id} - {suite.App.Owner.Login}  Conclusion: {suite.Conclusion}  Status: {suite.Status}");
-                        CheckSuite.GetOrCreateByOctokitCheckSuite(DataStore, suite);
+                            Log.Logger()?.ReportDebug($"Suite: {suite.App.Name} - {suite.App.Id} - {suite.App.Owner.Login}  Conclusion: {suite.Conclusion}  Status: {suite.Status}");
+                            CheckSuite.GetOrCreateByOctokitCheckSuite(DataStore, suite);
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        Log.Logger()?.ReportError($"Check suite error for Pull Request #{octoPull.Number}: " + e.Message);
                     }
 
                     var commitCombinedStatus = await devId.GitHubClient.Repository.Status.GetCombined(dsRepository.InternalId, dsPullRequest.HeadSha);
@@ -459,18 +466,26 @@ public partial class GitHubDataManager : IGitHubDataManager, IDisposable
                 CheckRun.GetOrCreateByOctokitCheckRun(DataStore, run);
             }
 
-            CheckSuite.DeleteAllForPullRequest(DataStore, dsPullRequest);
-            var octoCheckSuiteResponse = await client.Check.Suite.GetAllForReference(repository.InternalId, dsPullRequest.HeadSha);
-            foreach (var suite in octoCheckSuiteResponse.CheckSuites)
+            try
             {
-                // Skip Dependabot, as it is not part of a pull request's blocking suites.
-                if (suite.App.Id == CheckSuiteIdDependabot)
-                {
-                    continue;
-                }
+                CheckSuite.DeleteAllForPullRequest(DataStore, dsPullRequest);
+                var octoCheckSuiteResponse = await client.Check.Suite.GetAllForReference(repository.InternalId, dsPullRequest.HeadSha);
 
-                Log.Logger()?.ReportDebug($"Suite: {suite.App.Name} - {suite.App.Id} - {suite.App.Owner.Login}  Conclusion: {suite.Conclusion}  Status: {suite.Status}");
-                CheckSuite.GetOrCreateByOctokitCheckSuite(DataStore, suite);
+                foreach (var suite in octoCheckSuiteResponse.CheckSuites)
+                {
+                    // Skip Dependabot, as it is not part of a pull request's blocking suites.
+                    if (suite.App.Id == CheckSuiteIdDependabot)
+                    {
+                        continue;
+                    }
+
+                    Log.Logger()?.ReportDebug($"Suite: {suite.App.Name} - {suite.App.Id} - {suite.App.Owner.Login}  Conclusion: {suite.Conclusion}  Status: {suite.Status}");
+                    CheckSuite.GetOrCreateByOctokitCheckSuite(DataStore, suite);
+                }
+            }
+            catch (Exception e)
+            {
+                Log.Logger()?.ReportError($"Check suite error for Pull Request #{pull.Number}: " + e.Message);
             }
 
             var commitCombinedStatus = await client.Repository.Status.GetCombined(repository.InternalId, dsPullRequest.HeadSha);
