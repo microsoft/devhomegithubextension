@@ -68,19 +68,6 @@
         },
         {
           "type": "TextBlock",
-          "text": "%Widget_Template/Label%",
-          "wrap": true,
-          "size": "Small"
-        },
-        {
-          "type": "TextBlock",
-          "text": "${label}",
-          "wrap": true,
-          "weight": "bolder",
-          "spacing": "None"
-        },
-        {
-          "type": "TextBlock",
           "text": "%Widget_Template/Author%",
           "wrap": true,
           "size": "Small"
@@ -88,19 +75,6 @@
         {
           "type": "TextBlock",
           "text": "${owner}",
-          "wrap": true,
-          "weight": "bolder",
-          "spacing": "None"
-        },
-        {
-          "type": "TextBlock",
-          "text": "%Widget_Template/Project%",
-          "wrap": true,
-          "size": "Small"
-        },
-        {
-          "type": "TextBlock",
-          "text": "${Project}",
           "wrap": true,
           "weight": "bolder",
           "spacing": "None"
