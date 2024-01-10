@@ -76,8 +76,16 @@ public class CredentialVault : ICredentialVault
             var isCredentialRetrieved = CredRead(credentialNameToRetrieve, CRED_TYPE.GENERIC, 0, out ptrToCredential);
             if (!isCredentialRetrieved)
             {
-                Log.Logger()?.ReportError($"Retrieving credentials from Credential Manager has failed for {loginId}");
-                throw new Win32Exception(Marshal.GetLastWin32Error());
+                var error = Marshal.GetLastWin32Error();
+                Log.Logger()?.ReportError($"Retrieving credentials from Credential Manager has failed for {loginId} with {error}");
+
+                // NotFound is expected and can be ignored.
+                if (error == 1168)
+                {
+                    return null;
+                }
+
+                throw new Win32Exception(error);
             }
 
             CREDENTIAL credentialObject;

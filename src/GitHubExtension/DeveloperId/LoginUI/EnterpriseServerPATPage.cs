@@ -1,24 +1,23 @@
 ﻿// Copyright (c) Microsoft Corporation and Contributors
 // Licensed under the MIT license.
 
-using System.Text.Json;
-using System.Text.Json.Serialization;
+using System.Security;
 using GitHubExtension.Helpers;
 
 namespace GitHubExtension.DeveloperId.LoginUI;
 
 internal class EnterpriseServerPATPage : LoginUIPage
 {
-    public EnterpriseServerPATPage(Uri hostAddress, string errorText, string? inputPAT)
+    public EnterpriseServerPATPage(Uri hostAddress, string errorText, SecureString inputPAT)
         : base(LoginUIState.EnterpriseServerPATPage)
     {
         Data = new PageData()
         {
-            EnterpriseServerPATPageInputValue = inputPAT ?? string.Empty,
+            EnterpriseServerPATPageInputValue = new System.Net.NetworkCredential(string.Empty, inputPAT).Password ?? string.Empty,
             EnterpriseServerPATPageErrorValue = errorText ?? string.Empty,
             EnterpriseServerPATPageErrorVisible = !string.IsNullOrEmpty(errorText),
             EnterpriseServerPATPageCreatePATUrlValue = hostAddress?.GetComponents(UriComponents.SchemeAndServer, UriFormat.UriEscaped) + $"/settings/tokens/new?scopes=read:user,notifications,repo,read:org&description=DevHomeGitHubExtension",
-            EnterpriseServerPATPageServerUrlValue = hostAddress?.OriginalString ?? string.Empty,
+            EnterpriseServerPATPageServerUrlValue = hostAddress?.Host ?? string.Empty,
         };
     }
 

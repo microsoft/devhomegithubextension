@@ -18,10 +18,6 @@ public class DeveloperIdProvider : IDeveloperIdProviderInternal
 
     private static readonly object OAuthRequestsLock = new ();
 
-    private static readonly object CredentialVaultLock = new ();
-
-    private static readonly object AuthenticationProviderLock = new ();
-
     // DeveloperId list containing all Logged in Ids.
     private List<DeveloperId> DeveloperIds
     {
@@ -34,10 +30,15 @@ public class DeveloperIdProvider : IDeveloperIdProviderInternal
         get; set;
     }
 
-    private readonly CredentialVault credentialVault;
+    private readonly Lazy<CredentialVault> credentialVault;
 
     // DeveloperIdProvider uses singleton pattern.
-    private static DeveloperIdProvider? singletonDeveloperIdProvider;
+    private static Lazy<DeveloperIdProvider> singletonDeveloperIdProvider = new (() => new DeveloperIdProvider());
+
+    public static DeveloperIdProvider GetInstance()
+    {
+        return singletonDeveloperIdProvider.Value;
+    }
 
     public event TypedEventHandler<IDeveloperIdProvider, IDeveloperId>? Changed;
 
@@ -50,10 +51,7 @@ public class DeveloperIdProvider : IDeveloperIdProviderInternal
     {
         Log.Logger()?.ReportInfo($"Creating DeveloperIdProvider singleton instance");
 
-        lock (CredentialVaultLock)
-        {
-            credentialVault ??= new CredentialVault();
-        }
+        credentialVault = new (() => new CredentialVault());
 
         lock (OAuthRequestsLock)
         {
@@ -66,23 +64,13 @@ public class DeveloperIdProvider : IDeveloperIdProviderInternal
             try
             {
                 // Retrieve and populate Logged in DeveloperIds from previous launch.
-                RestoreDeveloperIds(credentialVault.GetAllCredentials());
+                RestoreDeveloperIds(credentialVault.Value.GetAllCredentials());
             }
             catch (Exception error)
             {
                 Log.Logger()?.ReportError($"Error while restoring DeveloperIds: {error.Message}. Proceeding without restoring.");
             }
         }
-    }
-
-    public static DeveloperIdProvider GetInstance()
-    {
-        lock (AuthenticationProviderLock)
-        {
-            singletonDeveloperIdProvider ??= new DeveloperIdProvider();
-        }
-
-        return singletonDeveloperIdProvider;
     }
 
     public DeveloperIdsResult GetLoggedInDeveloperIds()
@@ -176,7 +164,7 @@ public class DeveloperIdProvider : IDeveloperIdProviderInternal
                 return new ProviderOperationResult(ProviderOperationStatus.Failure, new ArgumentNullException(nameof(developerId)), "The developer account to log out does not exist", "Unable to find DeveloperId to logout");
             }
 
-            credentialVault.RemoveCredentials(developerIdToLogout.Url);
+            credentialVault.Value.RemoveCredentials(developerIdToLogout.Url);
             DeveloperIds?.Remove(developerIdToLogout);
         }
 
@@ -258,7 +246,7 @@ public class DeveloperIdProvider : IDeveloperIdProviderInternal
             try
             {
                 // Save the credential to Credential Vault.
-                credentialVault.SaveCredentials(duplicateDeveloperIds.Single().Url, accessToken);
+                credentialVault.Value.SaveCredentials(duplicateDeveloperIds.Single().Url, accessToken);
 
                 try
                 {
@@ -282,7 +270,7 @@ public class DeveloperIdProvider : IDeveloperIdProviderInternal
                 DeveloperIds.Add(newDeveloperId);
             }
 
-            credentialVault.SaveCredentials(newDeveloperId.Url, accessToken);
+            credentialVault.Value.SaveCredentials(newDeveloperId.Url, accessToken);
 
             try
             {
@@ -328,7 +316,7 @@ public class DeveloperIdProvider : IDeveloperIdProviderInternal
 
             GitHubClient gitHubClient = new (new ProductHeaderValue(Constants.DEV_HOME_APPLICATION_NAME), hostAddress)
             {
-                Credentials = new (credentialVault.GetCredentials(loginIdOrUrl)?.Password),
+                Credentials = new (credentialVault.Value.GetCredentials(loginIdOrUrl)?.Password),
             };
 
             var user = gitHubClient.User.Current().Result;
@@ -347,10 +335,10 @@ public class DeveloperIdProvider : IDeveloperIdProviderInternal
             {
                 try
                 {
-                    credentialVault.SaveCredentials(
+                    credentialVault.Value.SaveCredentials(
                         user.Url,
-                        new NetworkCredential(string.Empty, credentialVault.GetCredentials(loginIdOrUrl)?.Password).SecurePassword);
-                    credentialVault.RemoveCredentials(loginIdOrUrl);
+                        new NetworkCredential(string.Empty, credentialVault.Value.GetCredentials(loginIdOrUrl)?.Password).SecurePassword);
+                    credentialVault.Value.RemoveCredentials(loginIdOrUrl);
                     Log.Logger()?.ReportInfo($"Replaced {loginIdOrUrl} with {user.Url} in CredentialManager");
                 }
                 catch (Exception error)
@@ -382,10 +370,12 @@ public class DeveloperIdProvider : IDeveloperIdProviderInternal
     public void Dispose()
     {
         GC.SuppressFinalize(this);
-        lock (AuthenticationProviderLock)
-        {
-            singletonDeveloperIdProvider = null;
-        }
+    }
+
+    // This function is to be used for testing purposes only.
+    public static void ResetInstanceForTests()
+    {
+        singletonDeveloperIdProvider = new (() => new DeveloperIdProvider());
     }
 
     public IAsyncOperation<DeveloperIdResult> ShowLogonSession(WindowId windowHandle) => throw new NotImplementedException();
@@ -407,5 +397,5 @@ public class DeveloperIdProvider : IDeveloperIdProviderInternal
         }
     }
 
-    internal PasswordCredential? GetCredentials(IDeveloperId developerId) => credentialVault.GetCredentials(developerId.Url);
+    internal PasswordCredential? GetCredentials(IDeveloperId developerId) => credentialVault.Value.GetCredentials(developerId.Url);
 }

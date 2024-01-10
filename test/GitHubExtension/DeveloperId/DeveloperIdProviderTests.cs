@@ -16,7 +16,7 @@ public partial class DeveloperIdTests
         Assert.AreEqual(0, credentialVault.GetAllCredentials().Count());
 
         // Ensure that the DeveloperIdProvider is deleted and recreated on the next GetInstance() call
-        DeveloperIdProvider.GetInstance().Dispose();
+        DeveloperIdProvider.ResetInstanceForTests();
         return credentialVault;
     }
 
