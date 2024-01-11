@@ -204,7 +204,6 @@ public abstract class GitHubWidget : WidgetImpl
         var signInData = new JsonObject
         {
             { "message", Resources.GetResource(@"Widget_Template/SignInRequired", Log.Logger()) },
-            { "configuring", true },
         };
 
         return signInData.ToString();
@@ -216,7 +215,7 @@ public abstract class GitHubWidget : WidgetImpl
         return authProvider.GetLoggedInDeveloperIds().DeveloperIds.Any();
     }
 
-    public void UpdateActivityState()
+    public override void UpdateActivityState()
     {
         // State logic for the Widget:
         // Signed in -> Valid Repository Url -> Active / Inactive per widget host.
