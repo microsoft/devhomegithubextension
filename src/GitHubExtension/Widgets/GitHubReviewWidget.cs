@@ -1,9 +1,7 @@
 ﻿// Copyright (c) Microsoft Corporation and Contributors
 // Licensed under the MIT license.
 
-using System.Text.Json;
 using System.Text.Json.Nodes;
-using System.Text.Json.Serialization;
 using GitHubExtension.DataManager;
 using GitHubExtension.Helpers;
 using GitHubExtension.Widgets.Enums;
@@ -73,7 +71,7 @@ internal class GitHubReviewWidget : GitHubWidget
         UpdateActivityState();
     }
 
-    public new void UpdateActivityState()
+    public override void UpdateActivityState()
     {
         // State logic for the Widget: (no configuration is needed)
         // Signed in -> Active / Inactive per widget host.
@@ -156,7 +154,7 @@ internal class GitHubReviewWidget : GitHubWidget
 
     public void LoadContentData(IEnumerable<Octokit.Issue> items)
     {
-        Log.Logger()?.ReportDebug(Name, ShortId, "Getting Data for Mentioned in Widget");
+        Log.Logger()?.ReportDebug(Name, ShortId, "Getting Data for Review requested Widget");
 
         try
         {
@@ -232,7 +230,7 @@ internal class GitHubReviewWidget : GitHubWidget
         return page switch
         {
             WidgetPageState.SignIn => new JsonObject { { "message", Resources.GetResource(@"Widget_Template/SignInRequired", Log.Logger()) } }.ToJsonString(),
-            WidgetPageState.Configure => EmptyJson,
+            WidgetPageState.Configure => throw new NotImplementedException(Page.GetType().Name),
             WidgetPageState.Content => ContentData,
             WidgetPageState.Loading => EmptyJson,
             _ => throw new NotImplementedException(Page.GetType().Name),
