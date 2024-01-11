@@ -207,45 +207,57 @@
   </data>
   <data name="LoginUI_LoginFailedPage_text1" xml:space="preserve">
     <value>Something went wrong :(</value>
+    <comment>Generic error text shown in LoginUI failure page</comment>
   </data>
   <data name="LoginUI_LoginFailedPage_text2" xml:space="preserve">
     <value>Please consider filing feedback</value>
+    <comment>Generic error text shown in LoginUI failure page</comment>
   </data>
   <data name="LoginUI_LoginPage_Button1Text" xml:space="preserve">
     <value>Sign in to github.com</value>
+    <comment>Button name to login to GitHub.com. "github.com" should not be localized.</comment>
   </data>
   <data name="LoginUI_LoginPage_Button1ToolTip" xml:space="preserve">
     <value>Opens the browser to log you into GitHub</value>
+    <comment>Tooltip text on mouse hover over login button</comment>
   </data>
   <data name="LoginUI_LoginPage_Button2Flyout_Button" xml:space="preserve">
     <value>Go</value>
   </data>
   <data name="LoginUI_LoginPage_Button2Flyout_Text_ErrorMessage" xml:space="preserve">
-    <value>Please enter a valid GitHub enterprise server URL</value>
+    <value>Please enter a valid GitHub Enterprise Server URL</value>
+    <comment>"GitHub Enterprise Server" should not be localized</comment>
   </data>
   <data name="LoginUI_LoginPage_Button2Flyout_Text_Label" xml:space="preserve">
     <value>Server URL</value>
   </data>
   <data name="LoginUI_LoginPage_Button2Flyout_Text_PlaceHolder" xml:space="preserve">
-    <value>&lt;Enter the GitHub Server link&gt;</value>
+    <value>&lt;Enter the GitHub Enterprise Server link&gt;</value>
+    <comment>"GitHub Enterprise Server" should not be localized</comment>
   </data>
   <data name="LoginUI_LoginPage_Button2Text" xml:space="preserve">
-    <value>Sign in to GitHub Enterprise (Coming Soon!)</value>
+    <value>Sign in to GitHub Enterprise Server</value>
+    <comment>Button name to login to GitHub Enterprise Server</comment>
   </data>
   <data name="LoginUI_LoginPage_Button2ToolTip" xml:space="preserve">
-    <value>Coming soon!</value>
+    <value>Lets you enter the host address of your GitHub Enterprise Server</value>
+    <comment>Tooltip text on mouse hover over GitHub Enterprise Server button</comment>
   </data>
   <data name="LoginUI_LoginPage_Heading" xml:space="preserve">
     <value>GitHub</value>
+    <comment>Page title</comment>
   </data>
   <data name="LoginUI_LoginPage_Subheading" xml:space="preserve">
     <value>Sign in</value>
+    <comment>Page subtitle</comment>
   </data>
   <data name="LoginUI_LoginSucceededPage_text" xml:space="preserve">
-    <value>has logged in successfully! You may close this window.</value>
+    <value>{User} has logged in successfully! You may close this window.</value>
+    <comment>Text for when a user signs in successfully</comment>
   </data>
   <data name="LoginUI_WaitingPage_Text" xml:space="preserve">
     <value>Waiting for browser...</value>
+    <comment>Shown in Waiting page</comment>
   </data>
   <data name="Widget_Template.SignInRequired" xml:space="preserve">
     <value>Sign in to use this widget.</value>
@@ -365,6 +377,7 @@
   </data>
   <data name="LoginUI_WaitingPageBrowserLaunch_Text" xml:space="preserve">
     <value>Note: Browser may have launched in the background.</value>
+    <comment>Shown in Waiting page</comment>
   </data>
   <data name="WidgetTemplate_UnknownTime" xml:space="preserve">
     <value>not known</value>
@@ -415,5 +428,77 @@
   <data name="Widget_Template_Tooltip.Cancel" xml:space="preserve">
     <value>Cancel</value>
     <comment>Shown in Widget, Button tooltip</comment>
+  </data>
+  <data name="LoginUI_EnterprisePage_Button_Cancel" xml:space="preserve">
+    <value>Cancel</value>
+    <comment>LoginUI Button text</comment>
+  </data>
+  <data name="LoginUI_EnterprisePage_Button_Next" xml:space="preserve">
+    <value>Next</value>
+    <comment>LoginUI Button text</comment>
+  </data>
+  <data name="LoginUI_EnterprisePage_NullErrorText" xml:space="preserve">
+    <value>Enterprise Server is not valid</value>
+    <comment>LoginUI Error text if input is not valid</comment>
+  </data>
+  <data name="LoginUI_EnterprisePage_Heading" xml:space="preserve">
+    <value>GitHub</value>
+    <comment>LoginUI Page Title</comment>
+  </data>
+  <data name="LoginUI_EnterprisePage_InputText_PlaceHolder" xml:space="preserve">
+    <value>Enter server address here</value>
+    <comment>LoginUI Input placeholder text</comment>
+  </data>
+  <data name="LoginUI_EnterprisePage_Subheading" xml:space="preserve">
+    <value>Enterprise Server</value>
+    <comment>LoginUI Page subtitle</comment>
+  </data>
+  <data name="LoginUI_EnterprisePATPage_Button_Cancel" xml:space="preserve">
+    <value>Cancel</value>
+    <comment>LoginUI Button text</comment>
+  </data>
+  <data name="LoginUI_EnterprisePATPage_Button_Connect" xml:space="preserve">
+    <value>Connect</value>
+    <comment>LoginUI Button text</comment>
+  </data>
+  <data name="LoginUI_EnterprisePage_UriErrorText" xml:space="preserve">
+    <value>URL is invalid</value>
+    <comment>LoginUI Error text if input is not a valid URL</comment>
+  </data>
+  <data name="LoginUI_EnterprisePage_UnreachableErrorText" xml:space="preserve">
+    <value>Enterprise Server is not reachable</value>
+    <comment>LoginUI Error text if input is not reachable</comment>
+  </data>
+  <data name="LoginUI_EnterprisePATPage_InputText_PlaceHolder" xml:space="preserve">
+    <value>Enter Personal Access Token</value>
+    <comment>LoginUI placeholder text</comment>
+  </data>
+  <data name="LoginUI_EnterprisePATPage_Text1" xml:space="preserve">
+    <value>Enter your Personal Access Token (PAT) to connect to ${EnterpriseServerPATPageServerUrlValue}. To create a new PAT, </value>
+    <comment>LoginUI Instructional text before highlighted text. This will be displayed as "LoginUI_EnterprisePATPage_Text1+LoginUI_EnterprisePATPage_HighlightedText+LoginUI_EnterprisePATPage_Text2".</comment>
+  </data>
+  <data name="LoginUI_EnterprisePATPage_HighlightedText" xml:space="preserve">
+    <value>click here</value>
+    <comment>LoginUI Instructional text with hyperlink. This will be displayed as "LoginUI_EnterprisePATPage_Text1+LoginUI_EnterprisePATPage_HighlightedText+LoginUI_EnterprisePATPage_Text2".</comment>
+  </data>
+  <data name="LoginUI_EnterprisePATPage_Text2" xml:space="preserve">
+    <value>.</value>
+    <comment>LoginUI Instructional text after highlighted text. In some languages, there might be some text after the highlighted text with link. This will be displayed as "LoginUI_EnterprisePATPage_Text1+LoginUI_EnterprisePATPage_HighlightedText+LoginUI_EnterprisePATPage_Text2".</comment>
+  </data>
+  <data name="LoginUI_EnterprisePage_GenericErrorText" xml:space="preserve">
+    <value>Something went wrong</value>
+    <comment>LoginUI Error text for generic case</comment>
+  </data>
+  <data name="LoginUI_EnterprisePATPage_BadCredentialsErrorText" xml:space="preserve">
+    <value>PAT doesn't work for this GitHub Enterprise Server endpoint</value>
+    <comment>LoginUI Error text if input Personal Access Token does not work; "GitHub Enterprise Server" should not be localized</comment>
+  </data>
+  <data name="LoginUI_EnterprisePATPage_GenericErrorPrefix" xml:space="preserve">
+    <value>Error:</value>
+    <comment>LoginUI Error Prefix</comment>
+  </data>
+  <data name="LoginUI_EnterprisePATPage_NullErrorText" xml:space="preserve">
+    <value>Please enter the PAT</value>
+    <comment>LoginUI Error text if input is null</comment>
   </data>
 </root>

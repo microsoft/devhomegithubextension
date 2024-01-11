@@ -205,12 +205,20 @@ public class RepositoryProvider : IRepositoryProvider
             {
                 var loggedInDeveloperId = DeveloperId.DeveloperIdProvider.GetInstance().GetDeveloperIdInternal(developerId);
 
-                cloneOptions.CredentialsProvider = (url, user, cred) => new LibGit2Sharp.UsernamePasswordCredentials
+                try
                 {
-                    // Password is a PAT unique to GitHub.
-                    Username = loggedInDeveloperId.GetCredential().Password,
-                    Password = string.Empty,
-                };
+                    cloneOptions.CredentialsProvider = (url, user, cred) => new LibGit2Sharp.UsernamePasswordCredentials
+                    {
+                        // Password is a PAT unique to GitHub.
+                        Username = loggedInDeveloperId.GetCredential().Password,
+                        Password = string.Empty,
+                    };
+                }
+                catch (Exception e)
+                {
+                    Log.Logger()?.ReportError("DevHomeRepository", "Could not get credentials.", e);
+                    return new ProviderOperationResult(ProviderOperationStatus.Failure, e, "Could not get credentials.", e.Message);
+                }
             }
 
             try
