@@ -102,7 +102,7 @@ internal abstract class GitHubUserWidget : GitHubWidget
         }
     }
 
-    public new void UpdateActivityState()
+    public override void UpdateActivityState()
     {
         // State logic for the Widget:
         // Signed in -> Configure -> Active / Inactive per widget host.

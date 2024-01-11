@@ -33,9 +33,7 @@ public abstract class GitHubWidget : WidgetImpl
 
     protected bool Enabled { get; set; }
 
-    protected bool CanPin { get; set; }
-
-    protected bool Pinned { get; set; }
+    protected bool Saved { get; set; }
 
     protected Dictionary<WidgetPageState, string> Template { get; set; } = new ();
 
@@ -85,8 +83,7 @@ public abstract class GitHubWidget : WidgetImpl
         if (state.Any())
         {
             ResetWidgetInfoFromState();
-            Pinned = true;
-            CanPin = true;
+            Saved = true;
         }
 
         UpdateActivityState();
@@ -113,16 +110,6 @@ public abstract class GitHubWidget : WidgetImpl
     public override void OnWidgetContextChanged(WidgetContextChangedArgs contextChangedArgs)
     {
         Enabled = contextChangedArgs.WidgetContext.IsActive;
-
-        // The first time the widget changes context is when leaving the Add Widget dialog
-        // and goes to the actual dashboard when the user clicks the Pin button.
-        if (CanPin && !Pinned)
-        {
-            Pinned = true;
-            Page = WidgetPageState.Loading;
-            UpdateWidget();
-        }
-
         UpdateActivityState();
     }
 
@@ -154,6 +141,7 @@ public abstract class GitHubWidget : WidgetImpl
                 RequestContentData();
 
                 SetActive();
+                Saved = true;
                 break;
 
             case WidgetAction.Cancel:
@@ -173,6 +161,7 @@ public abstract class GitHubWidget : WidgetImpl
     public override void OnCustomizationRequested(WidgetCustomizationRequestedArgs customizationRequestedArgs)
     {
         SavedConfigurationData = ConfigurationData;
+        Saved = false;
         SetConfigure();
     }
 
@@ -215,7 +204,7 @@ public abstract class GitHubWidget : WidgetImpl
         return authProvider.GetLoggedInDeveloperIds().DeveloperIds.Any();
     }
 
-    public override void UpdateActivityState()
+    public virtual void UpdateActivityState()
     {
         // State logic for the Widget:
         // Signed in -> Valid Repository Url -> Active / Inactive per widget host.
@@ -225,7 +214,7 @@ public abstract class GitHubWidget : WidgetImpl
             return;
         }
 
-        if (!Pinned || !CanPin)
+        if (!Saved)
         {
             SetConfigure();
             return;

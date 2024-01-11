@@ -122,9 +122,7 @@ public abstract class GitHubRepositoryWidget : GitHubWidget
 
         if (dataUrl == string.Empty)
         {
-            CanPin = false;
             configurationData.Add("hasConfiguration", false);
-            configurationData.Add("configuring", !CanPin);
             var repositoryData = new JsonObject
             {
                 { "url", string.Empty },
@@ -167,14 +165,11 @@ public abstract class GitHubRepositoryWidget : GitHubWidget
                 configurationData.Add("configuration", repositoryData);
                 configurationData.Add("savedRepositoryUrl", SavedConfigurationData);
                 configurationData.Add("saveEnabled", true);
-                CanPin = true;
             }
             catch (Exception ex)
             {
                 Log.Logger()?.ReportError(Name, ShortId, $"Failed getting configuration information for input url: {dataUrl}", ex);
-                CanPin = false;
                 configurationData.Add("hasConfiguration", false);
-                configurationData.Add("configuring", !CanPin);
 
                 var repositoryData = new JsonObject
                 {
@@ -199,7 +194,7 @@ public abstract class GitHubRepositoryWidget : GitHubWidget
             WidgetPageState.SignIn => GetSignIn(),
             WidgetPageState.Configure => GetConfiguration(RepositoryUrl),
             WidgetPageState.Content => ContentData,
-            WidgetPageState.Loading => new JsonObject { { "configuring", true } }.ToJsonString(),
+            WidgetPageState.Loading => EmptyJson,
             _ => throw new NotImplementedException(Page.GetType().Name),
         };
     }
