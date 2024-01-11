@@ -1,6 +1,7 @@
 ﻿// Copyright (c) Microsoft Corporation and Contributors
 // Licensed under the MIT license.
 using GitHubExtension.DataModel;
+using Octokit;
 
 namespace GitHubExtension.Client;
 
@@ -216,5 +217,25 @@ public static class Validation
         }
 
         return n;
+    }
+
+    public static async Task<bool> IsReachableGitHubEnterpriseServerURL(Uri server)
+    {
+        try
+        {
+            var probeResult = await new EnterpriseProbe(new ProductHeaderValue(Constants.DEV_HOME_APPLICATION_NAME)).Probe(server);
+            if (probeResult != EnterpriseProbeResult.Ok)
+            {
+                Log.Logger()?.ReportError($"EnterpriseServer {server.AbsoluteUri} is not reachable");
+                return false;
+            }
+        }
+        catch (Exception ex)
+        {
+            Log.Logger()?.ReportError($"EnterpriseServer {server.AbsoluteUri} could not be probed.", ex);
+            return false;
+        }
+
+        return true;
     }
 }

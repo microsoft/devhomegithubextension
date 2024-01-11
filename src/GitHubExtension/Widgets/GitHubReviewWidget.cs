@@ -127,7 +127,7 @@ internal class GitHubReviewWidget : GitHubWidget
                 UsePublicClientAsFallback = true,
             };
 
-            SearchIssuesRequest request = new SearchIssuesRequest($"review-requested:{ReferredName}");
+            var request = new SearchIssuesRequest($"review-requested:{ReferredName}");
             var searchManager = GitHubSearchManager.CreateInstance();
             searchManager?.SearchForGitHubIssuesOrPRs(request, Name, SearchCategory.PullRequests, requestOptions);
             Log.Logger()?.ReportInfo(Name, ShortId, $"Requested search for {referredName}");
