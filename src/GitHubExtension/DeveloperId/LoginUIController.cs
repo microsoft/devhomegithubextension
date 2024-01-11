@@ -2,8 +2,6 @@
 // Licensed under the MIT license.
 
 using System.Net;
-using System.Text.Json;
-using System.Text.Json.Serialization;
 using GitHubExtension.Client;
 using GitHubExtension.DeveloperId.LoginUI;
 using GitHubExtension.Helpers;
@@ -103,7 +101,7 @@ public class LoginUIController : IExtensionAdaptiveCardSession
                         }
                         catch (Exception ex)
                         {
-                            Log.Logger()?.ReportError($"Error: {ex}");
+                            Log.Logger()?.ReportError($"Error: ", ex);
                             new LoginFailedPage().UpdateExtensionAdaptiveCard(_loginUI);
                             operationResult = new ProviderOperationResult(ProviderOperationStatus.Failure, ex, "Error occurred in login page", ex.Message);
                         }
@@ -146,7 +144,7 @@ public class LoginUIController : IExtensionAdaptiveCardSession
                         {
                             // Probe for Enterprise Server instance
                             _hostAddress = new Uri(enterprisePageInputPayload.EnterpriseServer);
-                            if (!Validation.IsReachableGitHubEnterpriseServerURL(_hostAddress))
+                            if (!await Validation.IsReachableGitHubEnterpriseServerURL(_hostAddress))
                             {
                                 operationResult = new EnterpriseServerPage(hostAddress: _hostAddress, errorText: $"{Resources.GetResource("LoginUI_EnterprisePage_UnreachableErrorText")}").UpdateExtensionAdaptiveCard(_loginUI);
                                 break;
@@ -154,13 +152,13 @@ public class LoginUIController : IExtensionAdaptiveCardSession
                         }
                         catch (UriFormatException ufe)
                         {
-                            Log.Logger()?.ReportError($"Error: {ufe}");
+                            Log.Logger()?.ReportError($"Error: ", ufe);
                             operationResult = new EnterpriseServerPage(hostAddress: enterprisePageInputPayload.EnterpriseServer, errorText: $"{Resources.GetResource("LoginUI_EnterprisePage_UriErrorText")}").UpdateExtensionAdaptiveCard(_loginUI);
                             break;
                         }
                         catch (Exception ex)
                         {
-                            Log.Logger()?.ReportError($"Error: {ex}");
+                            Log.Logger()?.ReportError($"Error: ", ex);
                             operationResult = new EnterpriseServerPage(hostAddress: enterprisePageInputPayload.EnterpriseServer, errorText: $"{Resources.GetResource("LoginUI_EnterprisePage_GenericErrorText")} : {ex}").UpdateExtensionAdaptiveCard(_loginUI);
                             break;
                         }
@@ -171,7 +169,7 @@ public class LoginUIController : IExtensionAdaptiveCardSession
                         }
                         catch (Exception ex)
                         {
-                            Log.Logger()?.ReportError($"Error: {ex}");
+                            Log.Logger()?.ReportError($"Error: ", ex);
                             operationResult = new LoginFailedPage().UpdateExtensionAdaptiveCard(_loginUI);
                         }
 
@@ -225,13 +223,13 @@ public class LoginUIController : IExtensionAdaptiveCardSession
                             }
                             catch (UriFormatException ufe)
                             {
-                                Log.Logger()?.ReportError($"Error: {ufe}");
+                                Log.Logger()?.ReportError($"Error: ", ufe);
                                 operationResult = new ProviderOperationResult(ProviderOperationStatus.Failure, null, $"Error: {ufe}", $"Error: {ufe}");
                                 break;
                             }
                             catch (Exception ex)
                             {
-                                Log.Logger()?.ReportError($"Error: {ex}");
+                                Log.Logger()?.ReportError($"Error: ", ex);
                                 operationResult = new ProviderOperationResult(ProviderOperationStatus.Failure, null, $"Error: {ex}", $"Error: {ex}");
                                 break;
                             }
@@ -282,12 +280,12 @@ public class LoginUIController : IExtensionAdaptiveCardSession
                         {
                             if (ex.Message.Contains("Bad credentials") || ex.Message.Contains("Not Found"))
                             {
-                                Log.Logger()?.ReportError($"Unauthorized Error: {ex}");
+                                Log.Logger()?.ReportError($"Unauthorized Error: ", ex);
                                 operationResult = new EnterpriseServerPATPage(hostAddress: _hostAddress, errorText: $"{Resources.GetResource("LoginUI_EnterprisePATPage_BadCredentialsErrorText")} {_hostAddress.OriginalString}", inputPAT: new NetworkCredential(null, enterprisePATPageInputPayload?.PAT).SecurePassword).UpdateExtensionAdaptiveCard(_loginUI);
                                 break;
                             }
 
-                            Log.Logger()?.ReportError($"Error: {ex}");
+                            Log.Logger()?.ReportError($"Error: ", ex);
                             operationResult = new EnterpriseServerPATPage(hostAddress: _hostAddress, errorText: $"{Resources.GetResource("LoginUI_EnterprisePATPage_GenericErrorPrefix")} {ex}", inputPAT: new NetworkCredential(null, enterprisePATPageInputPayload?.PAT).SecurePassword).UpdateExtensionAdaptiveCard(_loginUI);
                             break;
                         }

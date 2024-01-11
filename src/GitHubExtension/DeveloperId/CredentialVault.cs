@@ -10,17 +10,22 @@ using static GitHubExtension.DeveloperId.CredentialManager;
 namespace GitHubExtension.DeveloperId;
 public class CredentialVault : ICredentialVault
 {
-    private readonly string credentialResourceName;
+    private readonly string _credentialResourceName;
 
     private static class CredentialVaultConfiguration
     {
         public const string CredResourceName = "GitHubDevHomeExtension";
     }
 
+    // Win32 Error codes
+    public const int Win32ErrorNotFound = 1168;
+
     public CredentialVault(string applicationName = "")
     {
-        credentialResourceName = string.IsNullOrEmpty(applicationName) ? CredentialVaultConfiguration.CredResourceName : applicationName;
+        _credentialResourceName = string.IsNullOrEmpty(applicationName) ? CredentialVaultConfiguration.CredResourceName : applicationName;
     }
+
+    private string AddCredentialResourceNamePrefix(string loginId) => _credentialResourceName + ": " + loginId;
 
     public void SaveCredentials(string loginId, SecureString? accessToken)
     {
@@ -28,7 +33,7 @@ public class CredentialVault : ICredentialVault
         var credential = new CREDENTIAL
         {
             Type = CRED_TYPE.GENERIC,
-            TargetName = credentialResourceName + ": " + loginId,
+            TargetName = AddCredentialResourceNamePrefix(loginId),
             UserName = loginId,
             Persist = (int)CRED_PERSIST.LocalMachine,
             AttributeCount = 0,
@@ -68,7 +73,7 @@ public class CredentialVault : ICredentialVault
 
     public PasswordCredential? GetCredentials(string loginId)
     {
-        var credentialNameToRetrieve = credentialResourceName + ": " + loginId;
+        var credentialNameToRetrieve = AddCredentialResourceNamePrefix(loginId);
         var ptrToCredential = IntPtr.Zero;
 
         try
@@ -80,7 +85,7 @@ public class CredentialVault : ICredentialVault
                 Log.Logger()?.ReportError($"Retrieving credentials from Credential Manager has failed for {loginId} with {error}");
 
                 // NotFound is expected and can be ignored.
-                if (error == 1168)
+                if (error == Win32ErrorNotFound)
                 {
                     return null;
                 }
@@ -114,12 +119,12 @@ public class CredentialVault : ICredentialVault
                 accessTokenInChars[i] = '\0';
             }
 
-            var credential = new PasswordCredential(credentialResourceName, loginId, accessTokenString);
+            var credential = new PasswordCredential(_credentialResourceName, loginId, accessTokenString);
             return credential;
         }
         catch (Exception ex)
         {
-            Log.Logger()?.ReportError($"Retrieving credentials from Credential Manager has failed unexpectedly: {loginId} : {ex.Message}");
+            Log.Logger()?.ReportError($"Retrieving credentials from Credential Manager has failed unexpectedly: {loginId} : ", ex);
             throw;
         }
         finally
@@ -133,12 +138,11 @@ public class CredentialVault : ICredentialVault
 
     public void RemoveCredentials(string loginId)
     {
-        var targetCredentialToDelete = credentialResourceName + ": " + loginId;
+        var targetCredentialToDelete = AddCredentialResourceNamePrefix(loginId);
         var isCredentialDeleted = CredDelete(targetCredentialToDelete, CRED_TYPE.GENERIC, 0);
         if (!isCredentialDeleted)
         {
             Log.Logger()?.ReportError($"Deleting credentials from Credential Manager has failed for {loginId}");
-            throw new Win32Exception(Marshal.GetLastWin32Error());
         }
     }
 
@@ -151,7 +155,7 @@ public class CredentialVault : ICredentialVault
             IntPtr[] allCredentials;
             uint count;
 
-            if (CredEnumerate(credentialResourceName + "*", 0, out count, out ptrToCredential) != false)
+            if (CredEnumerate(_credentialResourceName + "*", 0, out count, out ptrToCredential) != false)
             {
                 allCredentials = new IntPtr[count];
                 Marshal.Copy(ptrToCredential, allCredentials, 0, (int)count);
@@ -161,7 +165,7 @@ public class CredentialVault : ICredentialVault
                 var error = Marshal.GetLastWin32Error();
 
                 // NotFound is expected and can be ignored.
-                if (error == 1168)
+                if (error == Win32ErrorNotFound)
                 {
                     return Enumerable.Empty<string>();
                 }
@@ -207,7 +211,7 @@ public class CredentialVault : ICredentialVault
             }
             catch (Exception ex)
             {
-                Log.Logger()?.ReportError($"Deleting credentials from Credential Manager has failed unexpectedly: {credential} : {ex.Message}");
+                Log.Logger()?.ReportError($"Deleting credentials from Credential Manager has failed unexpectedly: {credential} : ", ex);
             }
         }
     }

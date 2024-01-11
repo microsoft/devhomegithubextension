@@ -90,7 +90,7 @@ public class GitHubClientProvider
             }
             catch (Exception ex)
             {
-                Log.Logger()?.ReportInfo($"Rate limiting not enabled for server: {ex.Message}");
+                Log.Logger()?.ReportError($"Rate limiting not enabled for server.", ex);
             }
         }
 

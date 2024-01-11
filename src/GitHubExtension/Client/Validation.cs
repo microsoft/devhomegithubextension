@@ -219,11 +219,20 @@ public static class Validation
         return n;
     }
 
-    public static bool IsReachableGitHubEnterpriseServerURL(Uri server)
+    public static async Task<bool> IsReachableGitHubEnterpriseServerURL(Uri server)
     {
-        if (new EnterpriseProbe(new ProductHeaderValue(Constants.DEV_HOME_APPLICATION_NAME)).Probe(server).Result != EnterpriseProbeResult.Ok)
+        try
         {
-            Log.Logger()?.ReportError($"EnterpriseServer {server.AbsoluteUri} is not reachable");
+            var probeResult = await new EnterpriseProbe(new ProductHeaderValue(Constants.DEV_HOME_APPLICATION_NAME)).Probe(server);
+            if (probeResult != EnterpriseProbeResult.Ok)
+            {
+                Log.Logger()?.ReportError($"EnterpriseServer {server.AbsoluteUri} is not reachable");
+                return false;
+            }
+        }
+        catch (Exception ex)
+        {
+            Log.Logger()?.ReportError($"EnterpriseServer {server.AbsoluteUri} could not be probed.", ex);
             return false;
         }
 
