@@ -81,8 +81,8 @@ public abstract class GitHubRepositoryWidget : GitHubWidget
 
     public override void OnCustomizationRequested(WidgetCustomizationRequestedArgs customizationRequestedArgs)
     {
-        SavedConfigurationData = ConfigurationData;
-        SetConfigure();
+        Saved = false;
+        base.OnCustomizationRequested(customizationRequestedArgs);
     }
 
     private void HandleCheckUrl(WidgetActionInvokedArgs args)
