@@ -139,11 +139,7 @@ public abstract class GitHubRepositoryWidget : GitHubWidget
             try
             {
                 // Get client for logged in user.
-                var client = GitHubClientProvider.Instance.GetClientForLoggedInDeveloper(true).Result;
-                if (client == null)
-                {
-                    throw new InvalidOperationException("Failed getting GitHubClient.");
-                }
+                var client = GitHubClientProvider.Instance.GetClientForLoggedInDeveloper(true).Result ?? throw new InvalidOperationException("Failed getting GitHubClient.");
 
                 // Get repository for the URL, which is "data" in this case.
                 var ownerName = Validation.ParseOwnerFromGitHubURL(dataUrl);
