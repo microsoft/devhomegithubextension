@@ -1,7 +1,6 @@
 ﻿// Copyright (c) Microsoft Corporation and Contributors
 // Licensed under the MIT license.
 
-using System.Collections.Specialized;
 using System.Net;
 using System.Security;
 using System.Security.Cryptography;
@@ -53,7 +52,7 @@ internal class OAuthRequest : IDisposable
 
         var request = new OauthLoginRequest(OauthConfiguration.GetClientId())
         {
-            Scopes = { "user", "notifications", "repo", "read:org" },
+            Scopes = { "read:user", "notifications", "repo", "read:org" },
             State = State,
             RedirectUri = new Uri(OauthConfiguration.RedirectUri),
         };
