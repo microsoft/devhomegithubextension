@@ -70,12 +70,12 @@ public class SearchIssue
 
     public static void DeleteBefore(DataStore dataStore, Search search, DateTime date)
     {
-        // Delete delete out of date entires for a given search.
+        // Delete out of date entries for a given search.
         var sql = @"DELETE FROM SearchIssue WHERE TimeUpdated < $Time AND Search = $SearchId;";
         var command = dataStore.Connection!.CreateCommand();
         command.CommandText = sql;
         command.Parameters.AddWithValue("$Time", date.ToDataStoreInteger());
-        command.Parameters.AddWithValue("SearchId", search.Id);
+        command.Parameters.AddWithValue("$SearchId", search.Id);
         Log.Logger()?.ReportDebug(DataStore.GetCommandLogMessage(sql, command));
         var rowsDeleted = command.ExecuteNonQuery();
         Log.Logger()?.ReportDebug(DataStore.GetDeletedLogMessage(rowsDeleted));
