@@ -75,7 +75,7 @@ public class SearchIssue
         var command = dataStore.Connection!.CreateCommand();
         command.CommandText = sql;
         command.Parameters.AddWithValue("$Time", date.ToDataStoreInteger());
-        command.Parameters.AddWithValue("SearchId", search.Id);
+        command.Parameters.AddWithValue("$SearchId", search.Id);
         Log.Logger()?.ReportDebug(DataStore.GetCommandLogMessage(sql, command));
         var rowsDeleted = command.ExecuteNonQuery();
         Log.Logger()?.ReportDebug(DataStore.GetDeletedLogMessage(rowsDeleted));
