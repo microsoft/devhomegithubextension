@@ -1,7 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
+  <Import Project="$(SolutionDir)ToolingVersions.props" />
+
   <PropertyGroup>
     <TargetFramework>net8.0-windows10.0.22000.0</TargetFramework>
-    <SupportedOSPlatformVersion>10.0.17763.0</SupportedOSPlatformVersion>
     <RootNamespace>GitHubExtension.UITest</RootNamespace>
     <Platforms>x86;x64;arm64</Platforms>
     <IsPackable>false</IsPackable>
@@ -19,7 +20,7 @@
     <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.4.231008000" />
     <PackageReference Include="MSTest.TestAdapter" Version="3.0.2" />
     <PackageReference Include="MSTest.TestFramework" Version="3.0.2" />
-    <PackageReference Include="Appium.WebDriver" Version="4.4.0" />
+    <PackageReference Include="Appium.WebDriver" Version="4.4.5" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\src\GitHubExtension\GitHubExtension.csproj" />

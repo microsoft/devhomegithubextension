@@ -172,7 +172,7 @@ internal class GitHubPullsWidget : GitHubWidget
             WidgetPageState.SignIn => GetSignIn(),
             WidgetPageState.Configure => GetConfiguration(RepositoryUrl),
             WidgetPageState.Content => ContentData,
-            WidgetPageState.Loading => new JsonObject { { "configuring", true } }.ToJsonString(),
+            WidgetPageState.Loading => EmptyJson,
             _ => throw new NotImplementedException(Page.GetType().Name),
         };
     }
