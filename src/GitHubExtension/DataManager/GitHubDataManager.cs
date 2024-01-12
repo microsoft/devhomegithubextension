@@ -395,16 +395,21 @@ public partial class GitHubDataManager : IGitHubDataManager, IDisposable
 
                     // Update this pull request and associated CheckRuns and CheckSuites.
                     var dsPullRequest = PullRequest.GetOrCreateByOctokitPullRequest(DataStore, octoPull, dsRepository.Id);
-                    CheckRun.DeleteAllForPullRequest(DataStore, dsPullRequest);
-                    var octoCheckRunResponse = await devId.GitHubClient.Check.Run.GetAllForReference(repoName[0], repoName[1], dsPullRequest.HeadSha);
-                    foreach (var run in octoCheckRunResponse.CheckRuns)
-                    {
-                        CheckRun.GetOrCreateByOctokitCheckRun(DataStore, run);
-                    }
 
                     try
                     {
+                        // Remove all current information about the pull request first, so if there is an
+                        // error retrieving the updated information, we do not have torn state and would
+                        // instead have no state for it.
+                        CheckRun.DeleteAllForPullRequest(DataStore, dsPullRequest);
                         CheckSuite.DeleteAllForPullRequest(DataStore, dsPullRequest);
+
+                        var octoCheckRunResponse = await devId.GitHubClient.Check.Run.GetAllForReference(repoName[0], repoName[1], dsPullRequest.HeadSha);
+                        foreach (var run in octoCheckRunResponse.CheckRuns)
+                        {
+                            CheckRun.GetOrCreateByOctokitCheckRun(DataStore, run);
+                        }
+
                         var octoCheckSuiteResponse = await devId.GitHubClient.Check.Suite.GetAllForReference(repoName[0], repoName[1], dsPullRequest.HeadSha);
                         foreach (var suite in octoCheckSuiteResponse.CheckSuites)
                         {
@@ -420,7 +425,13 @@ public partial class GitHubDataManager : IGitHubDataManager, IDisposable
                     }
                     catch (Exception e)
                     {
-                        Log.Logger()?.ReportError($"Check suite error for Pull Request #{octoPull.Number}: " + e.Message);
+                        // Octokit can sometimes fail unexpectedly or have bugs. Should that occur here, we
+                        // will not stop processing all pull requests and instead skip  over getting the PR
+                        // checks information for this particular pull request.
+                        Log.Logger()?.ReportError($"Error updating Check Status for Pull Request #{octoPull.Number}: {e.Message}");
+
+                        // Put the full stack trace in debug if this occurs to reduce log spam.
+                        Log.Logger()?.ReportDebug($"Error updating Check Status for Pull Request #{octoPull.Number}.", e);
                     }
 
                     var commitCombinedStatus = await devId.GitHubClient.Repository.Status.GetCombined(dsRepository.InternalId, dsPullRequest.HeadSha);
@@ -454,23 +465,22 @@ public partial class GitHubDataManager : IGitHubDataManager, IDisposable
     {
         options ??= RequestOptions.RequestOptionsDefault();
         client ??= await GitHubClientProvider.Instance.GetClientForLoggedInDeveloper(true);
-        Log.Logger()?.ReportInfo(Name, $"Updating pull requests for: {repository.FullName}");
+        var user = await client.User.Current();
+        Log.Logger()?.ReportInfo(Name, $"Updating pull requests for: {repository.FullName} and user: {user.Login}");
         var octoPulls = await client.PullRequest.GetAllForRepository(repository.InternalId, options.PullRequestRequest, options.ApiOptions);
         foreach (var pull in octoPulls)
         {
             var dsPullRequest = PullRequest.GetOrCreateByOctokitPullRequest(DataStore, pull, repository.Id);
-            CheckRun.DeleteAllForPullRequest(DataStore, dsPullRequest);
-            var octoCheckRunResponse = await client.Check.Run.GetAllForReference(repository.InternalId, dsPullRequest.HeadSha);
-            foreach (var run in octoCheckRunResponse.CheckRuns)
-            {
-                CheckRun.GetOrCreateByOctokitCheckRun(DataStore, run);
-            }
 
             try
             {
-                CheckSuite.DeleteAllForPullRequest(DataStore, dsPullRequest);
-                var octoCheckSuiteResponse = await client.Check.Suite.GetAllForReference(repository.InternalId, dsPullRequest.HeadSha);
+                var octoCheckRunResponse = await client.Check.Run.GetAllForReference(repository.InternalId, dsPullRequest.HeadSha);
+                foreach (var run in octoCheckRunResponse.CheckRuns)
+                {
+                    CheckRun.GetOrCreateByOctokitCheckRun(DataStore, run);
+                }
 
+                var octoCheckSuiteResponse = await client.Check.Suite.GetAllForReference(repository.InternalId, dsPullRequest.HeadSha);
                 foreach (var suite in octoCheckSuiteResponse.CheckSuites)
                 {
                     // Skip Dependabot, as it is not part of a pull request's blocking suites.
@@ -485,7 +495,13 @@ public partial class GitHubDataManager : IGitHubDataManager, IDisposable
             }
             catch (Exception e)
             {
-                Log.Logger()?.ReportError($"Check suite error for Pull Request #{pull.Number}: " + e.Message);
+                // Octokit can sometimes fail unexpectedly or have bugs. Should that occur here, we
+                // will not stop processing all pull requests and instead skip  over getting the PR
+                // checks information for this particular pull request.
+                Log.Logger()?.ReportError($"Error updating Check Status for Pull Request #{pull.Number}: {e.Message}");
+
+                // Put the full stack trace in debug if this occurs to reduce log spam.
+                Log.Logger()?.ReportDebug($"Error updating Check Status for Pull Request #{pull.Number}.", e);
             }
 
             var commitCombinedStatus = await client.Repository.Status.GetCombined(repository.InternalId, dsPullRequest.HeadSha);
