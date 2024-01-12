@@ -148,6 +148,7 @@ public abstract class GitHubWidget : WidgetImpl
                 ConfigurationData = SavedConfigurationData;
                 ResetWidgetInfoFromState();
                 SetActive();
+                Saved = true;
                 break;
 
             case WidgetAction.Unknown:
