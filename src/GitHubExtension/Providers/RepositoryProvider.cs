@@ -11,7 +11,7 @@ using Windows.Storage.Streams;
 
 namespace GitHubExtension.Providers;
 
-public class RepositoryProvider : IRepositoryProvider
+public class RepositoryProvider : IRepositoryProvider, IRepositoryProvider2
 {
     public string DisplayName => Resources.GetResource(@"RepositoryProviderDisplayName");
 
@@ -52,6 +52,38 @@ public class RepositoryProvider : IRepositoryProvider
             }
 
             return new RepositoryUriSupportResult(true);
+        }).AsAsyncOperation();
+    }
+
+    private Octokit.GitHubClient GetClient(IDeveloperId developerId)
+    {
+        if (developerId != null)
+        {
+            var loggedInDeveloperId = DeveloperId.DeveloperIdProvider.GetInstance().GetDeveloperIdInternal(developerId);
+            return loggedInDeveloperId.GitHubClient;
+        }
+        else
+        {
+            return GitHubClientProvider.Instance.GetClient();
+        }
+    }
+
+    public IAsyncOperation<RepositoriesResult> GetRepositoriesAsync(IDeveloperId developerId, string search)
+    {
+        return Task.Run(async () =>
+        {
+            var client = GetClient(developerId);
+            var request = new SearchRepositoriesRequest(search);
+            var result = await client.Search.SearchRepo(request);
+
+            var reposFound = result.Items;
+            var repositoryList = new List<IRepository>();
+            foreach (var repository in reposFound)
+            {
+                repositoryList.Add(new DevHomeRepository(repository));
+            }
+
+            return new RepositoriesResult(repositoryList.AsEnumerable());
         }).AsAsyncOperation();
     }
 
