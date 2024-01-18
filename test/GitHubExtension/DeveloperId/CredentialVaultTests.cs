@@ -24,3 +24,4 @@ public partial class DeveloperIdTests
         credentialVault1.RemoveAllCredentials();
         Assert.AreEqual(0, credentialVault1.GetAllCredentials().Count());
     }
+}
