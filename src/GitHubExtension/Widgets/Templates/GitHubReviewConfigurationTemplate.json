@@ -1,7 +1,50 @@
 {
-    "type": "AdaptiveCard",
-    "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
-    "version": "1.5",
-    "body": [
-    ]
+  "type": "AdaptiveCard",
+  "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+  "version": "1.5",
+  "body": [
+    {
+      "type": "Input.ChoiceSet",
+      "id": "account",
+      "placeholder": "%Widget_Template/ChooseAccountPlaceholder%",
+      "value": "${selectedDevId}",
+      "choices": [
+        {
+          "$data": "${accounts}",
+          "title": "${devid}",
+          "value": "${devid}"
+        }
+      ]
+    },
+    {
+      "type": "ColumnSet",
+      "columns": [
+        {
+          "type": "Column",
+          "width": "stretch"
+        },
+        {
+          "type": "Column",
+          "width": "auto",
+          "items": [
+            {
+              "type": "ActionSet",
+              "actions": [
+                {
+                  "type": "Action.Execute",
+                  "title": "%Widget_Template_Button/Submit%",
+                  "verb": "Submit",
+                  "associatedInputs": "auto"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "Column",
+          "width": "stretch"
+        }
+      ]
+    }
+  ]
 }

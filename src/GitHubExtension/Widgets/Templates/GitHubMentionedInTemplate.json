@@ -22,7 +22,7 @@
           "items": [
             {
               "type": "TextBlock",
-              "text": "@${mentionedName}",
+              "text": "${userName}",
               "size": "Large",
               "style": "Heading",
               "wrap": true

@@ -2,9 +2,7 @@
 // Licensed under the MIT license.
 
 using System.Text;
-using System.Text.Json;
 using System.Text.Json.Nodes;
-using System.Text.Json.Serialization;
 using GitHubExtension.Client;
 using GitHubExtension.DataManager;
 using GitHubExtension.DeveloperId;
@@ -35,40 +33,22 @@ public abstract class GitHubWidget : WidgetImpl
 
     protected bool Enabled { get; set; }
 
+    protected bool Saved { get; set; }
+
     protected Dictionary<WidgetPageState, string> Template { get; set; } = new ();
 
-    protected string RepositoryUrl
+    protected string ConfigurationData
     {
         get => State();
 
         set => SetState(value);
     }
 
-    protected string SavedRepositoryUrl { get; set; } = string.Empty;
+    protected string SavedConfigurationData { get; set; } = string.Empty;
 
     protected DateTime LastUpdated { get; set; } = DateTime.MinValue;
 
     protected DataUpdater DataUpdater { get; set; }
-
-    public string GetOwner()
-    {
-        return Validation.ParseOwnerFromGitHubURL(RepositoryUrl);
-    }
-
-    public string GetRepo()
-    {
-        return Validation.ParseRepositoryFromGitHubURL(RepositoryUrl);
-    }
-
-    public string GetIssueQuery()
-    {
-        return Validation.ParseIssueQueryFromGitHubURL(RepositoryUrl);
-    }
-
-    public string GetUnescapedIssueQuery()
-    {
-        return Uri.UnescapeDataString(GetIssueQuery()).Replace('+', ' ');
-    }
 
     public GitHubWidget()
     {
@@ -96,7 +76,16 @@ public abstract class GitHubWidget : WidgetImpl
     {
         Id = widgetContext.Id;
         Enabled = widgetContext.IsActive;
-        RepositoryUrl = state;
+        ConfigurationData = state;
+
+        // If there is a state, it is being retrieved from the widget service, so
+        // this widget was pinned before.
+        if (state.Any())
+        {
+            ResetWidgetInfoFromState();
+            Saved = true;
+        }
+
         UpdateActivityState();
     }
 
@@ -131,10 +120,6 @@ public abstract class GitHubWidget : WidgetImpl
 
         switch (verb)
         {
-            case WidgetAction.CheckUrl:
-                HandleCheckUrl(actionInvokedArgs);
-                break;
-
             case WidgetAction.SignIn:
                 _ = HandleSignIn();
                 break;
@@ -148,7 +133,7 @@ public abstract class GitHubWidget : WidgetImpl
                 DataState = WidgetDataState.Unknown;
                 UpdateWidget();
 
-                SavedRepositoryUrl = string.Empty;
+                SavedConfigurationData = string.Empty;
                 LoadContentData();
 
                 // Reset the throttle time and force an immediate data update request.
@@ -156,11 +141,14 @@ public abstract class GitHubWidget : WidgetImpl
                 RequestContentData();
 
                 SetActive();
+                Saved = true;
                 break;
 
             case WidgetAction.Cancel:
-                RepositoryUrl = SavedRepositoryUrl;
+                ConfigurationData = SavedConfigurationData;
+                ResetWidgetInfoFromState();
                 SetActive();
+                Saved = true;
                 break;
 
             case WidgetAction.Unknown:
@@ -169,30 +157,13 @@ public abstract class GitHubWidget : WidgetImpl
         }
     }
 
-    public override void OnCustomizationRequested(WidgetCustomizationRequestedArgs customizationRequestedArgs) => throw new NotImplementedException();
+    protected abstract void ResetWidgetInfoFromState();
 
-    private void HandleCheckUrl(WidgetActionInvokedArgs args)
+    public override void OnCustomizationRequested(WidgetCustomizationRequestedArgs customizationRequestedArgs)
     {
-        // Set loading page while we fetch data from GitHub.
-        Page = WidgetPageState.Loading;
-        UpdateWidget();
-
-        // This is the action when the user clicks the submit button after entering a URL while in
-        // the Configure state.
-        Page = WidgetPageState.Configure;
-        var data = args.Data;
-        var dataObject = JsonSerializer.Deserialize(data, SourceGenerationContext.Default.DataPayload);
-        if (dataObject != null && dataObject.Repo != null)
-        {
-            var updateRequestOptions = new WidgetUpdateRequestOptions(Id)
-            {
-                Data = GetConfiguration(dataObject.Repo),
-                CustomState = RepositoryUrl,
-                Template = GetTemplateForPage(Page),
-            };
-
-            WidgetManager.GetDefault().UpdateWidget(updateRequestOptions);
-        }
+        SavedConfigurationData = ConfigurationData;
+        Saved = false;
+        SetConfigure();
     }
 
     private async Task HandleSignIn()
@@ -204,7 +175,7 @@ public abstract class GitHubWidget : WidgetImpl
         Log.Logger()?.ReportInfo($"User sign in successful from WidgetAction invocation");
     }
 
-    private WidgetAction GetWidgetActionForVerb(string verb)
+    protected WidgetAction GetWidgetActionForVerb(string verb)
     {
         try
         {
@@ -215,80 +186,6 @@ public abstract class GitHubWidget : WidgetImpl
             // Invalid verb.
             Log.Logger()?.ReportError($"Unknown WidgetAction verb: {verb}");
             return WidgetAction.Unknown;
-        }
-    }
-
-    public string GetConfiguration(string data)
-    {
-        var configurationData = new JsonObject
-        {
-            { "submitIcon", IconLoader.GetIconAsBase64("arrow.png") },
-        };
-
-        if (data == string.Empty)
-        {
-            configurationData.Add("hasConfiguration", false);
-            var repositoryData = new JsonObject
-            {
-                { "url", string.Empty },
-            };
-
-            configurationData.Add("configuration", repositoryData);
-            configurationData.Add("savedRepositoryUrl", SavedRepositoryUrl);
-            configurationData.Add("saveEnabled", false);
-
-            return configurationData.ToString();
-        }
-        else
-        {
-            try
-            {
-                // Get client for logged in user.
-                var client = GitHubClientProvider.Instance.GetClientForLoggedInDeveloper(true).Result ??
-                    throw new InvalidOperationException("Failed getting GitHubClient.");
-
-                // Get repository for the URL, which is "data" in this case.
-                var ownerName = Validation.ParseOwnerFromGitHubURL(data);
-                var repositoryName = Validation.ParseRepositoryFromGitHubURL(data);
-                var repository = client.Repository.Get(ownerName, repositoryName).Result;
-
-                // Set the Repository URL to the original string passed in from the user.
-                RepositoryUrl = data;
-
-                var repositoryData = new JsonObject
-                {
-                    { "name", repository.FullName },
-                    { "label", repository.Name },
-                    { "owner", repository.Owner.Login },
-                    { "milestone", string.Empty },
-                    { "project", repository.Description },
-                    { "url", repository.HtmlUrl },
-                    { "query", GetUnescapedIssueQuery() },
-                };
-
-                configurationData.Add("hasConfiguration", true);
-                configurationData.Add("configuration", repositoryData);
-                configurationData.Add("savedRepositoryUrl", SavedRepositoryUrl);
-                configurationData.Add("saveEnabled", SavedRepositoryUrl != data);
-            }
-            catch (Exception ex)
-            {
-                Log.Logger()?.ReportError(Name, ShortId, $"Failed getting configuration information for input url: {data}", ex);
-                configurationData.Add("hasConfiguration", false);
-
-                var repositoryData = new JsonObject
-                {
-                    { "url", RepositoryUrl },
-                };
-
-                configurationData.Add("errorMessage", ex.Message);
-                configurationData.Add("configuration", repositoryData);
-                configurationData.Add("saveEnabled", false);
-
-                return configurationData.ToString();
-            }
-
-            return configurationData.ToJsonString();
         }
     }
 
@@ -308,7 +205,7 @@ public abstract class GitHubWidget : WidgetImpl
         return authProvider.GetLoggedInDeveloperIds().DeveloperIds.Any();
     }
 
-    public override void UpdateActivityState()
+    public virtual void UpdateActivityState()
     {
         // State logic for the Widget:
         // Signed in -> Valid Repository Url -> Active / Inactive per widget host.
@@ -318,7 +215,7 @@ public abstract class GitHubWidget : WidgetImpl
             return;
         }
 
-        if (string.IsNullOrEmpty(RepositoryUrl))
+        if (!Saved)
         {
             SetConfigure();
             return;
@@ -339,7 +236,7 @@ public abstract class GitHubWidget : WidgetImpl
         {
             Data = GetData(Page),
             Template = GetTemplateForPage(Page),
-            CustomState = RepositoryUrl,
+            CustomState = ConfigurationData,
         };
 
         Log.Logger()?.ReportDebug(Name, ShortId, $"Updating widget for {Page}");
@@ -382,7 +279,7 @@ public abstract class GitHubWidget : WidgetImpl
 
     protected string GetCurrentState()
     {
-        return $"State: {ActivityState}  Page: {Page}  Data: {DataState}  Repository: {RepositoryUrl}";
+        return $"State: {ActivityState}  Page: {Page}  Data: {DataState}";
     }
 
     protected void LogCurrentState()
@@ -486,18 +383,4 @@ public abstract class GitHubWidget : WidgetImpl
         Log.Logger()?.ReportInfo(Name, ShortId, $"Change in Developer Id,  Updating widget state.");
         UpdateActivityState();
     }
-}
-
-internal class DataPayload
-{
-    public string? Repo
-    {
-        get; set;
-    }
-}
-
-[JsonSourceGenerationOptions(WriteIndented = true)]
-[JsonSerializable(typeof(DataPayload))]
-internal partial class SourceGenerationContext : JsonSerializerContext
-{
 }

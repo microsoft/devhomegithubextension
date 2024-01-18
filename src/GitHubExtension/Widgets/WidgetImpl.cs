@@ -49,6 +49,4 @@ public abstract class WidgetImpl
     public abstract void OnCustomizationRequested(WidgetCustomizationRequestedArgs customizationRequestedArgs);
 
     public abstract void OnWidgetContextChanged(WidgetContextChangedArgs contextChangedArgs);
-
-    public abstract void UpdateActivityState();
 }

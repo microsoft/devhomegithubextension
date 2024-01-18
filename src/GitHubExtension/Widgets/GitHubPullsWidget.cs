@@ -10,24 +10,13 @@ using Microsoft.Windows.Widgets.Providers;
 using Octokit;
 
 namespace GitHubExtension.Widgets;
-internal class GitHubPullsWidget : GitHubWidget
+internal class GitHubPullsWidget : GitHubRepositoryWidget
 {
     private readonly string pullsIconData = IconLoader.GetIconAsBase64("pulls.png");
 
     private static Dictionary<string, string> Templates { get; set; } = new ();
 
     protected static readonly new string Name = nameof(GitHubPullsWidget);
-
-    public GitHubPullsWidget()
-        : base()
-    {
-        GitHubDataManager.OnUpdate += DataManagerUpdateHandler;
-    }
-
-    ~GitHubPullsWidget()
-    {
-        GitHubDataManager.OnUpdate -= DataManagerUpdateHandler;
-    }
 
     public override void DeleteWidget(string widgetId, string customState)
     {
@@ -165,19 +154,7 @@ internal class GitHubPullsWidget : GitHubWidget
         };
     }
 
-    public override string GetData(WidgetPageState page)
-    {
-        return page switch
-        {
-            WidgetPageState.SignIn => GetSignIn(),
-            WidgetPageState.Configure => GetConfiguration(RepositoryUrl),
-            WidgetPageState.Content => ContentData,
-            WidgetPageState.Loading => EmptyJson,
-            _ => throw new NotImplementedException(Page.GetType().Name),
-        };
-    }
-
-    private void DataManagerUpdateHandler(object? source, DataManagerUpdateEventArgs e)
+    protected override void DataManagerUpdateHandler(object? source, DataManagerUpdateEventArgs e)
     {
         Log.Logger()?.ReportDebug(Name, ShortId, $"Data Update Event: Kind={e.Kind} Info={e.Description} Context={string.Join(",", e.Context)}");
 
@@ -197,11 +174,5 @@ internal class GitHubPullsWidget : GitHubWidget
                 UpdateActivityState();
             }
         }
-    }
-
-    public override void OnCustomizationRequested(WidgetCustomizationRequestedArgs customizationRequestedArgs)
-    {
-        SavedRepositoryUrl = RepositoryUrl;
-        SetConfigure();
     }
 }
