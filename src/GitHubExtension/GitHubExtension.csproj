@@ -91,11 +91,16 @@
 
   <ItemGroup>
 	<Folder Include="Assets\" />
-	<Folder Include="Widgets\Assets\" />
   </ItemGroup>
 
   <ItemGroup>
     <Content Update="Widgets\Assets\arrow.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Update="Widgets\Assets\AssignedToMeScreenshotDark.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Update="Widgets\Assets\AssignedToMeScreenshotLight.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Update="Widgets\Assets\gh_logo.jpg">
@@ -110,7 +115,31 @@
     <Content Update="Widgets\Assets\issues.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Update="Widgets\Assets\IssuesScreenshotDark.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Update="Widgets\Assets\IssuesScreenshotLight.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Update="Widgets\Assets\MentionedInScreenshotDark.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Update="Widgets\Assets\MentionedInScreenshotLight.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Update="Widgets\Assets\PullRequestsScreenshotDark.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Update="Widgets\Assets\PullRequestsScreenshotLight.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Update="Widgets\Assets\pulls.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Update="Widgets\Assets\ReviewRequestedScreenshotDark.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Update="Widgets\Assets\ReviewRequestedScreenshotLight.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Update="Widgets\Assets\screenshot.png">
