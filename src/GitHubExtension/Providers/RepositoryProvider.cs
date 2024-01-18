@@ -207,7 +207,7 @@ public class RepositoryProvider : IRepositoryProvider
 
                 try
                 {
-                    cloneOptions.CredentialsProvider = (url, user, cred) => new LibGit2Sharp.UsernamePasswordCredentials
+                    cloneOptions.FetchOptions.CredentialsProvider = (url, user, cred) => new LibGit2Sharp.UsernamePasswordCredentials
                     {
                         // Password is a PAT unique to GitHub.
                         Username = loggedInDeveloperId.GetCredential().Password,
