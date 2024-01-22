@@ -57,15 +57,26 @@ internal abstract class GitHubUserWidget : GitHubWidget
 
     protected override void ResetWidgetInfoFromState()
     {
-        var dataObject = JsonNode.Parse(ConfigurationData);
-
-        if (dataObject == null)
+        try
         {
-            return;
-        }
+            var dataObject = JsonNode.Parse(ConfigurationData);
 
-        ShowCategory = EnumHelper.StringToSearchCategory(dataObject["showCategory"]?.GetValue<string>() ?? string.Empty);
-        DeveloperLoginId = dataObject["account"]?.GetValue<string>() ?? string.Empty;
+            if (dataObject == null)
+            {
+                return;
+            }
+
+            ShowCategory = EnumHelper.StringToSearchCategory(dataObject["showCategory"]?.GetValue<string>() ?? string.Empty);
+            DeveloperLoginId = dataObject["account"]?.GetValue<string>() ?? string.Empty;
+        }
+        catch (Exception e)
+        {
+            // If we fail to parse configuration data, do nothing, report the failure, and don't
+            // crash the entire extension.
+            DeveloperLoginId = string.Empty;
+            ShowCategory = SearchCategory.Unknown;
+            Log.Logger()?.ReportError(Name, ShortId, $"Unexpected error while resetting state: {e.Message}", e);
+        }
     }
 
     public override void OnCustomizationRequested(WidgetCustomizationRequestedArgs customizationRequestedArgs)
