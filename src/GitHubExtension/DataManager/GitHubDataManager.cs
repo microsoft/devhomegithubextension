@@ -438,6 +438,27 @@ public partial class GitHubDataManager : IGitHubDataManager, IDisposable
                     CommitCombinedStatus.GetOrCreate(DataStore, commitCombinedStatus);
 
                     CreatePullRequestStatus(dsPullRequest);
+
+                    // Review information for this pull request.
+                    // We will only get review data for the logged-in Developer's pull requests.
+                    try
+                    {
+                        var octoReviews = await devId.GitHubClient.PullRequest.Review.GetAll(repoName[0], repoName[1], octoPull.Number);
+                        foreach (var octoReview in octoReviews)
+                        {
+                            ProcessReview(dsPullRequest, octoReview);
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        // Octokit can sometimes fail unexpectedly or have bugs. Should that occur here, we
+                        // will not stop processing all pull requests and instead skip  over getting the PR
+                        // review information for this particular pull request.
+                        Log.Logger()?.ReportError($"Error updating Reviews for Pull Request #{octoPull.Number}: {e.Message}");
+
+                        // Put the full stack trace in debug if this occurs to reduce log spam.
+                        Log.Logger()?.ReportDebug($"Error updating Reviews for Pull Request #{octoPull.Number}.", e);
+                    }
                 }
 
                 Log.Logger()?.ReportDebug(Name, $"Updated developer pull requests for {repoFullName}.");
@@ -512,6 +533,24 @@ public partial class GitHubDataManager : IGitHubDataManager, IDisposable
 
         // Remove unobserved pull requests from this repository.
         PullRequest.DeleteLastObservedBefore(DataStore, repository.Id, DateTime.UtcNow - LastObservedDeleteSpan);
+    }
+
+    private void ProcessReview(PullRequest pullRequest, Octokit.PullRequestReview octoReview)
+    {
+        // For creating review notifications, must first determine if the review has changed.
+        var existingReview = Review.GetByInternalId(DataStore, octoReview.Id);
+
+        // Add/update the review record.
+        var newReview = Review.GetOrCreateByOctokitReview(DataStore, octoReview, pullRequest.Id);
+
+        // Create a new notification if the state is different or the review did not exist.
+        if (existingReview == null || (existingReview.State != newReview.State))
+        {
+            // We assume that the logged in developer created this pull request.
+            Log.Logger()?.ReportInfo(Name, "Notifications", $"Creating NewReview Notification for {pullRequest}");
+            var notification = Notification.Create(newReview, NotificationType.NewReview);
+            Notification.Add(DataStore, notification);
+        }
     }
 
     private void CreatePullRequestStatus(PullRequest pullRequest)
@@ -662,6 +701,7 @@ public partial class GitHubDataManager : IGitHubDataManager, IDisposable
         Notification.DeleteBefore(DataStore, DateTime.Now - NotificationRetentionTime);
         Search.DeleteBefore(DataStore, DateTime.Now - SearchRetentionTime);
         SearchIssue.DeleteUnreferenced(DataStore);
+        Review.DeleteUnreferenced(DataStore);
     }
 
     // Sets a last-updated in the MetaData.

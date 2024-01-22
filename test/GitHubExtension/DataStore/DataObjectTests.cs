@@ -529,4 +529,70 @@ public partial class DataStoreTests
         testListener.PrintEventCounts();
         Assert.AreEqual(false, testListener.FoundErrors());
     }
+
+    [TestMethod]
+    [TestCategory("Unit")]
+    public void ReadAndWriteReview()
+    {
+        using var log = new Logger("TestStore", TestOptions.LogOptions);
+        var testListener = new TestListener("TestListener", TestContext!);
+        log.AddListener(testListener);
+        Log.Attach(log);
+
+        using var dataStore = new DataStore("TestStore", TestHelpers.GetDataStoreFilePath(TestOptions), TestOptions.DataStoreOptions.DataStoreSchema!);
+        Assert.IsNotNull(dataStore);
+        dataStore.Create();
+        Assert.IsNotNull(dataStore.Connection);
+
+        using var tx = dataStore.Connection!.BeginTransaction();
+
+        var reviews = new List<Review>
+        {
+            { new Review { PullRequestId = 1, AuthorId = 2, Body = "Review 1", InternalId = 16, State = "Approved" } },
+            { new Review { PullRequestId = 1, AuthorId = 3, Body = "Review 2", InternalId = 47, State = "Rejected" } },
+        };
+
+        dataStore.Connection.Insert(reviews[0]);
+        dataStore.Connection.Insert(reviews[1]);
+
+        // Add User record
+        dataStore.Connection.Insert(new User { Login = "Kittens", InternalId = 6, AvatarUrl = "https://www.microsoft.com", Type = "Cat" });
+        dataStore.Connection.Insert(new User { Login = "Doggos", InternalId = 83, AvatarUrl = "https://www.microsoft.com", Type = "Dog" });
+        dataStore.Connection.Insert(new User { Login = "Lizards", InternalId = 3, AvatarUrl = "https://www.microsoft.com", Type = "Reptile" });
+
+        // Add repository record
+        dataStore.Connection.Insert(new Repository { OwnerId = 1, InternalId = 47, Name = "TestRepo1", Description = "Short Desc", HtmlUrl = "https://www.microsoft.com", DefaultBranch = "main", HasIssues = 1 });
+
+        // Add PullRequest record
+        dataStore.Connection.Insert(new PullRequest { Title = "Fix the things", InternalId = 42, HeadSha = "1234abcd", AuthorId = 1, RepositoryId = 1 });
+
+        tx.Commit();
+
+        // Verify retrieval and input into data objects.
+        var dataStoreReviews = dataStore.Connection.GetAll<Review>().ToList();
+        Assert.AreEqual(2, dataStoreReviews.Count);
+        foreach (var review in dataStoreReviews)
+        {
+            TestContext?.WriteLine($"  Review: {review.Id}: {review.Body} - {review.State}");
+
+            Assert.IsTrue(review.Id == 1 || review.Id == 2);
+            Assert.AreEqual(review.Body, $"Review {review.Id}");
+            Assert.IsTrue(review.AuthorId == review.Id + 1);
+        }
+
+        // Verify objects work.
+        var pullrequest = PullRequest.GetById(dataStore, 1);
+        Assert.IsNotNull(pullrequest);
+        var reviewsForPullRequest = pullrequest.Reviews;
+        Assert.IsNotNull(reviewsForPullRequest);
+        Assert.AreEqual(2, reviewsForPullRequest.Count());
+        foreach (var review in reviewsForPullRequest)
+        {
+            TestContext?.WriteLine($"  PR 1 - Review: {review}");
+            Assert.IsTrue(review.PullRequestId == 1);
+        }
+
+        testListener.PrintEventCounts();
+        Assert.AreEqual(false, testListener.FoundErrors());
+    }
 }
