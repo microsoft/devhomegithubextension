@@ -1,7 +1,7 @@
 ﻿// Copyright (c) Microsoft Corporation and Contributors
 // Licensed under the MIT license.
 
-using GitHubExtension.Client;
+using GitHubExtension.Client
 using GitHubExtension.DataManager;
 using GitHubExtension.DataModel;
 using GitHubExtension.Helpers;
