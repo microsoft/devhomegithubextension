@@ -53,19 +53,6 @@
         },
         {
           "type": "TextBlock",
-          "text": "%Widget_Template/Label%",
-          "wrap": true,
-          "size": "Small"
-        },
-        {
-          "type": "TextBlock",
-          "text": "${label}",
-          "wrap": true,
-          "weight": "bolder",
-          "spacing": "None"
-        },
-        {
-          "type": "TextBlock",
           "text": "%Widget_Template/Author%",
           "wrap": true,
           "size": "Small"
@@ -73,19 +60,6 @@
         {
           "type": "TextBlock",
           "text": "${owner}",
-          "wrap": true,
-          "weight": "bolder",
-          "spacing": "None"
-        },
-        {
-          "type": "TextBlock",
-          "text": "%Widget_Template/Project%",
-          "wrap": true,
-          "size": "Small"
-        },
-        {
-          "type": "TextBlock",
-          "text": "${Project}",
           "wrap": true,
           "weight": "bolder",
           "spacing": "None"
@@ -100,7 +74,6 @@
     {
       "type": "ColumnSet",
       "spacing": "Medium",
-      "$when": "${$root.savedRepositoryUrl != \"\"}",
       "columns": [
         {
           "type": "Column",
@@ -127,7 +100,8 @@
                       "type": "Action.Execute",
                       "title": "%Widget_Template_Button/Cancel%",
                       "verb": "Cancel",
-                      "tooltip": "%Widget_Template_Tooltip/Cancel%"
+                      "tooltip": "%Widget_Template_Tooltip/Cancel%",
+                      "isEnabled": "${$root.savedRepositoryUrl != \"\"}"
                     }
                   ]
                 }

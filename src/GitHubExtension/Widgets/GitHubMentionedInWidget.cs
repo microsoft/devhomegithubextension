@@ -105,7 +105,7 @@ internal class GitHubMentionedInWidget : GitHubWidget
         UpdateActivityState();
     }
 
-    public new void UpdateActivityState()
+    public override void UpdateActivityState()
     {
         // State logic for the Widget:
         // Signed in -> Configure -> Active / Inactive per widget host.
@@ -304,7 +304,6 @@ internal class GitHubMentionedInWidget : GitHubWidget
         {
             { "showCategory", EnumHelper.SearchCategoryToString(ShowCategory == SearchCategory.Unknown ? SearchCategory.IssuesAndPullRequests : ShowCategory) },
             { "savedShowCategory", savedShowCategory != null ? "savedShowCategory" : string.Empty },
-            { "configuring", true },
         };
         return configurationData.ToJsonString();
     }

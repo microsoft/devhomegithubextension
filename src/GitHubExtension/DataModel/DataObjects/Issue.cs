@@ -1,7 +1,6 @@
 ﻿// Copyright (c) Microsoft Corporation and Contributors
 // Licensed under the MIT license.
 
-using System.Globalization;
 using Dapper;
 using Dapper.Contrib.Extensions;
 using GitHubExtension.Helpers;
