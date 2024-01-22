@@ -161,6 +161,7 @@ public class Notification
         {
             NotificationType.CheckRunFailed => ShowFailedCheckRunToast(),
             NotificationType.CheckRunSucceeded => ShowSucceededCheckRunToast(),
+            NotificationType.NewReview => ShowNewReviewToast(),
             _ => false,
         };
     }
@@ -225,6 +226,36 @@ public class Notification
         return true;
     }
 
+    private bool ShowNewReviewToast()
+    {
+        try
+        {
+            Notifications.Log.Logger()?.ReportInfo($"Showing Notification for {this}");
+            var resLoader = new ResourceLoader(ResourceLoader.GetDefaultResourceFilePath(), "GitHubExtension/Resources");
+            var nb = new AppNotificationBuilder();
+            nb.SetDuration(AppNotificationDuration.Long);
+            nb.AddArgument("htmlurl", HtmlUrl);
+            nb.AddText($"{resLoader.GetString("Notifications_Toast_NewReview/Title")}");
+            nb.AddText($"#{Identifier} - {Title}", new AppNotificationTextProperties().SetMaxLines(1));
+
+            // We want to show Author login but the AppNotification has a max 3 AddText calls, see:
+            // https://learn.microsoft.com/windows/windows-app-sdk/api/winrt/microsoft.windows.appnotifications.builder.appnotificationbuilder.addtext?view=windows-app-sdk-1.2
+            // The newline is a workaround to the 3 line restriction to show the Author line.
+            nb.AddText(Result + Environment.NewLine + "@" + User.Login);
+            nb.AddButton(new AppNotificationButton(resLoader.GetString("Notifications_Toast_Button/Dismiss")).AddArgument("action", "dismiss"));
+            AppNotificationManager.Default.Show(nb.BuildNotification());
+
+            Toasted = true;
+        }
+        catch (Exception ex)
+        {
+            Notifications.Log.Logger()?.ReportError($"Failed creating the Notification for {this}", ex);
+            return false;
+        }
+
+        return true;
+    }
+
     public static Notification Create(PullRequestStatus status, NotificationType type)
     {
         return new Notification
@@ -240,6 +271,25 @@ public class Notification
             DetailsUrl = status.DetailsUrl,
             ToastState = 0,
             TimeOccurred = status.TimeOccurred,
+            TimeCreated = DateTime.Now.ToDataStoreInteger(),
+        };
+    }
+
+    public static Notification Create(Review review, NotificationType type)
+    {
+        return new Notification
+        {
+            TypeId = (long)type,
+            UserId = review.AuthorId,
+            RepositoryId = review.PullRequest.RepositoryId,
+            Title = review.PullRequest.Title,
+            Description = review.Body,
+            Identifier = review.PullRequest.Number.ToStringInvariant(),
+            Result = review.State,
+            HtmlUrl = review.HtmlUrl,
+            DetailsUrl = review.HtmlUrl,
+            ToastState = 0,
+            TimeOccurred = review.TimeSubmitted,
             TimeCreated = DateTime.Now.ToDataStoreInteger(),
         };
     }
