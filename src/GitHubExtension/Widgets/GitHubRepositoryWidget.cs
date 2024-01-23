@@ -69,14 +69,24 @@ public abstract class GitHubRepositoryWidget : GitHubWidget
 
     protected override void ResetWidgetInfoFromState()
     {
-        var dataObject = JsonNode.Parse(ConfigurationData);
-
-        if (dataObject == null)
+        try
         {
-            return;
-        }
+            var dataObject = JsonNode.Parse(ConfigurationData);
 
-        RepositoryUrl = dataObject["url"]?.GetValue<string>() ?? string.Empty;
+            if (dataObject == null)
+            {
+                return;
+            }
+
+            RepositoryUrl = dataObject["url"]?.GetValue<string>() ?? string.Empty;
+        }
+        catch (Exception e)
+        {
+            // If we fail to parse configuration data, do nothing, report the failure, and don't
+            // crash the entire extension.
+            RepositoryUrl = string.Empty;
+            Log.Logger()?.ReportError(Name, ShortId, $"Unexpected error while resetting state: {e.Message}", e);
+        }
     }
 
     public override void OnCustomizationRequested(WidgetCustomizationRequestedArgs customizationRequestedArgs)
