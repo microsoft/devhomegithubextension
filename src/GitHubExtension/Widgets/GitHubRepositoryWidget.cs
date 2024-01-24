@@ -71,6 +71,7 @@ public abstract class GitHubRepositoryWidget : GitHubWidget
     protected override void ResetWidgetInfoFromState()
     {
         JsonNode? dataObject = null;
+
         try
         {
             dataObject = JsonNode.Parse(ConfigurationData);
@@ -79,7 +80,7 @@ public abstract class GitHubRepositoryWidget : GitHubWidget
         {
             // Old data versioning was not a Json string. If we attempt to parse
             // and we get a failure, check if it is the old version.
-            if (Validation.IsValidGitHubURL(ConfigurationData))
+            if (!string.IsNullOrEmpty(ConfigurationData))
             {
                 Log.Logger()?.ReportInfo(Name, ShortId, $"Found string data format, migrating to JSON format. Data: {ConfigurationData}");
                 var migratedState = new JsonObject
@@ -90,7 +91,6 @@ public abstract class GitHubRepositoryWidget : GitHubWidget
             }
             else
             {
-                Log.Logger()?.ReportWarn(Name, ShortId, $"Unrecognized configuration data, setting to default. Data: {ConfigurationData}");
                 ConfigurationData = EmptyJson;
             }
         }
