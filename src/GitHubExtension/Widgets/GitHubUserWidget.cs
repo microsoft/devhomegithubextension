@@ -60,8 +60,6 @@ internal abstract class GitHubUserWidget : GitHubWidget
     {
         JsonNode? dataObject = null;
 
-        ConfigurationData = EnumHelper.SearchCategoryToString(SearchCategory.Issues);
-
         try
         {
             dataObject = JsonNode.Parse(ConfigurationData);
@@ -345,11 +343,11 @@ internal abstract class GitHubUserWidget : GitHubWidget
 
         if (!string.IsNullOrEmpty(DeveloperLoginId))
         {
-            configurationData.Add("account", DeveloperLoginId);
+            configurationData.Add("selectedDevId", DeveloperLoginId);
         }
         else if (DeveloperIdProvider.GetInstance().GetLoggedInDeveloperIds().DeveloperIds.Count() == 1)
         {
-            configurationData.Add("account", DeveloperIdProvider.GetInstance().GetLoggedInDeveloperIds().DeveloperIds.First().LoginId);
+            configurationData.Add("selectedDevId", DeveloperIdProvider.GetInstance().GetLoggedInDeveloperIds().DeveloperIds.First().LoginId);
         }
 
         AddDevIds(ref configurationData);
