@@ -1,6 +1,7 @@
 ﻿// Copyright (c) Microsoft Corporation and Contributors
 // Licensed under the MIT license.
 
+using System.Text.Json;
 using System.Text.Json.Nodes;
 using GitHubExtension.DataManager;
 using GitHubExtension.DeveloperId;
@@ -57,17 +58,46 @@ internal abstract class GitHubUserWidget : GitHubWidget
 
     protected override void ResetWidgetInfoFromState()
     {
+        JsonNode? dataObject = null;
+
+        ConfigurationData = EnumHelper.SearchCategoryToString(SearchCategory.Issues);
+
         try
         {
-            var dataObject = JsonNode.Parse(ConfigurationData);
-
-            if (dataObject == null)
+            dataObject = JsonNode.Parse(ConfigurationData);
+        }
+        catch (JsonException)
+        {
+            // Old data versioning was not a Json string. If we attempt to parse
+            // and we get a failure, assume it is the old version.
+            if (!string.IsNullOrEmpty(ConfigurationData))
             {
-                return;
-            }
+                Log.Logger()?.ReportInfo(Name, ShortId, $"Found string data format, migrating to JSON format. Data: {ConfigurationData}");
+                var migratedState = new JsonObject
+                {
+                    { "showCategory", ConfigurationData },
+                };
 
-            ShowCategory = EnumHelper.StringToSearchCategory(dataObject["showCategory"]?.GetValue<string>() ?? string.Empty);
-            DeveloperLoginId = dataObject["account"]?.GetValue<string>() ?? string.Empty;
+                // Prior to this configuration change, multi-account was not supported. Assume that
+                // if there is exactly one Developer Id that is the one the user had configured.
+                if (DeveloperIdProvider.GetInstance().GetLoggedInDeveloperIds().DeveloperIds.Count() == 1)
+                {
+                    migratedState.Add("account", DeveloperIdProvider.GetInstance().GetLoggedInDeveloperIds().DeveloperIds.First().LoginId);
+                }
+
+                ConfigurationData = migratedState.ToJsonString();
+            }
+            else
+            {
+                ConfigurationData = EmptyJson;
+            }
+        }
+
+        try
+        {
+            dataObject ??= JsonNode.Parse(ConfigurationData);
+            ShowCategory = EnumHelper.StringToSearchCategory(dataObject!["showCategory"]?.GetValue<string>() ?? string.Empty);
+            DeveloperLoginId = dataObject!["account"]?.GetValue<string>() ?? string.Empty;
         }
         catch (Exception e)
         {
@@ -315,11 +345,11 @@ internal abstract class GitHubUserWidget : GitHubWidget
 
         if (!string.IsNullOrEmpty(DeveloperLoginId))
         {
-            configurationData.Add("selectedDevId", DeveloperLoginId);
+            configurationData.Add("account", DeveloperLoginId);
         }
         else if (DeveloperIdProvider.GetInstance().GetLoggedInDeveloperIds().DeveloperIds.Count() == 1)
         {
-            configurationData.Add("selectedDevId", DeveloperIdProvider.GetInstance().GetLoggedInDeveloperIds().DeveloperIds.First().LoginId);
+            configurationData.Add("account", DeveloperIdProvider.GetInstance().GetLoggedInDeveloperIds().DeveloperIds.First().LoginId);
         }
 
         AddDevIds(ref configurationData);

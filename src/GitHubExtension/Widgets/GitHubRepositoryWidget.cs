@@ -2,6 +2,7 @@
 // Licensed under the MIT license.
 
 using System.Text;
+using System.Text.Json;
 using System.Text.Json.Nodes;
 using GitHubExtension.Client;
 using GitHubExtension.DataManager;
@@ -69,16 +70,35 @@ public abstract class GitHubRepositoryWidget : GitHubWidget
 
     protected override void ResetWidgetInfoFromState()
     {
+        JsonNode? dataObject = null;
         try
         {
-            var dataObject = JsonNode.Parse(ConfigurationData);
-
-            if (dataObject == null)
+            dataObject = JsonNode.Parse(ConfigurationData);
+        }
+        catch (JsonException)
+        {
+            // Old data versioning was not a Json string. If we attempt to parse
+            // and we get a failure, check if it is the old version.
+            if (Validation.IsValidGitHubURL(ConfigurationData))
             {
-                return;
+                Log.Logger()?.ReportInfo(Name, ShortId, $"Found string data format, migrating to JSON format. Data: {ConfigurationData}");
+                var migratedState = new JsonObject
+                {
+                    { "url", ConfigurationData },
+                };
+                ConfigurationData = migratedState.ToJsonString();
             }
+            else
+            {
+                Log.Logger()?.ReportWarn(Name, ShortId, $"Unrecognized configuration data, setting to default. Data: {ConfigurationData}");
+                ConfigurationData = EmptyJson;
+            }
+        }
 
-            RepositoryUrl = dataObject["url"]?.GetValue<string>() ?? string.Empty;
+        try
+        {
+            dataObject ??= JsonNode.Parse(ConfigurationData);
+            RepositoryUrl = dataObject!["url"]?.GetValue<string>() ?? string.Empty;
         }
         catch (Exception e)
         {
