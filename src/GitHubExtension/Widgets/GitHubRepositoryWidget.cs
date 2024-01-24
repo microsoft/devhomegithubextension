@@ -81,20 +81,28 @@ public abstract class GitHubRepositoryWidget : GitHubWidget
             Log.Logger()?.ReportWarn(Name, ShortId, $"Failed to parse ConfigurationData; attempting migration. {e.Message}");
             Log.Logger()?.ReportDebug(Name, ShortId, $"Json parse failure.", e);
 
-            // Old data versioning was not a Json string. If we attempt to parse
-            // and we get a failure, check if it is the old version.
-            if (!string.IsNullOrEmpty(ConfigurationData))
+            try
             {
-                Log.Logger()?.ReportInfo(Name, ShortId, $"Found string data format, migrating to JSON format. Data: {ConfigurationData}");
-                var migratedState = new JsonObject
+                // Old data versioning was not a Json string. If we attempt to parse
+                // and we get a failure, check if it is the old version.
+                if (!string.IsNullOrEmpty(ConfigurationData))
                 {
-                    { "url", ConfigurationData },
-                };
-                ConfigurationData = migratedState.ToJsonString();
+                    Log.Logger()?.ReportInfo(Name, ShortId, $"Found string data format, migrating to JSON format. Data: {ConfigurationData}");
+                    var migratedState = new JsonObject
+                    {
+                        { "url", ConfigurationData },
+                    };
+                    ConfigurationData = migratedState.ToJsonString();
+                }
+                else
+                {
+                    ConfigurationData = EmptyJson;
+                }
             }
-            else
+            catch (Exception ex)
             {
-                ConfigurationData = EmptyJson;
+                // Adding for abundance of caution because we have seen crashes in this space.
+                Log.Logger()?.ReportError(Name, ShortId, $"Unexpected failure during migration.", ex);
             }
         }
 
