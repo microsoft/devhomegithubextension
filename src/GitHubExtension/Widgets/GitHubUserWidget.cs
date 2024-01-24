@@ -64,8 +64,11 @@ internal abstract class GitHubUserWidget : GitHubWidget
         {
             dataObject = JsonNode.Parse(ConfigurationData);
         }
-        catch (JsonException)
+        catch (JsonException e)
         {
+            Log.Logger()?.ReportWarn(Name, ShortId, $"Failed to parse ConfigurationData; attempting migration. {e.Message}");
+            Log.Logger()?.ReportDebug(Name, ShortId, $"Json parse failure.", e);
+
             // Old data versioning was not a Json string. If we attempt to parse
             // and we get a failure, assume it is the old version.
             if (!string.IsNullOrEmpty(ConfigurationData))
