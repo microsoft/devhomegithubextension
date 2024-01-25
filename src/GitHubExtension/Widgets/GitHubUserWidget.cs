@@ -1,6 +1,7 @@
 ﻿// Copyright (c) Microsoft Corporation and Contributors
 // Licensed under the MIT license.
 
+using System.Text.Json;
 using System.Text.Json.Nodes;
 using GitHubExtension.DataManager;
 using GitHubExtension.DeveloperId;
@@ -57,17 +58,57 @@ internal abstract class GitHubUserWidget : GitHubWidget
 
     protected override void ResetWidgetInfoFromState()
     {
+        JsonNode? dataObject = null;
+
         try
         {
-            var dataObject = JsonNode.Parse(ConfigurationData);
+            dataObject = JsonNode.Parse(ConfigurationData);
+        }
+        catch (JsonException e)
+        {
+            Log.Logger()?.ReportWarn(Name, ShortId, $"Failed to parse ConfigurationData; attempting migration. {e.Message}");
+            Log.Logger()?.ReportDebug(Name, ShortId, $"Json parse failure.", e);
 
-            if (dataObject == null)
+            try
             {
-                return;
-            }
+                // Old data versioning was not a Json string. If we attempt to parse
+                // and we get a failure, assume it is the old version.
+                if (!string.IsNullOrEmpty(ConfigurationData))
+                {
+                    Log.Logger()?.ReportInfo(Name, ShortId, $"Found string data format, migrating to JSON format. Data: {ConfigurationData}");
+                    var migratedState = new JsonObject
+                    {
+                        { "showCategory", ConfigurationData },
+                    };
 
-            ShowCategory = EnumHelper.StringToSearchCategory(dataObject["showCategory"]?.GetValue<string>() ?? string.Empty);
-            DeveloperLoginId = dataObject["account"]?.GetValue<string>() ?? string.Empty;
+                    // Prior to this configuration change, multi-account was not supported. Assume that
+                    // if there is exactly one Developer Id that is the one the user had configured.
+                    // There is no else case here because if we leave this value absent, the widget will
+                    // change state to configuring, where the user can select the developer ID they want.
+                    if (DeveloperIdProvider.GetInstance().GetLoggedInDeveloperIds().DeveloperIds.Count() == 1)
+                    {
+                        migratedState.Add("account", DeveloperIdProvider.GetInstance().GetLoggedInDeveloperIds().DeveloperIds.First().LoginId);
+                    }
+
+                    ConfigurationData = migratedState.ToJsonString();
+                }
+                else
+                {
+                    ConfigurationData = EmptyJson;
+                }
+            }
+            catch (Exception ex)
+            {
+                // Adding for abundance of caution because we have seen crashes in this space.
+                Log.Logger()?.ReportError(Name, ShortId, $"Unexpected failure during migration.", ex);
+            }
+        }
+
+        try
+        {
+            dataObject ??= JsonNode.Parse(ConfigurationData);
+            ShowCategory = EnumHelper.StringToSearchCategory(dataObject!["showCategory"]?.GetValue<string>() ?? string.Empty);
+            DeveloperLoginId = dataObject!["account"]?.GetValue<string>() ?? string.Empty;
         }
         catch (Exception e)
         {
