@@ -2,6 +2,7 @@
 // Licensed under the MIT license.
 
 using System.Text;
+using System.Text.Json;
 using System.Text.Json.Nodes;
 using GitHubExtension.Client;
 using GitHubExtension.DataManager;
@@ -69,16 +70,46 @@ public abstract class GitHubRepositoryWidget : GitHubWidget
 
     protected override void ResetWidgetInfoFromState()
     {
+        JsonNode? dataObject = null;
+
         try
         {
-            var dataObject = JsonNode.Parse(ConfigurationData);
+            dataObject = JsonNode.Parse(ConfigurationData);
+        }
+        catch (JsonException e)
+        {
+            Log.Logger()?.ReportWarn(Name, ShortId, $"Failed to parse ConfigurationData; attempting migration. {e.Message}");
+            Log.Logger()?.ReportDebug(Name, ShortId, $"Json parse failure.", e);
 
-            if (dataObject == null)
+            try
             {
-                return;
+                // Old data versioning was not a Json string. If we attempt to parse
+                // and we get a failure, check if it is the old version.
+                if (!string.IsNullOrEmpty(ConfigurationData))
+                {
+                    Log.Logger()?.ReportInfo(Name, ShortId, $"Found string data format, migrating to JSON format. Data: {ConfigurationData}");
+                    var migratedState = new JsonObject
+                    {
+                        { "url", ConfigurationData },
+                    };
+                    ConfigurationData = migratedState.ToJsonString();
+                }
+                else
+                {
+                    ConfigurationData = EmptyJson;
+                }
             }
+            catch (Exception ex)
+            {
+                // Adding for abundance of caution because we have seen crashes in this space.
+                Log.Logger()?.ReportError(Name, ShortId, $"Unexpected failure during migration.", ex);
+            }
+        }
 
-            RepositoryUrl = dataObject["url"]?.GetValue<string>() ?? string.Empty;
+        try
+        {
+            dataObject ??= JsonNode.Parse(ConfigurationData);
+            RepositoryUrl = dataObject!["url"]?.GetValue<string>() ?? string.Empty;
         }
         catch (Exception e)
         {
