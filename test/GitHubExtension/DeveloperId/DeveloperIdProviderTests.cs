@@ -56,6 +56,32 @@ public partial class DeveloperIdTests
         return credentialVault;
     }
 
+    /* Tests depend on the following environment variables:
+     * DEV_HOME_TEST_GITHUB_COM_USER : Url for a test user on github.com
+     * DEV_HOME_TEST_GITHUB_COM_PAT : Personal Access Token for the test user on github.com
+     * DEV_HOME_TEST_GITHUB_ENTERPRISE_SERVER_USER : Url for a test user on GHES
+     * DEV_HOME_TEST_GITHUB_ENTERPRISE_SERVER_PAT : Personal Access Token for the test user on the GHES
+     */
+    private CredentialVault SetupCredentialVaultWithMultipleTestUsers()
+    {
+        var credentialVault = SetupCleanCredentialVaultClean();
+
+        var testLoginId = Environment.GetEnvironmentVariable("DEV_HOME_TEST_GITHUB_COM_USER") ?? string.Empty;
+        var testPassword = Environment.GetEnvironmentVariable("DEV_HOME_TEST_GITHUB_COM_PAT");
+
+        var testGHESLoginId = Environment.GetEnvironmentVariable("DEV_HOME_TEST_GITHUB_ENTERPRISE_SERVER_USER") ?? string.Empty;
+        var testGHESPassword = Environment.GetEnvironmentVariable("DEV_HOME_TEST_GITHUB_ENTERPRISE_SERVER_PAT");
+
+        var password = new NetworkCredential(null, testPassword).SecurePassword;
+        credentialVault.SaveCredentials(testLoginId, password);
+
+        var ghesPassword = new NetworkCredential(null, testGHESPassword).SecurePassword;
+        credentialVault.SaveCredentials(testGHESLoginId, ghesPassword);
+
+        Assert.AreEqual(2, credentialVault.GetAllCredentials().Count());
+        return credentialVault;
+    }
+
     private CredentialVault SetupCredentialVaultWithInvalidTestUser()
     {
         var credentialVault = SetupCleanCredentialVaultClean();
@@ -123,6 +149,31 @@ public partial class DeveloperIdTests
         Assert.AreEqual(1, result.DeveloperIds.Count());
         Assert.AreNotEqual("dummytestuser1", result.DeveloperIds.First().LoginId);
         Assert.IsNotNull(new Uri(result.DeveloperIds.First().Url));
+
+        // Cleanup
+        credentialVault.RemoveAllCredentials();
+        Assert.AreEqual(0, credentialVault.GetAllCredentials().Count());
+    }
+
+    [TestMethod]
+    [TestCategory("LiveData")]
+    public void DeveloperIdProvider_RestoreAndGetMultipleDeveloperIds()
+    {
+        // Setup CredentialVault with a dummy testuser and valid PAT for Github.com
+        var credentialVault = SetupCredentialVaultWithMultipleTestUsers();
+
+        // Test whether the DeveloperIdProvider can restore the saved credentials
+        var devIdProvider = DeveloperIdProvider.GetInstance();
+        Assert.IsNotNull(devIdProvider);
+        var result = devIdProvider.GetLoggedInDeveloperIds();
+
+        Assert.IsNotNull(result);
+        Assert.AreEqual(ProviderOperationStatus.Success, result.Result.Status);
+        Assert.AreEqual(2, result.DeveloperIds.Count());
+        Assert.AreNotEqual("dummytestuser1", result.DeveloperIds.First().LoginId);
+        Assert.AreNotEqual("dummytestuser1", result.DeveloperIds.Last().LoginId);
+        Assert.IsNotNull(new Uri(result.DeveloperIds.First().Url));
+        Assert.IsNotNull(new Uri(result.DeveloperIds.Last().Url));
 
         // Cleanup
         credentialVault.RemoveAllCredentials();
