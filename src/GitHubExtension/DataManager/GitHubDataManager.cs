@@ -543,6 +543,13 @@ public partial class GitHubDataManager : IGitHubDataManager, IDisposable
         // Add/update the review record.
         var newReview = Review.GetOrCreateByOctokitReview(DataStore, octoReview, pullRequest.Id);
 
+        // Ignore comments or pending state.
+        if (string.IsNullOrEmpty(newReview.State) || newReview.State == "Comment")
+        {
+            Log.Logger()?.ReportDebug(Name, "Notifications", $"Ignoring review for {pullRequest}. State: {newReview.State}");
+            return;
+        }
+
         // Create a new notification if the state is different or the review did not exist.
         if (existingReview == null || (existingReview.State != newReview.State))
         {

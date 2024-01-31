@@ -501,8 +501,12 @@
     <value>Please enter the PAT</value>
     <comment>LoginUI Error text if input is null</comment>
   </data>
-  <data name="Notifications_Toast_NewReview.Title" xml:space="preserve">
-    <value>New review</value>
+  <data name="Notifications_Toast_NewReview.Approved" xml:space="preserve">
+    <value>Approved</value>
+    <comment>Shown in toast notification.</comment>
+  </data>
+  <data name="Notifications_Toast_NewReview.ChangesRequested" xml:space="preserve">
+    <value>Changes requested</value>
     <comment>Shown in toast notification.</comment>
   </data>
 </root>

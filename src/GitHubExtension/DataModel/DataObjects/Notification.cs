@@ -235,13 +235,27 @@ public class Notification
             var nb = new AppNotificationBuilder();
             nb.SetDuration(AppNotificationDuration.Long);
             nb.AddArgument("htmlurl", HtmlUrl);
-            nb.AddText($"{resLoader.GetString("Notifications_Toast_NewReview/Title")}");
-            nb.AddText($"#{Identifier} - {Title}", new AppNotificationTextProperties().SetMaxLines(1));
+
+            switch (Result)
+            {
+                case "Approved":
+                    nb.AddText($"✅ {resLoader.GetString("Notifications_Toast_NewReview/Approved")}");
+                    break;
+
+                case "ChangesRequested":
+                    nb.AddText($"⚠️ {resLoader.GetString("Notifications_Toast_NewReview/ChangesRequested")}");
+                    break;
+
+                default:
+                    throw new ArgumentException($"Unknown Review Result: {Result}");
+            }
+
+            nb.AddText($"#{Identifier} - {Repository.FullName}", new AppNotificationTextProperties().SetMaxLines(1));
 
             // We want to show Author login but the AppNotification has a max 3 AddText calls, see:
             // https://learn.microsoft.com/windows/windows-app-sdk/api/winrt/microsoft.windows.appnotifications.builder.appnotificationbuilder.addtext?view=windows-app-sdk-1.2
             // The newline is a workaround to the 3 line restriction to show the Author line.
-            nb.AddText(Result + Environment.NewLine + "@" + User.Login);
+            nb.AddText(Title + Environment.NewLine + "@" + User.Login);
             nb.AddButton(new AppNotificationButton(resLoader.GetString("Notifications_Toast_Button/Dismiss")).AddArgument("action", "dismiss"));
             AppNotificationManager.Default.Show(nb.BuildNotification());
 
