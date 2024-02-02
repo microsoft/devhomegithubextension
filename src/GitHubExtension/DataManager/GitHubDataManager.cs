@@ -16,6 +16,7 @@ public partial class GitHubDataManager : IGitHubDataManager, IDisposable
     private static readonly TimeSpan NotificationRetentionTime = TimeSpan.FromDays(7);
     private static readonly TimeSpan SearchRetentionTime = TimeSpan.FromDays(7);
     private static readonly TimeSpan PullRequestStaleTime = TimeSpan.FromDays(1);
+    private static readonly TimeSpan ReviewStaleTime = TimeSpan.FromDays(7);
 
     // It is possible different widgets have queries which touch the same pull requests.
     // We want to keep this window large enough that we don't delete data being used by
@@ -537,6 +538,12 @@ public partial class GitHubDataManager : IGitHubDataManager, IDisposable
 
     private void ProcessReview(PullRequest pullRequest, Octokit.PullRequestReview octoReview)
     {
+        // Skip reviews that are stale.
+        if ((DateTime.Now - octoReview.SubmittedAt) > ReviewStaleTime)
+        {
+            return;
+        }
+
         // For creating review notifications, must first determine if the review has changed.
         var existingReview = Review.GetByInternalId(DataStore, octoReview.Id);
 
@@ -555,8 +562,7 @@ public partial class GitHubDataManager : IGitHubDataManager, IDisposable
         {
             // We assume that the logged in developer created this pull request.
             Log.Logger()?.ReportInfo(Name, "Notifications", $"Creating NewReview Notification for {pullRequest}");
-            var notification = Notification.Create(newReview, NotificationType.NewReview);
-            Notification.Add(DataStore, notification);
+            Notification.Create(DataStore, newReview, NotificationType.NewReview);
         }
     }
 
@@ -571,15 +577,13 @@ public partial class GitHubDataManager : IGitHubDataManager, IDisposable
         if (ShouldCreateCheckFailureNotification(curStatus, prevStatus))
         {
             Log.Logger()?.ReportInfo(Name, "Notifications", $"Creating CheckRunFailure Notification for {curStatus}");
-            var notification = Notification.Create(curStatus, NotificationType.CheckRunFailed);
-            Notification.Add(DataStore, notification);
+            Notification.Create(DataStore, curStatus, NotificationType.CheckRunFailed);
         }
 
         if (ShouldCreateCheckSucceededNotification(curStatus, prevStatus))
         {
             Log.Logger()?.ReportDebug(Name, "Notifications", $"Creating CheckRunSuccess Notification for {curStatus}");
-            var notification = Notification.Create(curStatus, NotificationType.CheckRunSucceeded);
-            Notification.Add(DataStore, notification);
+            Notification.Create(DataStore, curStatus, NotificationType.CheckRunSucceeded);
         }
     }
 

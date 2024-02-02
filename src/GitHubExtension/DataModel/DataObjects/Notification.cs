@@ -258,7 +258,6 @@ public class Notification
             nb.AddText(Title + Environment.NewLine + "@" + User.Login);
             nb.AddButton(new AppNotificationButton(resLoader.GetString("Notifications_Toast_Button/Dismiss")).AddArgument("action", "dismiss"));
             AppNotificationManager.Default.Show(nb.BuildNotification());
-
             Toasted = true;
         }
         catch (Exception ex)
@@ -270,9 +269,9 @@ public class Notification
         return true;
     }
 
-    public static Notification Create(PullRequestStatus status, NotificationType type)
+    public static Notification Create(DataStore dataStore, PullRequestStatus status, NotificationType type)
     {
-        return new Notification
+        var pullRequestNotification = new Notification
         {
             TypeId = (long)type,
             UserId = status.PullRequest.AuthorId,
@@ -287,11 +286,15 @@ public class Notification
             TimeOccurred = status.TimeOccurred,
             TimeCreated = DateTime.Now.ToDataStoreInteger(),
         };
+
+        Add(dataStore, pullRequestNotification);
+        SetOlderNotificationsToasted(dataStore, pullRequestNotification);
+        return pullRequestNotification;
     }
 
-    public static Notification Create(Review review, NotificationType type)
+    public static Notification Create(DataStore dataStore, Review review, NotificationType type)
     {
-        return new Notification
+        var reviewNotification = new Notification
         {
             TypeId = (long)type,
             UserId = review.AuthorId,
@@ -306,6 +309,10 @@ public class Notification
             TimeOccurred = review.TimeSubmitted,
             TimeCreated = DateTime.Now.ToDataStoreInteger(),
         };
+
+        Add(dataStore, reviewNotification);
+        SetOlderNotificationsToasted(dataStore, reviewNotification);
+        return reviewNotification;
     }
 
     public static Notification Add(DataStore dataStore, Notification notification)
@@ -334,6 +341,30 @@ public class Notification
         }
 
         return notifications;
+    }
+
+    public static void SetOlderNotificationsToasted(DataStore dataStore, Notification notification)
+    {
+        // Get all untoasted notifications for the same type, identifier, and author that are older
+        // than the specified notification.
+        var sql = @"SELECT * FROM Notification WHERE TypeId = @TypeId AND RepositoryId = @RepositoryId AND Identifier = @Identifier AND UserId = @UserId AND TimeOccurred < @TimeOccurred AND ToastState = 0";
+        var param = new
+        {
+            notification.TypeId,
+            notification.RepositoryId,
+            notification.Identifier,
+            notification.UserId,
+            notification.TimeOccurred,
+        };
+
+        Log.Logger()?.ReportDebug(DataStore.GetSqlLogMessage(sql, param));
+        var outDatedNotifications = dataStore.Connection!.Query<Notification>(sql, param, null) ?? Enumerable.Empty<Notification>();
+        foreach (var olderNotification in outDatedNotifications)
+        {
+            olderNotification.DataStore = dataStore;
+            olderNotification.Toasted = true;
+            Notifications.Log.Logger()?.ReportInfo($"Found older notification for {olderNotification.Identifier} with result {olderNotification.Result}, marking toasted.");
+        }
     }
 
     public static void DeleteBefore(DataStore dataStore, DateTime date)

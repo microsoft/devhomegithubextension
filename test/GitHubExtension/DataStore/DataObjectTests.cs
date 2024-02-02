@@ -515,8 +515,7 @@ public partial class DataStoreTests
         Assert.AreEqual(1, prStatus.ConclusionId);
 
         // Create notification from PR Status
-        var notification = DataModel.Notification.Create(prStatus, NotificationType.CheckRunFailed);
-        notification = DataModel.Notification.Add(dataStore, notification);
+        var notification = Notification.Create(dataStore, prStatus, NotificationType.CheckRunFailed);
         Assert.IsNotNull(notification);
         Assert.AreEqual("Fix the things", notification.Title);
         Assert.AreEqual(1, notification.RepositoryId);
