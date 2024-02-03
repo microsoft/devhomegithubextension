@@ -551,7 +551,7 @@ public partial class GitHubDataManager : IGitHubDataManager, IDisposable
         var newReview = Review.GetOrCreateByOctokitReview(DataStore, octoReview, pullRequest.Id);
 
         // Ignore comments or pending state.
-        if (string.IsNullOrEmpty(newReview.State) || newReview.State == "Comment")
+        if (string.IsNullOrEmpty(newReview.State) || newReview.State == "Commented")
         {
             Log.Logger()?.ReportDebug(Name, "Notifications", $"Ignoring review for {pullRequest}. State: {newReview.State}");
             return;
@@ -561,7 +561,7 @@ public partial class GitHubDataManager : IGitHubDataManager, IDisposable
         if (existingReview == null || (existingReview.State != newReview.State))
         {
             // We assume that the logged in developer created this pull request.
-            Log.Logger()?.ReportInfo(Name, "Notifications", $"Creating NewReview Notification for {pullRequest}");
+            Log.Logger()?.ReportInfo(Name, "Notifications", $"Creating NewReview Notification for {pullRequest}. State: {newReview.State}");
             Notification.Create(DataStore, newReview, NotificationType.NewReview);
         }
     }
