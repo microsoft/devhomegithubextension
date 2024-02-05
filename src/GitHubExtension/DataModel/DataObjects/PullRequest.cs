@@ -317,6 +317,26 @@ public class PullRequest
         }
     }
 
+    /// <summary>
+    /// Gets all reviews associated with this pull request.
+    /// </summary>
+    [Write(false)]
+    [Computed]
+    public IEnumerable<Review> Reviews
+    {
+        get
+        {
+            if (DataStore == null)
+            {
+                return Enumerable.Empty<Review>();
+            }
+            else
+            {
+                return Review.GetAllForPullRequest(DataStore, this) ?? Enumerable.Empty<Review>();
+            }
+        }
+    }
+
     public override string ToString() => $"{Number}: {Title}";
 
     // Create pull request from OctoKit pull request data

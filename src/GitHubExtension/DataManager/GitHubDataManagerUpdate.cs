@@ -47,6 +47,12 @@ public partial class GitHubDataManager
             {
                 notification.ShowToast();
             }
+
+            // Show notifications for new reviews.
+            if (notification.Type == NotificationType.NewReview)
+            {
+                notification.ShowToast();
+            }
         }
     }
 

@@ -528,4 +528,53 @@ public partial class DataStoreTests
         testListener.PrintEventCounts();
         Assert.AreEqual(false, testListener.FoundErrors());
     }
+
+    [TestMethod]
+    [TestCategory("LiveData")]
+    public void AddReviewFromOctokit()
+    {
+        using var log = new DevHome.Logging.Logger("TestStore", TestOptions.LogOptions);
+        var testListener = new TestListener("TestListener", TestContext!);
+        log.AddListener(testListener);
+        Log.Attach(log);
+
+        using var dataStore = new DataStore("TestStore", TestHelpers.GetDataStoreFilePath(TestOptions), TestOptions.DataStoreOptions.DataStoreSchema!);
+        Assert.IsNotNull(dataStore);
+        dataStore.Create();
+        Assert.IsNotNull(dataStore.Connection);
+
+        var client = GitHubClientProvider.Instance.GetClient();
+
+        using var tx = dataStore.Connection!.BeginTransaction();
+
+        var octoPull = client.PullRequest.Get("microsoft", "devhomegithubextension", 260).Result;
+        var dataStorePull = DataModel.PullRequest.GetOrCreateByOctokitPullRequest(dataStore, octoPull);
+
+        // Get reviews for pull
+        var octoReviews = client.PullRequest.Review.GetAll("microsoft", "devhomegithubextension", 260).Result;
+        Assert.IsNotNull(octoReviews);
+        TestContext?.WriteLine($"Found {octoReviews.Count}");
+        foreach (var review in octoReviews)
+        {
+            var dsReview = Review.GetOrCreateByOctokitReview(dataStore, review, dataStorePull.Id);
+            Assert.IsNotNull(dsReview);
+        }
+
+        tx.Commit();
+
+        // Verify retrieval and input into data objects and we get the same results.
+        var dataStoreReviews = dataStore.Connection.GetAll<Review>().ToList();
+        Assert.IsNotNull(dataStoreReviews);
+        var reviewsFromPull = dataStorePull.Reviews;
+        Assert.IsNotNull(reviewsFromPull);
+        Assert.AreEqual(dataStoreReviews.Count, reviewsFromPull.Count());
+
+        foreach (var review in reviewsFromPull)
+        {
+            TestContext?.WriteLine($"  Id: {review.Id}  PullId: {review.PullRequestId}  InternalId: {review.InternalId}  AuthorId: {review.AuthorId}  Author:{review.Author.Login}  State: {review.State}  Submitted: {review.SubmittedAt}");
+        }
+
+        testListener.PrintEventCounts();
+        Assert.AreEqual(false, testListener.FoundErrors());
+    }
 }
