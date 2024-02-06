@@ -16,7 +16,7 @@ internal class GitHubReviewWidget : GitHubUserWidget
     public GitHubReviewWidget()
         : base()
     {
-        // This widget doest not allow customization, so this value will not change.
+        // This widget does not allow customization, so this value will not change.
         ShowCategory = SearchCategory.PullRequests;
     }
 

@@ -127,7 +127,7 @@ public sealed class Program
         using var dataUpdater = new DataManager.DataUpdater(GitHubDataManager.Update);
         _ = dataUpdater.Start();
 
-        // This will make the main thread wait until the event is signalled by the extension class.
+        // This will make the main thread wait until the event is signaled by the extension class.
         // Since we have single instance of the extension object, we exit as soon as it is disposed.
         extensionDisposedEvent.WaitOne();
         Log.Logger()?.ReportInfo($"Extension is disposed.");
@@ -149,7 +149,7 @@ public sealed class Program
             {
                 foreach (var package in packageManager.FindPackagesForUser(string.Empty, pfn))
                 {
-                    Log.Logger()?.ReportInfo($"{package.Id.FullName}  Devmode: {package.IsDevelopmentMode}  Signature: {package.SignatureKind}");
+                    Log.Logger()?.ReportInfo($"{package.Id.FullName}  DevMode: {package.IsDevelopmentMode}  Signature: {package.SignatureKind}");
                 }
             }
         }

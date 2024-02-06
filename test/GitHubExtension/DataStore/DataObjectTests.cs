@@ -1,5 +1,5 @@
-﻿// Copyright (c) Microsoft Corporation and Contributors
-// Licensed under the MIT license.
+﻿// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 
 using Dapper.Contrib.Extensions;
 using DevHome.Logging;
@@ -446,9 +446,9 @@ public partial class DataStoreTests
         }
 
         // Verify objects work.
-        var pullrequest = DataModel.PullRequest.GetById(dataStore, 1);
-        Assert.IsNotNull(pullrequest);
-        var checksForPullRequest = pullrequest.Checks;
+        var pullRequest = DataModel.PullRequest.GetById(dataStore, 1);
+        Assert.IsNotNull(pullRequest);
+        var checksForPullRequest = pullRequest.Checks;
         Assert.IsNotNull(checksForPullRequest);
         Assert.AreEqual(2, checksForPullRequest.Count());
         foreach (var check in checksForPullRequest)
@@ -457,12 +457,12 @@ public partial class DataStoreTests
             Assert.IsTrue(check.Completed);
         }
 
-        var failedChecks = pullrequest.FailedChecks;
+        var failedChecks = pullRequest.FailedChecks;
         Assert.IsNotNull(failedChecks);
         Assert.AreEqual(1, failedChecks.Count());
 
-        Assert.AreEqual(CheckStatus.Completed, pullrequest.ChecksStatus);
-        Assert.AreEqual(CheckConclusion.Failure, pullrequest.ChecksConclusion);
+        Assert.AreEqual(CheckStatus.Completed, pullRequest.ChecksStatus);
+        Assert.AreEqual(CheckConclusion.Failure, pullRequest.ChecksConclusion);
 
         testListener.PrintEventCounts();
         Assert.AreEqual(false, testListener.FoundErrors());
@@ -483,7 +483,7 @@ public partial class DataStoreTests
         dataStore.Create();
         Assert.IsNotNull(dataStore.Connection);
 
-        // Add checkruns.
+        // Add CheckRuns.
         var checks = new List<CheckRun>
         {
             { new CheckRun { HeadSha = "1234abcd", Name = "Build x86", InternalId = 16, ConclusionId = 1, StatusId = 3, DetailsUrl = "https://link/to/failed/build" } },
@@ -506,9 +506,9 @@ public partial class DataStoreTests
         dataStore.Connection.Insert(new PullRequest { Title = "Fix the things", InternalId = 42, Number = 5, HeadSha = "1234abcd", AuthorId = 1, RepositoryId = 1 });
 
         // Add PullRequestStatus
-        var pullrequest = DataModel.PullRequest.GetById(dataStore, 1);
-        Assert.IsNotNull(pullrequest);
-        var prStatus = PullRequestStatus.Add(dataStore, pullrequest);
+        var pullRequest = DataModel.PullRequest.GetById(dataStore, 1);
+        Assert.IsNotNull(pullRequest);
+        var prStatus = PullRequestStatus.Add(dataStore, pullRequest);
 
         TestContext?.WriteLine($"  PR: {prStatus.PullRequest.Number} Status: {prStatus.Id}: {prStatus.Conclusion} - {prStatus.DetailsUrl}");
         Assert.AreEqual("https://link/to/failed/build", prStatus.DetailsUrl);
@@ -580,9 +580,9 @@ public partial class DataStoreTests
         }
 
         // Verify objects work.
-        var pullrequest = PullRequest.GetById(dataStore, 1);
-        Assert.IsNotNull(pullrequest);
-        var reviewsForPullRequest = pullrequest.Reviews;
+        var pullRequest = PullRequest.GetById(dataStore, 1);
+        Assert.IsNotNull(pullRequest);
+        var reviewsForPullRequest = pullRequest.Reviews;
         Assert.IsNotNull(reviewsForPullRequest);
         Assert.AreEqual(2, reviewsForPullRequest.Count());
         foreach (var review in reviewsForPullRequest)

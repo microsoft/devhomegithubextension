@@ -319,11 +319,11 @@ internal abstract class GitHubUserWidget : GitHubWidget
 
     protected IDeveloperId? GetWidgetDeveloperId()
     {
-        foreach (var devid in DeveloperIdProvider.GetInstance().GetLoggedInDeveloperIds().DeveloperIds)
+        foreach (var devId in DeveloperIdProvider.GetInstance().GetLoggedInDeveloperIds().DeveloperIds)
         {
-            if (devid.LoginId == DeveloperLoginId)
+            if (devId.LoginId == DeveloperLoginId)
             {
-                return devid;
+                return devId;
             }
         }
 

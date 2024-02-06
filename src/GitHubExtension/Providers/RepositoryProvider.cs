@@ -129,7 +129,7 @@ public class RepositoryProvider : IRepositoryProvider
                 return new RepositoryResult(exception, $"{exception.Message} HResult: {exception.HResult}");
             }
 
-            Octokit.Repository? ocktokitRepo = null;
+            Octokit.Repository? octokitRepo = null;
             var owner = Validation.ParseOwnerFromGitHubURL(uri);
             var repoName = Validation.ParseRepositoryFromGitHubURL(uri);
 
@@ -147,7 +147,7 @@ public class RepositoryProvider : IRepositoryProvider
                     gitHubClient = GitHubClientProvider.Instance.GetClient();
                 }
 
-                ocktokitRepo = gitHubClient.Repository.Get(owner, repoName).Result;
+                octokitRepo = gitHubClient.Repository.Get(owner, repoName).Result;
             }
             catch (AggregateException e)
             {
@@ -176,13 +176,13 @@ public class RepositoryProvider : IRepositoryProvider
                 return new RepositoryResult(e, $"Unspecified error when cloning a repo. HResult: {e.HResult}");
             }
 
-            if (ocktokitRepo == null)
+            if (octokitRepo == null)
             {
                 return new RepositoryResult(new ArgumentException("Repo is still null"), "Repo is still null");
             }
             else
             {
-                return new RepositoryResult(new DevHomeRepository(ocktokitRepo));
+                return new RepositoryResult(new DevHomeRepository(octokitRepo));
             }
         }).AsAsyncOperation();
     }

@@ -113,7 +113,7 @@ Assert.IsFalse(Directory.EnumerateFileSystemEntries(CLONE_LOCATION).Any());
 
     [TestMethod]
     [TestCategory("Unit")]
-    [Ignore("Ignoring right now until mock repo is implemeneted")]
+    [Ignore("Ignoring right now until mock repo is implemented")]
     public void CloneViaMakingRepoObject()
     {
         /*

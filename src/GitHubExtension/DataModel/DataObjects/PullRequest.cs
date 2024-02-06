@@ -385,7 +385,7 @@ public class PullRequest
 
         pull.AssigneeIds = string.Join(",", assignees);
 
-        // Owner is a rowid in the User table
+        // Owner is a rowId in the User table
         var author = User.GetOrCreateByOctokitUser(dataStore, okitPull.User);
         pull.AuthorId = author.Id;
 
