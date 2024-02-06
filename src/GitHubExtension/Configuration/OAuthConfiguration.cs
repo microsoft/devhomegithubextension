@@ -1,7 +1,8 @@
-// Copyright (c) Microsoft Corporation and Contributors
-// Licensed under the MIT license.
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 
 namespace GitHubExtension;
+
 internal static class OauthConfiguration
 {
     // This redirect url has to be configured into the OAuth app. This package has "devhome://"

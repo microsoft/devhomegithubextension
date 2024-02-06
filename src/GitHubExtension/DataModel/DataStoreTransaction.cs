@@ -1,9 +1,10 @@
-﻿// Copyright (c) Microsoft Corporation and Contributors
-// Licensed under the MIT license.
+﻿// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 
 using Microsoft.Data.Sqlite;
 
 namespace GitHubExtension.DataModel;
+
 public class DataStoreTransaction : IDataStoreTransaction
 {
     private SqliteTransaction? transaction;

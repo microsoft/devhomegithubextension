@@ -3,7 +3,7 @@
   "settings": {
     "documentationRules": {
       "companyName": "Microsoft Corporation",
-      "copyrightText": "Copyright (c) Microsoft Corporation and Contributors\r\nLicensed under the MIT license.",
+      "copyrightText": "Copyright (c) Microsoft Corporation.\r\nLicensed under the MIT License.",
       "xmlHeader": false,
       "headerDecoration": "",
       "fileNamingConvention": "metadata",

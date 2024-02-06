@@ -1,9 +1,10 @@
-﻿// Copyright (c) Microsoft Corporation and Contributors
-// Licensed under the MIT license.
+﻿// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 
 using System.Runtime.InteropServices;
 
 namespace GitHubExtension.DeveloperId;
+
 public static class CredentialManager
 {
     public enum CRED_TYPE : int

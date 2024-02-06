@@ -1,5 +1,5 @@
-﻿// Copyright (c) Microsoft Corporation and Contributors
-// Licensed under the MIT license.
+﻿// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 
 using System.Net;
 using System.Security;
@@ -9,6 +9,7 @@ using GitHubExtension.Helpers;
 using Octokit;
 
 namespace GitHubExtension.DeveloperId;
+
 internal class OAuthRequest : IDisposable
 {
     internal string State { get; private set; }

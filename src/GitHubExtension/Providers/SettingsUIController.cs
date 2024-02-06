@@ -1,5 +1,5 @@
-﻿// Copyright (c) Microsoft Corporation and Contributors
-// Licensed under the MIT license.
+﻿// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 
 using GitHubExtension.Helpers;
 using Microsoft.Windows.ApplicationModel.Resources;
@@ -7,6 +7,7 @@ using Microsoft.Windows.DevHome.SDK;
 using Windows.Foundation;
 
 namespace GitHubExtension.Providers;
+
 internal class SettingsUIController : IExtensionAdaptiveCardSession
 {
     private static readonly string _notificationsEnabledString = "NotificationsEnabled";

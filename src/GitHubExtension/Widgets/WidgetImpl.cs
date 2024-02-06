@@ -1,10 +1,11 @@
-﻿// Copyright (c) Microsoft Corporation and Contributors
-// Licensed under the MIT license.
+﻿// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 
 using GitHubExtension.Telemetry;
 using Microsoft.Windows.Widgets.Providers;
 
 namespace GitHubExtension.Widgets;
+
 public abstract class WidgetImpl
 {
     private readonly ILogger logger;

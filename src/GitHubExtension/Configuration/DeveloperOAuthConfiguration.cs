@@ -1,7 +1,8 @@
-﻿// Copyright (c) Microsoft Corporation and Contributors
-// Licensed under the MIT license.
+﻿// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 
 namespace GitHubExtension;
+
 internal static class DeveloperOAuthConfiguration
 {
     //// Follow this link https://docs.github.com/en/developers/apps/building-oauth-apps/creating-an-oauth-app

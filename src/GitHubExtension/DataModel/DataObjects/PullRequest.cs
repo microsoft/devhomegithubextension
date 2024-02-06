@@ -1,5 +1,5 @@
-﻿// Copyright (c) Microsoft Corporation and Contributors
-// Licensed under the MIT license.
+﻿// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 
 using Dapper;
 using Dapper.Contrib.Extensions;
@@ -385,7 +385,7 @@ public class PullRequest
 
         pull.AssigneeIds = string.Join(",", assignees);
 
-        // Owner is a rowid in the User table
+        // Owner is a rowId in the User table
         var author = User.GetOrCreateByOctokitUser(dataStore, okitPull.User);
         pull.AuthorId = author.Id;
 

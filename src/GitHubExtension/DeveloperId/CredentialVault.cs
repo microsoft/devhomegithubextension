@@ -1,5 +1,5 @@
-﻿// Copyright (c) Microsoft Corporation and Contributors
-// Licensed under the MIT license.
+﻿// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 
 using System.ComponentModel;
 using System.Runtime.InteropServices;
@@ -8,6 +8,7 @@ using Windows.Security.Credentials;
 using static GitHubExtension.DeveloperId.CredentialManager;
 
 namespace GitHubExtension.DeveloperId;
+
 public class CredentialVault : ICredentialVault
 {
     private readonly string _credentialResourceName;

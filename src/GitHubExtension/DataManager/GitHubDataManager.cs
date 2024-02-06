@@ -1,5 +1,5 @@
-﻿// Copyright (c) Microsoft Corporation and Contributors
-// Licensed under the MIT license.
+﻿// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 
 using GitHubExtension.Client;
 using GitHubExtension.DataManager;
@@ -8,6 +8,7 @@ using GitHubExtension.Helpers;
 using Windows.Storage;
 
 namespace GitHubExtension;
+
 public partial class GitHubDataManager : IGitHubDataManager, IDisposable
 {
     public static event DataManagerUpdateEventHandler? OnUpdate;

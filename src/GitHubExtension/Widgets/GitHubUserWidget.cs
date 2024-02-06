@@ -1,5 +1,5 @@
-﻿// Copyright (c) Microsoft Corporation and Contributors
-// Licensed under the MIT license.
+﻿// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 
 using System.Text.Json;
 using System.Text.Json.Nodes;
@@ -12,6 +12,7 @@ using Microsoft.Windows.Widgets.Providers;
 using Octokit;
 
 namespace GitHubExtension.Widgets;
+
 internal abstract class GitHubUserWidget : GitHubWidget
 {
     protected static readonly new string Name = nameof(GitHubUserWidget);
@@ -318,11 +319,11 @@ internal abstract class GitHubUserWidget : GitHubWidget
 
     protected IDeveloperId? GetWidgetDeveloperId()
     {
-        foreach (var devid in DeveloperIdProvider.GetInstance().GetLoggedInDeveloperIds().DeveloperIds)
+        foreach (var devId in DeveloperIdProvider.GetInstance().GetLoggedInDeveloperIds().DeveloperIds)
         {
-            if (devid.LoginId == DeveloperLoginId)
+            if (devId.LoginId == DeveloperLoginId)
             {
-                return devid;
+                return devId;
             }
         }
 

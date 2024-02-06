@@ -1,5 +1,5 @@
-﻿// Copyright (c) Microsoft Corporation and Contributors
-// Licensed under the MIT license.
+﻿// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 
 using System.Net;
 using GitHubExtension.Client;
@@ -9,6 +9,7 @@ using Microsoft.Windows.DevHome.SDK;
 using Windows.Foundation;
 
 namespace GitHubExtension.DeveloperId;
+
 public class LoginUIController : IExtensionAdaptiveCardSession
 {
     private readonly IDeveloperIdProviderInternal _developerIdProvider;

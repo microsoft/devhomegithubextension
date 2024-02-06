@@ -1,9 +1,10 @@
-﻿// Copyright (c) Microsoft Corporation and Contributors
-// Licensed under the MIT license.
+﻿// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 
 using Microsoft.Windows.DevHome.SDK;
 
 namespace GitHubExtension.Test;
+
 [TestClass]
 public partial class GitHubProviderTests
 {
@@ -112,7 +113,7 @@ Assert.IsFalse(Directory.EnumerateFileSystemEntries(CLONE_LOCATION).Any());
 
     [TestMethod]
     [TestCategory("Unit")]
-    [Ignore("Ignoring right now until mock repo is implemeneted")]
+    [Ignore("Ignoring right now until mock repo is implemented")]
     public void CloneViaMakingRepoObject()
     {
         /*

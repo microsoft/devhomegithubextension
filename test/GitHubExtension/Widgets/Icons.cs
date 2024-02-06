@@ -1,8 +1,10 @@
-﻿// Copyright (c) Microsoft Corporation and Contributors
-// Licensed under the MIT license.
+﻿// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
+
 using DevHome.Logging;
 
 namespace GitHubExtension.Test;
+
 public partial class WidgetTests
 {
     [TestMethod]
