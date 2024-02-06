@@ -1,5 +1,5 @@
-﻿// Copyright (c) Microsoft Corporation and Contributors
-// Licensed under the MIT license.
+﻿// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 
 using System.Text.Json.Nodes;
 using GitHubExtension.DataManager;
@@ -8,6 +8,7 @@ using Microsoft.Windows.Widgets.Providers;
 using Octokit;
 
 namespace GitHubExtension.Widgets;
+
 internal class GitHubReviewWidget : GitHubUserWidget
 {
     protected static readonly new string Name = nameof(GitHubReviewWidget);

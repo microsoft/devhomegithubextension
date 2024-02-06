@@ -1,10 +1,11 @@
-﻿// Copyright (c) Microsoft Corporation and Contributors
-// Licensed under the MIT license.
+﻿// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 
 using DevHome.Logging;
 using GitHubExtension.DataModel;
 
 namespace GitHubExtension.Test;
+
 public partial class TestOptions
 {
     public Options LogOptions { get; set; }

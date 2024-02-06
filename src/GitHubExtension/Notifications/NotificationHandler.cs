@@ -1,5 +1,5 @@
-﻿// Copyright (c) Microsoft Corporation and Contributors
-// Licensed under the MIT license.
+﻿// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 
 using System.Diagnostics;
 using System.Globalization;
@@ -8,6 +8,7 @@ using GitHubExtension.Client;
 using Microsoft.Windows.AppNotifications;
 
 namespace GitHubExtension.Notifications;
+
 public class NotificationHandler
 {
 #pragma warning disable IDE0060 // Remove unused parameter

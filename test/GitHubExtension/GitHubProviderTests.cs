@@ -1,9 +1,10 @@
-﻿// Copyright (c) Microsoft Corporation and Contributors
-// Licensed under the MIT license.
+﻿// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 
 using Microsoft.Windows.DevHome.SDK;
 
 namespace GitHubExtension.Test;
+
 [TestClass]
 public partial class GitHubProviderTests
 {

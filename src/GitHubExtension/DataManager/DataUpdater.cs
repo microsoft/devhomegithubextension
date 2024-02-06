@@ -1,7 +1,8 @@
-﻿// Copyright (c) Microsoft Corporation and Contributors
-// Licensed under the MIT license.
+﻿// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 
 namespace GitHubExtension.DataManager;
+
 public class DataUpdater : IDisposable
 {
     // This is the default interval the timer will run. It is not the interval that we necessarily do work.

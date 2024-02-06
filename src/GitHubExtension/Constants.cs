@@ -1,7 +1,8 @@
-﻿// Copyright (c) Microsoft Corporation and Contributors
-// Licensed under the MIT license.
+﻿// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 
 namespace GitHubExtension;
+
 internal class Constants
 {
 #pragma warning disable SA1310 // Field names should not contain underscore

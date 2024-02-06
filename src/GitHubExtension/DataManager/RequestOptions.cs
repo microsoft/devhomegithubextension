@@ -1,9 +1,10 @@
-﻿// Copyright (c) Microsoft Corporation and Contributors
-// Licensed under the MIT license.
+﻿// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 
 using Octokit;
 
 namespace GitHubExtension;
+
 public class RequestOptions
 {
     // Request options for making queries to GitHub.

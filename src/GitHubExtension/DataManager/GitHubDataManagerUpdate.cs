@@ -1,10 +1,11 @@
-﻿// Copyright (c) Microsoft Corporation and Contributors
-// Licensed under the MIT license.
+﻿// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 
 using GitHubExtension.DataManager;
 using GitHubExtension.DataModel;
 
 namespace GitHubExtension;
+
 public partial class GitHubDataManager
 {
     // This is how frequently the DataStore update occurs.

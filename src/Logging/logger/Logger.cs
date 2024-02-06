@@ -1,11 +1,12 @@
-﻿// Copyright (c) Microsoft Corporation and Contributors
-// Licensed under the MIT license.
+﻿// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 
 using System.Collections.Concurrent;
 using DevHome.Logging.Helpers;
 using DevHome.Logging.Listeners;
 
 namespace DevHome.Logging;
+
 public class Logger : ILoggerHost, IDisposable
 {
     public Logger(string name, Options options)
@@ -13,7 +14,7 @@ public class Logger : ILoggerHost, IDisposable
         Name = name;
         Options = options;
 
-        // Debug Listneer
+        // Debug listener
         if (options.DebugListenerEnabled)
         {
             var debugListener = new DebugListener("Debug");

@@ -1,15 +1,12 @@
-﻿// Copyright (c) Microsoft Corporation and Contributors
-// Licensed under the MIT license.
+﻿// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 
-using System.Text;
 using System.Text.Json;
 using System.Text.Json.Nodes;
 using GitHubExtension.Client;
 using GitHubExtension.DataManager;
-using GitHubExtension.DeveloperId;
 using GitHubExtension.Helpers;
 using GitHubExtension.Widgets.Enums;
-using Microsoft.Windows.DevHome.SDK;
 using Microsoft.Windows.Widgets.Providers;
 
 namespace GitHubExtension.Widgets;

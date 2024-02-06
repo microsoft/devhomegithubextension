@@ -1,5 +1,5 @@
-﻿// Copyright (c) Microsoft Corporation and Contributors
-// Licensed under the MIT license.
+﻿// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 
 using GitHubExtension.ExtensionServer;
 using Microsoft.Windows.AppLifecycle;
@@ -8,6 +8,7 @@ using Windows.ApplicationModel.Activation;
 using Windows.Management.Deployment;
 
 namespace GitHubExtension;
+
 public sealed class Program
 {
     [MTAThread]
