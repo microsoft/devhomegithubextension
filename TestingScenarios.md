@@ -5,12 +5,12 @@ These are the testing scenarios that need to be validated before shipping a new 
 ### Widgets
 
 1. For each widget: user can configure the widget immediately after first pin
-2. For each widget: user can customize (reconfigure) the widget after it was initially configured
-3. For each widget that supports customization: can be customized and persist after restart
-4. Widgets have correct data
-5. Widgets are adequately performant
-6. Notifications can be enabled/disabled in Dev Home settings
-7. Notifications are displayed
+1. For each widget: user can customize (reconfigure) the widget after it was initially configured
+1. For each widget that supports customization: can be customized and persist after restart
+1. Widgets have correct data
+1. Widgets are adequately performant
+1. Notifications can be enabled/disabled in Dev Home settings
+1. Notifications are displayed
 
 ### Clone repositories
 
