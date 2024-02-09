@@ -1,10 +1,11 @@
-﻿// Copyright (c) Microsoft Corporation and Contributors
-// Licensed under the MIT license.
+﻿// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 
 using Microsoft.Windows.DevHome.SDK;
 using Windows.Foundation;
 
 namespace GitHubExtension.Test.Mocks;
+
 public class MockRepository : IRepository
 {
     public string DisplayName => "Mock Repository";

@@ -1,5 +1,5 @@
-﻿// Copyright (c) Microsoft Corporation and Contributors
-// Licensed under the MIT license.
+﻿// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 
 using GitHubExtension.Client;
 using GitHubExtension.DataManager;
@@ -8,6 +8,7 @@ using GitHubExtension.Helpers;
 using Windows.Storage;
 
 namespace GitHubExtension;
+
 public partial class GitHubDataManager : IGitHubDataManager, IDisposable
 {
     public static event DataManagerUpdateEventHandler? OnUpdate;
@@ -16,6 +17,7 @@ public partial class GitHubDataManager : IGitHubDataManager, IDisposable
     private static readonly TimeSpan NotificationRetentionTime = TimeSpan.FromDays(7);
     private static readonly TimeSpan SearchRetentionTime = TimeSpan.FromDays(7);
     private static readonly TimeSpan PullRequestStaleTime = TimeSpan.FromDays(1);
+    private static readonly TimeSpan ReviewStaleTime = TimeSpan.FromDays(7);
 
     // It is possible different widgets have queries which touch the same pull requests.
     // We want to keep this window large enough that we don't delete data being used by
@@ -438,6 +440,27 @@ public partial class GitHubDataManager : IGitHubDataManager, IDisposable
                     CommitCombinedStatus.GetOrCreate(DataStore, commitCombinedStatus);
 
                     CreatePullRequestStatus(dsPullRequest);
+
+                    // Review information for this pull request.
+                    // We will only get review data for the logged-in Developer's pull requests.
+                    try
+                    {
+                        var octoReviews = await devId.GitHubClient.PullRequest.Review.GetAll(repoName[0], repoName[1], octoPull.Number);
+                        foreach (var octoReview in octoReviews)
+                        {
+                            ProcessReview(dsPullRequest, octoReview);
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        // Octokit can sometimes fail unexpectedly or have bugs. Should that occur here, we
+                        // will not stop processing all pull requests and instead skip  over getting the PR
+                        // review information for this particular pull request.
+                        Log.Logger()?.ReportError($"Error updating Reviews for Pull Request #{octoPull.Number}: {e.Message}");
+
+                        // Put the full stack trace in debug if this occurs to reduce log spam.
+                        Log.Logger()?.ReportDebug($"Error updating Reviews for Pull Request #{octoPull.Number}.", e);
+                    }
                 }
 
                 Log.Logger()?.ReportDebug(Name, $"Updated developer pull requests for {repoFullName}.");
@@ -514,6 +537,36 @@ public partial class GitHubDataManager : IGitHubDataManager, IDisposable
         PullRequest.DeleteLastObservedBefore(DataStore, repository.Id, DateTime.UtcNow - LastObservedDeleteSpan);
     }
 
+    private void ProcessReview(PullRequest pullRequest, Octokit.PullRequestReview octoReview)
+    {
+        // Skip reviews that are stale.
+        if ((DateTime.Now - octoReview.SubmittedAt) > ReviewStaleTime)
+        {
+            return;
+        }
+
+        // For creating review notifications, must first determine if the review has changed.
+        var existingReview = Review.GetByInternalId(DataStore, octoReview.Id);
+
+        // Add/update the review record.
+        var newReview = Review.GetOrCreateByOctokitReview(DataStore, octoReview, pullRequest.Id);
+
+        // Ignore comments or pending state.
+        if (string.IsNullOrEmpty(newReview.State) || newReview.State == "Commented")
+        {
+            Log.Logger()?.ReportDebug(Name, "Notifications", $"Ignoring review for {pullRequest}. State: {newReview.State}");
+            return;
+        }
+
+        // Create a new notification if the state is different or the review did not exist.
+        if (existingReview == null || (existingReview.State != newReview.State))
+        {
+            // We assume that the logged in developer created this pull request.
+            Log.Logger()?.ReportInfo(Name, "Notifications", $"Creating NewReview Notification for {pullRequest}. State: {newReview.State}");
+            Notification.Create(DataStore, newReview, NotificationType.NewReview);
+        }
+    }
+
     private void CreatePullRequestStatus(PullRequest pullRequest)
     {
         // Get the previous status for comparison.
@@ -525,15 +578,13 @@ public partial class GitHubDataManager : IGitHubDataManager, IDisposable
         if (ShouldCreateCheckFailureNotification(curStatus, prevStatus))
         {
             Log.Logger()?.ReportInfo(Name, "Notifications", $"Creating CheckRunFailure Notification for {curStatus}");
-            var notification = Notification.Create(curStatus, NotificationType.CheckRunFailed);
-            Notification.Add(DataStore, notification);
+            Notification.Create(DataStore, curStatus, NotificationType.CheckRunFailed);
         }
 
         if (ShouldCreateCheckSucceededNotification(curStatus, prevStatus))
         {
             Log.Logger()?.ReportDebug(Name, "Notifications", $"Creating CheckRunSuccess Notification for {curStatus}");
-            var notification = Notification.Create(curStatus, NotificationType.CheckRunSucceeded);
-            Notification.Add(DataStore, notification);
+            Notification.Create(DataStore, curStatus, NotificationType.CheckRunSucceeded);
         }
     }
 
@@ -662,6 +713,7 @@ public partial class GitHubDataManager : IGitHubDataManager, IDisposable
         Notification.DeleteBefore(DataStore, DateTime.Now - NotificationRetentionTime);
         Search.DeleteBefore(DataStore, DateTime.Now - SearchRetentionTime);
         SearchIssue.DeleteUnreferenced(DataStore);
+        Review.DeleteUnreferenced(DataStore);
     }
 
     // Sets a last-updated in the MetaData.

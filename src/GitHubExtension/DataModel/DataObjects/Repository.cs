@@ -1,5 +1,5 @@
-﻿// Copyright (c) Microsoft Corporation and Contributors
-// Licensed under the MIT license.
+﻿// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 
 using Dapper;
 using Dapper.Contrib.Extensions;
@@ -149,7 +149,7 @@ public class Repository
             TimePushed = octokitRepository.UpdatedAt.DateTime.ToDataStoreInteger(),
         };
 
-        // Owner is a rowid in the User table
+        // Owner is a rowId in the User table
         var owner = User.GetOrCreateByOctokitUser(dataStore, octokitRepository.Owner);
         repo.OwnerId = owner.Id;
 
@@ -250,12 +250,12 @@ public class Repository
         return repo;
     }
 
-    public static Repository? Get(DataStore dataStore, string fullname)
+    public static Repository? Get(DataStore dataStore, string fullName)
     {
-        var nameSplit = fullname.Split(new[] { '/' }, 2);
+        var nameSplit = fullName.Split(new[] { '/' }, 2);
         if (nameSplit.Length != 2)
         {
-            Log.Logger()?.ReportWarn($"Invalid fullname input into Repository.Get: {fullname}");
+            Log.Logger()?.ReportWarn($"Invalid fullName input into Repository.Get: {fullName}");
             return null;
         }
 

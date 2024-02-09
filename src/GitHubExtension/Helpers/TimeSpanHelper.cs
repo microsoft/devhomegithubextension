@@ -1,10 +1,11 @@
-﻿// Copyright (c) Microsoft Corporation and Contributors
-// Licensed under the MIT license.
+﻿// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 
 using DevHome.Logging;
 using Jeffijoe.MessageFormat;
 
 namespace GitHubExtension.Helpers;
+
 internal class TimeSpanHelper
 {
     public static string TimeSpanToDisplayString(TimeSpan timeSpan, Logger? log = null)

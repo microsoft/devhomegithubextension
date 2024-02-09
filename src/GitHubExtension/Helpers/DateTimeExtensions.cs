@@ -1,9 +1,10 @@
-﻿// Copyright (c) Microsoft Corporation and Contributors
-// Licensed under the MIT license.
+﻿// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 
 using System.Globalization;
 
 namespace GitHubExtension.Helpers;
+
 public static class DateTimeExtensions
 {
     // Data store stores time as integers, which is just the Ticks so we don't lose precision.

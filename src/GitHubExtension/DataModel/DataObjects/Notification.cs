@@ -1,5 +1,5 @@
-﻿// Copyright (c) Microsoft Corporation and Contributors
-// Licensed under the MIT license.
+﻿// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 
 using Dapper;
 using Dapper.Contrib.Extensions;
@@ -161,6 +161,7 @@ public class Notification
         {
             NotificationType.CheckRunFailed => ShowFailedCheckRunToast(),
             NotificationType.CheckRunSucceeded => ShowSucceededCheckRunToast(),
+            NotificationType.NewReview => ShowNewReviewToast(),
             _ => false,
         };
     }
@@ -225,9 +226,52 @@ public class Notification
         return true;
     }
 
-    public static Notification Create(PullRequestStatus status, NotificationType type)
+    private bool ShowNewReviewToast()
     {
-        return new Notification
+        try
+        {
+            Notifications.Log.Logger()?.ReportInfo($"Showing Notification for {this}");
+            var resLoader = new ResourceLoader(ResourceLoader.GetDefaultResourceFilePath(), "GitHubExtension/Resources");
+            var nb = new AppNotificationBuilder();
+            nb.SetDuration(AppNotificationDuration.Long);
+            nb.AddArgument("htmlurl", HtmlUrl);
+
+            switch (Result)
+            {
+                case "Approved":
+                    nb.AddText($"✅ {resLoader.GetString("Notifications_Toast_NewReview/Approved")}");
+                    break;
+
+                case "ChangesRequested":
+                    nb.AddText($"⚠️ {resLoader.GetString("Notifications_Toast_NewReview/ChangesRequested")}");
+                    break;
+
+                default:
+                    throw new ArgumentException($"Unknown Review Result: {Result}");
+            }
+
+            nb.AddText($"#{Identifier} - {Repository.FullName}", new AppNotificationTextProperties().SetMaxLines(1));
+
+            // We want to show Author login but the AppNotification has a max 3 AddText calls, see:
+            // https://learn.microsoft.com/windows/windows-app-sdk/api/winrt/microsoft.windows.appnotifications.builder.appnotificationbuilder.addtext?view=windows-app-sdk-1.2
+            // The newline is a workaround to the 3 line restriction to show the Author line.
+            nb.AddText(Title + Environment.NewLine + "@" + User.Login);
+            nb.AddButton(new AppNotificationButton(resLoader.GetString("Notifications_Toast_Button/Dismiss")).AddArgument("action", "dismiss"));
+            AppNotificationManager.Default.Show(nb.BuildNotification());
+            Toasted = true;
+        }
+        catch (Exception ex)
+        {
+            Notifications.Log.Logger()?.ReportError($"Failed creating the Notification for {this}", ex);
+            return false;
+        }
+
+        return true;
+    }
+
+    public static Notification Create(DataStore dataStore, PullRequestStatus status, NotificationType type)
+    {
+        var pullRequestNotification = new Notification
         {
             TypeId = (long)type,
             UserId = status.PullRequest.AuthorId,
@@ -242,6 +286,33 @@ public class Notification
             TimeOccurred = status.TimeOccurred,
             TimeCreated = DateTime.Now.ToDataStoreInteger(),
         };
+
+        Add(dataStore, pullRequestNotification);
+        SetOlderNotificationsToasted(dataStore, pullRequestNotification);
+        return pullRequestNotification;
+    }
+
+    public static Notification Create(DataStore dataStore, Review review, NotificationType type)
+    {
+        var reviewNotification = new Notification
+        {
+            TypeId = (long)type,
+            UserId = review.AuthorId,
+            RepositoryId = review.PullRequest.RepositoryId,
+            Title = review.PullRequest.Title,
+            Description = review.Body,
+            Identifier = review.PullRequest.Number.ToStringInvariant(),
+            Result = review.State,
+            HtmlUrl = review.HtmlUrl,
+            DetailsUrl = review.HtmlUrl,
+            ToastState = 0,
+            TimeOccurred = review.TimeSubmitted,
+            TimeCreated = DateTime.Now.ToDataStoreInteger(),
+        };
+
+        Add(dataStore, reviewNotification);
+        SetOlderNotificationsToasted(dataStore, reviewNotification);
+        return reviewNotification;
     }
 
     public static Notification Add(DataStore dataStore, Notification notification)
@@ -270,6 +341,30 @@ public class Notification
         }
 
         return notifications;
+    }
+
+    public static void SetOlderNotificationsToasted(DataStore dataStore, Notification notification)
+    {
+        // Get all untoasted notifications for the same type, identifier, and author that are older
+        // than the specified notification.
+        var sql = @"SELECT * FROM Notification WHERE TypeId = @TypeId AND RepositoryId = @RepositoryId AND Identifier = @Identifier AND UserId = @UserId AND TimeOccurred < @TimeOccurred AND ToastState = 0";
+        var param = new
+        {
+            notification.TypeId,
+            notification.RepositoryId,
+            notification.Identifier,
+            notification.UserId,
+            notification.TimeOccurred,
+        };
+
+        Log.Logger()?.ReportDebug(DataStore.GetSqlLogMessage(sql, param));
+        var outDatedNotifications = dataStore.Connection!.Query<Notification>(sql, param, null) ?? Enumerable.Empty<Notification>();
+        foreach (var olderNotification in outDatedNotifications)
+        {
+            olderNotification.DataStore = dataStore;
+            olderNotification.Toasted = true;
+            Notifications.Log.Logger()?.ReportInfo($"Found older notification for {olderNotification.Identifier} with result {olderNotification.Result}, marking toasted.");
+        }
     }
 
     public static void DeleteBefore(DataStore dataStore, DateTime date)
