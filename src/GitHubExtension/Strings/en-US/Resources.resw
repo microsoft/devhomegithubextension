@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <root>
   <!-- 
     Microsoft ResX Schema 
@@ -512,5 +512,21 @@
   <data name="Widget_Template.ChooseAccountPlaceholder" xml:space="preserve">
     <value>Please choose an account</value>
     <comment>Placeholder text for a combobox where the user can select between accounts</comment>
+  </data>
+  <data name="Widget_Releases_Latest" xml:space="preserve">
+    <value>Latest</value>
+    <comment>Refers to most recent release of a repository</comment>
+  </data>
+  <data name="Widget_Releases_Prerelease" xml:space="preserve">
+    <value>Pre-release</value>
+    <comment>Refers to the pre-release status of a repository release</comment>
+  </data>
+  <data name="Widget_Template.Published" xml:space="preserve">
+    <value>Published</value>
+    <comment>Shown in Widget</comment>
+  </data>
+  <data name="Widget_Template_Tooltip.OpenRelease" xml:space="preserve">
+    <value>Open release</value>
+    <comment>Shown in Widget, Tooltip text</comment>
   </data>
 </root>

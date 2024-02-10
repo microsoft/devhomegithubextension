@@ -179,6 +179,28 @@ public partial class GitHubDataManager : IGitHubDataManager, IDisposable
         SendDeveloperUpdateEvent(this);
     }
 
+    public async Task UpdateReleasesForRepositoryAsync(string owner, string name, RequestOptions? options = null)
+    {
+        ValidateDataStore();
+        var parameters = new DataStoreOperationParameters
+        {
+            Owner = owner,
+            RepositoryName = name,
+            RequestOptions = options,
+            OperationName = "UpdateReleasesForRepositoryAsync",
+        };
+
+        await UpdateDataForRepositoryAsync(
+            parameters,
+            async (parameters, devId) =>
+            {
+                var repository = await UpdateRepositoryAsync(parameters.Owner!, parameters.RepositoryName!, devId.GitHubClient);
+                await UpdateReleasesAsync(repository, devId.GitHubClient, parameters.RequestOptions);
+            });
+
+        SendRepositoryUpdateEvent(this, GetFullNameFromOwnerAndRepository(owner, name), new string[] { "Releases" });
+    }
+
     public IEnumerable<Repository> GetRepositories()
     {
         ValidateDataStore();
@@ -701,6 +723,41 @@ public partial class GitHubDataManager : IGitHubDataManager, IDisposable
 
         // Remove issues from this repository that were not observed recently.
         Issue.DeleteLastObservedBefore(DataStore, repository.Id, DateTime.UtcNow - LastObservedDeleteSpan);
+    }
+
+    // Internal method to update releases. Assumes Repository has already been populated and created.
+    // DataStore transaction is assumed to be wrapped around this in the public method.
+    private async Task UpdateReleasesAsync(Repository repository, Octokit.GitHubClient? client = null, RequestOptions? options = null)
+    {
+        options ??= RequestOptions.RequestOptionsDefault();
+
+        // Limit the number of fetched releases.
+        options.ApiOptions.PageCount = 1;
+        options.ApiOptions.PageSize = 50;
+
+        client ??= await GitHubClientProvider.Instance.GetClientForLoggedInDeveloper(true);
+        Log.Logger()?.ReportInfo(Name, $"Updating releases for: {repository.FullName}");
+
+        var releasesResult = await client.Repository.Release.GetAll(repository.InternalId, options.ApiOptions);
+        if (releasesResult == null)
+        {
+            Log.Logger()?.ReportDebug($"No releases found.");
+            return;
+        }
+
+        Log.Logger()?.ReportDebug(Name, $"Results contain {releasesResult.Count} releases.");
+        foreach (var release in releasesResult)
+        {
+            if (release.Draft)
+            {
+                continue;
+            }
+
+            _ = Release.GetOrCreateByOctokitRelease(DataStore, release, repository.Id);
+        }
+
+        // Remove releases from this repository that were not observed recently.
+        Release.DeleteLastObservedBefore(DataStore, repository.Id, DateTime.UtcNow - LastObservedDeleteSpan);
     }
 
     // Removes unused data from the datastore.
