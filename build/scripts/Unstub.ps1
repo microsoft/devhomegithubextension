@@ -10,12 +10,12 @@ if ($projFileContent.Contains('Microsoft.Telemetry.Inbox.Managed')) {
     return;
 }
 
-$xml = [xml]$projFileContent
+$xml = [System.Xml.XmlDocument]$projFileContent
 $xml.PreserveWhitespace = $true
-$packageRef = $xml.SelectSingleNode("//ItemGroup/PackageReference")
-$newNode = $packageRef.Clone()
-$newNode.Include="Microsoft.Telemetry.Inbox.Managed"
-$newNode.Version="10.0.25148.1001-220626-1600.rs-fun-deploy-dev5"
-$parentNode = $packageRef.ParentNode
-$parentNode.AppendChild($newNode)
+$itemGroup = $xml.CreateElement("ItemGroup")
+$packageRef = $xml.CreateElement("PackageReference")
+$packageRef.SetAttribute("Include", "Microsoft.Telemetry.Inbox.Managed")
+$packageRef.SetAttribute("Version", "10.0.25148.1001-220626-1600.rs-fun-deploy-dev5")
+$itemGroup.AppendChild($packageRef)
+$xml.Project.AppendChild($itemGroup)
 $xml.Save($projFile)
