@@ -47,7 +47,7 @@ public class LogEvent
 
     public static long NoElapsedTicks => -1L;
 
-    public static TimeSpan NoElapsed => new (NoElapsedTicks);
+    public static TimeSpan NoElapsed => new(NoElapsedTicks);
 
     public bool HasElapsed => Elapsed.Ticks >= 0;
 
@@ -68,7 +68,7 @@ public class LogEvent
 
     public static LogEvent Create(string source, string subSource, SeverityLevel severity, string message, TimeSpan elapsed) => Create(source, subSource, severity, message, null, elapsed);
 
-    public static LogEvent Create(string source, string subSource, SeverityLevel severity, string message, Exception? exception, TimeSpan elapsed) => new (source, subSource, severity, message, exception!, elapsed);
+    public static LogEvent Create(string source, string subSource, SeverityLevel severity, string message, Exception? exception, TimeSpan elapsed) => new(source, subSource, severity, message, exception!, elapsed);
 
     public string FullSourceName
     {

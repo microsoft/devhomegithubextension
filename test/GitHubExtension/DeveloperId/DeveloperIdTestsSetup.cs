@@ -42,7 +42,7 @@ public partial class DeveloperIdTests
         set;
     }
 
-    private TestOptions testOptions = new ();
+    private TestOptions testOptions = new();
 
     private TestOptions TestOptions
     {

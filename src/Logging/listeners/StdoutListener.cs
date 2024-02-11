@@ -19,7 +19,7 @@ public class StdoutListener : ListenerBase
 
     // Static lock object so different instances of the Stdout listener do not simultaneously write
     // to stdout and have interleaved tearing of messages.
-    private static readonly object _stdoutLock = new ();
+    private static readonly object _stdoutLock = new();
 
     public StdoutListener(string name)
         : base(name)

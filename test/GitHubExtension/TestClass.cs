@@ -50,7 +50,7 @@ public class TestClass : IDisposable
         }
     }
 
-    private static readonly Semaphore AuthenticationEventTriggered = new (initialCount: 0, maximumCount: 1);
+    private static readonly Semaphore AuthenticationEventTriggered = new(initialCount: 0, maximumCount: 1);
 
     public void AuthenticationEvent(object? sender, IDeveloperId developerId)
     {

@@ -12,7 +12,7 @@ public class EnumHelper
         SearchCategory.Issues => "Issues",
         SearchCategory.PullRequests => "PullRequests",
         SearchCategory.IssuesAndPullRequests => "IssuesAndPullRequests",
-        _ => "unknown"
+        _ => "unknown",
     };
 
     public static SearchCategory StringToSearchCategory(string value)

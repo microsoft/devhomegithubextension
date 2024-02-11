@@ -1,9 +1,10 @@
-﻿// Copyright (c) Microsoft Corporation.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using Microsoft.Windows.DevHome.SDK;
 
 namespace GitHubExtension;
+
 public class DataStoreOperationParameters
 {
     // parameters for updating the data store.

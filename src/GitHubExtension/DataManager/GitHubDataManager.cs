@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft Corporation.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using GitHubExtension.Client;
@@ -763,7 +763,7 @@ public partial class GitHubDataManager : IGitHubDataManager, IDisposable
 
     // Making the default options a singleton to avoid repeatedly calling the storage APIs and
     // creating a new GitHubDataStoreSchema when not necessary.
-    private static readonly Lazy<DataStoreOptions> LazyDataStoreOptions = new (DefaultOptionsInit);
+    private static readonly Lazy<DataStoreOptions> LazyDataStoreOptions = new(DefaultOptionsInit);
 
     private static DataStoreOptions DefaultOptions => LazyDataStoreOptions.Value;
 

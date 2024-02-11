@@ -112,7 +112,7 @@ public class CredentialVault : ICredentialVault
             Marshal.Copy(credentialObject.CredentialBlob, accessTokenInChars, 0, accessTokenInChars.Length);
 
             // convert accessTokenInChars to string
-            string accessTokenString = new (accessTokenInChars);
+            string accessTokenString = new(accessTokenInChars);
 
             for (var i = 0; i < accessTokenInChars.Length; i++)
             {

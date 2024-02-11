@@ -27,7 +27,7 @@ public class MockDeveloperIdProvider : IDeveloperIdProviderInternal
 
     public AuthenticationState GetDeveloperIdState(IDeveloperId developerId) => throw new NotImplementedException();
 
-    public DeveloperIdsResult GetLoggedInDeveloperIds() => new (new List<DeveloperId.DeveloperId>());
+    public DeveloperIdsResult GetLoggedInDeveloperIds() => new(new List<DeveloperId.DeveloperId>());
 
     public AdaptiveCardSessionResult GetLoginAdaptiveCardSession() => throw new NotImplementedException();
 
@@ -68,46 +68,4 @@ public class MockDeveloperIdProvider : IDeveloperIdProviderInternal
     }
 
     public IEnumerable<DeveloperId.DeveloperId> GetLoggedInDeveloperIdsInternal() => new List<DeveloperId.DeveloperId>();
-}
-
-public class MockExtensionAdaptiveCard : IExtensionAdaptiveCard
-{
-    private int updateCount;
-
-    public int UpdateCount
-    {
-        get => updateCount;
-        set => updateCount = value;
-    }
-
-    public MockExtensionAdaptiveCard(string templateJson, string dataJson, string state)
-    {
-        TemplateJson = templateJson;
-        DataJson = dataJson;
-        State = state;
-    }
-
-    public string DataJson
-    {
-        get; set;
-    }
-
-    public string State
-    {
-        get; set;
-    }
-
-    public string TemplateJson
-    {
-        get; set;
-    }
-
-    public ProviderOperationResult Update(string templateJson, string dataJson, string state)
-    {
-        UpdateCount++;
-        TemplateJson = templateJson;
-        DataJson = dataJson;
-        State = state;
-        return new ProviderOperationResult(ProviderOperationStatus.Success, null, "Update() succeeded", "Update() succeeded");
-    }
 }
