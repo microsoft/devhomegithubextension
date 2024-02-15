@@ -529,4 +529,8 @@
     <value>Open release</value>
     <comment>Shown in Widget, Tooltip text</comment>
   </data>
+  <data name="Widget_Template.EmptyReleases" xml:space="preserve">
+    <value>There are no releases in this repository.</value>
+    <comment>Shown in Widget, when there are no releases</comment>
+  </data>
 </root>

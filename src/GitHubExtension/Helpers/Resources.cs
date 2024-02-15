@@ -60,6 +60,7 @@ public static class Resources
             "Widget_Template/EmptyAssigned",
             "Widget_Template/EmptyMentioned",
             "Widget_Template/EmptyReviews",
+            "Widget_Template/EmptyReleases",
             "Widget_Template/Pulls",
             "Widget_Template/Issues",
             "Widget_Template/Opened",

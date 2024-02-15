@@ -754,7 +754,7 @@ public partial class GitHubDataManager : IGitHubDataManager, IDisposable
                 continue;
             }
 
-            _ = Release.GetOrCreateByOctokitRelease(DataStore, release, repository.Id);
+            _ = Release.GetOrCreateByOctokitRelease(DataStore, release, repository);
         }
 
         // Remove releases from this repository that were not observed recently.

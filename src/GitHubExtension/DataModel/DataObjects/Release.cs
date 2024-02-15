@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft Corporation.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using Dapper;
@@ -52,9 +52,9 @@ public class Release
 
     public override string ToString() => Name;
 
-    public static Release GetOrCreateByOctokitRelease(DataStore dataStore, Octokit.Release okitRelease, long repositoryId)
+    public static Release GetOrCreateByOctokitRelease(DataStore dataStore, Octokit.Release okitRelease, Repository repository)
     {
-        var release = CreateFromOctokitRelease(dataStore, okitRelease, repositoryId);
+        var release = CreateFromOctokitRelease(dataStore, okitRelease, repository);
         return AddOrUpdateRelease(dataStore, release);
     }
 
@@ -109,12 +109,13 @@ public class Release
         Log.Logger()?.ReportDebug(DataStore.GetDeletedLogMessage(rowsDeleted));
     }
 
-    private static Release CreateFromOctokitRelease(DataStore dataStore, Octokit.Release okitRelease, long repositoryId)
+    private static Release CreateFromOctokitRelease(DataStore dataStore, Octokit.Release okitRelease, Repository repository)
     {
         var release = new Release
         {
             DataStore = dataStore,
             InternalId = okitRelease.Id,
+            RepositoryId = repository.Id,
             Name = okitRelease.Name,
             TagName = okitRelease.TagName,
             Prerelease = okitRelease.Prerelease ? 1 : 0,
@@ -123,13 +124,6 @@ public class Release
             TimePublished = okitRelease.PublishedAt.HasValue ? okitRelease.PublishedAt.Value.DateTime.ToDataStoreInteger() : 0,
             TimeLastObserved = DateTime.UtcNow.ToDataStoreInteger(),
         };
-
-        var repo = Repository.GetById(dataStore, repositoryId);
-
-        if (repo != null)
-        {
-            release.RepositoryId = repo.Id;
-        }
 
         return release;
     }
