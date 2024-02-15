@@ -18,6 +18,7 @@ public partial class GitHubDataManager : IGitHubDataManager, IDisposable
     private static readonly TimeSpan SearchRetentionTime = TimeSpan.FromDays(7);
     private static readonly TimeSpan PullRequestStaleTime = TimeSpan.FromDays(1);
     private static readonly TimeSpan ReviewStaleTime = TimeSpan.FromDays(7);
+    private static readonly TimeSpan ReleaseRetentionTime = TimeSpan.FromDays(7);
 
     // It is possible different widgets have queries which touch the same pull requests.
     // We want to keep this window large enough that we don't delete data being used by
@@ -733,7 +734,7 @@ public partial class GitHubDataManager : IGitHubDataManager, IDisposable
 
         // Limit the number of fetched releases.
         options.ApiOptions.PageCount = 1;
-        options.ApiOptions.PageSize = 50;
+        options.ApiOptions.PageSize = 10;
 
         client ??= await GitHubClientProvider.Instance.GetClientForLoggedInDeveloper(true);
         Log.Logger()?.ReportInfo(Name, $"Updating releases for: {repository.FullName}");
@@ -771,6 +772,7 @@ public partial class GitHubDataManager : IGitHubDataManager, IDisposable
         Search.DeleteBefore(DataStore, DateTime.Now - SearchRetentionTime);
         SearchIssue.DeleteUnreferenced(DataStore);
         Review.DeleteUnreferenced(DataStore);
+        Release.DeleteBefore(DataStore, DateTime.Now - ReleaseRetentionTime);
     }
 
     // Sets a last-updated in the MetaData.

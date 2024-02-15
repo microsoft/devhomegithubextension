@@ -152,4 +152,16 @@ public class Release
         release.DataStore = dataStore;
         return release;
     }
+
+    public static void DeleteBefore(DataStore dataStore, DateTime date)
+    {
+        // Delete releases older than the date listed.
+        var sql = @"DELETE FROM Release WHERE TimeLastObserved < $Time;";
+        var command = dataStore.Connection!.CreateCommand();
+        command.CommandText = sql;
+        command.Parameters.AddWithValue("$Time", date.ToDataStoreInteger());
+        Log.Logger()?.ReportDebug(DataStore.GetCommandLogMessage(sql, command));
+        var rowsDeleted = command.ExecuteNonQuery();
+        Log.Logger()?.ReportDebug(DataStore.GetDeletedLogMessage(rowsDeleted));
+    }
 }
