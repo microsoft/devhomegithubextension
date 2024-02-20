@@ -101,6 +101,7 @@ public static class Resources
             "Widget_Template_Button/Cancel",
             "Widget_Template_Tooltip/Save",
             "Widget_Template_Tooltip/Cancel",
+            "Widget_Template/ChooseAccountPlaceholder",
         };
     }
 }
