@@ -1,5 +1,5 @@
-﻿// Copyright (c) Microsoft Corporation and Contributors
-// Licensed under the MIT license.
+﻿// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 
 using GitHubExtension.Client;
 
@@ -29,13 +29,13 @@ public class DevHomeRepository : Microsoft.Windows.DevHome.SDK.IRepository
     /// <summary>
     /// Initializes a new instance of the <see cref="DevHomeRepository"/> class.
     /// </summary>
-    /// <param name="ocktokitRepository">The repository received from ocktokit</param>
-    public DevHomeRepository(Octokit.Repository ocktokitRepository)
+    /// <param name="octokitRepository">The repository received from octokit</param>
+    public DevHomeRepository(Octokit.Repository octokitRepository)
     {
-        this.name = ocktokitRepository.Name;
-        this.cloneUrl = new Uri(ocktokitRepository.CloneUrl);
+        this.name = octokitRepository.Name;
+        this.cloneUrl = new Uri(octokitRepository.CloneUrl);
 
-        _lastUpdated = ocktokitRepository.UpdatedAt;
-        _isPrivate = ocktokitRepository.Private;
+        _lastUpdated = octokitRepository.UpdatedAt;
+        _isPrivate = octokitRepository.Private;
     }
 }

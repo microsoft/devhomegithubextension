@@ -1,5 +1,5 @@
-﻿// Copyright (c) Microsoft Corporation and Contributors
-// Licensed under the MIT license.
+﻿// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 
 using System.Net;
 using GitHubExtension.Client;
@@ -9,6 +9,7 @@ using Microsoft.Windows.DevHome.SDK;
 using Windows.Foundation;
 
 namespace GitHubExtension.DeveloperId;
+
 public class LoginUIController : IExtensionAdaptiveCardSession
 {
     private readonly IDeveloperIdProviderInternal _developerIdProvider;
@@ -60,15 +61,6 @@ public class LoginUIController : IExtensionAdaptiveCardSession
                     {
                         try
                         {
-                            // If there is already a developer id, we should block another login.
-                            if (_developerIdProvider.GetLoggedInDeveloperIdsInternal().Any())
-                            {
-                                Log.Logger()?.ReportInfo($"DeveloperId {_developerIdProvider.GetLoggedInDeveloperIdsInternal().First().LoginId} already exists. Blocking login.");
-                                new LoginFailedPage().UpdateExtensionAdaptiveCard(_loginUI);
-                                operationResult = new ProviderOperationResult(ProviderOperationStatus.Failure, null, "Only one DeveloperId can be logged in at a time", "One DeveloperId already exists");
-                                break;
-                            }
-
                             var loginPageActionPayload = Json.ToObject<LoginPage.ActionPayload>(action) ?? throw new InvalidOperationException("Invalid action");
 
                             if (!loginPageActionPayload.IsSubmitAction())

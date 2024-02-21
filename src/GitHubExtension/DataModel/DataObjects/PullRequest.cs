@@ -1,5 +1,5 @@
-﻿// Copyright (c) Microsoft Corporation and Contributors
-// Licensed under the MIT license.
+﻿// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 
 using Dapper;
 using Dapper.Contrib.Extensions;
@@ -317,6 +317,26 @@ public class PullRequest
         }
     }
 
+    /// <summary>
+    /// Gets all reviews associated with this pull request.
+    /// </summary>
+    [Write(false)]
+    [Computed]
+    public IEnumerable<Review> Reviews
+    {
+        get
+        {
+            if (DataStore == null)
+            {
+                return Enumerable.Empty<Review>();
+            }
+            else
+            {
+                return Review.GetAllForPullRequest(DataStore, this) ?? Enumerable.Empty<Review>();
+            }
+        }
+    }
+
     public override string ToString() => $"{Number}: {Title}";
 
     // Create pull request from OctoKit pull request data
@@ -365,7 +385,7 @@ public class PullRequest
 
         pull.AssigneeIds = string.Join(",", assignees);
 
-        // Owner is a rowid in the User table
+        // Owner is a rowId in the User table
         var author = User.GetOrCreateByOctokitUser(dataStore, okitPull.User);
         pull.AuthorId = author.Id;
 

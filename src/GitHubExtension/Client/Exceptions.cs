@@ -1,7 +1,8 @@
-﻿// Copyright (c) Microsoft Corporation and Contributors
-// Licensed under the MIT license.
+﻿// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 
 namespace GitHubExtension.Client;
+
 public class InvalidUrlException : Exception
 {
     public InvalidUrlException()

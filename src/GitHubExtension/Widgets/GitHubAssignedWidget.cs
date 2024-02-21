@@ -1,9 +1,10 @@
-﻿// Copyright (c) Microsoft Corporation and Contributors
-// Licensed under the MIT license.
+﻿// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 
 using Octokit;
 
 namespace GitHubExtension.Widgets;
+
 internal class GitHubAssignedWidget : GitHubUserWidget
 {
     private static readonly string TitleIconData =

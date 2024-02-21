@@ -1,9 +1,10 @@
-﻿// Copyright (c) Microsoft Corporation and Contributors
-// Licensed under the MIT license.
+﻿// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 
 using GitHubExtension.DataModel;
 
 namespace GitHubExtension.Helpers;
+
 public class IconLoader
 {
     private static readonly Dictionary<string, string> Base64ImageRegistry = new ();

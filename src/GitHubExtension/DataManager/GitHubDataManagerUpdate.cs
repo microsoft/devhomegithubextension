@@ -1,10 +1,11 @@
-﻿// Copyright (c) Microsoft Corporation and Contributors
-// Licensed under the MIT license.
+﻿// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 
 using GitHubExtension.DataManager;
 using GitHubExtension.DataModel;
 
 namespace GitHubExtension;
+
 public partial class GitHubDataManager
 {
     // This is how frequently the DataStore update occurs.
@@ -44,6 +45,12 @@ public partial class GitHubDataManager
         {
             // Show notifications for failed checkruns for Developer users.
             if (notification.Type == NotificationType.CheckRunFailed && notification.User.IsDeveloper)
+            {
+                notification.ShowToast();
+            }
+
+            // Show notifications for new reviews.
+            if (notification.Type == NotificationType.NewReview)
             {
                 notification.ShowToast();
             }

@@ -501,4 +501,16 @@
     <value>Please enter the PAT</value>
     <comment>LoginUI Error text if input is null</comment>
   </data>
+  <data name="Notifications_Toast_NewReview.Approved" xml:space="preserve">
+    <value>Approved</value>
+    <comment>Shown in toast notification.</comment>
+  </data>
+  <data name="Notifications_Toast_NewReview.ChangesRequested" xml:space="preserve">
+    <value>Changes requested</value>
+    <comment>Shown in toast notification.</comment>
+  </data>
+  <data name="Widget_Template.ChooseAccountPlaceholder" xml:space="preserve">
+    <value>Please choose an account</value>
+    <comment>Placeholder text for a combobox where the user can select between accounts</comment>
+  </data>
 </root>

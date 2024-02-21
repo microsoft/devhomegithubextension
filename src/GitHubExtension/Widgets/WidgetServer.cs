@@ -1,5 +1,5 @@
-﻿// Copyright (c) Microsoft Corporation and Contributors
-// Licensed under the MIT license.
+﻿// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
@@ -7,6 +7,7 @@ using System.Runtime.InteropServices;
 using Microsoft.Windows.Widgets.Providers;
 
 namespace GitHubExtension.Widgets;
+
 public sealed class WidgetServer : IDisposable
 {
     private readonly HashSet<int> registrationCookies = new ();

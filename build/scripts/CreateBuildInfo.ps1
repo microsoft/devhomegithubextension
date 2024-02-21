@@ -5,7 +5,7 @@ Param(
 )
 
 $Major = "0"
-$Minor = "10"
+$Minor = "11"
 $Patch = "99" # default to 99 for local builds
 
 $versionSplit = $Version.Split(".");
