@@ -27,8 +27,8 @@ public sealed class WidgetProvider : IWidgetProvider, IWidgetProvider2
         Log.Logger()?.Dispose();
     }
 
-    private readonly Dictionary<string, IWidgetImplFactory> widgetDefinitionRegistry = new ();
-    private readonly Dictionary<string, WidgetImpl> runningWidgets = new ();
+    private readonly Dictionary<string, IWidgetImplFactory> widgetDefinitionRegistry = new();
+    private readonly Dictionary<string, WidgetImpl> runningWidgets = new();
 
     private void InitializeWidget(WidgetContext widgetContext, string state)
     {

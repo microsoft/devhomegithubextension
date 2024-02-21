@@ -64,7 +64,7 @@ public class RepositoryProvider : IRepositoryProvider
             var repositoryList = new List<IRepository>();
             try
             {
-                ApiOptions apiOptions = new ()
+                ApiOptions apiOptions = new()
                 {
                     PageSize = 50,
                     PageCount = 1,

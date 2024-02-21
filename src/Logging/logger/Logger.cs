@@ -45,9 +45,9 @@ public class Logger : ILoggerHost, IDisposable
         Dispose();
     }
 
-    private readonly BlockingCollection<LogEvent> eventQueue = new (new ConcurrentQueue<LogEvent>());
+    private readonly BlockingCollection<LogEvent> eventQueue = new(new ConcurrentQueue<LogEvent>());
 
-    private readonly ManualResetEvent processorCanceledEvent = new (true);
+    private readonly ManualResetEvent processorCanceledEvent = new(true);
 
     private CancellationTokenSource? cancelTokenSource;
 

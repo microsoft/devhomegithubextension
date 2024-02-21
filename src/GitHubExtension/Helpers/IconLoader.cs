@@ -7,7 +7,7 @@ namespace GitHubExtension.Helpers;
 
 public class IconLoader
 {
-    private static readonly Dictionary<string, string> Base64ImageRegistry = new ();
+    private static readonly Dictionary<string, string> Base64ImageRegistry = new();
 
     public static string GetIconAsBase64(string filename)
     {

@@ -249,7 +249,7 @@ public class GitHubDataStoreSchema : IDataStoreSchema
     "CREATE UNIQUE INDEX IDX_Review_InternalId ON Review (InternalId);";
 
     // All Sqls together.
-    private static readonly List<string> SchemaSqlsValue = new ()
+    private static readonly List<string> SchemaSqlsValue = new()
     {
         Metadata,
         User,

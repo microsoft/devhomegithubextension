@@ -13,7 +13,7 @@ internal class SettingsUIController : IExtensionAdaptiveCardSession
     private static readonly string _notificationsEnabledString = "NotificationsEnabled";
 
     private IExtensionAdaptiveCard? _settingsUI;
-    private static readonly SettingsUITemplate _settingsUITemplate = new ();
+    private static readonly SettingsUITemplate _settingsUITemplate = new();
 
     public void Dispose()
     {
