@@ -73,7 +73,10 @@ public class RepositoryProvider : IRepositoryProvider, IRepositoryProvider2
         return Task.Run(async () =>
         {
             var client = GetClient(developerId);
-            var request = new SearchRepositoriesRequest(search);
+            var request = new SearchRepositoriesRequest(search)
+            {
+                In = new[] { InQualifier.Name },
+            };
             var result = await client.Search.SearchRepo(request);
 
             var reposFound = result.Items;
