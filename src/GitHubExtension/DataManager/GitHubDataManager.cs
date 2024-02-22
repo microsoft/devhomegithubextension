@@ -269,29 +269,30 @@ public partial class GitHubDataManager : IGitHubDataManager, IDisposable
                     found = true;
                     break;
                 }
-                catch (Exception ex)
+                catch (Exception ex) when (ex is Octokit.ApiException)
                 {
-                    if (ex is Octokit.ForbiddenException)
+                    switch (ex)
                     {
-                        // This can happen most commonly with SAML-enabled organizations.
-                        Log.Logger()?.ReportDebug(Name, $"DeveloperId {devId.LoginId} was forbidden access to {parameters.Owner}/{parameters.RepositoryName}");
-                        continue;
-                    }
+                        case Octokit.NotFoundException:
+                            // A private repository will come back as "not found" by the GitHub API when an unauthorized account cannot even view it.
+                            Log.Logger()?.ReportDebug(Name, $"DeveloperId {devId.LoginId} did not find {parameters.Owner}/{parameters.RepositoryName}");
+                            continue;
 
-                    if (ex is Octokit.NotFoundException)
-                    {
-                        // A private repository can come back as "not found" by the GitHub API when an unauthorized account cannot even view it.
-                        Log.Logger()?.ReportDebug(Name, $"DeveloperId {devId.LoginId} did not find {parameters.Owner}/{parameters.RepositoryName}");
-                        continue;
-                    }
+                        case Octokit.RateLimitExceededException:
+                            Log.Logger()?.ReportDebug(Name, $"DeveloperId {devId.LoginId} rate limit exceeded.");
+                            throw;
 
-                    if (ex is Octokit.RateLimitExceededException)
-                    {
-                        Log.Logger()?.ReportError(Name, $"DeveloperId {devId.LoginId} rate limit exceeded.", ex);
-                        throw;
-                    }
+                        case Octokit.ForbiddenException:
+                            // This can happen most commonly with SAML-enabled organizations.
+                            // The user may have access but the org blocked the application.
+                            Log.Logger()?.ReportDebug(Name, $"DeveloperId {devId.LoginId} was forbidden access to {parameters.Owner}/{parameters.RepositoryName}");
+                            throw;
 
-                    throw;
+                        default:
+                            // If it's some other error like abuse detection, abort and do not continue.
+                            Log.Logger()?.ReportDebug(Name, $"Unhandled Octokit API error for {devId.LoginId} and {parameters.Owner} / {parameters.RepositoryName}");
+                            throw;
+                    }
                 }
             }
 
