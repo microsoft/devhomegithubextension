@@ -29,7 +29,7 @@ public class Log
         return new Options
         {
             LogFileFolderRoot = ApplicationData.Current.TemporaryFolder.Path,
-            LogFileName = "Widgets_{now}.log",
+            LogFileName = "Widgets_{now}.dhlog",
             LogFileFolderName = "Widgets",
             DebugListenerEnabled = true,
 #if DEBUG
