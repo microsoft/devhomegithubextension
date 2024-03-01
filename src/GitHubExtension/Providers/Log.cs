@@ -29,7 +29,7 @@ public class Log
         return new Options
         {
             LogFileFolderRoot = ApplicationData.Current.TemporaryFolder.Path,
-            LogFileName = "GitHubExtension_{now}.log",
+            LogFileName = "GitHubExtension_{now}.dhlog",
             LogFileFolderName = "GitHubExtension",
             DebugListenerEnabled = true,
 #if DEBUG

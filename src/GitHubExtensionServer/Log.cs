@@ -29,7 +29,7 @@ public class Log
         return new Options
         {
             LogFileFolderRoot = ApplicationData.Current.TemporaryFolder.Path,
-            LogFileName = "ExtensionServer_{now}.log",
+            LogFileName = "ExtensionServer_{now}.dhlog",
             LogFileFolderName = "ExtensionServer",
             DebugListenerEnabled = true,
 #if DEBUG

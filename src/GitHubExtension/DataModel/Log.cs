@@ -38,7 +38,7 @@ public class Log
         return new Options
         {
             LogFileFolderRoot = ApplicationData.Current.TemporaryFolder.Path,
-            LogFileName = "DataStore_{now}.log",
+            LogFileName = "DataStore_{now}.dhlog",
             LogFileFolderName = "DataStore",
             DebugListenerEnabled = true,
 #if DEBUG
