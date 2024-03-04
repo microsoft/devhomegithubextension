@@ -26,6 +26,8 @@
     <None Remove="Widgets\Templates\GitHubMentionedInTemplate.json" />
     <None Remove="Widgets\Templates\GitHubPullsConfigurationTemplate.json" />
     <None Remove="Widgets\Templates\GitHubPullsTemplate.json" />
+    <None Remove="Widgets\Templates\GitHubReleasesConfigurationTemplate.json" />
+    <None Remove="Widgets\Templates\GitHubReleasesTemplate.json" />
     <None Remove="Widgets\Templates\GitHubReviewConfigurationTemplate.json" />
     <None Remove="Widgets\Templates\GitHubReviewTemplate.json" />
     <None Remove="Widgets\Templates\GitHubSignInTemplate.json" />
@@ -38,7 +40,13 @@
     <Content Include="Widgets\Templates\GitHubAssignedTemplate.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="Widgets\Templates\GitHubReleasesConfigurationTemplate.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Widgets\Templates\GitHubIssuesConfigurationTemplate.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Widgets\Templates\GitHubReleasesTemplate.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Widgets\Templates\GitHubIssuesTemplate.json">
@@ -135,6 +143,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Update="Widgets\Assets\pulls.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Update="Widgets\Assets\releases.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Update="Widgets\Assets\ReviewRequestedScreenshotDark.png">

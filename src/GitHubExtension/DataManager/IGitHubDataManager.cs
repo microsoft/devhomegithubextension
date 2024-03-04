@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft Corporation.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using GitHubExtension.DataModel;
@@ -24,6 +24,8 @@ public interface IGitHubDataManager : IDisposable
     Task UpdateIssuesForRepositoryAsync(string fullName, RequestOptions? options = null);
 
     Task UpdatePullRequestsForLoggedInDeveloperIdsAsync();
+
+    Task UpdateReleasesForRepositoryAsync(string owner, string name, RequestOptions? options = null);
 
     IEnumerable<Repository> GetRepositories();
 

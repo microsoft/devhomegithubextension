@@ -594,4 +594,67 @@ public partial class DataStoreTests
         testListener.PrintEventCounts();
         Assert.AreEqual(false, testListener.FoundErrors());
     }
+
+    [TestMethod]
+    [TestCategory("Unit")]
+    public void ReadAndWriteRelease()
+    {
+        using var log = new Logger("TestStore", TestOptions.LogOptions);
+        var testListener = new TestListener("TestListener", TestContext!);
+        log.AddListener(testListener);
+        Log.Attach(log);
+
+        using var dataStore = new DataStore("TestStore", TestHelpers.GetDataStoreFilePath(TestOptions), TestOptions.DataStoreOptions.DataStoreSchema!);
+        Assert.IsNotNull(dataStore);
+        dataStore.Create();
+        Assert.IsNotNull(dataStore.Connection);
+
+        // Add repository record
+        dataStore.Connection.Insert(new Repository { OwnerId = 1, InternalId = 47, Name = "TestRepo1", Description = "Short Desc", HtmlUrl = "https://www.microsoft.com", DefaultBranch = "main" });
+
+        var releases = new List<Release>
+        {
+            { new Release { InternalId = 13,  Name = "Release 0.0.1", TagName = "0.0.1", Prerelease = 1, HtmlUrl = "https://www.microsoft.com", RepositoryId = 1 } },
+            { new Release { InternalId = 23, Name = "Release 1.0.0", TagName = "1.0.0", Prerelease = 0, HtmlUrl = "https://www.microsoft.com", RepositoryId = 1 } },
+        };
+
+        using var tx = dataStore.Connection!.BeginTransaction();
+        dataStore.Connection.Insert(releases[0]);
+        dataStore.Connection.Insert(releases[1]);
+        tx.Commit();
+
+        // Verify retrieval and input into data objects.
+        var dataStoreReleases = dataStore.Connection.GetAll<Release>().ToList();
+        Assert.AreEqual(dataStoreReleases.Count, 2);
+        foreach (var release in dataStoreReleases)
+        {
+            // Get Repo info
+            var repo = dataStore.Connection.Get<Repository>(release.RepositoryId);
+
+            TestContext?.WriteLine($"  Repo: {repo.Name} - {release.Name} - {release.TagName}");
+            Assert.AreEqual("TestRepo1", repo.Name);
+            Assert.IsTrue(release.Id == 1 || release.Id == 2);
+
+            if (release.Id == 1)
+            {
+                Assert.AreEqual(13, release.InternalId);
+                Assert.AreEqual("Release 0.0.1", release.Name);
+                Assert.AreEqual("0.0.1", release.TagName);
+                Assert.AreEqual(1, release.Prerelease);
+                Assert.AreEqual("https://www.microsoft.com", release.HtmlUrl);
+            }
+
+            if (release.Id == 2)
+            {
+                Assert.AreEqual(23, release.InternalId);
+                Assert.AreEqual("Release 1.0.0", release.Name);
+                Assert.AreEqual("1.0.0", release.TagName);
+                Assert.AreEqual(0, release.Prerelease);
+                Assert.AreEqual("https://www.microsoft.com", release.HtmlUrl);
+            }
+        }
+
+        testListener.PrintEventCounts();
+        Assert.AreEqual(false, testListener.FoundErrors());
+    }
 }

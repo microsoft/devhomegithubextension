@@ -18,6 +18,7 @@ public partial class GitHubDataManager : IGitHubDataManager, IDisposable
     private static readonly TimeSpan SearchRetentionTime = TimeSpan.FromDays(7);
     private static readonly TimeSpan PullRequestStaleTime = TimeSpan.FromDays(1);
     private static readonly TimeSpan ReviewStaleTime = TimeSpan.FromDays(7);
+    private static readonly TimeSpan ReleaseRetentionTime = TimeSpan.FromDays(7);
 
     // It is possible different widgets have queries which touch the same pull requests.
     // We want to keep this window large enough that we don't delete data being used by
@@ -177,6 +178,28 @@ public partial class GitHubDataManager : IGitHubDataManager, IDisposable
         };
         await UpdateDataStoreAsync(parameters, UpdatePullRequestsForLoggedInDeveloperIdsAsync);
         SendDeveloperUpdateEvent(this);
+    }
+
+    public async Task UpdateReleasesForRepositoryAsync(string owner, string name, RequestOptions? options = null)
+    {
+        ValidateDataStore();
+        var parameters = new DataStoreOperationParameters
+        {
+            Owner = owner,
+            RepositoryName = name,
+            RequestOptions = options,
+            OperationName = "UpdateReleasesForRepositoryAsync",
+        };
+
+        await UpdateDataForRepositoryAsync(
+            parameters,
+            async (parameters, devId) =>
+            {
+                var repository = await UpdateRepositoryAsync(parameters.Owner!, parameters.RepositoryName!, devId.GitHubClient);
+                await UpdateReleasesAsync(repository, devId.GitHubClient, parameters.RequestOptions);
+            });
+
+        SendRepositoryUpdateEvent(this, GetFullNameFromOwnerAndRepository(owner, name), new string[] { "Releases" });
     }
 
     public IEnumerable<Repository> GetRepositories()
@@ -704,6 +727,41 @@ public partial class GitHubDataManager : IGitHubDataManager, IDisposable
         Issue.DeleteLastObservedBefore(DataStore, repository.Id, DateTime.UtcNow - LastObservedDeleteSpan);
     }
 
+    // Internal method to update releases. Assumes Repository has already been populated and created.
+    // DataStore transaction is assumed to be wrapped around this in the public method.
+    private async Task UpdateReleasesAsync(Repository repository, Octokit.GitHubClient? client = null, RequestOptions? options = null)
+    {
+        options ??= RequestOptions.RequestOptionsDefault();
+
+        // Limit the number of fetched releases.
+        options.ApiOptions.PageCount = 1;
+        options.ApiOptions.PageSize = 10;
+
+        client ??= await GitHubClientProvider.Instance.GetClientForLoggedInDeveloper(true);
+        Log.Logger()?.ReportInfo(Name, $"Updating releases for: {repository.FullName}");
+
+        var releasesResult = await client.Repository.Release.GetAll(repository.InternalId, options.ApiOptions);
+        if (releasesResult == null)
+        {
+            Log.Logger()?.ReportDebug($"No releases found.");
+            return;
+        }
+
+        Log.Logger()?.ReportDebug(Name, $"Results contain {releasesResult.Count} releases.");
+        foreach (var release in releasesResult)
+        {
+            if (release.Draft)
+            {
+                continue;
+            }
+
+            _ = Release.GetOrCreateByOctokitRelease(DataStore, release, repository);
+        }
+
+        // Remove releases from this repository that were not observed recently.
+        Release.DeleteLastObservedBefore(DataStore, repository.Id, DateTime.UtcNow - LastObservedDeleteSpan);
+    }
+
     // Removes unused data from the datastore.
     private void PruneObsoleteData()
     {
@@ -715,6 +773,7 @@ public partial class GitHubDataManager : IGitHubDataManager, IDisposable
         Search.DeleteBefore(DataStore, DateTime.Now - SearchRetentionTime);
         SearchIssue.DeleteUnreferenced(DataStore);
         Review.DeleteUnreferenced(DataStore);
+        Release.DeleteBefore(DataStore, DateTime.Now - ReleaseRetentionTime);
     }
 
     // Sets a last-updated in the MetaData.
