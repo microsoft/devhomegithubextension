@@ -148,6 +148,12 @@
     <Content Update="Widgets\Assets\releases.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Update="Widgets\Assets\ReleasesScreenshotDark.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Update="Widgets\Assets\ReleasesScreenshotLight.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Update="Widgets\Assets\ReviewRequestedScreenshotDark.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

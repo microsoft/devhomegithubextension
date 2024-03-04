@@ -99,14 +99,14 @@
                         <Icon Path="Widgets\Assets\GitHubLogo_Light.jpg" />
                       </Icons>
                       <Screenshots>
-                        <Screenshot Path="Widgets\Assets\IssuesScreenshotLight.png" DisplayAltText="DevHomeGitHub icon" />
+                        <Screenshot Path="Widgets\Assets\IssuesScreenshotLight.png" DisplayAltText="Issues widget preview image" />
                       </Screenshots>
                       <DarkMode>
                         <Icons>
                           <Icon Path="Widgets\Assets\GitHubLogo_Dark.png" />
                         </Icons>
                         <Screenshots>
-                          <Screenshot Path="Widgets\Assets\IssuesScreenshotDark.png" DisplayAltText="DevHomeGitHub icon" />
+                          <Screenshot Path="Widgets\Assets\IssuesScreenshotDark.png" DisplayAltText="Issues widget preview image" />
                         </Screenshots>
                       </DarkMode>
                       <LightMode>
@@ -114,7 +114,7 @@
                           <Icon Path="Widgets\Assets\GitHubLogo_Light.png" />
                         </Icons>
                         <Screenshots>
-                          <Screenshot Path="Widgets\Assets\IssuesScreenshotLight.png" DisplayAltText="DevHomeGitHub icon" />
+                          <Screenshot Path="Widgets\Assets\IssuesScreenshotLight.png" DisplayAltText="Issues widget preview image" />
                         </Screenshots>
                       </LightMode>
                     </ThemeResources>
@@ -133,14 +133,14 @@
                         <Icon Path="Widgets\Assets\GitHubLogo_Light.jpg" />
                       </Icons>
                       <Screenshots>
-                        <Screenshot Path="Widgets\Assets\PullRequestsScreenshotLight.png" DisplayAltText="DevHomeGitHub icon" />
+                        <Screenshot Path="Widgets\Assets\PullRequestsScreenshotLight.png" DisplayAltText="Pull Requests widget preview image" />
                       </Screenshots>
                       <DarkMode>
                         <Icons>
                           <Icon Path="Widgets\Assets\GitHubLogo_Dark.png" />
                         </Icons>
                         <Screenshots>
-                          <Screenshot Path="Widgets\Assets\PullRequestsScreenshotDark.png" DisplayAltText="DevHomeGitHub icon" />
+                          <Screenshot Path="Widgets\Assets\PullRequestsScreenshotDark.png" DisplayAltText="Pull Requests widget preview image" />
                         </Screenshots>
                       </DarkMode>
                       <LightMode>
@@ -148,7 +148,7 @@
                           <Icon Path="Widgets\Assets\GitHubLogo_Light.png" />
                         </Icons>
                         <Screenshots>
-                          <Screenshot Path="Widgets\Assets\PullRequestsScreenshotLight.png" DisplayAltText="DevHomeGitHub icon" />
+                          <Screenshot Path="Widgets\Assets\PullRequestsScreenshotLight.png" DisplayAltText="Pull Requests widget preview image" />
                         </Screenshots>
                       </LightMode>
                     </ThemeResources>
@@ -167,14 +167,14 @@
                         <Icon Path="Widgets\Assets\GitHubLogo_Light.jpg" />
                       </Icons>
                       <Screenshots>
-                        <Screenshot Path="Widgets\Assets\MentionedInScreenshotLight.png" DisplayAltText="DevHomeGitHub icon" />
+                        <Screenshot Path="Widgets\Assets\MentionedInScreenshotLight.png" DisplayAltText="Mentioned In widget preview image" />
                       </Screenshots>
                       <DarkMode>
                         <Icons>
                           <Icon Path="Widgets\Assets\GitHubLogo_Dark.png" />
                         </Icons>
                         <Screenshots>
-                          <Screenshot Path="Widgets\Assets\MentionedInScreenshotDark.png" DisplayAltText="DevHomeGitHub icon" />
+                          <Screenshot Path="Widgets\Assets\MentionedInScreenshotDark.png" DisplayAltText="Mentioned In widget preview image" />
                         </Screenshots>
                       </DarkMode>
                       <LightMode>
@@ -182,7 +182,7 @@
                           <Icon Path="Widgets\Assets\GitHubLogo_Light.png" />
                         </Icons>
                         <Screenshots>
-                          <Screenshot Path="Widgets\Assets\MentionedInScreenshotLight.png" DisplayAltText="DevHomeGitHub icon" />
+                          <Screenshot Path="Widgets\Assets\MentionedInScreenshotLight.png" DisplayAltText="Mentioned In widget preview image" />
                         </Screenshots>
                       </LightMode>
                     </ThemeResources>
@@ -201,14 +201,14 @@
                         <Icon Path="Widgets\Assets\GitHubLogo_Light.jpg" />
                       </Icons>
                       <Screenshots>
-                        <Screenshot Path="Widgets\Assets\AssignedToMeScreenshotLight.png" DisplayAltText="DevHomeGitHub icon" />
+                        <Screenshot Path="Widgets\Assets\AssignedToMeScreenshotLight.png" DisplayAltText="Assigned To Me widget preview image" />
                       </Screenshots>
                       <DarkMode>
                         <Icons>
                           <Icon Path="Widgets\Assets\GitHubLogo_Dark.png" />
                         </Icons>
                         <Screenshots>
-                          <Screenshot Path="Widgets\Assets\AssignedToMeScreenshotDark.png" DisplayAltText="DevHomeGitHub icon" />
+                          <Screenshot Path="Widgets\Assets\AssignedToMeScreenshotDark.png" DisplayAltText="Assigned To Me widget preview image" />
                         </Screenshots>
                       </DarkMode>
                       <LightMode>
@@ -216,7 +216,7 @@
                           <Icon Path="Widgets\Assets\GitHubLogo_Light.png" />
                         </Icons>
                         <Screenshots>
-                          <Screenshot Path="Widgets\Assets\AssignedToMeScreenshotLight.png" DisplayAltText="DevHomeGitHub icon" />
+                          <Screenshot Path="Widgets\Assets\AssignedToMeScreenshotLight.png" DisplayAltText="Assigned To Me widget preview image" />
                         </Screenshots>
                       </LightMode>
                     </ThemeResources>
@@ -235,14 +235,14 @@
                         <Icon Path="Widgets\Assets\GitHubLogo_Light.jpg" />
                       </Icons>
                       <Screenshots>
-                        <Screenshot Path="Widgets\Assets\ReviewRequestedScreenshotLight.png" DisplayAltText="DevHomeGitHub icon" />
+                        <Screenshot Path="Widgets\Assets\ReviewRequestedScreenshotLight.png" DisplayAltText="Review Requested widget preview image" />
                       </Screenshots>
                       <DarkMode>
                         <Icons>
                           <Icon Path="Widgets\Assets\GitHubLogo_Dark.png" />
                         </Icons>
                         <Screenshots>
-                          <Screenshot Path="Widgets\Assets\ReviewRequestedScreenshotDark.png" DisplayAltText="DevHomeGitHub icon" />
+                          <Screenshot Path="Widgets\Assets\ReviewRequestedScreenshotDark.png" DisplayAltText="Review Requested widget preview image" />
                         </Screenshots>
                       </DarkMode>
                       <LightMode>
@@ -250,7 +250,7 @@
                           <Icon Path="Widgets\Assets\GitHubLogo_Light.png" />
                         </Icons>
                         <Screenshots>
-                          <Screenshot Path="Widgets\Assets\ReviewRequestedScreenshotLight.png" DisplayAltText="DevHomeGitHub icon" />
+                          <Screenshot Path="Widgets\Assets\ReviewRequestedScreenshotLight.png" DisplayAltText="Review Requested widget preview image" />
                         </Screenshots>
                       </LightMode>
                     </ThemeResources>
@@ -269,14 +269,14 @@
                         <Icon Path="Widgets\Assets\GitHubLogo_Light.jpg" />
                       </Icons>
                       <Screenshots>
-                        <Screenshot Path="Widgets\Assets\IssuesScreenshotLight.png" DisplayAltText="DevHomeGitHub icon" />
+                        <Screenshot Path="Widgets\Assets\ReleasesScreenshotLight.png" DisplayAltText="Releases widget preview image" />
                       </Screenshots>
                       <DarkMode>
                         <Icons>
                           <Icon Path="Widgets\Assets\GitHubLogo_Dark.png" />
                         </Icons>
                         <Screenshots>
-                          <Screenshot Path="Widgets\Assets\IssuesScreenshotDark.png" DisplayAltText="DevHomeGitHub icon" />
+                          <Screenshot Path="Widgets\Assets\ReleasesScreenshotDark.png" DisplayAltText="Releases widget preview image" />
                         </Screenshots>
                       </DarkMode>
                       <LightMode>
@@ -284,7 +284,7 @@
                           <Icon Path="Widgets\Assets\GitHubLogo_Light.png" />
                         </Icons>
                         <Screenshots>
-                          <Screenshot Path="Widgets\Assets\IssuesScreenshotLight.png" DisplayAltText="DevHomeGitHub icon" />
+                          <Screenshot Path="Widgets\Assets\ReleasesScreenshotLight.png" DisplayAltText="Releases widget preview image" />
                         </Screenshots>
                       </LightMode>
                     </ThemeResources>
