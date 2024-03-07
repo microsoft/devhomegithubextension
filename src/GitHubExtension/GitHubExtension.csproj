@@ -26,6 +26,8 @@
     <None Remove="Widgets\Templates\GitHubMentionedInTemplate.json" />
     <None Remove="Widgets\Templates\GitHubPullsConfigurationTemplate.json" />
     <None Remove="Widgets\Templates\GitHubPullsTemplate.json" />
+    <None Remove="Widgets\Templates\GitHubReleasesConfigurationTemplate.json" />
+    <None Remove="Widgets\Templates\GitHubReleasesTemplate.json" />
     <None Remove="Widgets\Templates\GitHubReviewConfigurationTemplate.json" />
     <None Remove="Widgets\Templates\GitHubReviewTemplate.json" />
     <None Remove="Widgets\Templates\GitHubSignInTemplate.json" />
@@ -38,7 +40,13 @@
     <Content Include="Widgets\Templates\GitHubAssignedTemplate.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="Widgets\Templates\GitHubReleasesConfigurationTemplate.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Widgets\Templates\GitHubIssuesConfigurationTemplate.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Widgets\Templates\GitHubReleasesTemplate.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Widgets\Templates\GitHubIssuesTemplate.json">
@@ -80,7 +88,7 @@
     <PackageReference Include="Microsoft.Windows.CsWin32" Version="0.2.206-beta" />
     <PackageReference Include="Microsoft.Windows.CsWinRT" Version="2.0.2" />
     <PackageReference Include="Microsoft.Windows.DevHome.SDK" Version="0.100.369" />
-    <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.4.231115000" />
+    <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.5.240227000" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="Octokit" Version="10.0.0" />
   </ItemGroup>
@@ -135,6 +143,15 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Update="Widgets\Assets\pulls.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Update="Widgets\Assets\releases.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Update="Widgets\Assets\ReleasesScreenshotDark.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Update="Widgets\Assets\ReleasesScreenshotLight.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Update="Widgets\Assets\ReviewRequestedScreenshotDark.png">

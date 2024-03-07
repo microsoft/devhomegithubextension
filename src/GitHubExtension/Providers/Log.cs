@@ -4,7 +4,7 @@
 using DevHome.Logging;
 using Windows.Storage;
 
-namespace GitHubExtension.DataModel;
+namespace GitHubExtension.Providers;
 
 public class Log
 {
@@ -14,7 +14,7 @@ public class Log
     {
         try
         {
-            _logger ??= new Logger("DataStore", GetLoggingOptions());
+            _logger ??= new Logger("GitHubExtension", GetLoggingOptions());
         }
         catch
         {
@@ -24,27 +24,18 @@ public class Log
         return _logger;
     }
 
-    public static void Attach(Logger logger)
-    {
-        if (logger is not null)
-        {
-            _logger?.Dispose();
-            _logger = logger;
-        }
-    }
-
     public static Options GetLoggingOptions()
     {
         return new Options
         {
             LogFileFolderRoot = ApplicationData.Current.TemporaryFolder.Path,
-            LogFileName = "DataStore_{now}.log",
-            LogFileFolderName = "DataStore",
+            LogFileName = "GitHubExtension_{now}.dhlog",
+            LogFileFolderName = "GitHubExtension",
             DebugListenerEnabled = true,
 #if DEBUG
             LogStdoutEnabled = true,
-            LogStdoutFilter = SeverityLevel.Info,
-            LogFileFilter = SeverityLevel.Info,
+            LogStdoutFilter = SeverityLevel.Debug,
+            LogFileFilter = SeverityLevel.Debug,
 #else
             LogStdoutEnabled = false,
             LogStdoutFilter = SeverityLevel.Info,

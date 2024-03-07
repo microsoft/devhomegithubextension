@@ -14,9 +14,9 @@ namespace GitHubExtension.DeveloperId;
 public class DeveloperIdProvider : IDeveloperIdProviderInternal
 {
     // Locks to control access to Singleton class members.
-    private static readonly object _developerIdsLock = new ();
+    private static readonly object _developerIdsLock = new();
 
-    private static readonly object _oAuthRequestsLock = new ();
+    private static readonly object _oAuthRequestsLock = new();
 
     // DeveloperId list containing all Logged in Ids.
     private List<DeveloperId> DeveloperIds
@@ -39,7 +39,7 @@ public class DeveloperIdProvider : IDeveloperIdProviderInternal
     public string DisplayName => "GitHub";
 
     // DeveloperIdProvider uses singleton pattern.
-    private static Lazy<DeveloperIdProvider> _singletonDeveloperIdProvider = new (() => new DeveloperIdProvider());
+    private static Lazy<DeveloperIdProvider> _singletonDeveloperIdProvider = new(() => new DeveloperIdProvider());
 
     public static DeveloperIdProvider GetInstance()
     {
@@ -51,7 +51,7 @@ public class DeveloperIdProvider : IDeveloperIdProviderInternal
     {
         Log.Logger()?.ReportInfo($"Creating DeveloperIdProvider singleton instance");
 
-        _credentialVault = new (() => new CredentialVault());
+        _credentialVault = new(() => new CredentialVault());
 
         lock (_oAuthRequestsLock)
         {
@@ -76,7 +76,7 @@ public class DeveloperIdProvider : IDeveloperIdProviderInternal
 
     public DeveloperIdsResult GetLoggedInDeveloperIds()
     {
-        List<IDeveloperId> iDeveloperIds = new ();
+        List<IDeveloperId> iDeveloperIds = new();
         lock (_developerIdsLock)
         {
             iDeveloperIds.AddRange(DeveloperIds);
@@ -113,11 +113,11 @@ public class DeveloperIdProvider : IDeveloperIdProviderInternal
     {
         try
         {
-            GitHubClient gitHubClient = new (new ProductHeaderValue(Constants.DEV_HOME_APPLICATION_NAME), hostAddress);
+            GitHubClient gitHubClient = new(new ProductHeaderValue(Constants.DEV_HOME_APPLICATION_NAME), hostAddress);
             var credentials = new Credentials(new System.Net.NetworkCredential(string.Empty, personalAccessToken).Password);
             gitHubClient.Credentials = credentials;
             var newUser = gitHubClient.User.Current().Result;
-            DeveloperId developerId = new (newUser.Login, newUser.Name, newUser.Email, newUser.Url, gitHubClient);
+            DeveloperId developerId = new(newUser.Login, newUser.Name, newUser.Email, newUser.Url, gitHubClient);
             SaveOrOverwriteDeveloperId(developerId, personalAccessToken);
 
             Log.Logger()?.ReportInfo($"{developerId.LoginId} logged in with PAT flow to {developerId.GetHostAddress()}");
@@ -133,7 +133,7 @@ public class DeveloperIdProvider : IDeveloperIdProviderInternal
 
     private OAuthRequest? LoginNewDeveloperId()
     {
-        OAuthRequest oauthRequest = new ();
+        OAuthRequest oauthRequest = new();
 
         lock (_oAuthRequestsLock)
         {
@@ -222,7 +222,7 @@ public class DeveloperIdProvider : IDeveloperIdProviderInternal
 
     public IEnumerable<DeveloperId> GetLoggedInDeveloperIdsInternal()
     {
-        List<DeveloperId> iDeveloperIds = new ();
+        List<DeveloperId> iDeveloperIds = new();
         lock (_developerIdsLock)
         {
             iDeveloperIds.AddRange(DeveloperIds);
@@ -321,15 +321,15 @@ public class DeveloperIdProvider : IDeveloperIdProviderInternal
             // For loginIds without URL, use GitHub.com as default.
             var hostAddress = isUrl ? new Uri(loginIdOrUrl) : new Uri(Constants.GITHUB_COM_URL);
 
-            GitHubClient gitHubClient = new (new ProductHeaderValue(Constants.DEV_HOME_APPLICATION_NAME), hostAddress)
+            GitHubClient gitHubClient = new(new ProductHeaderValue(Constants.DEV_HOME_APPLICATION_NAME), hostAddress)
             {
-                Credentials = new (_credentialVault.Value.GetCredentials(loginIdOrUrl)?.Password),
+                Credentials = new(_credentialVault.Value.GetCredentials(loginIdOrUrl)?.Password),
             };
 
             try
             {
                 var user = gitHubClient.User.Current().Result;
-                DeveloperId developerId = new (user.Login, user.Name, user.Email, user.Url, gitHubClient);
+                DeveloperId developerId = new(user.Login, user.Name, user.Email, user.Url, gitHubClient);
                 lock (_developerIdsLock)
                 {
                     DeveloperIds.Add(developerId);
@@ -396,7 +396,7 @@ public class DeveloperIdProvider : IDeveloperIdProviderInternal
     // This function is to be used for testing purposes only.
     public static void ResetInstanceForTests()
     {
-        _singletonDeveloperIdProvider = new (() => new DeveloperIdProvider());
+        _singletonDeveloperIdProvider = new(() => new DeveloperIdProvider());
     }
 
     public IAsyncOperation<DeveloperIdResult> ShowLogonSession(WindowId windowHandle) => throw new NotImplementedException();

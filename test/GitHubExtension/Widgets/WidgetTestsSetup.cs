@@ -12,7 +12,7 @@ public partial class WidgetTests
         set;
     }
 
-    private TestOptions testOptions = new ();
+    private TestOptions testOptions = new();
 
     private TestOptions TestOptions
     {

@@ -23,8 +23,8 @@ internal class OAuthRequest : IDisposable
 
     internal OAuthRequest()
     {
-        gitHubClient = new (new ProductHeaderValue(Constants.DEV_HOME_APPLICATION_NAME));
-        oAuthCompleted = new (0);
+        gitHubClient = new(new ProductHeaderValue(Constants.DEV_HOME_APPLICATION_NAME));
+        oAuthCompleted = new(0);
         State = string.Empty;
     }
 
@@ -133,7 +133,7 @@ internal class OAuthRequest : IDisposable
         }
 
         var newUser = gitHubClient.User.Current().Result;
-        DeveloperId developerId = new (newUser.Login, newUser.Name, newUser.Email, newUser.Url, gitHubClient);
+        DeveloperId developerId = new(newUser.Login, newUser.Name, newUser.Email, newUser.Url, gitHubClient);
 
         return developerId;
     }

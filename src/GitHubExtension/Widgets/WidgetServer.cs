@@ -10,7 +10,7 @@ namespace GitHubExtension.Widgets;
 
 public sealed class WidgetServer : IDisposable
 {
-    private readonly HashSet<int> registrationCookies = new ();
+    private readonly HashSet<int> registrationCookies = new();
 
     [UnconditionalSuppressMessage(
         "ReflectionAnalysis",

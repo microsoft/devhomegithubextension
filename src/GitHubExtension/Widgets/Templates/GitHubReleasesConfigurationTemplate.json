@@ -1,0 +1,106 @@
+{
+  "type": "AdaptiveCard",
+  "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+  "version": "1.5",
+  "body": [
+    {
+      "type": "Input.Text",
+      "id": "url",
+      "label": "%Widget_Template_Label/Url%",
+      "inlineAction": {
+        "type": "Action.Execute",
+        "tooltip": "%Widget_Template_Tooltip/Submit%",
+        "verb": "CheckUrl",
+        "iconUrl": "data:image/png;base64,${submitIcon}"
+      },
+      "spacing": "Medium",
+      "style": "Url",
+      "placeholder": "%Widget_Template_Input/UrlPlaceholder%",
+      "value": "${$root.configuration.url}"
+    },
+    {
+      "type": "Container",
+      "items": [
+        {
+          "type": "TextBlock",
+          "text": "${errorMessage}",
+          "wrap": true,
+          "horizontalAlignment": "Center"
+        }
+      ],
+      "$when": "${errorMessage != null}",
+      "separator": true,
+      "horizontalAlignment": "Center",
+      "verticalContentAlignment": "Center",
+      "style": "warning"
+    },
+    {
+      "type": "Container",
+      "items": [
+        {
+          "type": "TextBlock",
+          "text": "%Widget_Template/Repository%",
+          "wrap": true,
+          "spacing": "Medium",
+          "size": "Small"
+        },
+        {
+          "type": "TextBlock",
+          "text": "${name}",
+          "wrap": true,
+          "weight": "bolder",
+          "spacing": "None"
+        }
+      ],
+      "spacing": "Medium",
+      "$data": "${$root.configuration}",
+      "$when": "${$root.hasConfiguration}",
+      "horizontalAlignment": "Left",
+      "bleed": true
+    },
+    {
+      "type": "ColumnSet",
+      "spacing": "Medium",
+      "columns": [
+        {
+          "type": "Column",
+          "width": "stretch"
+        },
+        {
+          "type": "Column",
+          "width": "auto",
+          "items": [
+            {
+              "type": "Container",
+              "items": [
+                {
+                  "type": "ActionSet",
+                  "actions": [
+                    {
+                      "type": "Action.Execute",
+                      "title": "%Widget_Template_Button/Save%",
+                      "verb": "Save",
+                      "tooltip": "%Widget_Template_Tooltip/Save%",
+                      "isEnabled": "${$root.saveEnabled}"
+                    },
+                    {
+                      "type": "Action.Execute",
+                      "title": "%Widget_Template_Button/Cancel%",
+                      "verb": "Cancel",
+                      "tooltip": "%Widget_Template_Tooltip/Cancel%",
+                      "isEnabled": "${$root.savedRepositoryUrl != \"\"}"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "Column",
+          "width": "stretch"
+        }
+      ]
+    }
+  ]
+}

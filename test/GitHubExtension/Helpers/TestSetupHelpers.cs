@@ -10,7 +10,7 @@ namespace GitHubExtension.Test;
 public partial class TestHelpers
 {
     private const string DataBaseFileName = "GitHubExtension-Test.db";
-    private const string LogFileName = "GitHubExtension-{now}.log";
+    private const string LogFileName = "GitHubExtension-{now}.dhlog";
 
     public static void CleanupTempTestOptions(TestOptions options, TestContext context)
     {

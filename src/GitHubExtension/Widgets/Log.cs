@@ -4,7 +4,7 @@
 using DevHome.Logging;
 using Windows.Storage;
 
-namespace GitHubExtension.Providers;
+namespace GitHubExtension.Widgets;
 
 public class Log
 {
@@ -14,7 +14,7 @@ public class Log
     {
         try
         {
-            _logger ??= new Logger("GitHubExtension", GetLoggingOptions());
+            _logger ??= new Logger("Widgets", GetLoggingOptions());
         }
         catch
         {
@@ -29,8 +29,8 @@ public class Log
         return new Options
         {
             LogFileFolderRoot = ApplicationData.Current.TemporaryFolder.Path,
-            LogFileName = "GitHubExtension_{now}.log",
-            LogFileFolderName = "GitHubExtension",
+            LogFileName = "Widgets_{now}.dhlog",
+            LogFileFolderName = "Widgets",
             DebugListenerEnabled = true,
 #if DEBUG
             LogStdoutEnabled = true,

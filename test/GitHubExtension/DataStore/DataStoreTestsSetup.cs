@@ -12,7 +12,7 @@ public partial class DataStoreTests
         set;
     }
 
-    private TestOptions testOptions = new ();
+    private TestOptions testOptions = new();
 
     private TestOptions TestOptions
     {

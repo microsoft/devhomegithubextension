@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft Corporation.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Text;
@@ -34,7 +34,7 @@ public abstract class GitHubWidget : WidgetImpl
 
     protected bool Saved { get; set; }
 
-    protected Dictionary<WidgetPageState, string> Template { get; set; } = new ();
+    protected Dictionary<WidgetPageState, string> Template { get; set; } = new();
 
     protected string ConfigurationData
     {
@@ -231,7 +231,7 @@ public abstract class GitHubWidget : WidgetImpl
 
     public void UpdateWidget()
     {
-        WidgetUpdateRequestOptions updateOptions = new (Id)
+        WidgetUpdateRequestOptions updateOptions = new(Id)
         {
             Data = GetData(Page),
             Template = GetTemplateForPage(Page),

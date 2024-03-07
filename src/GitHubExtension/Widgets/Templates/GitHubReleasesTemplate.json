@@ -1,0 +1,163 @@
+{
+  "type": "AdaptiveCard",
+  "body": [
+    {
+      "type": "ColumnSet",
+      "columns": [
+        {
+          "type": "Column",
+          "width": "auto",
+          "verticalContentAlignment": "center",
+          "items": [
+            {
+              "type": "Image",
+              "url": "data:image/png;base64,${releases_icon_data}",
+              "size": "large",
+              "horizontalAlignment": "left"
+            }
+          ]
+        },
+        {
+          "type": "Column",
+          "width": "stretch",
+          "verticalContentAlignment": "Center",
+          "items": [
+            {
+              "type": "TextBlock",
+              "text": "${selected_repo}",
+              "size": "large",
+              "style": "heading",
+              "wrap": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "Container",
+      "$when": "${(count(releases) == 0)}",
+      "items": [
+        {
+          "type": "TextBlock",
+          "text": "${if(is_loading_data, '%Widget_Template/ContentLoading%', '%Widget_Template/EmptyReleases%')}",
+          "wrap": true,
+          "weight": "bolder",
+          "horizontalAlignment": "center"
+        }
+      ],
+      "spacing": "medium",
+      "verticalContentAlignment": "center"
+    },
+    {
+      "type": "Container",
+      "spacing": "default",
+      "items": [
+        {
+          "$data": "${releases}",
+          "type": "ColumnSet",
+          "style": "emphasis",
+          "spacing": "default",
+          "selectAction": {
+            "type": "Action.OpenUrl",
+            "url": "${url}",
+            "tooltip": "%Widget_Template_Tooltip/OpenRelease%"
+          },
+          "columns": [
+            {
+              "type": "Column",
+              "width": "12px",
+              "items": [
+                {
+                  "type": "Image",
+                  "style": "Person",
+                  "url": "data:image/png;base64,${icon}",
+                  "size": "small"
+                }
+              ]
+            },
+            {
+              "type": "Column",
+              "width": "stretch",
+              "items": [
+                {
+                  "type": "TextBlock",
+                  "size": "medium",
+                  "weight": "bolder",
+                  "text": "${name}",
+                  "wrap": true,
+                  "maxLines": 2
+                },
+                {
+                  "type": "TextBlock",
+                  "text": "${tag}",
+                  "isSubtle": true,
+                  "size": "small",
+                  "spacing": "None",
+                  "weight": "bolder"
+                },
+                {
+                  "type": "ColumnSet",
+                  "wrap": true,
+                  "spacing": "small",
+                  "columns": [
+                    {
+                      "type": "Column",
+                      "width": "auto",
+                      "verticalContentAlignment": "center",
+                      "items": [
+                        {
+                          "type": "TextBlock",
+                          "size": "small",
+                          "text": "%Widget_Template/Published% ${published}",
+                          "isSubtle": true,
+                          "spacing": "small",
+                          "wrap": true
+                        }
+                      ]
+                    },
+                    {
+                      "type": "Column",
+                      "width": "auto",
+                      "verticalContentAlignment": "center",
+                      "items": [
+                        {
+                          "type": "TextBlock",
+                          "$when": "${infoText != ''}",
+                          "size": "small",
+                          "text": "·",
+                          "isSubtle": true,
+                          "spacing": "small",
+                          "wrap": true
+                        }
+                      ]
+                    },
+                    {
+                      "type": "Column",
+                      "width": "auto",
+                      "verticalContentAlignment": "center",
+                      "items": [
+                        {
+                          "type": "TextBlock",
+                          "$when": "${infoText != ''}",
+                          "weight": "bolder",
+                          "size": "small",
+                          "text": "${infoText}",
+                          "isSubtle": true,
+                          "spacing": "small",
+                          "wrap": true,
+                          "color": "${infoColor}"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+  "version": "1.5"
+}
