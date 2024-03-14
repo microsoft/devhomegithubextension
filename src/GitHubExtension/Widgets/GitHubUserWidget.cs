@@ -57,6 +57,17 @@ internal abstract class GitHubUserWidget : GitHubWidget
         UpdateActivityState();
     }
 
+    protected void UpdateTitle(JsonNode dataObj)
+    {
+        GetTitleFromDataObject(dataObj);
+        if (WidgetTitle == string.Empty)
+        {
+            WidgetTitle = UserName;
+        }
+
+        Log.Logger()?.ReportInfo("Depois do update = " + WidgetTitle);
+    }
+
     protected override void ResetWidgetInfoFromState()
     {
         JsonNode? dataObject = null;
@@ -110,6 +121,7 @@ internal abstract class GitHubUserWidget : GitHubWidget
             dataObject ??= JsonNode.Parse(ConfigurationData);
             ShowCategory = EnumHelper.StringToSearchCategory(dataObject!["showCategory"]?.GetValue<string>() ?? string.Empty);
             DeveloperLoginId = dataObject!["account"]?.GetValue<string>() ?? string.Empty;
+            UpdateTitle(dataObject);
         }
         catch (Exception e)
         {
@@ -141,6 +153,7 @@ internal abstract class GitHubUserWidget : GitHubWidget
 
             ShowCategory = EnumHelper.StringToSearchCategory(dataObject["showCategory"]?.GetValue<string>() ?? string.Empty);
             DeveloperLoginId = dataObject["account"]?.GetValue<string>() ?? string.Empty;
+            UpdateTitle(dataObject);
 
             ConfigurationData = data;
 
@@ -240,6 +253,7 @@ internal abstract class GitHubUserWidget : GitHubWidget
             { "openCount", 0 },
             { "items", new JsonArray() },
             { "userName", UserName },
+            { "widgetTitle", WidgetTitle },
             { "titleIconUrl", GetTitleIconData() },
             { "is_loading_data", true },
         };
@@ -292,6 +306,7 @@ internal abstract class GitHubUserWidget : GitHubWidget
             issuesData.Add("items", issuesArray);
             issuesData.Add("userName", UserName);
             issuesData.Add("titleIconUrl", GetTitleIconData());
+            issuesData.Add("widgetTitle", WidgetTitle);
 
             LastUpdated = DateTime.Now;
             ContentData = issuesData.ToJsonString();
@@ -353,6 +368,7 @@ internal abstract class GitHubUserWidget : GitHubWidget
             { "showCategory", EnumHelper.SearchCategoryToString(ShowCategory == SearchCategory.Unknown ? SearchCategory.IssuesAndPullRequests : ShowCategory) },
             { "savedShowCategory", SavedConfigurationData },
             { "configuring", true },
+            { "widgetTitle", WidgetTitle },
         };
 
         if (!string.IsNullOrEmpty(DeveloperLoginId))

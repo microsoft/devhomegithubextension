@@ -45,6 +45,8 @@ public abstract class GitHubWidget : WidgetImpl
 
     protected string SavedConfigurationData { get; set; } = string.Empty;
 
+    protected string WidgetTitle { get; set; } = string.Empty;
+
     protected DateTime LastUpdated { get; set; } = DateTime.MinValue;
 
     protected DataUpdater DataUpdater { get; set; }
@@ -163,6 +165,12 @@ public abstract class GitHubWidget : WidgetImpl
         SavedConfigurationData = ConfigurationData;
         Saved = false;
         SetConfigure();
+    }
+
+    protected void GetTitleFromDataObject(JsonNode dataObj)
+    {
+        WidgetTitle = dataObj!["widgetTitle"]?.GetValue<string>() ?? string.Empty;
+        Log.Logger()?.ReportInfo("Widget Title = " + WidgetTitle);
     }
 
     private async Task HandleSignIn()
