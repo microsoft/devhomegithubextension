@@ -124,6 +124,7 @@ internal class GitHubReleasesWidget : GitHubRepositoryWidget
 
             releasesData.Add("releases", releasesArray);
             releasesData.Add("selected_repo", repository?.FullName ?? string.Empty);
+            releasesData.Add("widgetTitle", WidgetTitle);
             releasesData.Add("is_loading_data", DataState == WidgetDataState.Unknown);
             releasesData.Add("releases_icon_data", _releasesIconData);
 

@@ -19,6 +19,13 @@
       "value": "${$root.configuration.url}"
     },
     {
+      "type": "Input.Text",
+      "placeholder": "%Widget_Template/WidgetTitlePlaceholder%",
+      "id": "widgetTitle",
+      "label": "%Widget_Template/WidgetTitleLabel%",
+      "value": "${widgetTitle}"
+    },
+    {
       "type": "Container",
       "items": [
         {
@@ -85,13 +92,6 @@
       "$when": "${$root.hasConfiguration}",
       "horizontalAlignment": "Left",
       "bleed": true
-    },
-    {
-      "type": "Input.Text",
-      "placeholder": "%Widget_Template/WidgetTitlePlaceholder%",
-      "id": "widgetTitle",
-      "label": "%Widget_Template/WidgetTitleLabel%",
-      "value": "${widgetTitle}"
     },
     {
       "type": "ColumnSet",
