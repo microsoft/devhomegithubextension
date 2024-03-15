@@ -105,6 +105,8 @@ public static class Resources
             "Widget_Template/ChooseAccountPlaceholder",
             "Widget_Template/Published",
             "Widget_Template_Tooltip/OpenRelease",
+            "Widget_Template/WidgetTitleLabel",
+            "Widget_Template/WidgetTitlePlaceholder",
         };
     }
 }
