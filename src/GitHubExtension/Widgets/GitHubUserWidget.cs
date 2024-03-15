@@ -64,8 +64,6 @@ internal abstract class GitHubUserWidget : GitHubWidget
         {
             WidgetTitle = UserName;
         }
-
-        Log.Logger()?.ReportInfo("Depois do update = " + WidgetTitle);
     }
 
     protected override void ResetWidgetInfoFromState()

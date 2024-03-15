@@ -170,7 +170,6 @@ public abstract class GitHubWidget : WidgetImpl
     protected void GetTitleFromDataObject(JsonNode dataObj)
     {
         WidgetTitle = dataObj!["widgetTitle"]?.GetValue<string>() ?? string.Empty;
-        Log.Logger()?.ReportInfo("Widget Title = " + WidgetTitle);
     }
 
     private async Task HandleSignIn()
