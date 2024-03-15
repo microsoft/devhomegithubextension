@@ -59,6 +59,11 @@ public abstract class GitHubRepositoryWidget : GitHubWidget
                 HandleCheckUrl(actionInvokedArgs);
                 break;
 
+            case WidgetAction.Save:
+                UpdateTitle(JsonNode.Parse(actionInvokedArgs.Data));
+                base.OnActionInvoked(actionInvokedArgs);
+                break;
+
             default:
                 base.OnActionInvoked(actionInvokedArgs);
                 break;
@@ -117,8 +122,13 @@ public abstract class GitHubRepositoryWidget : GitHubWidget
         return repository;
     }
 
-    private void UpdateTitle(JsonNode dataObj)
+    private void UpdateTitle(JsonNode? dataObj)
     {
+        if (dataObj == null)
+        {
+            return;
+        }
+
         GetTitleFromDataObject(dataObj);
         if (WidgetTitle == string.Empty)
         {
