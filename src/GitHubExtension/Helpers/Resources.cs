@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft Corporation.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using DevHome.Logging;
@@ -60,6 +60,7 @@ public static class Resources
             "Widget_Template/EmptyAssigned",
             "Widget_Template/EmptyMentioned",
             "Widget_Template/EmptyReviews",
+            "Widget_Template/EmptyReleases",
             "Widget_Template/Pulls",
             "Widget_Template/Issues",
             "Widget_Template/Opened",
@@ -102,6 +103,8 @@ public static class Resources
             "Widget_Template_Tooltip/Save",
             "Widget_Template_Tooltip/Cancel",
             "Widget_Template/ChooseAccountPlaceholder",
+            "Widget_Template/Published",
+            "Widget_Template_Tooltip/OpenRelease",
         };
     }
 }

@@ -19,6 +19,7 @@ public sealed class WidgetProvider : IWidgetProvider, IWidgetProvider2
         widgetDefinitionRegistry.Add("GitHub_MentionedIns", new WidgetImplFactory<GitHubMentionedInWidget>());
         widgetDefinitionRegistry.Add("GitHub_Assigneds", new WidgetImplFactory<GitHubAssignedWidget>());
         widgetDefinitionRegistry.Add("GitHub_Reviews", new WidgetImplFactory<GitHubReviewWidget>());
+        widgetDefinitionRegistry.Add("GitHub_Releases", new WidgetImplFactory<GitHubReleasesWidget>());
         RecoverRunningWidgets();
     }
 
@@ -27,8 +28,8 @@ public sealed class WidgetProvider : IWidgetProvider, IWidgetProvider2
         Log.Logger()?.Dispose();
     }
 
-    private readonly Dictionary<string, IWidgetImplFactory> widgetDefinitionRegistry = new ();
-    private readonly Dictionary<string, WidgetImpl> runningWidgets = new ();
+    private readonly Dictionary<string, IWidgetImplFactory> widgetDefinitionRegistry = new();
+    private readonly Dictionary<string, WidgetImpl> runningWidgets = new();
 
     private void InitializeWidget(WidgetContext widgetContext, string state)
     {

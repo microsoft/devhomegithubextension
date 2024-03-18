@@ -65,6 +65,58 @@ public abstract class GitHubRepositoryWidget : GitHubWidget
         }
     }
 
+    protected Octokit.Repository GetRepositoryFromUrl(string url)
+    {
+        var ownerName = Validation.ParseOwnerFromGitHubURL(url);
+        var repositoryName = Validation.ParseRepositoryFromGitHubURL(url);
+        var devIds = DeveloperId.DeveloperIdProvider.GetInstance().GetLoggedInDeveloperIdsInternal();
+        var found = false;
+        Octokit.Repository? repository = null;
+
+        // We only need to get the information from one account which has access.
+        foreach (var devId in devIds)
+        {
+            try
+            {
+                repository = devId.GitHubClient.Repository.Get(ownerName, repositoryName).Result;
+                found = true;
+                break;
+            }
+            catch (Exception ex) when (ex.InnerException is not null && ex.InnerException is Octokit.ApiException)
+            {
+                switch (ex.InnerException)
+                {
+                    case Octokit.NotFoundException:
+                        // A private repository will come back as "not found" by the GitHub API when an unauthorized account cannot even view it.
+                        Log.Logger()?.ReportDebug(Name, $"DeveloperId {devId.LoginId} did not find {ownerName}/{repositoryName}");
+                        continue;
+
+                    case Octokit.RateLimitExceededException:
+                        Log.Logger()?.ReportDebug(Name, $"DeveloperId {devId.LoginId} rate limit exceeded.");
+                        throw ex.InnerException;
+
+                    case Octokit.ForbiddenException:
+                        // This can happen most commonly with SAML-enabled organizations.
+                        // The user may have access but the org blocked the application.
+                        Log.Logger()?.ReportDebug(Name, $"DeveloperId {devId.LoginId} was forbidden access to {ownerName}/{repositoryName}");
+                        throw ex.InnerException;
+
+                    default:
+                        // If it's some other error like abuse detection, abort and do not continue.
+                        Log.Logger()?.ReportDebug(Name, $"Unhandled Octokit API error for {devId.LoginId} and {ownerName}/{repositoryName}");
+                        throw ex.InnerException;
+                }
+            }
+        }
+
+        if (!found || repository is null)
+        {
+            throw new RepositoryNotFoundException($"The repository {ownerName}/{repositoryName} could not be accessed by any available developer accounts.");
+        }
+
+        return repository;
+    }
+
     protected override void ResetWidgetInfoFromState()
     {
         JsonNode? dataObject = null;
@@ -176,14 +228,7 @@ public abstract class GitHubRepositoryWidget : GitHubWidget
         {
             try
             {
-                // Get client for logged in user.
-                var client = GitHubClientProvider.Instance.GetClientForLoggedInDeveloper(true).Result ?? throw new InvalidOperationException("Failed getting GitHubClient.");
-
-                // Get repository for the URL, which is "data" in this case.
-                var ownerName = Validation.ParseOwnerFromGitHubURL(dataUrl);
-                var repositoryName = Validation.ParseRepositoryFromGitHubURL(dataUrl);
-                var repository = client.Repository.Get(ownerName, repositoryName).Result;
-
+                var repository = GetRepositoryFromUrl(dataUrl);
                 var repositoryData = new JsonObject
                 {
                     { "name", repository.FullName },

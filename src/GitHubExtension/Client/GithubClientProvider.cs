@@ -12,7 +12,7 @@ public class GitHubClientProvider
 {
     private readonly GitHubClient publicRepoClient;
 
-    private static readonly object InstanceLock = new ();
+    private static readonly object InstanceLock = new();
 
     private static GitHubClientProvider? _instance;
 

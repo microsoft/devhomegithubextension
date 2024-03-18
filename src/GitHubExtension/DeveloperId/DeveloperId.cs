@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft Corporation.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using Microsoft.Windows.DevHome.SDK;
@@ -26,7 +26,7 @@ public class DeveloperId : IDeveloperId
         DisplayName = string.Empty;
         Email = string.Empty;
         Url = string.Empty;
-        GitHubClient = new (new ProductHeaderValue(Constants.DEV_HOME_APPLICATION_NAME));
+        GitHubClient = new(new ProductHeaderValue(Constants.DEV_HOME_APPLICATION_NAME));
     }
 
     public DeveloperId(string loginId, string displayName, string email, string url, GitHubClient gitHubClient)
@@ -65,7 +65,7 @@ public class DeveloperId : IDeveloperId
         CredentialExpiryTime = DateTime.MaxValue;
         DeveloperIdProvider.GetInstance().RefreshDeveloperId(this);
         var credential = DeveloperIdProvider.GetInstance().GetCredentials(this) ?? throw new InvalidOperationException("Invalid credential present for valid DeveloperId");
-        GitHubClient.Credentials = new (credential.Password);
+        GitHubClient.Credentials = new(credential.Password);
         return credential;
     }
 

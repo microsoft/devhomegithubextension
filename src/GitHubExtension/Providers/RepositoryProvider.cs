@@ -2,6 +2,7 @@
 // Licensed under the MIT License.
 
 using GitHubExtension.Client;
+using GitHubExtension.DataModel;
 using GitHubExtension.DeveloperId;
 using GitHubExtension.Helpers;
 using Microsoft.Windows.DevHome.SDK;
@@ -55,6 +56,19 @@ public class RepositoryProvider : IRepositoryProvider
         }).AsAsyncOperation();
     }
 
+    private Octokit.GitHubClient GetClient(IDeveloperId developerId)
+    {
+        if (developerId != null)
+        {
+            var loggedInDeveloperId = DeveloperId.DeveloperIdProvider.GetInstance().GetDeveloperIdInternal(developerId);
+            return loggedInDeveloperId.GitHubClient;
+        }
+        else
+        {
+            return GitHubClientProvider.Instance.GetClient();
+        }
+    }
+
     IAsyncOperation<RepositoriesResult> IRepositoryProvider.GetRepositoriesAsync(IDeveloperId developerId)
     {
         return Task.Run(async () =>
@@ -64,14 +78,15 @@ public class RepositoryProvider : IRepositoryProvider
             var repositoryList = new List<IRepository>();
             try
             {
-                ApiOptions apiOptions = new ()
+                ApiOptions apiOptions = new()
                 {
-                    PageSize = 50,
+                    PageSize = 100,
                     PageCount = 1,
                 };
 
                 // Authenticate as the specified developer Id.
-                var client = DeveloperIdProvider.GetInstance().GetDeveloperIdInternal(developerId).GitHubClient;
+                var client = GetClient(developerId);
+
                 var request = new RepositoryRequest
                 {
                     Sort = RepositorySort.Updated,
@@ -93,12 +108,17 @@ public class RepositoryProvider : IRepositoryProvider
                 var getAllOrgReposTask = client.Repository.GetAllForCurrent(request, apiOptions);
 
                 var publicRepos = await getPublicReposTask;
+                publicRepos = publicRepos.OrderByDescending(x => x.UpdatedAt).ToList();
+
                 var privateRepos = await getPrivateReposTask;
+                privateRepos = privateRepos.OrderByDescending(x => x.UpdatedAt).ToList();
+
                 var orgRepos = await getAllOrgReposTask;
+                orgRepos = orgRepos.OrderByDescending(x => x.UpdatedAt).ToList();
 
                 var allRepos = publicRepos.Union(privateRepos).Union(orgRepos);
 
-                foreach (var repository in allRepos.OrderByDescending(x => x.UpdatedAt))
+                foreach (var repository in allRepos)
                 {
                     repositoryList.Add(new DevHomeRepository(repository));
                 }
