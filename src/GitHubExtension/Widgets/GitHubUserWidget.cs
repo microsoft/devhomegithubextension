@@ -60,7 +60,7 @@ internal abstract class GitHubUserWidget : GitHubWidget
     protected void UpdateTitle(JsonNode dataObj)
     {
         GetTitleFromDataObject(dataObj);
-        if (WidgetTitle == string.Empty)
+        if (string.IsNullOrEmpty(WidgetTitle))
         {
             WidgetTitle = UserName;
         }
