@@ -1,14 +1,14 @@
 ﻿// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-using DevHome.Logging;
 using Jeffijoe.MessageFormat;
+using Serilog;
 
 namespace GitHubExtension.Helpers;
 
 internal class TimeSpanHelper
 {
-    public static string TimeSpanToDisplayString(TimeSpan timeSpan, Logger? log = null)
+    public static string TimeSpanToDisplayString(TimeSpan timeSpan, ILogger? log = null)
     {
         if (timeSpan.TotalSeconds < 1)
         {
@@ -33,7 +33,7 @@ internal class TimeSpanHelper
         return MessageFormatter.Format(Resources.GetResource("WidgetTemplate_DaysAgo", log), new { days = timeSpan.Days });
     }
 
-    internal static string DateTimeOffsetToDisplayString(DateTimeOffset? dateTime, Logger? log)
+    internal static string DateTimeOffsetToDisplayString(DateTimeOffset? dateTime, ILogger? log)
     {
         if (dateTime == null)
         {

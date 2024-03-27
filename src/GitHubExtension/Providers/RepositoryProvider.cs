@@ -2,11 +2,10 @@
 // Licensed under the MIT License.
 
 using GitHubExtension.Client;
-using GitHubExtension.DataModel;
-using GitHubExtension.DeveloperId;
 using GitHubExtension.Helpers;
 using Microsoft.Windows.DevHome.SDK;
 using Octokit;
+using Serilog;
 using Windows.Foundation;
 using Windows.Storage.Streams;
 
@@ -14,6 +13,10 @@ namespace GitHubExtension.Providers;
 
 public class RepositoryProvider : IRepositoryProvider
 {
+    private static readonly Lazy<ILogger> _log = new(() => Serilog.Log.ForContext("SourceContext", nameof(RepositoryProvider)));
+
+    private static readonly ILogger Log = _log.Value;
+
     public string DisplayName => Resources.GetResource(@"RepositoryProviderDisplayName");
 
     public IRandomAccessStreamReference Icon
@@ -126,7 +129,7 @@ public class RepositoryProvider : IRepositoryProvider
             catch (Exception ex)
             {
                 // Any failures should be thrown so the core app can catch the failures.
-                Providers.Log.Logger()?.ReportError("RepositoryProvider", "Failed getting list of repositories.", ex);
+                Log.Error("Failed getting list of repositories.", ex);
                 return new RepositoriesResult(ex, $"Something went wrong.  HResult: {ex.HResult}");
             }
 
@@ -174,25 +177,25 @@ public class RepositoryProvider : IRepositoryProvider
                 var innerException = e.InnerException;
                 if (innerException is Octokit.NotFoundException)
                 {
-                    Log.Logger()?.ReportError($"Can't find {owner}/{repoName}");
+                    Log.Error($"Can't find {owner}/{repoName}");
                     return new RepositoryResult(innerException, $"Can't find {owner}/{repoName}. HResult: {innerException.HResult}");
                 }
 
                 if (innerException is Octokit.ForbiddenException)
                 {
-                    Log.Logger()?.ReportError($"Forbidden access to {owner}/{repoName}");
+                    Log.Error($"Forbidden access to {owner}/{repoName}");
                     return new RepositoryResult(innerException, $"Forbidden access to {owner}/{repoName}. HResult: {innerException.HResult}");
                 }
 
                 if (innerException is Octokit.RateLimitExceededException)
                 {
-                    Log.Logger()?.ReportError("Rate limit exceeded.", e);
+                    Log.Error("Rate limit exceeded.", e);
                     return new RepositoryResult(innerException, $"Rate limit exceeded. HResult: {innerException.HResult}");
                 }
             }
             catch (Exception e)
             {
-                Log.Logger()?.ReportError("Unspecified error.", e);
+                Log.Error("Unspecified error.", e);
                 return new RepositoryResult(e, $"Unspecified error when cloning a repo. HResult: {e.HResult}");
             }
 
@@ -236,7 +239,7 @@ public class RepositoryProvider : IRepositoryProvider
                 }
                 catch (Exception e)
                 {
-                    Log.Logger()?.ReportError("DevHomeRepository", "Could not get credentials.", e);
+                    Log.Error("Could not get credentials.", e);
                     return new ProviderOperationResult(ProviderOperationStatus.Failure, e, "Could not get credentials.", e.Message);
                 }
             }
@@ -248,27 +251,27 @@ public class RepositoryProvider : IRepositoryProvider
             }
             catch (LibGit2Sharp.RecurseSubmodulesException recurseException)
             {
-                Providers.Log.Logger()?.ReportError("DevHomeRepository", "Could not clone all submodules.", recurseException);
+                Log.Error("Could not clone all submodules.", recurseException);
                 return new ProviderOperationResult(ProviderOperationStatus.Failure, recurseException, "Could not clone all submodules.", recurseException.Message);
             }
             catch (LibGit2Sharp.UserCancelledException userCancelledException)
             {
-                Providers.Log.Logger()?.ReportError("DevHomeRepository", "The user stopped the clone operation.", userCancelledException);
+                Log.Error("The user stopped the clone operation.", userCancelledException);
                 return new ProviderOperationResult(ProviderOperationStatus.Failure, userCancelledException, "User cancelled the clone operation.", userCancelledException.Message);
             }
             catch (LibGit2Sharp.NameConflictException nameConflictException)
             {
-                Providers.Log.Logger()?.ReportError("DevHomeRepository", nameConflictException);
+                Log.Error("Name conflict", nameConflictException);
                 return new ProviderOperationResult(ProviderOperationStatus.Failure, nameConflictException, "The destination location is non-empty.", nameConflictException.Message);
             }
             catch (LibGit2Sharp.LibGit2SharpException libGitTwoException)
             {
-                Providers.Log.Logger()?.ReportError("DevHomeRepository", $"Either no logged in account has access to this repository, or the repository can't be found.", libGitTwoException);
+                Log.Error($"Either no logged in account has access to this repository, or the repository can't be found.", libGitTwoException);
                 return new ProviderOperationResult(ProviderOperationStatus.Failure, libGitTwoException, "LibGit2 library threw an exception.", "LibGit2 library threw an exception.");
             }
             catch (Exception e)
             {
-                Providers.Log.Logger()?.ReportError("DevHomeRepository", "Could not clone the repository.", e);
+                Log.Error("Could not clone the repository.", e);
                 return new ProviderOperationResult(ProviderOperationStatus.Failure, e, "Something happened when cloning the repository.", "Something happened when cloning the repository.");
             }
 

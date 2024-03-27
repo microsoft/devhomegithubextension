@@ -3,9 +3,9 @@
 
 using GitHubExtension.Client;
 using GitHubExtension.DataManager;
-using GitHubExtension.DataModel;
 using Microsoft.Windows.DevHome.SDK;
 using Octokit;
+using Serilog;
 
 namespace GitHubExtension;
 
@@ -13,6 +13,10 @@ public delegate void SearchManagerResultsAvailableEventHandler(IEnumerable<Octok
 
 public partial class GitHubSearchManager : IGitHubSearchManager, IDisposable
 {
+    private static readonly Lazy<ILogger> _log = new(() => Serilog.Log.ForContext("SourceContext", nameof(GitHubSearchManager)));
+
+    private static readonly ILogger Log = _log.Value;
+
     private static readonly string Name = nameof(GitHubSearchManager);
 
     public static event SearchManagerResultsAvailableEventHandler? OnResultsAvailable;
@@ -29,7 +33,7 @@ public partial class GitHubSearchManager : IGitHubSearchManager, IDisposable
         }
         catch (Exception e)
         {
-            Log.Logger()?.ReportError(Name, "Failed creating GitHubSearchManager", e);
+            Log.Error(Name, "Failed creating GitHubSearchManager", e);
             Environment.FailFast(e.Message, e);
             return null;
         }
@@ -51,7 +55,7 @@ public partial class GitHubSearchManager : IGitHubSearchManager, IDisposable
 
     private async Task SearchForGitHubIssuesOrPRs(Octokit.SearchIssuesRequest request, string initiator, SearchCategory category, GitHubClient client, RequestOptions? options = null)
     {
-        Log.Logger()?.ReportInfo(Name, $"Searching for issues or pull requests for widget {initiator}");
+        Log.Information(Name, $"Searching for issues or pull requests for widget {initiator}");
         request.State = Octokit.ItemState.Open;
         request.Archived = false;
         request.PerPage = 10;
@@ -72,12 +76,12 @@ public partial class GitHubSearchManager : IGitHubSearchManager, IDisposable
         var octokitResult = await client.Search.SearchIssues(request);
         if (octokitResult == null)
         {
-            Log.Logger()?.ReportDebug($"No issues or PRs found.");
+            Log.Debug($"No issues or PRs found.");
             SendResultsAvailable(new List<Octokit.Issue>(), initiator);
         }
         else
         {
-            Log.Logger()?.ReportDebug(Name, $"Results contain {octokitResult.Items.Count} items.");
+            Log.Debug($"Results contain {octokitResult.Items.Count} items.");
             SendResultsAvailable(octokitResult.Items, initiator);
         }
     }
@@ -86,7 +90,7 @@ public partial class GitHubSearchManager : IGitHubSearchManager, IDisposable
     {
         if (OnResultsAvailable != null)
         {
-            Log.Logger()?.ReportInfo(Name, $"Sending search results available Event, of type: {initiator}");
+            Log.Information(Name, $"Sending search results available Event, of type: {initiator}");
             OnResultsAvailable.Invoke(results, initiator);
         }
     }

@@ -4,12 +4,17 @@
 using Dapper;
 using Dapper.Contrib.Extensions;
 using GitHubExtension.Helpers;
+using Serilog;
 
 namespace GitHubExtension.DataModel;
 
 [Table("Review")]
 public class Review
 {
+    private static readonly Lazy<ILogger> _log = new(() => Serilog.Log.ForContext("SourceContext", $"DataModel/{nameof(Review)}"));
+
+    private static readonly ILogger Log = _log.Value;
+
     [Key]
     public long Id { get; set; } = DataStore.NoForeignKey;
 
@@ -172,7 +177,7 @@ public class Review
             PullRequestId = pullRequest.Id,
         };
 
-        Log.Logger()?.ReportDebug(DataStore.GetSqlLogMessage(sql, param));
+        Log.Verbose(DataStore.GetSqlLogMessage(sql, param));
         var reviews = dataStore.Connection!.Query<Review>(sql, param, null) ?? Enumerable.Empty<Review>();
         foreach (var review in reviews)
         {
@@ -190,7 +195,7 @@ public class Review
             AuthorId = user.Id,
         };
 
-        Log.Logger()?.ReportDebug(DataStore.GetSqlLogMessage(sql, param));
+        Log.Verbose(DataStore.GetSqlLogMessage(sql, param));
         var reviews = dataStore.Connection!.Query<Review>(sql, param, null) ?? Enumerable.Empty<Review>();
         foreach (var review in reviews)
         {
@@ -206,8 +211,8 @@ public class Review
         var sql = @"DELETE FROM Review WHERE PullRequestId NOT IN (SELECT Id FROM PullRequest)";
         var command = dataStore.Connection!.CreateCommand();
         command.CommandText = sql;
-        Log.Logger()?.ReportDebug(DataStore.GetCommandLogMessage(sql, command));
+        Log.Verbose(DataStore.GetCommandLogMessage(sql, command));
         var rowsDeleted = command.ExecuteNonQuery();
-        Log.Logger()?.ReportDebug(DataStore.GetDeletedLogMessage(rowsDeleted));
+        Log.Verbose(DataStore.GetDeletedLogMessage(rowsDeleted));
     }
 }

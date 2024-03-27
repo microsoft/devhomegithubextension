@@ -9,27 +9,14 @@ public partial class DataStoreTests
     [TestCategory("Unit")]
     public void DataManagerCreate()
     {
-        using var log = new DevHome.Logging.Logger("TestStore", TestOptions.LogOptions);
-        var testListener = new TestListener("TestListener", TestContext!);
-        log.AddListener(testListener);
-        DataModel.Log.Attach(log);
-
         using var dataManager = GitHubDataManager.CreateInstance(TestOptions.DataStoreOptions);
         Assert.IsNotNull(dataManager);
-
-        testListener.PrintEventCounts();
-        Assert.AreEqual(false, testListener.FoundErrors());
     }
 
     [TestMethod]
     [TestCategory("Unit")]
     public void DataManagerGetRepositories()
     {
-        using var log = new DevHome.Logging.Logger("TestStore", TestOptions.LogOptions);
-        var testListener = new TestListener("TestListener", TestContext!);
-        log.AddListener(testListener);
-        DataModel.Log.Attach(log);
-
         using var dataManager = GitHubDataManager.CreateInstance(TestOptions.DataStoreOptions);
         Assert.IsNotNull(dataManager);
 
@@ -41,21 +28,12 @@ public partial class DataStoreTests
 
         noSuchRepo = dataManager.GetRepository("foo", "bar");
         Assert.IsNull(noSuchRepo);
-
-        testListener.PrintEventCounts();
-        Assert.AreEqual(false, testListener.FoundErrors());
     }
 
     [TestMethod]
     [TestCategory("LiveData")]
     public async Task DataManagerUpdateRepository()
     {
-        using var log = new DevHome.Logging.Logger("TestStore", TestOptions.LogOptions);
-        var testListener = new TestListener("TestListener", TestContext!);
-        log.AddListener(testListener);
-        DataModel.Log.Attach(log);
-        DeveloperId.Log.Attach(log);
-
         using var dataManager = GitHubDataManager.CreateInstance(TestOptions.DataStoreOptions);
         Assert.IsNotNull(dataManager);
 
@@ -72,22 +50,12 @@ public partial class DataStoreTests
         };
 
         await dataManager.UpdateAllDataForRepositoryAsync("microsoft/windowsappsdk", requestOptions);
-
-        // Add Update Data test
-        testListener.PrintEventCounts();
-        Assert.AreEqual(false, testListener.FoundErrors());
     }
 
     [TestMethod]
     [TestCategory("LiveData")]
     public async Task DataManagerUpdatePullRequests()
     {
-        using var log = new DevHome.Logging.Logger("TestStore", TestOptions.LogOptions);
-        var testListener = new TestListener("TestListener", TestContext!);
-        log.AddListener(testListener);
-        DataModel.Log.Attach(log);
-        DeveloperId.Log.Attach(log);
-
         using var dataManager = GitHubDataManager.CreateInstance(TestOptions.DataStoreOptions);
         Assert.IsNotNull(dataManager);
 
@@ -105,21 +73,12 @@ public partial class DataStoreTests
 
         await dataManager.UpdatePullRequestsForRepositoryAsync("octokit/octokit.net", requestOptions);
         await dataManager.UpdatePullRequestsForRepositoryAsync("microsoft/powertoys", requestOptions);
-
-        testListener.PrintEventCounts();
-        Assert.AreEqual(false, testListener.FoundErrors());
     }
 
     [TestMethod]
     [TestCategory("LiveData")]
     public async Task DataManagerUpdateIssues()
     {
-        using var log = new DevHome.Logging.Logger("TestStore", TestOptions.LogOptions);
-        var testListener = new TestListener("TestListener", TestContext!);
-        log.AddListener(testListener);
-        DataModel.Log.Attach(log);
-        DeveloperId.Log.Attach(log);
-
         using var dataManager = GitHubDataManager.CreateInstance(TestOptions.DataStoreOptions);
         Assert.IsNotNull(dataManager);
 
@@ -136,22 +95,12 @@ public partial class DataStoreTests
         };
 
         await dataManager.UpdateIssuesForRepositoryAsync("octokit/octokit.net", requestOptions);
-
-        // Add Update Data test
-        testListener.PrintEventCounts();
-        Assert.AreEqual(false, testListener.FoundErrors());
     }
 
     [TestMethod]
     [TestCategory("LiveData")]
     public async Task DataManagerUpdatePullRequestsForDeveloper()
     {
-        using var log = new DevHome.Logging.Logger("TestStore", TestOptions.LogOptions);
-        var testListener = new TestListener("TestListener", TestContext!);
-        log.AddListener(testListener);
-        DataModel.Log.Attach(log);
-        DeveloperId.Log.Attach(log);
-
         using var dataManager = GitHubDataManager.CreateInstance(TestOptions.DataStoreOptions);
         Assert.IsNotNull(dataManager);
 
@@ -166,21 +115,12 @@ public partial class DataStoreTests
         {
             TestContext?.WriteLine($"  User: {pull.Author.Login}  Repo: {pull.Repository.FullName} - {pull.Number} - {pull.Title}");
         }
-
-        // Add Update Data test
-        testListener.PrintEventCounts();
-        Assert.AreEqual(false, testListener.FoundErrors());
     }
 
     [TestMethod]
     [TestCategory("Unit")]
     public void DataUpdater()
     {
-        using var log = new DevHome.Logging.Logger("TestStore", TestOptions.LogOptions);
-        var testListener = new TestListener("TestListener", TestContext!);
-        log.AddListener(testListener);
-        DataModel.Log.Attach(log);
-
         var countingDoneEvent = new ManualResetEvent(false);
         var count = 0;
 #pragma warning disable CS1998 // Async method lacks 'await' operators and will run synchronously
@@ -219,20 +159,5 @@ public partial class DataStoreTests
         // This test can randomly fail based on timings in builds, so disabling this check to avoid
         // 1-off errors from tanking a build.
         // Assert.AreEqual(1, count);
-        testListener.PrintEventCounts();
-        Assert.AreEqual(false, testListener.FoundErrors());
-    }
-
-    [TestMethod]
-    [TestCategory("Manual")]
-    public void ShowNotificationToast()
-    {
-        using var log = new DevHome.Logging.Logger("TestStore", TestOptions.LogOptions);
-        var testListener = new TestListener("TestListener", TestContext!);
-        log.AddListener(testListener);
-        DataModel.Log.Attach(log);
-        DeveloperId.Log.Attach(log);
-        testListener.PrintEventCounts();
-        Assert.AreEqual(false, testListener.FoundErrors());
     }
 }
