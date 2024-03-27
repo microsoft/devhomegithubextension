@@ -154,6 +154,7 @@ internal class GitHubIssuesWidget : GitHubRepositoryWidget
 
             issuesData.Add("issues", issuesArray);
             issuesData.Add("selected_repo", repository?.FullName ?? string.Empty);
+            issuesData.Add("widgetTitle", WidgetTitle);
             issuesData.Add("is_loading_data", DataState == WidgetDataState.Unknown);
             issuesData.Add("issues_icon_data", issuesIconData);
 

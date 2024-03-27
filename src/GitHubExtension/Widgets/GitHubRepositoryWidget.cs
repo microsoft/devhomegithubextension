@@ -59,6 +59,11 @@ public abstract class GitHubRepositoryWidget : GitHubWidget
                 HandleCheckUrl(actionInvokedArgs);
                 break;
 
+            case WidgetAction.Save:
+                UpdateTitle(JsonNode.Parse(actionInvokedArgs.Data));
+                base.OnActionInvoked(actionInvokedArgs);
+                break;
+
             default:
                 base.OnActionInvoked(actionInvokedArgs);
                 break;
@@ -117,6 +122,20 @@ public abstract class GitHubRepositoryWidget : GitHubWidget
         return repository;
     }
 
+    private void UpdateTitle(JsonNode? dataObj)
+    {
+        if (dataObj == null)
+        {
+            return;
+        }
+
+        GetTitleFromDataObject(dataObj);
+        if (string.IsNullOrEmpty(WidgetTitle))
+        {
+            WidgetTitle = GetRepositoryFromUrl(RepositoryUrl).FullName;
+        }
+    }
+
     protected override void ResetWidgetInfoFromState()
     {
         JsonNode? dataObject = null;
@@ -159,6 +178,7 @@ public abstract class GitHubRepositoryWidget : GitHubWidget
         {
             dataObject ??= JsonNode.Parse(ConfigurationData);
             RepositoryUrl = dataObject!["url"]?.GetValue<string>() ?? string.Empty;
+            UpdateTitle(dataObject);
         }
         catch (Exception e)
         {
@@ -189,6 +209,7 @@ public abstract class GitHubRepositoryWidget : GitHubWidget
         if (dataObject != null && dataObject["url"] != null)
         {
             RepositoryUrl = dataObject["url"]?.GetValue<string>() ?? string.Empty;
+            UpdateTitle(dataObject);
 
             ConfigurationData = data;
 
@@ -208,6 +229,7 @@ public abstract class GitHubRepositoryWidget : GitHubWidget
         var configurationData = new JsonObject
         {
             { "submitIcon", IconLoader.GetIconAsBase64("arrow.png") },
+            { "widgetTitle", WidgetTitle },
         };
 
         if (dataUrl == string.Empty)

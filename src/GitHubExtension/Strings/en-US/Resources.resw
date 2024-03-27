@@ -533,4 +533,12 @@
     <value>There are no releases in this repository.</value>
     <comment>Shown in Widget, when there are no releases</comment>
   </data>
+  <data name="Widget_Template/WidgetTitleLabel" xml:space="preserve">
+    <value>Title (Optional)</value>
+    <comment>Shown in Widget, Label for title</comment>
+  </data>
+  <data name="Widget_Template/WidgetTitlePlaceholder" xml:space="preserve">
+    <value>Widget Title</value>
+    <comment>Shown in Widget, placeholder for title</comment>
+  </data>
 </root>
