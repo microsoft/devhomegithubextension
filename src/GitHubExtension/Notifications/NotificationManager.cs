@@ -2,11 +2,16 @@
 // Licensed under the MIT License.
 
 using Microsoft.Windows.AppNotifications;
+using Serilog;
 
 namespace GitHubExtension.Notifications;
 
 public class NotificationManager
 {
+    private static readonly Lazy<ILogger> _log = new(() => Serilog.Log.ForContext("SourceContext", nameof(NotificationManager)));
+
+    private static readonly ILogger Log = _log.Value;
+
     private bool isRegistered;
 
     public NotificationManager(Windows.Foundation.TypedEventHandler<AppNotificationManager, AppNotificationActivatedEventArgs> handler)
@@ -14,7 +19,7 @@ public class NotificationManager
         AppNotificationManager.Default.NotificationInvoked += handler;
         AppNotificationManager.Default.Register();
         isRegistered = true;
-        Log.Logger()?.ReportInfo($"NotificationManager created and registered.");
+        Log.Information($"NotificationManager created and registered.");
     }
 
     ~NotificationManager()
@@ -28,7 +33,7 @@ public class NotificationManager
         {
             AppNotificationManager.Default.Unregister();
             isRegistered = false;
-            Log.Logger()?.ReportInfo($"NotificationManager unregistered.");
+            Log.Information($"NotificationManager unregistered.");
         }
     }
 }

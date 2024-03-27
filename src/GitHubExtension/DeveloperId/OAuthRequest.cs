@@ -7,11 +7,16 @@ using System.Security.Cryptography;
 using System.Web;
 using GitHubExtension.Helpers;
 using Octokit;
+using Serilog;
 
 namespace GitHubExtension.DeveloperId;
 
 internal class OAuthRequest : IDisposable
 {
+    private static readonly Lazy<ILogger> _log = new(() => Serilog.Log.ForContext("SourceContext", nameof(OAuthRequest)));
+
+    private static readonly ILogger Log = _log.Value;
+
     internal string State { get; private set; }
 
     internal SecureString? AccessToken { get; private set; }
@@ -75,11 +80,11 @@ internal class OAuthRequest : IDisposable
 
             if (browserLaunch)
             {
-                Log.Logger()?.ReportInfo($"Uri Launched - Check browser");
+                Log.Information($"Uri Launched - Check browser");
             }
             else
             {
-                Log.Logger()?.ReportError($"Uri Launch failed");
+                Log.Error($"Uri Launch failed");
             }
         });
     }
@@ -94,13 +99,13 @@ internal class OAuthRequest : IDisposable
 
         if (!string.IsNullOrEmpty(queryStringCollection.Get("error")))
         {
-            Log.Logger()?.ReportError($"OAuth authorization error: {queryStringCollection.Get("error")}");
+            Log.Error($"OAuth authorization error: {queryStringCollection.Get("error")}");
             throw new UriFormatException();
         }
 
         if (string.IsNullOrEmpty(queryStringCollection.Get("code")))
         {
-            Log.Logger()?.ReportError($"Malformed authorization response: {queryString}");
+            Log.Error($"Malformed authorization response: {queryString}");
             throw new UriFormatException();
         }
 
@@ -116,11 +121,11 @@ internal class OAuthRequest : IDisposable
         }
         catch (Exception ex)
         {
-            Log.Logger()?.ReportError($"Authorization code exchange failed: {ex}");
+            Log.Error($"Authorization code exchange failed: {ex}");
             throw;
         }
 
-        Log.Logger()?.ReportInfo($"Authorization code exchange completed");
+        Log.Information($"Authorization code exchange completed");
         oAuthCompleted.Release();
     }
 
@@ -128,7 +133,7 @@ internal class OAuthRequest : IDisposable
     {
         if (AccessToken is null)
         {
-            Log.Logger()?.ReportError($"RetrieveDeveloperIdData called before AccessToken is set");
+            Log.Error($"RetrieveDeveloperIdData called before AccessToken is set");
             throw new InvalidOperationException("RetrieveDeveloperIdData called before AccessToken is set");
         }
 
@@ -150,7 +155,7 @@ internal class OAuthRequest : IDisposable
 
         if (string.IsNullOrEmpty(state))
         {
-            Log.Logger()?.ReportError($"Authorization code exchange failed: ResponseString:{queryString}");
+            Log.Error($"Authorization code exchange failed: ResponseString:{queryString}");
             throw new UriFormatException();
         }
 

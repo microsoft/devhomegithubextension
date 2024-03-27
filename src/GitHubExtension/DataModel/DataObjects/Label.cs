@@ -4,12 +4,17 @@
 using Dapper;
 using Dapper.Contrib.Extensions;
 using GitHubExtension.Helpers;
+using Serilog;
 
 namespace GitHubExtension.DataModel;
 
 [Table("Label")]
 public class Label
 {
+    private static readonly Lazy<ILogger> _log = new(() => Serilog.Log.ForContext("SourceContext", $"DataModel/{nameof(Label)}"));
+
+    private static readonly ILogger Log = _log.Value;
+
     // This is the time between seeing a potential updated label record and updating it.
     // This value / 2 is the average time between label changing on GitHub and having
     // it reflected in the datastore.

@@ -3,12 +3,17 @@
 
 using Dapper;
 using Dapper.Contrib.Extensions;
+using Serilog;
 
 namespace GitHubExtension.DataModel;
 
-[Table("Metadata")]
+[Table("MetaData")]
 public class MetaData
 {
+    private static readonly Lazy<ILogger> _log = new(() => Serilog.Log.ForContext("SourceContext", $"DataModel/{nameof(MetaData)}"));
+
+    private static readonly ILogger Log = _log.Value;
+
     [Key]
     public long Id { get; set; } = DataStore.NoForeignKey;
 

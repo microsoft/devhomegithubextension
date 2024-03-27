@@ -4,12 +4,17 @@
 using Dapper;
 using Dapper.Contrib.Extensions;
 using GitHubExtension.Helpers;
+using Serilog;
 
 namespace GitHubExtension.DataModel;
 
 [Table("Issue")]
 public class Issue
 {
+    private static readonly Lazy<ILogger> _log = new(() => Serilog.Log.ForContext("SourceContext", $"DataModel/{nameof(Issue)}"));
+
+    private static readonly ILogger Log = _log.Value;
+
     [Key]
     public long Id { get; set; } = DataStore.NoForeignKey;
 
@@ -286,7 +291,7 @@ public class Issue
             RepositoryId = repository.Id,
         };
 
-        Log.Logger()?.ReportDebug(DataStore.GetSqlLogMessage(sql, param));
+        Log.Verbose(DataStore.GetSqlLogMessage(sql, param));
         var issues = dataStore.Connection!.Query<Issue>(sql, param, null) ?? Enumerable.Empty<Issue>();
         foreach (var issue in issues)
         {
@@ -310,7 +315,7 @@ public class Issue
             SearchId = search.Id,
         };
 
-        Log.Logger()?.ReportDebug(DataStore.GetSqlLogMessage(sql, param));
+        Log.Verbose(DataStore.GetSqlLogMessage(sql, param));
         var issues = dataStore.Connection!.Query<Issue>(sql, param, null) ?? Enumerable.Empty<Issue>();
         foreach (var issue in issues)
         {
@@ -365,8 +370,8 @@ public class Issue
         command.CommandText = sql;
         command.Parameters.AddWithValue("$Time", date.ToDataStoreInteger());
         command.Parameters.AddWithValue("$RepositoryId", repositoryId);
-        Log.Logger()?.ReportDebug(DataStore.GetCommandLogMessage(sql, command));
+        Log.Verbose(DataStore.GetCommandLogMessage(sql, command));
         var rowsDeleted = command.ExecuteNonQuery();
-        Log.Logger()?.ReportDebug(DataStore.GetDeletedLogMessage(rowsDeleted));
+        Log.Verbose(DataStore.GetDeletedLogMessage(rowsDeleted));
     }
 }

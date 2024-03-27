@@ -36,8 +36,6 @@ internal class GitHubMentionedInWidget : GitHubUserWidget
         "W2+XsCNN5MdnNZw38ksp1Odyag9m4AD1g0f1QBnmA2WUN5HPim5V7jiPIsneZsCMdjHvmn" +
         "ZBE9QJ5KFrH0dFXqxnYisOz0HtBybqufmgwMDAwMDFWCmpq/ANfVYnfzsINAAAAAAElFTkSuQmCC";
 
-    protected static readonly new string Name = nameof(GitHubMentionedInWidget);
-
     protected override string GetTitleIconData()
     {
         return TitleIconData;

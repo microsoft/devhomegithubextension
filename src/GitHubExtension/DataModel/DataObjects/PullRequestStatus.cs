@@ -4,6 +4,7 @@
 using Dapper;
 using Dapper.Contrib.Extensions;
 using GitHubExtension.Helpers;
+using Serilog;
 
 namespace GitHubExtension.DataModel;
 
@@ -13,6 +14,10 @@ namespace GitHubExtension.DataModel;
 [Table("PullRequestStatus")]
 public class PullRequestStatus
 {
+    private static readonly Lazy<ILogger> _log = new(() => Serilog.Log.ForContext("SourceContext", $"DataModel/{nameof(PullRequestStatus)}"));
+
+    private static readonly ILogger Log = _log.Value;
+
     [Key]
     public long Id { get; set; } = DataStore.NoForeignKey;
 
@@ -159,7 +164,7 @@ public class PullRequestStatus
             PullRequestId = pullRequest.Id,
         };
 
-        Log.Logger()?.ReportDebug(DataStore.GetSqlLogMessage(sql, param));
+        Log.Verbose(DataStore.GetSqlLogMessage(sql, param));
         var pullRequestStatus = dataStore.Connection!.QueryFirstOrDefault<PullRequestStatus>(sql, param, null);
         if (pullRequestStatus is not null)
         {
@@ -174,7 +179,7 @@ public class PullRequestStatus
     {
         var pullRequestStatus = Create(pullRequest);
         pullRequestStatus.Id = dataStore.Connection!.Insert(pullRequestStatus);
-        Log.Logger()?.ReportDebug($"Inserted PullRequestStatus, Id = {pullRequestStatus.Id}");
+        Log.Debug($"Inserted PullRequestStatus, Id = {pullRequestStatus.Id}");
 
         // Remove older records we no longer need.
         DeleteOutdatedForPullRequest(dataStore, pullRequest);
@@ -190,9 +195,9 @@ public class PullRequestStatus
         var command = dataStore.Connection!.CreateCommand();
         command.CommandText = sql;
         command.Parameters.AddWithValue("$Id", pullRequest.Id);
-        Log.Logger()?.ReportDebug(DataStore.GetCommandLogMessage(sql, command));
+        Log.Verbose(DataStore.GetCommandLogMessage(sql, command));
         var rowsDeleted = command.ExecuteNonQuery();
-        Log.Logger()?.ReportDebug(DataStore.GetDeletedLogMessage(rowsDeleted));
+        Log.Verbose(DataStore.GetDeletedLogMessage(rowsDeleted));
     }
 
     public static void DeleteUnreferenced(DataStore dataStore)
@@ -203,9 +208,9 @@ public class PullRequestStatus
         var sql = @"DELETE FROM PullRequestStatus WHERE HeadSha NOT IN (SELECT HeadSha FROM PullRequest)";
         var command = dataStore.Connection!.CreateCommand();
         command.CommandText = sql;
-        Log.Logger()?.ReportDebug(DataStore.GetCommandLogMessage(sql, command));
+        Log.Verbose(DataStore.GetCommandLogMessage(sql, command));
         var rowsDeleted = command.ExecuteNonQuery();
-        Log.Logger()?.ReportDebug(DataStore.GetDeletedLogMessage(rowsDeleted));
+        Log.Verbose(DataStore.GetDeletedLogMessage(rowsDeleted));
     }
 
     private PullRequestCombinedStatus GetCombinedStatus()
@@ -229,7 +234,7 @@ public class PullRequestStatus
             return PullRequestCombinedStatus.Success;
         }
 
-        Log.Logger()?.ReportWarn($"Unknown PR Status:  State={State} Status={Status} Conclusion={Conclusion}");
+        Log.Warning($"Unknown PR Status:  State={State} Status={Status} Conclusion={Conclusion}");
         return PullRequestCombinedStatus.Unknown;
     }
 }

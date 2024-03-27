@@ -4,12 +4,17 @@
 using Dapper;
 using Dapper.Contrib.Extensions;
 using GitHubExtension.Helpers;
+using Serilog;
 
 namespace GitHubExtension.DataModel;
 
 [Table("Repository")]
 public class Repository
 {
+    private static readonly Lazy<ILogger> _log = new(() => Serilog.Log.ForContext("SourceContext", $"DataModel/{nameof(Repository)}"));
+
+    private static readonly ILogger Log = _log.Value;
+
     [Key]
     public long Id { get; set; } = DataStore.NoForeignKey;
 
@@ -257,7 +262,7 @@ public class Repository
             Owner = owner,
         };
 
-        Log.Logger()?.ReportDebug(DataStore.GetSqlLogMessage(sql, param));
+        Log.Verbose(DataStore.GetSqlLogMessage(sql, param));
         var repo = dataStore.Connection!.QueryFirstOrDefault<Repository>(sql, param, null);
         if (repo is not null)
         {
@@ -272,7 +277,7 @@ public class Repository
         var nameSplit = fullName.Split(new[] { '/' }, 2);
         if (nameSplit.Length != 2)
         {
-            Log.Logger()?.ReportWarn($"Invalid fullName input into Repository.Get: {fullName}");
+            Log.Warning($"Invalid fullName input into Repository.Get: {fullName}");
             return null;
         }
 

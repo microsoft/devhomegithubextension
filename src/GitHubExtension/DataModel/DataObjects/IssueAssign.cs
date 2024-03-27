@@ -3,12 +3,17 @@
 
 using Dapper;
 using Dapper.Contrib.Extensions;
+using Serilog;
 
 namespace GitHubExtension.DataModel;
 
 [Table("IssueAssign")]
 public class IssueAssign
 {
+    private static readonly Lazy<ILogger> _log = new(() => Serilog.Log.ForContext("SourceContext", $"DataModel/{nameof(IssueAssign)}"));
+
+    private static readonly ILogger Log = _log.Value;
+
     [Key]
     public long Id { get; set; } = DataStore.NoForeignKey;
 
@@ -55,7 +60,7 @@ public class IssueAssign
             IssueId = issue.Id,
         };
 
-        Log.Logger()?.ReportDebug(DataStore.GetSqlLogMessage(sql, param));
+        Log.Verbose(DataStore.GetSqlLogMessage(sql, param));
         return dataStore.Connection!.Query<User>(sql, param, null) ?? Enumerable.Empty<User>();
     }
 

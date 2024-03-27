@@ -4,12 +4,17 @@
 using Dapper;
 using Dapper.Contrib.Extensions;
 using GitHubExtension.Helpers;
+using Serilog;
 
 namespace GitHubExtension.DataModel;
 
 [Table("Search")]
 public class Search
 {
+    private static readonly Lazy<ILogger> _log = new(() => Serilog.Log.ForContext("SourceContext", $"DataModel/{nameof(Search)}"));
+
+    private static readonly ILogger Log = _log.Value;
+
     // This is the time between seeing a search and updating it's TimeUpdated.
     private static readonly long UpdateThreshold = TimeSpan.FromMinutes(2).Ticks;
 
@@ -92,8 +97,8 @@ public class Search
         var command = dataStore.Connection!.CreateCommand();
         command.CommandText = sql;
         command.Parameters.AddWithValue("$Time", date.ToDataStoreInteger());
-        Log.Logger()?.ReportDebug(DataStore.GetCommandLogMessage(sql, command));
+        Log.Verbose(DataStore.GetCommandLogMessage(sql, command));
         var rowsDeleted = command.ExecuteNonQuery();
-        Log.Logger()?.ReportDebug(DataStore.GetDeletedLogMessage(rowsDeleted));
+        Log.Verbose(DataStore.GetDeletedLogMessage(rowsDeleted));
     }
 }

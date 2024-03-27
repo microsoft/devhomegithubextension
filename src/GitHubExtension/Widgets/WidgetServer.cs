@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
 using Microsoft.Windows.Widgets.Providers;
+using Serilog;
 
 namespace GitHubExtension.Widgets;
 
@@ -19,9 +20,10 @@ public sealed class WidgetServer : IDisposable
     public void RegisterWidget<T>(Func<T> createWidget)
         where T : IWidgetProvider
     {
-        Log.Logger()?.ReportDebug($"Registering class object:");
-        Log.Logger()?.ReportDebug($"CLSID: {typeof(T).GUID:B}");
-        Log.Logger()?.ReportDebug($"Type: {typeof(T)}");
+        var log = Log.ForContext("SourceContext", nameof(WidgetServer));
+        log.Debug($"Registering class object:");
+        log.Debug($"CLSID: {typeof(T).GUID:B}");
+        log.Debug($"Type: {typeof(T)}");
 
         int cookie;
         var clsid = typeof(T).GUID;
@@ -38,7 +40,7 @@ public sealed class WidgetServer : IDisposable
         }
 
         registrationCookies.Add(cookie);
-        Log.Logger()?.ReportDebug($"Cookie: {cookie}");
+        log.Debug($"Cookie: {cookie}");
         hr = Ole32.CoResumeClassObjects();
         if (hr < 0)
         {
@@ -53,10 +55,11 @@ public sealed class WidgetServer : IDisposable
 
     public void Dispose()
     {
-        Log.Logger()?.ReportDebug($"Revoking class object registrations:");
+        var log = Log.ForContext("SourceContext", nameof(WidgetServer));
+        log.Debug($"Revoking class object registrations:");
         foreach (var cookie in registrationCookies)
         {
-            Log.Logger()?.ReportDebug($"Cookie: {cookie}");
+            log.Debug($"Cookie: {cookie}");
             var hr = Ole32.CoRevokeClassObject(cookie);
             Debug.Assert(hr >= 0, $"CoRevokeClassObject failed ({hr:x}). Cookie: {cookie}");
         }

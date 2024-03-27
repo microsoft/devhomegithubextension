@@ -5,12 +5,17 @@ using Dapper;
 using Dapper.Contrib.Extensions;
 using GitHubExtension.DeveloperId;
 using GitHubExtension.Helpers;
+using Serilog;
 
 namespace GitHubExtension.DataModel;
 
 [Table("User")]
 public class User
 {
+    private static readonly Lazy<ILogger> _log = new(() => Serilog.Log.ForContext("SourceContext", $"DataModel/{nameof(User)}"));
+
+    private static readonly ILogger Log = _log.Value;
+
     // This is the time between seeing a potential updated user record and updating it.
     // This value / 2 is the average time between user updating their user data and having
     // it reflected in the datastore.
@@ -151,7 +156,7 @@ public class User
             DeveloperIds = GetDeveloperLoginIds(),
         };
 
-        Log.Logger()?.ReportDebug(DataStore.GetSqlLogMessage(sql, param));
+        Log.Verbose(DataStore.GetSqlLogMessage(sql, param));
         var users = dataStore.Connection!.Query<User>(sql, param) ?? Enumerable.Empty<User>();
         foreach (var user in users)
         {

@@ -5,6 +5,7 @@ using System.Runtime.InteropServices;
 using GitHubExtension.DeveloperId;
 using GitHubExtension.Providers;
 using Microsoft.Windows.DevHome.SDK;
+using Serilog;
 
 namespace GitHubExtension;
 
@@ -14,6 +15,7 @@ namespace GitHubExtension;
 public sealed class GitHubExtension : IExtension
 {
     private readonly ManualResetEvent _extensionDisposedEvent;
+    private readonly ILogger _log = Log.ForContext("SourceContext", nameof(GitHubExtension));
 
     public GitHubExtension(ManualResetEvent extensionDisposedEvent)
     {
@@ -33,7 +35,7 @@ public sealed class GitHubExtension : IExtension
             case ProviderType.FeaturedApplications:
                 return new object();
             default:
-                Providers.Log.Logger()?.ReportInfo("Invalid provider");
+                _log.Warning($"Invalid provider: {providerType}");
                 return null;
         }
     }
