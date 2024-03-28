@@ -101,7 +101,7 @@ public partial class GitHubDataManager : IGitHubDataManager, IDisposable
                 await UpdatePullRequestsAsync(repository, devId.GitHubClient, parameters.RequestOptions);
             });
 
-        SendRepositoryUpdateEvent(this, GetFullNameFromOwnerAndRepository(owner, name), IssuesAndPRsStringArray);
+        SendRepositoryUpdateEvent(this, GetFullNameFromOwnerAndRepository(owner, name), _IssuesAndPRs);
     }
 
     public async Task UpdateAllDataForRepositoryAsync(string fullName, RequestOptions? options = null)
@@ -130,7 +130,7 @@ public partial class GitHubDataManager : IGitHubDataManager, IDisposable
                 await UpdatePullRequestsAsync(repository, devId.GitHubClient, parameters.RequestOptions);
             });
 
-        SendRepositoryUpdateEvent(this, GetFullNameFromOwnerAndRepository(owner, name), PRsStringArray);
+        SendRepositoryUpdateEvent(this, GetFullNameFromOwnerAndRepository(owner, name), _PRs);
     }
 
     public async Task UpdatePullRequestsForRepositoryAsync(string fullName, RequestOptions? options = null)
@@ -159,7 +159,7 @@ public partial class GitHubDataManager : IGitHubDataManager, IDisposable
                 await UpdateIssuesAsync(repository, devId.GitHubClient, parameters.RequestOptions);
             });
 
-        SendRepositoryUpdateEvent(this, GetFullNameFromOwnerAndRepository(owner, name), IssuesStringArray);
+        SendRepositoryUpdateEvent(this, GetFullNameFromOwnerAndRepository(owner, name), _Issues);
     }
 
     public async Task UpdateIssuesForRepositoryAsync(string fullName, RequestOptions? options = null)
@@ -199,7 +199,7 @@ public partial class GitHubDataManager : IGitHubDataManager, IDisposable
                 await UpdateReleasesAsync(repository, devId.GitHubClient, parameters.RequestOptions);
             });
 
-        SendRepositoryUpdateEvent(this, GetFullNameFromOwnerAndRepository(owner, name), ReleasesStringArray);
+        SendRepositoryUpdateEvent(this, GetFullNameFromOwnerAndRepository(owner, name), _Releases);
     }
 
     public IEnumerable<Repository> GetRepositories()
@@ -839,10 +839,10 @@ public partial class GitHubDataManager : IGitHubDataManager, IDisposable
     public override string ToString() => "GitHubDataManager";
 
     private bool disposed; // To detect redundant calls.
-    private static readonly string[] IssuesAndPRsStringArray = new string[] { "Issues", "PullRequests" };
-    private static readonly string[] PRsStringArray = new string[] { "PullRequests" };
-    private static readonly string[] IssuesStringArray = new string[] { "Issues" };
-    private static readonly string[] ReleasesStringArray = new string[] { "Releases" };
+    private static readonly string[] _IssuesAndPRs = new string[] { "Issues", "PullRequests" };
+    private static readonly string[] _PRs = new string[] { "PullRequests" };
+    private static readonly string[] _Issues = new string[] { "Issues" };
+    private static readonly string[] _Releases = new string[] { "Releases" };
 
     protected virtual void Dispose(bool disposing)
     {
