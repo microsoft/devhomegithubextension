@@ -9,10 +9,8 @@ using Octokit;
 
 namespace GitHubExtension.Widgets;
 
-internal class GitHubReviewWidget : GitHubUserWidget
+internal sealed class GitHubReviewWidget : GitHubUserWidget
 {
-    protected static readonly new string Name = nameof(GitHubReviewWidget);
-
     public GitHubReviewWidget()
         : base()
     {

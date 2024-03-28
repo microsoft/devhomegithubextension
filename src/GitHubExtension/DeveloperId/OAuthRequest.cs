@@ -10,7 +10,7 @@ using Octokit;
 
 namespace GitHubExtension.DeveloperId;
 
-internal class OAuthRequest : IDisposable
+internal sealed class OAuthRequest : IDisposable
 {
     internal string State { get; private set; }
 
@@ -28,7 +28,7 @@ internal class OAuthRequest : IDisposable
         State = string.Empty;
     }
 
-    protected virtual void Dispose(bool disposing)
+    private void Dispose(bool disposing)
     {
         if (disposing)
         {

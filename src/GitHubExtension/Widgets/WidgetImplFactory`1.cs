@@ -5,7 +5,7 @@ using Microsoft.Windows.Widgets.Providers;
 
 namespace GitHubExtension.Widgets;
 
-internal class WidgetImplFactory<T> : IWidgetImplFactory
+internal sealed class WidgetImplFactory<T> : IWidgetImplFactory
     where T : WidgetImpl, new()
 {
     public WidgetImpl Create(WidgetContext widgetContext, string state)

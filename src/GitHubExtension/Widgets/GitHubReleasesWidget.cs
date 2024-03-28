@@ -10,11 +10,11 @@ using Octokit;
 
 namespace GitHubExtension.Widgets;
 
-internal class GitHubReleasesWidget : GitHubRepositoryWidget
+internal sealed class GitHubReleasesWidget : GitHubRepositoryWidget
 {
     private readonly string _releasesIconData = IconLoader.GetIconAsBase64("releases.png");
 
-    protected static readonly new string Name = nameof(GitHubReleasesWidget);
+    private static readonly new string Name = nameof(GitHubReleasesWidget);
 
     public override void DeleteWidget(string widgetId, string customState)
     {

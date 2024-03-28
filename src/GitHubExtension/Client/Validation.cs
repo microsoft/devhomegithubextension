@@ -209,7 +209,7 @@ public static class Validation
 
     private static string[]? GetNameAndRepoFromFullName(string s)
     {
-        var n = s.Split(new[] { '/' });
+        var n = s.Split(['/']);
 
         // This should be exactly two results with no empty strings.
         if (n.Length != 2 || string.IsNullOrEmpty(n[0]) || string.IsNullOrEmpty(n[1]))

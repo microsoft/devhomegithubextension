@@ -10,13 +10,13 @@ using Octokit;
 
 namespace GitHubExtension.Widgets;
 
-internal class GitHubPullsWidget : GitHubRepositoryWidget
+internal sealed class GitHubPullsWidget : GitHubRepositoryWidget
 {
     private readonly string pullsIconData = IconLoader.GetIconAsBase64("pulls.png");
 
     private static Dictionary<string, string> Templates { get; set; } = new();
 
-    protected static readonly new string Name = nameof(GitHubPullsWidget);
+    private static readonly new string Name = nameof(GitHubPullsWidget);
 
     public override void DeleteWidget(string widgetId, string customState)
     {

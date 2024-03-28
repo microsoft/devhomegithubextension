@@ -19,13 +19,13 @@ public class NotificationHandler
     {
         Log.Logger()?.ReportInfo($"Notification Activated with args: {NotificationArgsToString(args)}");
 
-        if (args.Arguments.ContainsKey("htmlurl"))
+        if (args.Arguments.TryGetValue("htmlurl", out var htmlUrl))
         {
             try
             {
                 // Do not assume this string is a safe URL and blindly execute it; verify that it is
                 // in fact a valid GitHub URL.
-                var urlString = args.Arguments["htmlurl"];
+                var urlString = htmlUrl;
                 if (!Validation.IsValidGitHubURL(urlString))
                 {
                     throw new InvalidGitHubUrlException($"{urlString} is invalid.");
@@ -42,7 +42,7 @@ public class NotificationHandler
             }
             catch (Exception ex)
             {
-                Log.Logger()?.ReportError($"Failed launching Uri for {args.Arguments["htmlurl"]}", ex);
+                Log.Logger()?.ReportError($"Failed launching Uri for {htmlUrl}", ex);
             }
 
             return;

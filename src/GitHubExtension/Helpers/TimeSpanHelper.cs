@@ -6,7 +6,7 @@ using Jeffijoe.MessageFormat;
 
 namespace GitHubExtension.Helpers;
 
-internal class TimeSpanHelper
+internal sealed class TimeSpanHelper
 {
     public static string TimeSpanToDisplayString(TimeSpan timeSpan, Logger? log = null)
     {
