@@ -1,6 +1,8 @@
 ﻿// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
+using Serilog;
+
 namespace GitHubExtension.DataManager;
 
 public class DataUpdater : IDisposable
@@ -8,6 +10,7 @@ public class DataUpdater : IDisposable
     // This is the default interval the timer will run. It is not the interval that we necessarily do work.
     private static readonly TimeSpan TimerUpdateInterval = TimeSpan.FromSeconds(5);
 
+    private readonly ILogger _logger;
     private readonly PeriodicTimer _timer;
     private readonly Func<Task> _action;
     private CancellationTokenSource _cancelSource;
@@ -17,6 +20,7 @@ public class DataUpdater : IDisposable
 
     public DataUpdater(TimeSpan interval, Func<Task> action)
     {
+        _logger = Log.Logger.ForContext("SourceContext", nameof(DataUpdater));
         _timer = new PeriodicTimer(interval);
         _cancelSource = new CancellationTokenSource();
         _started = false;
@@ -64,7 +68,7 @@ public class DataUpdater : IDisposable
     {
         if (!disposed)
         {
-            DataModel.Log.Logger()?.ReportDebug(ToString(), "Disposing of all Disposable resources.");
+            _logger.Debug("Disposing of all updater resources.");
 
             if (disposing)
             {

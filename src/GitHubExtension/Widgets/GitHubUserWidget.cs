@@ -15,8 +15,6 @@ namespace GitHubExtension.Widgets;
 
 internal abstract class GitHubUserWidget : GitHubWidget
 {
-    protected static readonly new string Name = nameof(GitHubUserWidget);
-
     protected string DeveloperLoginId { get; set; } = string.Empty;
 
     protected SearchCategory ShowCategory { get; set; } = SearchCategory.Unknown;
@@ -76,8 +74,8 @@ internal abstract class GitHubUserWidget : GitHubWidget
         }
         catch (JsonException e)
         {
-            Log.Logger()?.ReportWarn(Name, ShortId, $"Failed to parse ConfigurationData; attempting migration. {e.Message}");
-            Log.Logger()?.ReportDebug(Name, ShortId, $"Json parse failure.", e);
+            Log.Warning($"Failed to parse ConfigurationData; attempting migration. {e.Message}");
+            Log.Debug($"Json parse failure.", e);
 
             try
             {
@@ -85,7 +83,7 @@ internal abstract class GitHubUserWidget : GitHubWidget
                 // and we get a failure, assume it is the old version.
                 if (!string.IsNullOrEmpty(ConfigurationData))
                 {
-                    Log.Logger()?.ReportInfo(Name, ShortId, $"Found string data format, migrating to JSON format. Data: {ConfigurationData}");
+                    Log.Information($"Found string data format, migrating to JSON format. Data: {ConfigurationData}");
                     var migratedState = new JsonObject
                     {
                         { "showCategory", ConfigurationData },
@@ -110,7 +108,7 @@ internal abstract class GitHubUserWidget : GitHubWidget
             catch (Exception ex)
             {
                 // Adding for abundance of caution because we have seen crashes in this space.
-                Log.Logger()?.ReportError(Name, ShortId, $"Unexpected failure during migration.", ex);
+                Log.Error($"Unexpected failure during migration.", ex);
             }
         }
 
@@ -127,7 +125,7 @@ internal abstract class GitHubUserWidget : GitHubWidget
             // crash the entire extension.
             DeveloperLoginId = string.Empty;
             ShowCategory = SearchCategory.Unknown;
-            Log.Logger()?.ReportError(Name, ShortId, $"Unexpected error while resetting state: {e.Message}", e);
+            Log.Error($"Unexpected error while resetting state: {e.Message}", e);
         }
     }
 
@@ -204,7 +202,7 @@ internal abstract class GitHubUserWidget : GitHubWidget
         // Throttle protection against a widget trigging rapid data updates.
         if (DateTime.Now - LastUpdated < WidgetDataRequestMinTime)
         {
-            Log.Logger()?.ReportDebug(Name, ShortId, "Data request too soon, skipping.");
+            Log.Debug("Data request too soon, skipping.");
         }
 
         if (ActivityState == WidgetActivityState.Configure)
@@ -214,7 +212,7 @@ internal abstract class GitHubUserWidget : GitHubWidget
 
         try
         {
-            Log.Logger()?.ReportInfo(Name, ShortId, $"Requesting data update for {UserName}");
+            Log.Information($"Requesting data update for {UserName}");
             var requestOptions = new RequestOptions
             {
                 ApiOptions = new ApiOptions
@@ -235,12 +233,12 @@ internal abstract class GitHubUserWidget : GitHubWidget
             }
 
             searchManager?.SearchForGitHubIssuesOrPRs(request, Id, ShowCategory, developerId, requestOptions);
-            Log.Logger()?.ReportInfo(Name, ShortId, $"Requested data update for {UserName}");
+            Log.Information($"Requested data update for {UserName}");
             DataState = WidgetDataState.Requested;
         }
         catch (Exception ex)
         {
-            Log.Logger()?.ReportError(Name, ShortId, "Failed requesting data update.", ex);
+            Log.Error("Failed requesting data update.", ex);
         }
     }
 
@@ -260,7 +258,7 @@ internal abstract class GitHubUserWidget : GitHubWidget
 
     public void LoadContentData(IEnumerable<Octokit.Issue> items)
     {
-        Log.Logger()?.ReportDebug(Name, ShortId, "Getting Data for Category in Widget");
+        Log.Debug("Getting Data for Category in Widget");
 
         try
         {
@@ -274,7 +272,7 @@ internal abstract class GitHubUserWidget : GitHubWidget
                     { "title", item.Title },
                     { "url", item.HtmlUrl },
                     { "number", item.Number },
-                    { "date", TimeSpanHelper.DateTimeOffsetToDisplayString(item.UpdatedAt, Log.Logger()) },
+                    { "date", TimeSpanHelper.DateTimeOffsetToDisplayString(item.UpdatedAt, Log) },
                     { "user", item.User.Login },
                     { "avatar", item.User.AvatarUrl },
                     { "iconUrl", IconLoader.GetIconAsBase64(item.PullRequest == null ? "issues.png" : "pulls.png") },
@@ -312,7 +310,7 @@ internal abstract class GitHubUserWidget : GitHubWidget
         }
         catch (Exception e)
         {
-            Log.Logger()?.ReportError(Name, ShortId, "Error retrieving data.", e);
+            Log.Error("Error retrieving data.", e);
             DataState = WidgetDataState.Failed;
             return;
         }
@@ -322,7 +320,7 @@ internal abstract class GitHubUserWidget : GitHubWidget
     {
         return page switch
         {
-            WidgetPageState.SignIn => new JsonObject { { "message", Resources.GetResource(@"Widget_Template/SignInRequired", Log.Logger()) } }.ToJsonString(),
+            WidgetPageState.SignIn => new JsonObject { { "message", Resources.GetResource(@"Widget_Template/SignInRequired", Log) } }.ToJsonString(),
             WidgetPageState.Configure => GetConfigurationData(),
             WidgetPageState.Content => ContentData,
             WidgetPageState.Loading => EmptyJson,
@@ -349,7 +347,7 @@ internal abstract class GitHubUserWidget : GitHubWidget
 
         foreach (var developerId in DeveloperIdProvider.GetInstance().GetLoggedInDeveloperIds().DeveloperIds)
         {
-            Log.Logger()?.ReportInfo(developerId.LoginId);
+            Log.Information(developerId.LoginId);
             developerIdsData.Add(new JsonObject
             {
                 { "devId", developerId.LoginId },
@@ -385,10 +383,10 @@ internal abstract class GitHubUserWidget : GitHubWidget
 
     private void SearchManagerResultsAvailableHandler(IEnumerable<Octokit.Issue> results, string widgetId)
     {
-        Log.Logger()?.ReportDebug(Name, ShortId, $"Results Available Event: ID={widgetId}");
+        Log.Debug($"Results Available Event: ID={widgetId}");
         if (widgetId == Id)
         {
-            Log.Logger()?.ReportInfo(Name, ShortId, $"Received matching repository update event.");
+            Log.Information($"Received matching repository update event.");
             LoadContentData(results);
             UpdateActivityState();
         }

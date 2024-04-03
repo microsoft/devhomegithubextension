@@ -53,12 +53,8 @@ public partial class DeveloperIdTests
     [TestInitialize]
     public void TestInitialize()
     {
-        using var log = new DevHome.Logging.Logger("TestStore", TestOptions.LogOptions);
-        var testListener = new TestListener("TestListener", TestContext!);
-        log.AddListener(testListener);
-        DataModel.Log.Attach(log);
-        DeveloperId.Log.Attach(log);
         TestOptions = TestHelpers.SetupTempTestOptions(TestContext!);
+        TestHelpers.ConfigureTestLog(TestOptions, TestContext!);
 
         TestContext?.WriteLine("DeveloperIdTests may use the same credential store as Dev Home Github Extension");
 
@@ -70,6 +66,7 @@ public partial class DeveloperIdTests
     [TestCleanup]
     public void Cleanup()
     {
+        TestHelpers.CloseTestLog();
         TestHelpers.CleanupTempTestOptions(TestOptions, TestContext!);
     }
 }

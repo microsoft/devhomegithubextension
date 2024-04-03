@@ -1,11 +1,13 @@
 ﻿// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-using GitHubExtension.ExtensionServer;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Windows.AppLifecycle;
 using Microsoft.Windows.AppNotifications;
+using Serilog;
 using Windows.ApplicationModel.Activation;
 using Windows.Management.Deployment;
+using Windows.Storage;
 
 namespace GitHubExtension;
 
@@ -14,7 +16,16 @@ public sealed class Program
     [MTAThread]
     public static void Main([System.Runtime.InteropServices.WindowsRuntime.ReadOnlyArray] string[] args)
     {
-        Log.Logger()?.ReportInfo($"Launched with args: {string.Join(' ', args.ToArray())}");
+        // Setup Logging
+        Environment.SetEnvironmentVariable("DEVHOME_LOGS_ROOT", ApplicationData.Current.TemporaryFolder.Path);
+        var configuration = new ConfigurationBuilder()
+            .AddJsonFile("appsettings.json")
+            .Build();
+        Log.Logger = new LoggerConfiguration()
+            .ReadFrom.Configuration(configuration)
+            .CreateLogger();
+
+        Log.Information($"Launched with args: {string.Join(' ', args.ToArray())}");
         LogPackageInformation();
 
         // Set up notification handling. This must happen before GetActivatedEventArgs().
@@ -26,9 +37,10 @@ public sealed class Program
         var activationArgs = AppInstance.GetCurrent().GetActivatedEventArgs();
         if (!mainInstance.IsCurrent)
         {
-            Log.Logger()?.ReportInfo($"Not main instance, redirecting.");
+            Log.Information($"Not main instance, redirecting.");
             mainInstance.RedirectActivationToAsync(activationArgs).AsTask().Wait();
             notificationManager.Unregister();
+            Log.CloseAndFlush();
             return;
         }
 
@@ -45,16 +57,16 @@ public sealed class Program
         }
         else
         {
-            Log.Logger()?.ReportWarn("Not being launched as a ComServer... exiting.");
+            Log.Warning("Not being launched as a ComServer... exiting.");
         }
 
         notificationManager.Unregister();
-        Log.Logger()?.Dispose();
+        Log.CloseAndFlush();
     }
 
     private static void AppActivationRedirected(object? sender, Microsoft.Windows.AppLifecycle.AppActivationArguments activationArgs)
     {
-        Log.Logger()?.ReportInfo($"Redirected with kind: {activationArgs.Kind}");
+        Log.Information($"Redirected with kind: {activationArgs.Kind}");
 
         // Handle COM server.
         if (activationArgs.Kind == ExtendedActivationKind.Launch)
@@ -64,7 +76,7 @@ public sealed class Program
 
             if (args?.Length > 0 && args[1] == "-RegisterProcessAsComServer")
             {
-                Log.Logger()?.ReportInfo($"Activation COM Registration Redirect: {string.Join(' ', args.ToList())}");
+                Log.Information($"Activation COM Registration Redirect: {string.Join(' ', args.ToList())}");
                 HandleCOMServerActivation();
             }
         }
@@ -81,7 +93,7 @@ public sealed class Program
             var d = activationArgs.Data as IProtocolActivatedEventArgs;
             if (d is not null)
             {
-                Log.Logger()?.ReportInfo($"Protocol Activation redirected from: {d.Uri}");
+                Log.Information($"Protocol Activation redirected from: {d.Uri}");
                 HandleProtocolActivation(d.Uri);
             }
         }
@@ -92,7 +104,7 @@ public sealed class Program
         var notificationArgs = activationArgs.Data as AppNotificationActivatedEventArgs;
         if (notificationArgs != null)
         {
-            Log.Logger()?.ReportInfo($"Notification Activation.");
+            Log.Information($"Notification Activation.");
             Notifications.NotificationHandler.NotificationActivation(notificationArgs);
         }
     }
@@ -104,7 +116,7 @@ public sealed class Program
 
     private static void HandleCOMServerActivation()
     {
-        Log.Logger()?.ReportInfo($"Activating COM Server");
+        Log.Information($"Activating COM Server");
 
         // Register and run COM server.
         // This could be called by either of the COM registrations, we will do them all to avoid deadlock and bind all on the extension's lifetime.
@@ -130,7 +142,7 @@ public sealed class Program
         // This will make the main thread wait until the event is signaled by the extension class.
         // Since we have single instance of the extension object, we exit as soon as it is disposed.
         extensionDisposedEvent.WaitOne();
-        Log.Logger()?.ReportInfo($"Extension is disposed.");
+        Log.Information($"Extension is disposed.");
     }
 
     private static void LogPackageInformation()
@@ -140,6 +152,7 @@ public sealed class Program
               "MicrosoftWindows.Client.WebExperience_cw5n1h2txyewy",
               "Microsoft.Windows.DevHome_8wekyb3d8bbwe",
               "Microsoft.Windows.DevHomeGitHubExtension_8wekyb3d8bbwe",
+              "Microsoft.Windows.DevHomeGitHubExtension.Dev_8wekyb3d8bbwe",
         };
 
         try
@@ -149,13 +162,13 @@ public sealed class Program
             {
                 foreach (var package in packageManager.FindPackagesForUser(string.Empty, pfn))
                 {
-                    Log.Logger()?.ReportInfo($"{package.Id.FullName}  DevMode: {package.IsDevelopmentMode}  Signature: {package.SignatureKind}");
+                    Log.Information($"{package.Id.FullName}  DevMode: {package.IsDevelopmentMode}  Signature: {package.SignatureKind}");
                 }
             }
         }
         catch (Exception ex)
         {
-            Log.Logger()?.ReportError("Failed getting package information.", ex);
+            Log.Error("Failed getting package information.", ex);
         }
     }
 }
