@@ -22,7 +22,7 @@ public static class Validation
 
     public static bool IsValidGitHubURL(Uri uri)
     {
-        return IsValidGitHubComURL(uri) || IsValidGitHubEnterpriseServerURL(uri);
+        return IsValidGitHubComURL(uri) || (IsValidGitHubEnterpriseServerURL(uri) && IsReachableGitHubEnterpriseServerURL(uri).Result);
     }
 
     public static bool IsValidGitHubComURL(Uri uri)
