@@ -77,11 +77,11 @@ public partial class TestHelpers
             .WriteTo.File(
                 path: GetLogFilePath(options),
                 formatProvider: CultureInfo.InvariantCulture,
-                outputTemplate: "[{Timestamp:yyyy/mm/dd HH:mm:ss.fff} {Level:u3}] ({SourceContext}) {Message:lj}{NewLine}{Exception}")
+                outputTemplate: "[{Timestamp:yyyy/MM/dd HH:mm:ss.fff} {Level:u3}] ({SourceContext}) {Message:lj}{NewLine}{Exception}")
             .WriteTo.TestContextSink(
                 context: context,
                 formatProvider: CultureInfo.InvariantCulture,
-                outputTemplate: "[{Timestamp:yyyy/mm/dd HH:mm:ss.fff} {Level:u3}] ({SourceContext}) {Message:lj}{NewLine}{Exception}")
+                outputTemplate: "[{Timestamp:yyyy/MM/dd HH:mm:ss.fff} {Level:u3}] ({SourceContext}) {Message:lj}{NewLine}{Exception}")
             .CreateLogger();
     }
 
