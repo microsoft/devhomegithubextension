@@ -98,7 +98,7 @@ public class Notification
                     // Catch errors so we do not throw for something like this. The local ToastState
                     // will still be set even if the datastore update fails. This could result in a
                     // toast later being shown twice, however, so report it as an error.
-                    Log.Error("Failed setting Notification ToastState for Notification Id = {Id}", ex);
+                    Log.Error(ex, "Failed setting Notification ToastState for Notification Id = {Id}");
                 }
             }
         }
@@ -194,7 +194,7 @@ public class Notification
         }
         catch (Exception ex)
         {
-            Log.Error($"Failed creating the Notification for {this}", ex);
+            Log.Error(ex, $"Failed creating the Notification for {this}");
             return false;
         }
 
@@ -224,7 +224,7 @@ public class Notification
         }
         catch (Exception ex)
         {
-            Log.Error($"Failed creating the Notification for {this}", ex);
+            Log.Error(ex, $"Failed creating the Notification for {this}");
             return false;
         }
 
@@ -267,7 +267,7 @@ public class Notification
         }
         catch (Exception ex)
         {
-            Log.Error($"Failed creating the Notification for {this}", ex);
+            Log.Error(ex, $"Failed creating the Notification for {this}");
             return false;
         }
 

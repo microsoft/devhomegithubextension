@@ -47,7 +47,7 @@ public partial class GitHubDataManager : IGitHubDataManager, IDisposable
         }
         catch (Exception e)
         {
-            Log.Error("Failed creating GitHubDataManager", e);
+            Log.Error(e, "Failed creating GitHubDataManager");
             Environment.FailFast(e.Message, e);
             return null;
         }
@@ -253,7 +253,7 @@ public partial class GitHubDataManager : IGitHubDataManager, IDisposable
         }
         catch (Exception ex)
         {
-            Log.Error($"Failed Updating DataStore for: {parameters}", ex);
+            Log.Error(ex, $"Failed Updating DataStore for: {parameters}");
             tx.Rollback();
 
             // Rethrow so clients can catch/display an error UX.
@@ -334,7 +334,7 @@ public partial class GitHubDataManager : IGitHubDataManager, IDisposable
         catch (Exception ex)
         {
             // This is for catching any other unexpected error as well as any we throw.
-            Log.Error($"Failed trying update data for repository: {parameters.Owner}/{parameters.RepositoryName}", ex);
+            Log.Error(ex, $"Failed trying update data for repository: {parameters.Owner}/{parameters.RepositoryName}");
             tx.Rollback();
             throw;
         }
@@ -460,7 +460,7 @@ public partial class GitHubDataManager : IGitHubDataManager, IDisposable
                         Log.Error($"Error updating Check Status for Pull Request #{octoPull.Number}: {e.Message}");
 
                         // Put the full stack trace in debug if this occurs to reduce log spam.
-                        Log.Debug($"Error updating Check Status for Pull Request #{octoPull.Number}.", e);
+                        Log.Debug(e, $"Error updating Check Status for Pull Request #{octoPull.Number}.");
                     }
 
                     var commitCombinedStatus = await devId.GitHubClient.Repository.Status.GetCombined(dsRepository.InternalId, dsPullRequest.HeadSha);
@@ -486,7 +486,7 @@ public partial class GitHubDataManager : IGitHubDataManager, IDisposable
                         Log.Error($"Error updating Reviews for Pull Request #{octoPull.Number}: {e.Message}");
 
                         // Put the full stack trace in debug if this occurs to reduce log spam.
-                        Log.Debug($"Error updating Reviews for Pull Request #{octoPull.Number}.", e);
+                        Log.Debug(e, $"Error updating Reviews for Pull Request #{octoPull.Number}.");
                     }
                 }
 
@@ -551,7 +551,7 @@ public partial class GitHubDataManager : IGitHubDataManager, IDisposable
                 Log.Error($"Error updating Check Status for Pull Request #{pull.Number}: {e.Message}");
 
                 // Put the full stack trace in debug if this occurs to reduce log spam.
-                Log.Debug($"Error updating Check Status for Pull Request #{pull.Number}.", e);
+                Log.Debug(e, $"Error updating Check Status for Pull Request #{pull.Number}.");
             }
 
             var commitCombinedStatus = await client.Repository.Status.GetCombined(repository.InternalId, dsPullRequest.HeadSha);

@@ -130,7 +130,7 @@ public class CredentialVault : ICredentialVault
         }
         catch (Exception ex)
         {
-            Log.Error($"Retrieving credentials from Credential Manager has failed unexpectedly: {loginId} : ", ex);
+            Log.Error(ex, $"Retrieving credentials from Credential Manager has failed unexpectedly: {loginId} : ");
             throw;
         }
         finally
@@ -217,7 +217,7 @@ public class CredentialVault : ICredentialVault
             }
             catch (Exception ex)
             {
-                Log.Error($"Deleting credentials from Credential Manager has failed unexpectedly: {credential} : ", ex);
+                Log.Error(ex, $"Deleting credentials from Credential Manager has failed unexpectedly: {credential} : ");
             }
         }
     }

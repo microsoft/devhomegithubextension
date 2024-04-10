@@ -75,7 +75,7 @@ public class DeveloperIdProvider : IDeveloperIdProviderInternal
         }
         catch (Exception ex)
         {
-            Log.Error($"Error while restoring DeveloperIds: {ex.Message}. Proceeding without restoring.", ex);
+            Log.Error(ex, $"Error while restoring DeveloperIds: {ex.Message}. Proceeding without restoring.");
         }
     }
 
@@ -131,7 +131,7 @@ public class DeveloperIdProvider : IDeveloperIdProviderInternal
         }
         catch (Exception ex)
         {
-            Log.Error($"Error while logging in with PAT to {hostAddress.AbsoluteUri} : ", ex);
+            Log.Error(ex, $"Error while logging in with PAT to {hostAddress.AbsoluteUri} : ");
             throw;
         }
     }
@@ -151,7 +151,7 @@ public class DeveloperIdProvider : IDeveloperIdProviderInternal
             catch (Exception ex)
             {
                 OAuthRequests.Remove(oauthRequest);
-                Log.Error($"Unable to complete OAuth request: ", ex);
+                Log.Error(ex, $"Unable to complete OAuth request: ");
             }
         }
 
@@ -180,7 +180,7 @@ public class DeveloperIdProvider : IDeveloperIdProviderInternal
         }
         catch (Exception ex)
         {
-            Log.Error($"LoggedOut event signaling failed: ", ex);
+            Log.Error(ex, $"LoggedOut event signaling failed: ");
         }
 
         return new ProviderOperationResult(ProviderOperationStatus.Success, null, "The developer account has been logged out successfully", "LogoutDeveloperId succeeded");
@@ -264,7 +264,7 @@ public class DeveloperIdProvider : IDeveloperIdProviderInternal
                 }
                 catch (Exception ex)
                 {
-                    Log.Error($"Updated event signaling failed: ", ex);
+                    Log.Error(ex, $"Updated event signaling failed: ");
                 }
             }
             catch (InvalidOperationException)
@@ -288,7 +288,7 @@ public class DeveloperIdProvider : IDeveloperIdProviderInternal
             }
             catch (Exception ex)
             {
-                Log.Error($"LoggedIn event signaling failed: ", ex);
+                Log.Error(ex, $"LoggedIn event signaling failed: ");
             }
         }
     }
@@ -350,7 +350,7 @@ public class DeveloperIdProvider : IDeveloperIdProviderInternal
             }
             catch (Exception ex)
             {
-                Log.Error($"Error while restoring DeveloperId {loginIdOrUrl} : ", ex);
+                Log.Error(ex, $"Error while restoring DeveloperId {loginIdOrUrl} : ");
 
                 // If we are unable to restore a DeveloperId, remove it from CredentialManager to avoid
                 // the same error next time, and to force the user to login again
@@ -373,7 +373,7 @@ public class DeveloperIdProvider : IDeveloperIdProviderInternal
         }
         catch (Exception ex)
         {
-            Log.Error($"Error while replacing {developerId.LoginId} with {developerId.Url} in CredentialManager: ", ex);
+            Log.Error(ex, $"Error while replacing {developerId.LoginId} with {developerId.Url} in CredentialManager: ");
         }
     }
 

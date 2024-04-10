@@ -238,7 +238,7 @@ public static class Validation
         }
         catch (Exception ex)
         {
-            Log.Error($"EnterpriseServer {server.AbsoluteUri} could not be probed.", ex);
+            Log.Error(ex, $"EnterpriseServer {server.AbsoluteUri} could not be probed.");
             return false;
         }
 

@@ -33,7 +33,7 @@ public partial class GitHubSearchManager : IGitHubSearchManager, IDisposable
         }
         catch (Exception e)
         {
-            Log.Error(Name, "Failed creating GitHubSearchManager", e);
+            Log.Error(e, "Failed creating GitHubSearchManager");
             Environment.FailFast(e.Message, e);
             return null;
         }

@@ -108,7 +108,7 @@ internal abstract class GitHubUserWidget : GitHubWidget
             catch (Exception ex)
             {
                 // Adding for abundance of caution because we have seen crashes in this space.
-                Log.Error($"Unexpected failure during migration.", ex);
+                Log.Error(ex, $"Unexpected failure during migration.");
             }
         }
 
@@ -125,7 +125,7 @@ internal abstract class GitHubUserWidget : GitHubWidget
             // crash the entire extension.
             DeveloperLoginId = string.Empty;
             ShowCategory = SearchCategory.Unknown;
-            Log.Error($"Unexpected error while resetting state: {e.Message}", e);
+            Log.Error(e, $"Unexpected error while resetting state: {e.Message}");
         }
     }
 
@@ -238,7 +238,7 @@ internal abstract class GitHubUserWidget : GitHubWidget
         }
         catch (Exception ex)
         {
-            Log.Error("Failed requesting data update.", ex);
+            Log.Error(ex, "Failed requesting data update.");
         }
     }
 
@@ -310,7 +310,7 @@ internal abstract class GitHubUserWidget : GitHubWidget
         }
         catch (Exception e)
         {
-            Log.Error("Error retrieving data.", e);
+            Log.Error(e, "Error retrieving data.");
             DataState = WidgetDataState.Failed;
             return;
         }

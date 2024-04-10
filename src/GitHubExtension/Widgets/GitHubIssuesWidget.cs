@@ -79,7 +79,7 @@ internal class GitHubIssuesWidget : GitHubRepositoryWidget
         }
         catch (Exception ex)
         {
-            Log.Error("Failed requesting data update.", ex);
+            Log.Error(ex, "Failed requesting data update.");
         }
     }
 
@@ -162,7 +162,7 @@ internal class GitHubIssuesWidget : GitHubRepositoryWidget
         }
         catch (Exception e)
         {
-            Log.Error("Error retrieving data.", e);
+            Log.Error(e, "Error retrieving data.");
             DataState = WidgetDataState.Failed;
             return;
         }
