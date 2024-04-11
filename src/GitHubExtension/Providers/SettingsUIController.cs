@@ -4,12 +4,17 @@
 using GitHubExtension.Helpers;
 using Microsoft.Windows.ApplicationModel.Resources;
 using Microsoft.Windows.DevHome.SDK;
+using Serilog;
 using Windows.Foundation;
 
 namespace GitHubExtension.Providers;
 
 internal sealed class SettingsUIController : IExtensionAdaptiveCardSession
 {
+    private static readonly Lazy<ILogger> _log = new(() => Serilog.Log.ForContext("SourceContext", nameof(RepositoryProvider)));
+
+    private static readonly ILogger Log = _log.Value;
+
     private static readonly string _notificationsEnabledString = "NotificationsEnabled";
 
     private IExtensionAdaptiveCard? _settingsUI;
@@ -17,13 +22,13 @@ internal sealed class SettingsUIController : IExtensionAdaptiveCardSession
 
     public void Dispose()
     {
-        Log.Logger()?.ReportDebug($"Dispose");
+        Log.Debug($"Dispose");
         _settingsUI?.Update(null, null, null);
     }
 
     public ProviderOperationResult Initialize(IExtensionAdaptiveCard extensionUI)
     {
-        Log.Logger()?.ReportDebug($"Initialize");
+        Log.Debug($"Initialize");
         _settingsUI = extensionUI;
         return _settingsUI.Update(_settingsUITemplate.GetSettingsUITemplate(), null, "SettingsPage");
     }
@@ -33,14 +38,14 @@ internal sealed class SettingsUIController : IExtensionAdaptiveCardSession
         return Task.Run(async () =>
         {
             ProviderOperationResult operationResult;
-            Log.Logger()?.ReportInfo($"OnAction() called with state:{_settingsUI?.State}");
-            Log.Logger()?.ReportDebug($"action: {action}");
+            Log.Information($"OnAction() called with state:{_settingsUI?.State}");
+            Log.Debug($"action: {action}");
 
             switch (_settingsUI?.State)
             {
                 case "SettingsPage":
                     {
-                        Log.Logger()?.ReportDebug($"inputs: {inputs}");
+                        Log.Debug($"inputs: {inputs}");
 
                         var currentNotificationsEnabled = LocalSettings.ReadSettingAsync<string>(_notificationsEnabledString).Result ?? "true";
                         await LocalSettings.SaveSettingAsync(_notificationsEnabledString, currentNotificationsEnabled == "true" ? "false" : "true");
@@ -52,7 +57,7 @@ internal sealed class SettingsUIController : IExtensionAdaptiveCardSession
 
                 default:
                     {
-                        Log.Logger()?.ReportError($"Unexpected state:{_settingsUI?.State}");
+                        Log.Error($"Unexpected state:{_settingsUI?.State}");
                         operationResult = new ProviderOperationResult(ProviderOperationStatus.Failure, null, "Something went wrong", $"Unexpected state:{_settingsUI?.State}");
                         break;
                     }

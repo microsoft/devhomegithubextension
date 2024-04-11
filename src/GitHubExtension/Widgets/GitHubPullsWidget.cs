@@ -16,8 +16,6 @@ internal sealed class GitHubPullsWidget : GitHubRepositoryWidget
 
     private static Dictionary<string, string> Templates { get; set; } = new();
 
-    private static readonly new string Name = nameof(GitHubPullsWidget);
-
     public override void DeleteWidget(string widgetId, string customState)
     {
         // Remove event handler.
@@ -36,7 +34,7 @@ internal sealed class GitHubPullsWidget : GitHubRepositoryWidget
         // Throttle protection against a widget trigging rapid data updates.
         if (DateTime.Now - LastUpdated < WidgetDataRequestMinTime)
         {
-            Log.Logger()?.ReportDebug(Name, ShortId, "Data request too soon, skipping.");
+            Log.Debug("Data request too soon, skipping.");
         }
 
         if (ActivityState == WidgetActivityState.Configure)
@@ -46,7 +44,7 @@ internal sealed class GitHubPullsWidget : GitHubRepositoryWidget
 
         try
         {
-            Log.Logger()?.ReportDebug(Name, ShortId, $"Requesting data update for {GetOwner()}/{GetRepo()}");
+            Log.Debug($"Requesting data update for {GetOwner()}/{GetRepo()}");
             var requestOptions = new RequestOptions
             {
                 PullRequestRequest = new PullRequestRequest
@@ -66,12 +64,12 @@ internal sealed class GitHubPullsWidget : GitHubRepositoryWidget
 
             var dataManager = GitHubDataManager.CreateInstance();
             _ = dataManager?.UpdatePullRequestsForRepositoryAsync(GetOwner(), GetRepo(), requestOptions);
-            Log.Logger()?.ReportInfo(Name, ShortId, $"Requested data update for {GetOwner()}/{GetRepo()}");
+            Log.Information($"Requested data update for {GetOwner()}/{GetRepo()}");
             DataState = WidgetDataState.Requested;
         }
         catch (Exception ex)
         {
-            Log.Logger()?.ReportError(Name, ShortId, "Failed requesting data update.", ex);
+            Log.Error(ex, "Failed requesting data update.");
         }
     }
 
@@ -84,7 +82,7 @@ internal sealed class GitHubPullsWidget : GitHubRepositoryWidget
             return;
         }
 
-        Log.Logger()?.ReportDebug(Name, ShortId, "Getting Data for Pull Requests");
+        Log.Debug("Getting Data for Pull Requests");
 
         try
         {
@@ -101,7 +99,7 @@ internal sealed class GitHubPullsWidget : GitHubRepositoryWidget
                     { "title", pullItem.Title },
                     { "url", pullItem.HtmlUrl },
                     { "number", pullItem.Number },
-                    { "date", TimeSpanHelper.DateTimeOffsetToDisplayString(pullItem.UpdatedAt, Log.Logger()) },
+                    { "date", TimeSpanHelper.DateTimeOffsetToDisplayString(pullItem.UpdatedAt, Log) },
                     { "user", pullItem.Author.Login },
                     { "avatar", pullItem.Author.AvatarUrl },
                     { "icon", pullsIconData },
@@ -127,6 +125,7 @@ internal sealed class GitHubPullsWidget : GitHubRepositoryWidget
 
             pullsData.Add("pulls", pullsArray);
             pullsData.Add("selected_repo", repository?.FullName ?? string.Empty);
+            pullsData.Add("widgetTitle", WidgetTitle);
             pullsData.Add("is_loading_data", DataState == WidgetDataState.Unknown);
             pullsData.Add("pulls_icon_data", pullsIconData);
 
@@ -136,7 +135,7 @@ internal sealed class GitHubPullsWidget : GitHubRepositoryWidget
         }
         catch (Exception e)
         {
-            Log.Logger()?.ReportError(Name, ShortId, "Error retrieving data.", e);
+            Log.Error(e, "Error retrieving data.");
             DataState = WidgetDataState.Failed;
             return;
         }
@@ -156,7 +155,7 @@ internal sealed class GitHubPullsWidget : GitHubRepositoryWidget
 
     protected override void DataManagerUpdateHandler(object? source, DataManagerUpdateEventArgs e)
     {
-        Log.Logger()?.ReportDebug(Name, ShortId, $"Data Update Event: Kind={e.Kind} Info={e.Description} Context={string.Join(",", e.Context)}");
+        Log.Debug($"Data Update Event: Kind={e.Kind} Info={e.Description} Context={string.Join(",", e.Context)}");
 
         // Don't update if we're in configuration mode.
         if (ActivityState == WidgetActivityState.Configure)
@@ -169,7 +168,7 @@ internal sealed class GitHubPullsWidget : GitHubRepositoryWidget
             var fullName = Validation.ParseFullNameFromGitHubURL(RepositoryUrl);
             if (fullName == e.Description && e.Context.Contains("PullRequests"))
             {
-                Log.Logger()?.ReportInfo(Name, ShortId, $"Received matching repository update event.");
+                Log.Information($"Received matching repository update event.");
                 LoadContentData();
                 UpdateActivityState();
             }

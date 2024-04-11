@@ -5,12 +5,17 @@ using GitHubExtension.Client;
 using GitHubExtension.DataManager;
 using GitHubExtension.DataModel;
 using GitHubExtension.Helpers;
+using Serilog;
 using Windows.Storage;
 
 namespace GitHubExtension;
 
 public partial class GitHubDataManager : IGitHubDataManager, IDisposable
 {
+    private static readonly Lazy<ILogger> _log = new(() => Serilog.Log.ForContext("SourceContext", nameof(GitHubDataManager)));
+
+    private static readonly ILogger Log = _log.Value;
+
     public static event DataManagerUpdateEventHandler? OnUpdate;
 
     private static readonly string LastUpdatedKeyName = "LastUpdated";
@@ -28,8 +33,6 @@ public partial class GitHubDataManager : IGitHubDataManager, IDisposable
     private static readonly TimeSpan LastObservedDeleteSpan = TimeSpan.FromMinutes(6);
     private static readonly long CheckSuiteIdDependabot = 29110;
 
-    private static readonly string Name = nameof(GitHubDataManager);
-
     private DataStore DataStore { get; set; }
 
     public DataStoreOptions DataStoreOptions { get; private set; }
@@ -44,7 +47,7 @@ public partial class GitHubDataManager : IGitHubDataManager, IDisposable
         }
         catch (Exception e)
         {
-            Log.Logger()?.ReportError(Name, "Failed creating GitHubDataManager", e);
+            Log.Error(e, "Failed creating GitHubDataManager");
             Environment.FailFast(e.Message, e);
             return null;
         }
@@ -250,7 +253,7 @@ public partial class GitHubDataManager : IGitHubDataManager, IDisposable
         }
         catch (Exception ex)
         {
-            Log.Logger()?.ReportError(Name, $"Failed Updating DataStore for: {parameters}", ex);
+            Log.Error(ex, $"Failed Updating DataStore for: {parameters}");
             tx.Rollback();
 
             // Rethrow so clients can catch/display an error UX.
@@ -258,7 +261,7 @@ public partial class GitHubDataManager : IGitHubDataManager, IDisposable
         }
 
         tx.Commit();
-        Log.Logger()?.ReportInfo(Name, $"Updated datastore: {parameters}");
+        Log.Information($"Updated datastore: {parameters}");
     }
 
     // Wrapper for the targeted repository update pattern.
@@ -298,22 +301,22 @@ public partial class GitHubDataManager : IGitHubDataManager, IDisposable
                     {
                         case Octokit.NotFoundException:
                             // A private repository will come back as "not found" by the GitHub API when an unauthorized account cannot even view it.
-                            Log.Logger()?.ReportDebug(Name, $"DeveloperId {devId.LoginId} did not find {parameters.Owner}/{parameters.RepositoryName}");
+                            Log.Debug($"DeveloperId {devId.LoginId} did not find {parameters.Owner}/{parameters.RepositoryName}");
                             continue;
 
                         case Octokit.RateLimitExceededException:
-                            Log.Logger()?.ReportDebug(Name, $"DeveloperId {devId.LoginId} rate limit exceeded.");
+                            Log.Debug($"DeveloperId {devId.LoginId} rate limit exceeded.");
                             throw;
 
                         case Octokit.ForbiddenException:
                             // This can happen most commonly with SAML-enabled organizations.
                             // The user may have access but the org blocked the application.
-                            Log.Logger()?.ReportDebug(Name, $"DeveloperId {devId.LoginId} was forbidden access to {parameters.Owner}/{parameters.RepositoryName}");
+                            Log.Debug($"DeveloperId {devId.LoginId} was forbidden access to {parameters.Owner}/{parameters.RepositoryName}");
                             throw;
 
                         default:
                             // If it's some other error like abuse detection, abort and do not continue.
-                            Log.Logger()?.ReportDebug(Name, $"Unhandled Octokit API error for {devId.LoginId} and {parameters.Owner} / {parameters.RepositoryName}");
+                            Log.Debug($"Unhandled Octokit API error for {devId.LoginId} and {parameters.Owner} / {parameters.RepositoryName}");
                             throw;
                     }
                 }
@@ -331,13 +334,13 @@ public partial class GitHubDataManager : IGitHubDataManager, IDisposable
         catch (Exception ex)
         {
             // This is for catching any other unexpected error as well as any we throw.
-            Log.Logger()?.ReportError(Name, $"Failed trying update data for repository: {parameters.Owner}/{parameters.RepositoryName}", ex);
+            Log.Error(ex, $"Failed trying update data for repository: {parameters.Owner}/{parameters.RepositoryName}");
             tx.Rollback();
             throw;
         }
 
         tx.Commit();
-        Log.Logger()?.ReportInfo(Name, $"Updated datastore: {parameters}");
+        Log.Information($"Updated datastore: {parameters}");
     }
 
     // Find all pull requests the developer, and update them.
@@ -348,7 +351,7 @@ public partial class GitHubDataManager : IGitHubDataManager, IDisposable
         if (devIds is null || !devIds.Any())
         {
             // This may not be an error if the user has not yet logged in with a DevId.
-            Log.Logger()?.ReportInfo(Name, "Called to update all pull requests for a user with no logged in developer.");
+            Log.Information("Called to update all pull requests for a user with no logged in developer.");
             return;
         }
 
@@ -405,7 +408,7 @@ public partial class GitHubDataManager : IGitHubDataManager, IDisposable
                     // the UI to query it to attempt to resolve any issues discovered in the main
                     // app UX, such as via a user prompt that tells them not all of their data
                     // could be accessed.
-                    Log.Logger()?.ReportWarn(Name, $"Forbidden exception while trying to query repository {repoFullName}: {ex.Message}");
+                    Log.Warning($"Forbidden exception while trying to query repository {repoFullName}: {ex.Message}");
                     continue;
                 }
 
@@ -445,7 +448,7 @@ public partial class GitHubDataManager : IGitHubDataManager, IDisposable
                                 continue;
                             }
 
-                            Log.Logger()?.ReportDebug($"Suite: {suite.App.Name} - {suite.App.Id} - {suite.App.Owner.Login}  Conclusion: {suite.Conclusion}  Status: {suite.Status}");
+                            Log.Verbose($"Suite: {suite.App.Name} - {suite.App.Id} - {suite.App.Owner.Login}  Conclusion: {suite.Conclusion}  Status: {suite.Status}");
                             CheckSuite.GetOrCreateByOctokitCheckSuite(DataStore, suite);
                         }
                     }
@@ -454,10 +457,10 @@ public partial class GitHubDataManager : IGitHubDataManager, IDisposable
                         // Octokit can sometimes fail unexpectedly or have bugs. Should that occur here, we
                         // will not stop processing all pull requests and instead skip  over getting the PR
                         // checks information for this particular pull request.
-                        Log.Logger()?.ReportError($"Error updating Check Status for Pull Request #{octoPull.Number}: {e.Message}");
+                        Log.Error($"Error updating Check Status for Pull Request #{octoPull.Number}: {e.Message}");
 
                         // Put the full stack trace in debug if this occurs to reduce log spam.
-                        Log.Logger()?.ReportDebug($"Error updating Check Status for Pull Request #{octoPull.Number}.", e);
+                        Log.Debug(e, $"Error updating Check Status for Pull Request #{octoPull.Number}.");
                     }
 
                     var commitCombinedStatus = await devId.GitHubClient.Repository.Status.GetCombined(dsRepository.InternalId, dsPullRequest.HeadSha);
@@ -480,14 +483,14 @@ public partial class GitHubDataManager : IGitHubDataManager, IDisposable
                         // Octokit can sometimes fail unexpectedly or have bugs. Should that occur here, we
                         // will not stop processing all pull requests and instead skip  over getting the PR
                         // review information for this particular pull request.
-                        Log.Logger()?.ReportError($"Error updating Reviews for Pull Request #{octoPull.Number}: {e.Message}");
+                        Log.Error($"Error updating Reviews for Pull Request #{octoPull.Number}: {e.Message}");
 
                         // Put the full stack trace in debug if this occurs to reduce log spam.
-                        Log.Logger()?.ReportDebug($"Error updating Reviews for Pull Request #{octoPull.Number}.", e);
+                        Log.Debug(e, $"Error updating Reviews for Pull Request #{octoPull.Number}.");
                     }
                 }
 
-                Log.Logger()?.ReportDebug(Name, $"Updated developer pull requests for {repoFullName}.");
+                Log.Debug($"Updated developer pull requests for {repoFullName}.");
             }
 
             // After we update for this developer, remove all pull requests for this developer that
@@ -501,7 +504,7 @@ public partial class GitHubDataManager : IGitHubDataManager, IDisposable
     private async Task<Repository> UpdateRepositoryAsync(string owner, string repositoryName, Octokit.GitHubClient? client = null)
     {
         client ??= await GitHubClientProvider.Instance.GetClientForLoggedInDeveloper(true);
-        Log.Logger()?.ReportInfo(Name, $"Updating repository: {owner}/{repositoryName}");
+        Log.Information($"Updating repository: {owner}/{repositoryName}");
         var octokitRepository = await client.Repository.Get(owner, repositoryName);
         return Repository.GetOrCreateByOctokitRepository(DataStore, octokitRepository);
     }
@@ -513,7 +516,7 @@ public partial class GitHubDataManager : IGitHubDataManager, IDisposable
         options ??= RequestOptions.RequestOptionsDefault();
         client ??= await GitHubClientProvider.Instance.GetClientForLoggedInDeveloper(true);
         var user = await client.User.Current();
-        Log.Logger()?.ReportInfo(Name, $"Updating pull requests for: {repository.FullName} and user: {user.Login}");
+        Log.Information($"Updating pull requests for: {repository.FullName} and user: {user.Login}");
         var octoPulls = await client.PullRequest.GetAllForRepository(repository.InternalId, options.PullRequestRequest, options.ApiOptions);
         foreach (var pull in octoPulls)
         {
@@ -536,7 +539,7 @@ public partial class GitHubDataManager : IGitHubDataManager, IDisposable
                         continue;
                     }
 
-                    Log.Logger()?.ReportDebug($"Suite: {suite.App.Name} - {suite.App.Id} - {suite.App.Owner.Login}  Conclusion: {suite.Conclusion}  Status: {suite.Status}");
+                    Log.Verbose($"Suite: {suite.App.Name} - {suite.App.Id} - {suite.App.Owner.Login}  Conclusion: {suite.Conclusion}  Status: {suite.Status}");
                     CheckSuite.GetOrCreateByOctokitCheckSuite(DataStore, suite);
                 }
             }
@@ -545,10 +548,10 @@ public partial class GitHubDataManager : IGitHubDataManager, IDisposable
                 // Octokit can sometimes fail unexpectedly or have bugs. Should that occur here, we
                 // will not stop processing all pull requests and instead skip  over getting the PR
                 // checks information for this particular pull request.
-                Log.Logger()?.ReportError($"Error updating Check Status for Pull Request #{pull.Number}: {e.Message}");
+                Log.Error($"Error updating Check Status for Pull Request #{pull.Number}: {e.Message}");
 
                 // Put the full stack trace in debug if this occurs to reduce log spam.
-                Log.Logger()?.ReportDebug($"Error updating Check Status for Pull Request #{pull.Number}.", e);
+                Log.Debug(e, $"Error updating Check Status for Pull Request #{pull.Number}.");
             }
 
             var commitCombinedStatus = await client.Repository.Status.GetCombined(repository.InternalId, dsPullRequest.HeadSha);
@@ -578,7 +581,7 @@ public partial class GitHubDataManager : IGitHubDataManager, IDisposable
         // Ignore comments or pending state.
         if (string.IsNullOrEmpty(newReview.State) || newReview.State == "Commented")
         {
-            Log.Logger()?.ReportDebug(Name, "Notifications", $"Ignoring review for {pullRequest}. State: {newReview.State}");
+            Log.Debug($"Ignoring review for {pullRequest}. State: {newReview.State}");
             return;
         }
 
@@ -586,7 +589,7 @@ public partial class GitHubDataManager : IGitHubDataManager, IDisposable
         if (existingReview == null || (existingReview.State != newReview.State))
         {
             // We assume that the logged in developer created this pull request.
-            Log.Logger()?.ReportInfo(Name, "Notifications", $"Creating NewReview Notification for {pullRequest}. State: {newReview.State}");
+            Log.Information($"Creating NewReview Notification for {pullRequest}. State: {newReview.State}");
             Notification.Create(DataStore, newReview, NotificationType.NewReview);
         }
     }
@@ -601,13 +604,13 @@ public partial class GitHubDataManager : IGitHubDataManager, IDisposable
 
         if (ShouldCreateCheckFailureNotification(curStatus, prevStatus))
         {
-            Log.Logger()?.ReportInfo(Name, "Notifications", $"Creating CheckRunFailure Notification for {curStatus}");
+            Log.Information($"Creating CheckRunFailure Notification for {curStatus}");
             Notification.Create(DataStore, curStatus, NotificationType.CheckRunFailed);
         }
 
         if (ShouldCreateCheckSucceededNotification(curStatus, prevStatus))
         {
-            Log.Logger()?.ReportDebug(Name, "Notifications", $"Creating CheckRunSuccess Notification for {curStatus}");
+            Log.Debug($"Creating CheckRunSuccess Notification for {curStatus}");
             Notification.Create(DataStore, curStatus, NotificationType.CheckRunSucceeded);
         }
     }
@@ -684,7 +687,7 @@ public partial class GitHubDataManager : IGitHubDataManager, IDisposable
     {
         options ??= RequestOptions.RequestOptionsDefault();
         client ??= await GitHubClientProvider.Instance.GetClientForLoggedInDeveloper(true);
-        Log.Logger()?.ReportInfo(Name, $"Updating issues for: {repository.FullName}");
+        Log.Information($"Updating issues for: {repository.FullName}");
 
         // Since we are only interested in issues and for a specific repository, we will override
         // these two properties. All other properties the caller can specify however they see fit.
@@ -694,7 +697,7 @@ public partial class GitHubDataManager : IGitHubDataManager, IDisposable
         var issuesResult = await client.Search.SearchIssues(options.SearchIssuesRequest);
         if (issuesResult == null)
         {
-            Log.Logger()?.ReportDebug($"No issues found.");
+            Log.Debug($"No issues found.");
             return;
         }
 
@@ -702,11 +705,11 @@ public partial class GitHubDataManager : IGitHubDataManager, IDisposable
         Search? search = null;
         if (!string.IsNullOrEmpty(options.SearchIssuesRequest.Term))
         {
-            Log.Logger()?.ReportDebug($"Term = {options.SearchIssuesRequest.Term}");
+            Log.Debug($"Term = {options.SearchIssuesRequest.Term}");
             search = Search.GetOrCreate(DataStore, options.SearchIssuesRequest.Term, repository.Id);
         }
 
-        Log.Logger()?.ReportDebug(Name, $"Results contain {issuesResult.Items.Count} issues.");
+        Log.Debug($"Results contain {issuesResult.Items.Count} issues.");
         foreach (var issue in issuesResult.Items)
         {
             var dsIssue = Issue.GetOrCreateByOctokitIssue(DataStore, issue, repository.Id);
@@ -738,16 +741,16 @@ public partial class GitHubDataManager : IGitHubDataManager, IDisposable
         options.ApiOptions.PageSize = 10;
 
         client ??= await GitHubClientProvider.Instance.GetClientForLoggedInDeveloper(true);
-        Log.Logger()?.ReportInfo(Name, $"Updating releases for: {repository.FullName}");
+        Log.Information($"Updating releases for: {repository.FullName}");
 
         var releasesResult = await client.Repository.Release.GetAll(repository.InternalId, options.ApiOptions);
         if (releasesResult == null)
         {
-            Log.Logger()?.ReportDebug($"No releases found.");
+            Log.Debug($"No releases found.");
             return;
         }
 
-        Log.Logger()?.ReportDebug(Name, $"Results contain {releasesResult.Count} releases.");
+        Log.Debug($"Results contain {releasesResult.Count} releases.");
         foreach (var release in releasesResult)
         {
             if (release.Draft)
@@ -788,7 +791,7 @@ public partial class GitHubDataManager : IGitHubDataManager, IDisposable
         var nameSplit = fullName.Split(['/']);
         if (nameSplit.Length != 2 || string.IsNullOrEmpty(nameSplit[0]) || string.IsNullOrEmpty(nameSplit[1]))
         {
-            Log.Logger()?.ReportError(Name, $"Invalid repository full name: {fullName}");
+            Log.Error($"Invalid repository full name: {fullName}");
             throw new ArgumentException($"Invalid repository full name: {fullName}");
         }
 
@@ -848,7 +851,7 @@ public partial class GitHubDataManager : IGitHubDataManager, IDisposable
     {
         if (!disposed)
         {
-            Log.Logger()?.ReportDebug(Name, "Disposing of all Disposable resources.");
+            Log.Debug("Disposing of all Disposable resources.");
 
             if (disposing)
             {

@@ -24,11 +24,13 @@ public partial class DataStoreTests
     public void TestInitialize()
     {
         TestOptions = TestHelpers.SetupTempTestOptions(TestContext!);
+        TestHelpers.ConfigureTestLog(TestOptions, TestContext!);
     }
 
     [TestCleanup]
     public void Cleanup()
     {
+        TestHelpers.CloseTestLog();
         TestHelpers.CleanupTempTestOptions(TestOptions, TestContext!);
     }
 }

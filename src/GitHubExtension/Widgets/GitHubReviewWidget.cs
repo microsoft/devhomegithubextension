@@ -52,6 +52,7 @@ internal sealed class GitHubReviewWidget : GitHubUserWidget
             }
 
             DeveloperLoginId = dataObject["account"]?.GetValue<string>() ?? string.Empty;
+            UpdateTitle(dataObject);
 
             ConfigurationData = data;
 

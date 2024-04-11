@@ -4,12 +4,17 @@
 using Dapper;
 using Dapper.Contrib.Extensions;
 using GitHubExtension.Helpers;
+using Serilog;
 
 namespace GitHubExtension.DataModel;
 
 [Table("PullRequest")]
 public class PullRequest
 {
+    private static readonly Lazy<ILogger> _log = new(() => Serilog.Log.ForContext("SourceContext", $"DataModel/{nameof(PullRequest)}"));
+
+    private static readonly ILogger Log = _log.Value;
+
     [Key]
     public long Id { get; set; } = DataStore.NoForeignKey;
 
@@ -486,7 +491,7 @@ public class PullRequest
             RepositoryId = repository.Id,
         };
 
-        Log.Logger()?.ReportDebug(DataStore.GetSqlLogMessage(sql, param));
+        Log.Verbose(DataStore.GetSqlLogMessage(sql, param));
         var pulls = dataStore.Connection!.Query<PullRequest>(sql, param, null) ?? Enumerable.Empty<PullRequest>();
         foreach (var pull in pulls)
         {
@@ -504,7 +509,7 @@ public class PullRequest
             AuthorId = user.Id,
         };
 
-        Log.Logger()?.ReportDebug(DataStore.GetSqlLogMessage(sql, param));
+        Log.Verbose(DataStore.GetSqlLogMessage(sql, param));
         var pulls = dataStore.Connection!.Query<PullRequest>(sql, param, null) ?? Enumerable.Empty<PullRequest>();
         foreach (var pull in pulls)
         {
@@ -559,9 +564,9 @@ public class PullRequest
         command.CommandText = sql;
         command.Parameters.AddWithValue("$Time", date.ToDataStoreInteger());
         command.Parameters.AddWithValue("$RepositoryId", repositoryId);
-        Log.Logger()?.ReportDebug(DataStore.GetCommandLogMessage(sql, command));
+        Log.Verbose(DataStore.GetCommandLogMessage(sql, command));
         var rowsDeleted = command.ExecuteNonQuery();
-        Log.Logger()?.ReportDebug(DataStore.GetDeletedLogMessage(rowsDeleted));
+        Log.Verbose(DataStore.GetDeletedLogMessage(rowsDeleted));
     }
 
     // Delete all records from a particular user before the specified date.
@@ -582,9 +587,9 @@ public class PullRequest
             command.CommandText = sql;
             command.Parameters.AddWithValue("$Time", date.ToDataStoreInteger());
             command.Parameters.AddWithValue("$UserId", user.Id);
-            Log.Logger()?.ReportDebug(DataStore.GetCommandLogMessage(sql, command));
+            Log.Verbose(DataStore.GetCommandLogMessage(sql, command));
             var rowsDeleted = command.ExecuteNonQuery();
-            Log.Logger()?.ReportDebug(DataStore.GetDeletedLogMessage(rowsDeleted));
+            Log.Verbose(DataStore.GetDeletedLogMessage(rowsDeleted));
             break;
         }
     }

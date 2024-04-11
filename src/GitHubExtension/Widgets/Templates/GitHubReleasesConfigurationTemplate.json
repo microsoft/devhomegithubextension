@@ -19,6 +19,13 @@
       "value": "${$root.configuration.url}"
     },
     {
+      "type": "Input.Text",
+      "placeholder": "%Widget_Template/WidgetTitlePlaceholder%",
+      "id": "widgetTitle",
+      "label": "%Widget_Template/WidgetTitleLabel%",
+      "value": "${widgetTitle}"
+    },
+    {
       "type": "Container",
       "items": [
         {

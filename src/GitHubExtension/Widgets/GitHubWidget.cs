@@ -20,8 +20,6 @@ public abstract class GitHubWidget : WidgetImpl
 
     private DateTime lastUpdateRequest = DateTime.MinValue;
 
-    protected static readonly string Name = nameof(GitHubWidget);
-
     protected WidgetActivityState ActivityState { get; set; } = WidgetActivityState.Unknown;
 
     protected WidgetDataState DataState { get; set; } = WidgetDataState.Unknown;
@@ -44,6 +42,8 @@ public abstract class GitHubWidget : WidgetImpl
     }
 
     protected string SavedConfigurationData { get; set; } = string.Empty;
+
+    protected string WidgetTitle { get; set; } = string.Empty;
 
     protected DateTime LastUpdated { get; set; } = DateTime.MinValue;
 
@@ -115,7 +115,7 @@ public abstract class GitHubWidget : WidgetImpl
     public override void OnActionInvoked(WidgetActionInvokedArgs actionInvokedArgs)
     {
         var verb = GetWidgetActionForVerb(actionInvokedArgs.Verb);
-        Log.Logger()?.ReportDebug(Name, ShortId, $"ActionInvoked: {verb}");
+        Log.Debug($"ActionInvoked: {verb}");
 
         switch (verb)
         {
@@ -151,7 +151,7 @@ public abstract class GitHubWidget : WidgetImpl
                 break;
 
             case WidgetAction.Unknown:
-                Log.Logger()?.ReportError(Name, ShortId, $"Unknown verb: {actionInvokedArgs.Verb}");
+                Log.Error($"Unknown verb: {actionInvokedArgs.Verb}");
                 break;
         }
     }
@@ -165,13 +165,18 @@ public abstract class GitHubWidget : WidgetImpl
         SetConfigure();
     }
 
+    protected void GetTitleFromDataObject(JsonNode dataObj)
+    {
+        WidgetTitle = dataObj!["widgetTitle"]?.GetValue<string>() ?? string.Empty;
+    }
+
     private async Task HandleSignIn()
     {
-        Log.Logger()?.ReportInfo($"WidgetAction invoked for user sign in");
+        Log.Information($"WidgetAction invoked for user sign in");
         var authProvider = DeveloperIdProvider.GetInstance();
         await authProvider.LoginNewDeveloperIdAsync();
         UpdateActivityState();
-        Log.Logger()?.ReportInfo($"User sign in successful from WidgetAction invocation");
+        Log.Information($"User sign in successful from WidgetAction invocation");
     }
 
     protected WidgetAction GetWidgetActionForVerb(string verb)
@@ -183,7 +188,7 @@ public abstract class GitHubWidget : WidgetImpl
         catch (Exception)
         {
             // Invalid verb.
-            Log.Logger()?.ReportError($"Unknown WidgetAction verb: {verb}");
+            Log.Error($"Unknown WidgetAction verb: {verb}");
             return WidgetAction.Unknown;
         }
     }
@@ -192,7 +197,7 @@ public abstract class GitHubWidget : WidgetImpl
     {
         var signInData = new JsonObject
         {
-            { "message", Resources.GetResource(@"Widget_Template/SignInRequired", Log.Logger()) },
+            { "message", Resources.GetResource(@"Widget_Template/SignInRequired", Log) },
         };
 
         return signInData.ToString();
@@ -238,7 +243,7 @@ public abstract class GitHubWidget : WidgetImpl
             CustomState = ConfigurationData,
         };
 
-        Log.Logger()?.ReportDebug(Name, ShortId, $"Updating widget for {Page}");
+        Log.Debug($"Updating widget for {Page}");
         WidgetManager.GetDefault().UpdateWidget(updateOptions);
     }
 
@@ -256,7 +261,7 @@ public abstract class GitHubWidget : WidgetImpl
     {
         if (Template.TryGetValue(page, out var pageTemplate))
         {
-            Log.Logger()?.ReportDebug(Name, ShortId, $"Using cached template for {page}");
+            Log.Debug($"Using cached template for {page}");
             return pageTemplate;
         }
 
@@ -264,14 +269,14 @@ public abstract class GitHubWidget : WidgetImpl
         {
             var path = Path.Combine(AppContext.BaseDirectory, GetTemplatePath(page));
             var template = File.ReadAllText(path, Encoding.Default) ?? throw new FileNotFoundException(path);
-            template = Resources.ReplaceIdentifiers(template, Resources.GetWidgetResourceIdentifiers(), Log.Logger());
-            Log.Logger()?.ReportDebug(Name, ShortId, $"Caching template for {page}");
+            template = Resources.ReplaceIdentifiers(template, Resources.GetWidgetResourceIdentifiers(), Log);
+            Log.Debug($"Caching template for {page}");
             Template[page] = template;
             return template;
         }
         catch (Exception e)
         {
-            Log.Logger()?.ReportError(Name, ShortId, "Error getting template.", e);
+            Log.Error(e, "Error getting template.");
             return string.Empty;
         }
     }
@@ -283,7 +288,7 @@ public abstract class GitHubWidget : WidgetImpl
 
     protected void LogCurrentState()
     {
-        Log.Logger()?.ReportDebug(Name, ShortId, GetCurrentState());
+        Log.Debug(GetCurrentState());
     }
 
     protected void SetActive()
@@ -371,7 +376,7 @@ public abstract class GitHubWidget : WidgetImpl
         }
         catch (Exception ex)
         {
-            Log.Logger()?.ReportError(Name, ShortId, "Failed Requesting Update", ex);
+            Log.Error(ex, "Failed Requesting Update");
         }
 
         lastUpdateRequest = DateTime.Now;
@@ -379,7 +384,7 @@ public abstract class GitHubWidget : WidgetImpl
 
     private void HandleDeveloperIdChange(object? sender, IDeveloperId e)
     {
-        Log.Logger()?.ReportInfo(Name, ShortId, $"Change in Developer Id,  Updating widget state.");
+        Log.Information($"Change in Developer Id,  Updating widget state.");
         UpdateActivityState();
     }
 }
