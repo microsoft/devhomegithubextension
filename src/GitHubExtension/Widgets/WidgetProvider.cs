@@ -34,7 +34,7 @@ public sealed class WidgetProvider : IWidgetProvider, IWidgetProvider2
         var widgetId = widgetContext.Id;
         var widgetDefinitionId = widgetContext.DefinitionId;
         _log.Verbose($"Calling Initialize for Widget Id: {widgetId} - {widgetDefinitionId}");
-        if (widgetDefinitionRegistry.ContainsKey(widgetDefinitionId))
+        if (widgetDefinitionRegistry.TryGetValue(widgetDefinitionId, out var widgetDefinition))
         {
             if (!runningWidgets.ContainsKey(widgetId))
             {
@@ -112,7 +112,7 @@ public sealed class WidgetProvider : IWidgetProvider, IWidgetProvider2
     public void Deactivate(string widgetId)
     {
         _log.Verbose($"Deactivate id: {widgetId}");
-        if (runningWidgets.ContainsKey(widgetId))
+        if (runningWidgets.TryGetValue(widgetId, out var widget))
         {
             widget.Deactivate(widgetId);
         }
@@ -121,7 +121,7 @@ public sealed class WidgetProvider : IWidgetProvider, IWidgetProvider2
     public void DeleteWidget(string widgetId, string customState)
     {
         _log.Information($"DeleteWidget id: {widgetId}");
-        if (runningWidgets.ContainsKey(widgetId))
+        if (runningWidgets.TryGetValue(widgetId, out var widget))
         {
             widget.DeleteWidget(widgetId, customState);
             runningWidgets.Remove(widgetId);
