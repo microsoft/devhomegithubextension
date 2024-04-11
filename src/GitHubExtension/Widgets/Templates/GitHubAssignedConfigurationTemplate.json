@@ -17,6 +17,13 @@
       ]
     },
     {
+      "type": "Input.Text",
+      "placeholder": "%Widget_Template/WidgetTitlePlaceholder%",
+      "id": "widgetTitle",
+      "label": "%Widget_Template/WidgetTitleLabel%",
+      "value": "${widgetTitle}"
+    },
+    {
       "type": "ColumnSet",
       "columns": [
         {

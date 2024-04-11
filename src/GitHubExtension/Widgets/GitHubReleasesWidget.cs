@@ -14,8 +14,6 @@ internal class GitHubReleasesWidget : GitHubRepositoryWidget
 {
     private readonly string _releasesIconData = IconLoader.GetIconAsBase64("releases.png");
 
-    protected static readonly new string Name = nameof(GitHubReleasesWidget);
-
     public override void DeleteWidget(string widgetId, string customState)
     {
         // Remove event handler.
@@ -34,7 +32,7 @@ internal class GitHubReleasesWidget : GitHubRepositoryWidget
         // Throttle protection against a widget trigging rapid data updates.
         if (DateTime.Now - LastUpdated < WidgetDataRequestMinTime)
         {
-            Log.Logger()?.ReportDebug(Name, ShortId, "Data request too soon, skipping.");
+            Log.Debug("Data request too soon, skipping.");
         }
 
         if (ActivityState == WidgetActivityState.Configure)
@@ -44,7 +42,7 @@ internal class GitHubReleasesWidget : GitHubRepositoryWidget
 
         try
         {
-            Log.Logger()?.ReportDebug(Name, ShortId, $"Requesting data update for {GetOwner()}/{GetRepo()}");
+            Log.Debug($"Requesting data update for {GetOwner()}/{GetRepo()}");
             var requestOptions = new RequestOptions
             {
                 UsePublicClientAsFallback = true,
@@ -52,12 +50,12 @@ internal class GitHubReleasesWidget : GitHubRepositoryWidget
 
             var dataManager = GitHubDataManager.CreateInstance();
             _ = dataManager?.UpdateReleasesForRepositoryAsync(GetOwner(), GetRepo(), requestOptions);
-            Log.Logger()?.ReportInfo(Name, ShortId, $"Requested data update for {GetOwner()}/{GetRepo()}");
+            Log.Information($"Requested data update for {GetOwner()}/{GetRepo()}");
             DataState = WidgetDataState.Requested;
         }
         catch (Exception ex)
         {
-            Log.Logger()?.ReportError(Name, ShortId, "Failed requesting data update.", ex);
+            Log.Error(ex, "Failed requesting data update.");
         }
     }
 
@@ -70,7 +68,7 @@ internal class GitHubReleasesWidget : GitHubRepositoryWidget
             return;
         }
 
-        Log.Logger()?.ReportDebug(Name, ShortId, "Getting Data for Releases");
+        Log.Debug("Getting Data for Releases");
 
         try
         {
@@ -114,7 +112,7 @@ internal class GitHubReleasesWidget : GitHubRepositoryWidget
                     { "tag", releaseItem.TagName },
                     { "infoText", infoText },
                     { "infoColor", infoColor },
-                    { "published", TimeSpanHelper.DateTimeOffsetToDisplayString(releaseItem.PublishedAt, Log.Logger()) },
+                    { "published", TimeSpanHelper.DateTimeOffsetToDisplayString(releaseItem.PublishedAt, Log) },
                     { "url", releaseItem.HtmlUrl },
                     { "icon", _releasesIconData },
                 };
@@ -124,6 +122,7 @@ internal class GitHubReleasesWidget : GitHubRepositoryWidget
 
             releasesData.Add("releases", releasesArray);
             releasesData.Add("selected_repo", repository?.FullName ?? string.Empty);
+            releasesData.Add("widgetTitle", WidgetTitle);
             releasesData.Add("is_loading_data", DataState == WidgetDataState.Unknown);
             releasesData.Add("releases_icon_data", _releasesIconData);
 
@@ -133,7 +132,7 @@ internal class GitHubReleasesWidget : GitHubRepositoryWidget
         }
         catch (Exception e)
         {
-            Log.Logger()?.ReportError(Name, ShortId, "Error retrieving data.", e);
+            Log.Error(e, "Error retrieving data.");
             DataState = WidgetDataState.Failed;
             return;
         }
@@ -153,7 +152,7 @@ internal class GitHubReleasesWidget : GitHubRepositoryWidget
 
     protected override void DataManagerUpdateHandler(object? source, DataManagerUpdateEventArgs e)
     {
-        Log.Logger()?.ReportDebug(Name, ShortId, $"Data Update Event: Kind={e.Kind} Info={e.Description} Context={string.Join(",", e.Context)}");
+        Log.Debug($"Data Update Event: Kind={e.Kind} Info={e.Description} Context={string.Join(",", e.Context)}");
 
         // Don't update if we're in configuration mode.
         if (ActivityState == WidgetActivityState.Configure)
@@ -166,7 +165,7 @@ internal class GitHubReleasesWidget : GitHubRepositoryWidget
             var fullName = Validation.ParseFullNameFromGitHubURL(RepositoryUrl);
             if (fullName == e.Description && e.Context.Contains("Releases"))
             {
-                Log.Logger()?.ReportInfo(Name, ShortId, $"Received matching repository update event.");
+                Log.Information($"Received matching repository update event.");
                 LoadContentData();
                 UpdateActivityState();
             }

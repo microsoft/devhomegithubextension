@@ -2,7 +2,6 @@
 // Licensed under the MIT License.
 
 using Dapper.Contrib.Extensions;
-using DevHome.Logging;
 using GitHubExtension.DataModel;
 using GitHubExtension.Helpers;
 
@@ -14,11 +13,6 @@ public partial class DataStoreTests
     [TestCategory("Unit")]
     public void DateTimeExtension()
     {
-        using var log = new Logger("TestStore", TestOptions.LogOptions);
-        var testListener = new TestListener("TestListener", TestContext!);
-        log.AddListener(testListener);
-        Log.Attach(log);
-
         var now = DateTime.Now;
         TestContext?.WriteLine($"Now: {now}");
         var nowAsInteger = now.ToDataStoreInteger();
@@ -61,20 +55,12 @@ public partial class DataStoreTests
         Assert.IsNotNull(thirtyDaysFromMetaData);
         Assert.AreEqual(now, nowFromMetaData.ToDateTime());
         Assert.AreEqual(thirtyDays, thirtyDaysFromMetaData.ToTimeSpan());
-
-        testListener.PrintEventCounts();
-        Assert.AreEqual(false, testListener.FoundErrors());
     }
 
     [TestMethod]
     [TestCategory("Unit")]
     public void ReadAndWriteMetaData()
     {
-        using var log = new Logger("TestStore", TestOptions.LogOptions);
-        var testListener = new TestListener("TestListener", TestContext!);
-        log.AddListener(testListener);
-        Log.Attach(log);
-
         using var dataStore = new DataStore("TestStore", TestHelpers.GetDataStoreFilePath(TestOptions), TestOptions.DataStoreOptions.DataStoreSchema!);
         Assert.IsNotNull(dataStore);
         dataStore.Create();
@@ -124,20 +110,12 @@ public partial class DataStoreTests
         {
             TestContext?.WriteLine($"  Id: {metaData.Id}  Key: {metaData.Key}  Value: {metaData.Value}");
         }
-
-        testListener.PrintEventCounts();
-        Assert.AreEqual(false, testListener.FoundErrors());
     }
 
     [TestMethod]
     [TestCategory("Unit")]
     public void ReadAndWriteUser()
     {
-        using var log = new Logger("TestStore", TestOptions.LogOptions);
-        var testListener = new TestListener("TestListener", TestContext!);
-        log.AddListener(testListener);
-        Log.Attach(log);
-
         using var dataStore = new DataStore("TestStore", TestHelpers.GetDataStoreFilePath(TestOptions), TestOptions.DataStoreOptions.DataStoreSchema!);
         Assert.IsNotNull(dataStore);
         dataStore.Create();
@@ -179,20 +157,12 @@ public partial class DataStoreTests
                 Assert.AreEqual("https://www.microsoft.com", user.AvatarUrl);
             }
         }
-
-        testListener.PrintEventCounts();
-        Assert.AreEqual(false, testListener.FoundErrors());
     }
 
     [TestMethod]
     [TestCategory("Unit")]
     public void ReadAndWriteRepository()
     {
-        using var log = new Logger("TestStore", TestOptions.LogOptions);
-        var testListener = new TestListener("TestListener", TestContext!);
-        log.AddListener(testListener);
-        Log.Attach(log);
-
         using var dataStore = new DataStore("TestStore", TestHelpers.GetDataStoreFilePath(TestOptions), TestOptions.DataStoreOptions.DataStoreSchema!);
         Assert.IsNotNull(dataStore);
         dataStore.Create();
@@ -240,20 +210,12 @@ public partial class DataStoreTests
                 Assert.AreEqual("https://www.microsoft.com", repo.HtmlUrl);
             }
         }
-
-        testListener.PrintEventCounts();
-        Assert.AreEqual(false, testListener.FoundErrors());
     }
 
     [TestMethod]
     [TestCategory("Unit")]
     public void ReadAndWriteIssue()
     {
-        using var log = new Logger("TestStore", TestOptions.LogOptions);
-        var testListener = new TestListener("TestListener", TestContext!);
-        log.AddListener(testListener);
-        Log.Attach(log);
-
         using var dataStore = new DataStore("TestStore", TestHelpers.GetDataStoreFilePath(TestOptions), TestOptions.DataStoreOptions.DataStoreSchema!);
         Assert.IsNotNull(dataStore);
         dataStore.Create();
@@ -306,20 +268,12 @@ public partial class DataStoreTests
                 Assert.AreEqual("Missing Tests", issue.Title);
             }
         }
-
-        testListener.PrintEventCounts();
-        Assert.AreEqual(false, testListener.FoundErrors());
     }
 
     [TestMethod]
     [TestCategory("Unit")]
     public void ReadAndWritePullRequest()
     {
-        using var log = new Logger("TestStore", TestOptions.LogOptions);
-        var testListener = new TestListener("TestListener", TestContext!);
-        log.AddListener(testListener);
-        Log.Attach(log);
-
         using var dataStore = new DataStore("TestStore", TestHelpers.GetDataStoreFilePath(TestOptions), TestOptions.DataStoreOptions.DataStoreSchema!);
         Assert.IsNotNull(dataStore);
         dataStore.Create();
@@ -378,20 +332,12 @@ public partial class DataStoreTests
             Assert.AreEqual(0, pull.Checks.Count());
             Assert.AreEqual(0, pull.FailedChecks.Count());
         }
-
-        testListener.PrintEventCounts();
-        Assert.AreEqual(false, testListener.FoundErrors());
     }
 
     [TestMethod]
     [TestCategory("Unit")]
     public void ReadAndWriteCheckRun()
     {
-        using var log = new Logger("TestStore", TestOptions.LogOptions);
-        var testListener = new TestListener("TestListener", TestContext!);
-        log.AddListener(testListener);
-        Log.Attach(log);
-
         using var dataStore = new DataStore("TestStore", TestHelpers.GetDataStoreFilePath(TestOptions), TestOptions.DataStoreOptions.DataStoreSchema!);
         Assert.IsNotNull(dataStore);
         dataStore.Create();
@@ -463,21 +409,12 @@ public partial class DataStoreTests
 
         Assert.AreEqual(CheckStatus.Completed, pullRequest.ChecksStatus);
         Assert.AreEqual(CheckConclusion.Failure, pullRequest.ChecksConclusion);
-
-        testListener.PrintEventCounts();
-        Assert.AreEqual(false, testListener.FoundErrors());
     }
 
     [TestMethod]
     [TestCategory("Unit")]
     public void ReadAndWriteStatusAndNotification()
     {
-        // Also includes notifications.
-        using var log = new Logger("TestStore", TestOptions.LogOptions);
-        var testListener = new TestListener("TestListener", TestContext!);
-        log.AddListener(testListener);
-        Log.Attach(log);
-
         using var dataStore = new DataStore("TestStore", TestHelpers.GetDataStoreFilePath(TestOptions), TestOptions.DataStoreOptions.DataStoreSchema!);
         Assert.IsNotNull(dataStore);
         dataStore.Create();
@@ -524,20 +461,12 @@ public partial class DataStoreTests
         TestContext?.WriteLine($"  {notification.Title}");
         TestContext?.WriteLine($"  {notification.Description}");
         TestContext?.WriteLine($"  {notification.DetailsUrl}");
-
-        testListener.PrintEventCounts();
-        Assert.AreEqual(false, testListener.FoundErrors());
     }
 
     [TestMethod]
     [TestCategory("Unit")]
     public void ReadAndWriteReview()
     {
-        using var log = new Logger("TestStore", TestOptions.LogOptions);
-        var testListener = new TestListener("TestListener", TestContext!);
-        log.AddListener(testListener);
-        Log.Attach(log);
-
         using var dataStore = new DataStore("TestStore", TestHelpers.GetDataStoreFilePath(TestOptions), TestOptions.DataStoreOptions.DataStoreSchema!);
         Assert.IsNotNull(dataStore);
         dataStore.Create();
@@ -590,20 +519,12 @@ public partial class DataStoreTests
             TestContext?.WriteLine($"  PR 1 - Review: {review}");
             Assert.IsTrue(review.PullRequestId == 1);
         }
-
-        testListener.PrintEventCounts();
-        Assert.AreEqual(false, testListener.FoundErrors());
     }
 
     [TestMethod]
     [TestCategory("Unit")]
     public void ReadAndWriteRelease()
     {
-        using var log = new Logger("TestStore", TestOptions.LogOptions);
-        var testListener = new TestListener("TestListener", TestContext!);
-        log.AddListener(testListener);
-        Log.Attach(log);
-
         using var dataStore = new DataStore("TestStore", TestHelpers.GetDataStoreFilePath(TestOptions), TestOptions.DataStoreOptions.DataStoreSchema!);
         Assert.IsNotNull(dataStore);
         dataStore.Create();
@@ -653,8 +574,5 @@ public partial class DataStoreTests
                 Assert.AreEqual("https://www.microsoft.com", release.HtmlUrl);
             }
         }
-
-        testListener.PrintEventCounts();
-        Assert.AreEqual(false, testListener.FoundErrors());
     }
 }

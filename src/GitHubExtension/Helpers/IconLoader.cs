@@ -1,7 +1,7 @@
 ﻿// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-using GitHubExtension.DataModel;
+using Serilog;
 
 namespace GitHubExtension.Helpers;
 
@@ -11,11 +11,12 @@ public class IconLoader
 
     public static string GetIconAsBase64(string filename)
     {
-        Log.Logger()?.ReportDebug(nameof(IconLoader), $"Asking for icon: {filename}");
+        var log = Log.ForContext("SourceContext", nameof(IconLoader));
+        log.Verbose($"Asking for icon: {filename}");
         if (!Base64ImageRegistry.ContainsKey(filename))
         {
             Base64ImageRegistry.Add(filename, ConvertIconToDataString(filename));
-            Log.Logger()?.ReportDebug(nameof(IconLoader), $"The icon {filename} was converted and is now stored.");
+            log.Verbose($"The icon {filename} was converted and is now stored.");
         }
 
         return Base64ImageRegistry[filename];

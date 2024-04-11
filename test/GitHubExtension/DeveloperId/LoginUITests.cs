@@ -153,7 +153,7 @@ public partial class DeveloperIdTests
         // Create DataRows during Runtime since these need Env vars
         RuntimeDataRow[] dataRows =
                                 {
-                                    new RuntimeDataRow()
+                                    new()
                                     {
                                         InitialState = "EnterpriseServerPATPage",
                                         Actions = LoginUITestData.ConnectButtonAction,
@@ -161,7 +161,7 @@ public partial class DeveloperIdTests
                                         FinalState = "LoginSucceededPage",
                                         HostAddress = Environment.GetEnvironmentVariable("DEV_HOME_TEST_GITHUB_ENTERPRISE_SERVER"),
                                     },
-                                    new RuntimeDataRow()
+                                    new()
                                     {
                                         InitialState = "EnterpriseServerPATPage",
                                         Actions = LoginUITestData.ConnectButtonAction,

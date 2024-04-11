@@ -14,11 +14,6 @@ public partial class DataStoreTests
     [TestCategory("LiveData")]
     public void AddUserFromOctokit()
     {
-        using var log = new DevHome.Logging.Logger("TestStore", TestOptions.LogOptions);
-        var testListener = new TestListener("TestListener", TestContext!);
-        log.AddListener(testListener);
-        Log.Attach(log);
-
         using var dataStore = new DataStore("TestStore", TestHelpers.GetDataStoreFilePath(TestOptions), TestOptions.DataStoreOptions.DataStoreSchema!);
         Assert.IsNotNull(dataStore);
         dataStore.Create();
@@ -65,20 +60,12 @@ public partial class DataStoreTests
         // The update code will have set a timestamp on updating the record, and we will
         // be within that window of don't update. This value should not have updated.
         Assert.AreNotEqual("https://some.new.url", afterUpdate.AvatarUrl);
-
-        testListener.PrintEventCounts();
-        Assert.AreEqual(false, testListener.FoundErrors());
     }
 
     [TestMethod]
     [TestCategory("LiveData")]
     public void AddRepositoryFromOctokit()
     {
-        using var log = new DevHome.Logging.Logger("TestStore", TestOptions.LogOptions);
-        var testListener = new TestListener("TestListener", TestContext!);
-        log.AddListener(testListener);
-        DataModel.Log.Attach(log);
-
         using var dataStore = new DataStore("TestStore", TestHelpers.GetDataStoreFilePath(TestOptions), TestOptions.DataStoreOptions.DataStoreSchema!);
         Assert.IsNotNull(dataStore);
         dataStore.Create();
@@ -140,20 +127,12 @@ public partial class DataStoreTests
             Assert.AreEqual(repo1.Id, repo2.Id);
             TestContext?.WriteLine($"  FullName: {repo1.FullName}  User: {repo1.Owner.Login}  Repo: {repo1.Name}");
         }
-
-        testListener.PrintEventCounts();
-        Assert.AreEqual(false, testListener.FoundErrors());
     }
 
     [TestMethod]
     [TestCategory("LiveData")]
     public void AddPullRequestFromOctokit()
     {
-        using var log = new DevHome.Logging.Logger("TestStore", TestOptions.LogOptions);
-        var testListener = new TestListener("TestListener", TestContext!);
-        log.AddListener(testListener);
-        Log.Attach(log);
-
         using var dataStore = new DataStore("TestStore", TestHelpers.GetDataStoreFilePath(TestOptions), TestOptions.DataStoreOptions.DataStoreSchema!);
         Assert.IsNotNull(dataStore);
         dataStore.Create();
@@ -240,20 +219,12 @@ public partial class DataStoreTests
                 TestContext?.WriteLine($"    Id: {pull.Id}  User: {pull.Author.Login} - {pull.Number} - {pull.Title}");
             }
         }
-
-        testListener.PrintEventCounts();
-        Assert.AreEqual(false, testListener.FoundErrors());
     }
 
     [TestMethod]
     [TestCategory("LiveData")]
     public void AddIssueFromOctokit()
     {
-        using var log = new DevHome.Logging.Logger("TestStore", TestOptions.LogOptions);
-        var testListener = new TestListener("TestListener", TestContext!);
-        log.AddListener(testListener);
-        Log.Attach(log);
-
         using var dataStore = new DataStore("TestStore", TestHelpers.GetDataStoreFilePath(TestOptions), TestOptions.DataStoreOptions.DataStoreSchema!);
         Assert.IsNotNull(dataStore);
         dataStore.Create();
@@ -340,20 +311,12 @@ public partial class DataStoreTests
                 TestContext?.WriteLine($"    Id: {issue.Id}  User: {issue.Author.Login} - {issue.Number} - {issue.Title}");
             }
         }
-
-        testListener.PrintEventCounts();
-        Assert.AreEqual(false, testListener.FoundErrors());
     }
 
     [TestMethod]
     [TestCategory("LiveData")]
     public void AddPullRequestLabelFromOctokit()
     {
-        using var log = new DevHome.Logging.Logger("TestStore", TestOptions.LogOptions);
-        var testListener = new TestListener("TestListener", TestContext!);
-        log.AddListener(testListener);
-        Log.Attach(log);
-
         using var dataStore = new DataStore("TestStore", TestHelpers.GetDataStoreFilePath(TestOptions), TestOptions.DataStoreOptions.DataStoreSchema!);
         Assert.IsNotNull(dataStore);
         dataStore.Create();
@@ -404,20 +367,12 @@ public partial class DataStoreTests
         {
             TestContext?.WriteLine($"  Id: {label.Id}  InternalId: {label.InternalId}  Name: {label.Name}  Color: {label.Color}  Default: {label.IsDefault}  Desc: {label.Description}");
         }
-
-        testListener.PrintEventCounts();
-        Assert.AreEqual(false, testListener.FoundErrors());
     }
 
     [TestMethod]
     [TestCategory("LiveData")]
     public void AddIssueLabelFromOctokit()
     {
-        using var log = new DevHome.Logging.Logger("TestStore", TestOptions.LogOptions);
-        var testListener = new TestListener("TestListener", TestContext!);
-        log.AddListener(testListener);
-        Log.Attach(log);
-
         using var dataStore = new DataStore("TestStore", TestHelpers.GetDataStoreFilePath(TestOptions), TestOptions.DataStoreOptions.DataStoreSchema!);
         Assert.IsNotNull(dataStore);
         dataStore.Create();
@@ -467,20 +422,12 @@ public partial class DataStoreTests
         {
             TestContext?.WriteLine($"  Id: {label.Id}  InternalId: {label.InternalId}  Name: {label.Name}  Color: {label.Color}  Default: {label.IsDefault}  Desc: {label.Description}");
         }
-
-        testListener.PrintEventCounts();
-        Assert.AreEqual(false, testListener.FoundErrors());
     }
 
     [TestMethod]
     [TestCategory("LiveData")]
     public void AddCheckRunFromOctokit()
     {
-        using var log = new DevHome.Logging.Logger("TestStore", TestOptions.LogOptions);
-        var testListener = new TestListener("TestListener", TestContext!);
-        log.AddListener(testListener);
-        Log.Attach(log);
-
         using var dataStore = new DataStore("TestStore", TestHelpers.GetDataStoreFilePath(TestOptions), TestOptions.DataStoreOptions.DataStoreSchema!);
         Assert.IsNotNull(dataStore);
         dataStore.Create();
@@ -524,20 +471,12 @@ public partial class DataStoreTests
         {
             TestContext?.WriteLine($"    Name: {check.Name}  Status: {check.Status}  Conclusion: {check.Conclusion}");
         }
-
-        testListener.PrintEventCounts();
-        Assert.AreEqual(false, testListener.FoundErrors());
     }
 
     [TestMethod]
     [TestCategory("LiveData")]
     public void AddReviewFromOctokit()
     {
-        using var log = new DevHome.Logging.Logger("TestStore", TestOptions.LogOptions);
-        var testListener = new TestListener("TestListener", TestContext!);
-        log.AddListener(testListener);
-        Log.Attach(log);
-
         using var dataStore = new DataStore("TestStore", TestHelpers.GetDataStoreFilePath(TestOptions), TestOptions.DataStoreOptions.DataStoreSchema!);
         Assert.IsNotNull(dataStore);
         dataStore.Create();
@@ -573,8 +512,5 @@ public partial class DataStoreTests
         {
             TestContext?.WriteLine($"  Id: {review.Id}  PullId: {review.PullRequestId}  InternalId: {review.InternalId}  AuthorId: {review.AuthorId}  Author:{review.Author.Login}  State: {review.State}  Submitted: {review.SubmittedAt}");
         }
-
-        testListener.PrintEventCounts();
-        Assert.AreEqual(false, testListener.FoundErrors());
     }
 }

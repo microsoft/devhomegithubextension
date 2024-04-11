@@ -1,20 +1,24 @@
 ﻿// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-using DevHome.Logging;
 using GitHubExtension.DataModel;
 
 namespace GitHubExtension.Test;
 
 public partial class TestOptions
 {
-    public Options LogOptions { get; set; }
+    public string LogFileFolderRoot { get; set; } = string.Empty;
+
+    public string LogFileFolderName { get; set; } = "{now}";
+
+    public string LogFileName { get; set; } = string.Empty;
+
+    public string LogFileFolderPath => Path.Combine(LogFileFolderRoot, LogFileFolderName);
 
     public DataStoreOptions DataStoreOptions { get; set; }
 
     public TestOptions()
     {
-        LogOptions = new Options();
         DataStoreOptions = new DataStoreOptions();
     }
 }

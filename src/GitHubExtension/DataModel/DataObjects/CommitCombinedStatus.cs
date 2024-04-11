@@ -3,12 +3,17 @@
 
 using Dapper;
 using Dapper.Contrib.Extensions;
+using Serilog;
 
 namespace GitHubExtension.DataModel;
 
 [Table("CommitCombinedStatus")]
 public class CommitCombinedStatus
 {
+    private static readonly Lazy<ILogger> _log = new(() => Serilog.Log.ForContext("SourceContext", $"DataModel/{nameof(CommitCombinedStatus)}"));
+
+    private static readonly ILogger Log = _log.Value;
+
     [Key]
     public long Id { get; set; } = DataStore.NoForeignKey;
 
@@ -71,7 +76,7 @@ public class CommitCombinedStatus
         catch (Exception)
         {
             // This error means a programming error or Octokit added to or changed their enum.
-            Log.Logger()?.ReportError($"Found Unknown CheckStatus value: {octoCommitState.Value}");
+            Log.Error($"Found Unknown CheckStatus value: {octoCommitState.Value}");
             return CommitState.Unknown;
         }
 
@@ -112,9 +117,9 @@ public class CommitCombinedStatus
         var sql = @"DELETE FROM CommitCombinedStatus WHERE HeadSha NOT IN (SELECT HeadSha FROM PullRequest)";
         var command = dataStore.Connection!.CreateCommand();
         command.CommandText = sql;
-        Log.Logger()?.ReportDebug(DataStore.GetCommandLogMessage(sql, command));
+        Log.Verbose(DataStore.GetCommandLogMessage(sql, command));
         var rowsDeleted = command.ExecuteNonQuery();
-        Log.Logger()?.ReportDebug(DataStore.GetDeletedLogMessage(rowsDeleted));
+        Log.Verbose(DataStore.GetDeletedLogMessage(rowsDeleted));
     }
 
     public static void DeleteForPullRequest(DataStore dataStore, PullRequest pullRequest)
@@ -124,8 +129,8 @@ public class CommitCombinedStatus
         var command = dataStore.Connection!.CreateCommand();
         command.CommandText = sql;
         command.Parameters.AddWithValue("$HeadSha", pullRequest.HeadSha);
-        Log.Logger()?.ReportDebug(DataStore.GetCommandLogMessage(sql, command));
+        Log.Verbose(DataStore.GetCommandLogMessage(sql, command));
         var rowsDeleted = command.ExecuteNonQuery();
-        Log.Logger()?.ReportDebug(DataStore.GetDeletedLogMessage(rowsDeleted));
+        Log.Verbose(DataStore.GetDeletedLogMessage(rowsDeleted));
     }
 }
