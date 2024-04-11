@@ -94,6 +94,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\WebServer\WebServer.csproj" />
     <ProjectReference Include="..\Logging\DevHome.Logging.csproj" />
     <ProjectReference Include="..\Telemetry\GitHubExtension.Telemetry.csproj" />
   </ItemGroup>
@@ -163,6 +164,12 @@
     <Content Update="Widgets\Assets\screenshot.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="WebContent\*">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
   <PropertyGroup>
