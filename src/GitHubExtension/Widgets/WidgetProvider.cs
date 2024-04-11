@@ -62,7 +62,7 @@ public sealed class WidgetProvider : IWidgetProvider, IWidgetProvider2
         }
         catch (Exception e)
         {
-            _log.Error("Failed retrieving list of running widgets.", e);
+            _log.Error(e, "Failed retrieving list of running widgets.");
             return;
         }
 

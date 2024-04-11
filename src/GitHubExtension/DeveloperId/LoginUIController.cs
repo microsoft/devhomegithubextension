@@ -98,7 +98,7 @@ public class LoginUIController : IExtensionAdaptiveCardSession
                         }
                         catch (Exception ex)
                         {
-                            Log.Error($"Error: ", ex);
+                            Log.Error(ex, $"Error: ");
                             new LoginFailedPage().UpdateExtensionAdaptiveCard(_loginUI);
                             operationResult = new ProviderOperationResult(ProviderOperationStatus.Failure, ex, "Error occurred in login page", ex.Message);
                         }
@@ -149,13 +149,13 @@ public class LoginUIController : IExtensionAdaptiveCardSession
                         }
                         catch (UriFormatException ufe)
                         {
-                            Log.Error($"Error: ", ufe);
+                            Log.Error(ufe, $"Error: ");
                             operationResult = new EnterpriseServerPage(hostAddress: enterprisePageInputPayload.EnterpriseServer, errorText: $"{Resources.GetResource("LoginUI_EnterprisePage_UriErrorText")}").UpdateExtensionAdaptiveCard(_loginUI);
                             break;
                         }
                         catch (Exception ex)
                         {
-                            Log.Error($"Error: ", ex);
+                            Log.Error(ex, $"Error: ");
                             operationResult = new EnterpriseServerPage(hostAddress: enterprisePageInputPayload.EnterpriseServer, errorText: $"{Resources.GetResource("LoginUI_EnterprisePage_GenericErrorText")} : {ex}").UpdateExtensionAdaptiveCard(_loginUI);
                             break;
                         }
@@ -166,7 +166,7 @@ public class LoginUIController : IExtensionAdaptiveCardSession
                         }
                         catch (Exception ex)
                         {
-                            Log.Error($"Error: ", ex);
+                            Log.Error(ex, $"Error: ");
                             operationResult = new LoginFailedPage().UpdateExtensionAdaptiveCard(_loginUI);
                         }
 
@@ -220,13 +220,13 @@ public class LoginUIController : IExtensionAdaptiveCardSession
                             }
                             catch (UriFormatException ufe)
                             {
-                                Log.Error($"Error: ", ufe);
+                                Log.Error(ufe, $"Error: ");
                                 operationResult = new ProviderOperationResult(ProviderOperationStatus.Failure, null, $"Error: {ufe}", $"Error: {ufe}");
                                 break;
                             }
                             catch (Exception ex)
                             {
-                                Log.Error($"Error: ", ex);
+                                Log.Error(ex, $"Error: ");
                                 operationResult = new ProviderOperationResult(ProviderOperationStatus.Failure, null, $"Error: {ex}", $"Error: {ex}");
                                 break;
                             }
@@ -277,12 +277,12 @@ public class LoginUIController : IExtensionAdaptiveCardSession
                         {
                             if (ex.Message.Contains("Bad credentials") || ex.Message.Contains("Not Found"))
                             {
-                                Log.Error($"Unauthorized Error: ", ex);
+                                Log.Error(ex, $"Unauthorized Error: ");
                                 operationResult = new EnterpriseServerPATPage(hostAddress: _hostAddress, errorText: $"{Resources.GetResource("LoginUI_EnterprisePATPage_BadCredentialsErrorText")} {_hostAddress.OriginalString}", inputPAT: new NetworkCredential(null, enterprisePATPageInputPayload?.PAT).SecurePassword).UpdateExtensionAdaptiveCard(_loginUI);
                                 break;
                             }
 
-                            Log.Error($"Error: ", ex);
+                            Log.Error(ex, $"Error: ");
                             operationResult = new EnterpriseServerPATPage(hostAddress: _hostAddress, errorText: $"{Resources.GetResource("LoginUI_EnterprisePATPage_GenericErrorPrefix")} {ex}", inputPAT: new NetworkCredential(null, enterprisePATPageInputPayload?.PAT).SecurePassword).UpdateExtensionAdaptiveCard(_loginUI);
                             break;
                         }

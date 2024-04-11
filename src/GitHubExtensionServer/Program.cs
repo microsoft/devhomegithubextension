@@ -168,7 +168,7 @@ public sealed class Program
         }
         catch (Exception ex)
         {
-            Log.Error("Failed getting package information.", ex);
+            Log.Error(ex, "Failed getting package information.");
         }
     }
 }

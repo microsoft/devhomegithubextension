@@ -27,7 +27,7 @@ public partial class GitHubDataManager
         }
         catch (Exception ex)
         {
-            Log.Error("Update failed unexpectedly.", ex);
+            Log.Error(ex, "Update failed unexpectedly.");
         }
 
         lastUpdateTime = DateTime.Now;

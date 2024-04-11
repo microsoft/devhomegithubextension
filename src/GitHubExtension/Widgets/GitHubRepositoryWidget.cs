@@ -168,7 +168,7 @@ public abstract class GitHubRepositoryWidget : GitHubWidget
             catch (Exception ex)
             {
                 // Adding for abundance of caution because we have seen crashes in this space.
-                Log.Error($"Unexpected failure during migration.", ex);
+                Log.Error(ex, $"Unexpected failure during migration.");
             }
         }
 
@@ -183,7 +183,7 @@ public abstract class GitHubRepositoryWidget : GitHubWidget
             // If we fail to parse configuration data, do nothing, report the failure, and don't
             // crash the entire extension.
             RepositoryUrl = string.Empty;
-            Log.Error($"Unexpected error while resetting state: {e.Message}", e);
+            Log.Error(e, $"Unexpected error while resetting state: {e.Message}");
         }
     }
 
@@ -267,7 +267,7 @@ public abstract class GitHubRepositoryWidget : GitHubWidget
             }
             catch (Exception ex)
             {
-                Log.Error($"Failed getting configuration information for input url: {dataUrl}", ex);
+                Log.Error(ex, $"Failed getting configuration information for input url: {dataUrl}");
                 configurationData.Add("hasConfiguration", false);
 
                 var repositoryData = new JsonObject

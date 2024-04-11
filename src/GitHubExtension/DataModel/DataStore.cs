@@ -66,7 +66,7 @@ public class DataStore : IDisposable
                     // if we had a problem opening the DB and fetching the pragma, then
                     // we surely cannot reuse it.
                     deleteExistingDatabase = true;
-                    Log.Error($"Unable to open existing database to verify schema. Deleting database.", e);
+                    Log.Error(e, $"Unable to open existing database to verify schema. Deleting database.");
                 }
             }
 
@@ -92,16 +92,16 @@ public class DataStore : IDisposable
                 {
                     if ((uint)e.HResult == 0x80070020)
                     {
-                        Log.Fatal($"Sharing Violation Error; datastore exists and cannot be deleted ({DataStoreFilePath})", e);
+                        Log.Fatal(e, $"Sharing Violation Error; datastore exists and cannot be deleted ({DataStoreFilePath})");
                     }
                     else
                     {
-                        Log.Fatal($"I/O Error ({DataStoreFilePath})", e);
+                        Log.Fatal(e, $"I/O Error ({DataStoreFilePath})");
                     }
                 }
                 catch (UnauthorizedAccessException e)
                 {
-                    Log.Fatal($"Access Denied ({e})", e);
+                    Log.Fatal(e, $"Access Denied ({e})");
                 }
             }
         }
@@ -125,7 +125,7 @@ public class DataStore : IDisposable
             }
             catch (Exception e)
             {
-                Log.Fatal($"Failed creating directory: ({directory})", e);
+                Log.Fatal(e, $"Failed creating directory: ({directory})");
             }
         }
 
@@ -163,7 +163,7 @@ public class DataStore : IDisposable
         }
         catch (SqliteException e)
         {
-            Log.Fatal($"Failed to open connection: {Connection.ConnectionString}", e);
+            Log.Fatal(e, $"Failed to open connection: {Connection.ConnectionString}");
         }
 
         Log.Debug($"Opened DataStore at {DataStoreFilePath}");
@@ -259,7 +259,7 @@ public class DataStore : IDisposable
         }
         catch (SqliteException e)
         {
-            Log.Error($"Failure executing SQL Command: {command.CommandText}", e);
+            Log.Error(e, $"Failure executing SQL Command: {command.CommandText}");
         }
     }
 

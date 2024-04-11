@@ -276,7 +276,7 @@ public abstract class GitHubWidget : WidgetImpl
         }
         catch (Exception e)
         {
-            Log.Error("Error getting template.", e);
+            Log.Error(e, "Error getting template.");
             return string.Empty;
         }
     }
@@ -376,7 +376,7 @@ public abstract class GitHubWidget : WidgetImpl
         }
         catch (Exception ex)
         {
-            Log.Error("Failed Requesting Update", ex);
+            Log.Error(ex, "Failed Requesting Update");
         }
 
         lastUpdateRequest = DateTime.Now;
