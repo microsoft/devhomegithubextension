@@ -1,15 +1,19 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-using DevHome.Logging.Helpers;
 using GitHubExtension.DeveloperId;
 using Microsoft.Windows.DevHome.SDK;
 using Octokit;
+using Serilog;
 
 namespace GitHubExtension.Client;
 
 public class GitHubClientProvider
 {
+    private static readonly Lazy<ILogger> _log = new(() => Serilog.Log.ForContext("SourceContext", nameof(GitHubClientProvider)));
+
+    private static readonly ILogger Log = _log.Value;
+
     private readonly GitHubClient publicRepoClient;
 
     private static readonly object InstanceLock = new();
@@ -66,18 +70,18 @@ public class GitHubClientProvider
         GitHubClient client;
         if (devIds == null || !devIds.Any())
         {
-            Log.Logger()?.ReportInfo($"No logged in developer, using public GitHub client.");
+            Log.Information($"No logged in developer, using public GitHub client.");
             client = Instance.GetClient();
         }
         else
         {
-            Log.Logger()?.ReportInfo($"Using authenticated user: {devIds.First().LoginId}");
+            Log.Information($"Using authenticated user: {devIds.First().LoginId}");
             client = devIds.First().GitHubClient;
         }
 
         if (client == null)
         {
-            Log.Logger()?.ReportError($"Failed creating GitHubClient.");
+            Log.Error($"Failed creating GitHubClient.");
             return client!;
         }
 
@@ -86,11 +90,11 @@ public class GitHubClientProvider
             try
             {
                 var miscRateLimit = await client.RateLimit.GetRateLimits();
-                Log.Logger()?.ReportInfo($"Rate Limit:  Remaining: {miscRateLimit.Resources.Core.Remaining}  Total: {miscRateLimit.Resources.Core.Limit}  Resets: {miscRateLimit.Resources.Core.Reset.ToStringInvariant()}");
+                Log.Information($"Rate Limit:  Remaining: {miscRateLimit.Resources.Core.Remaining}  Total: {miscRateLimit.Resources.Core.Limit}  Resets: {miscRateLimit.Resources.Core.Reset}");
             }
             catch (Exception ex)
             {
-                Log.Logger()?.ReportError($"Rate limiting not enabled for server.", ex);
+                Log.Error(ex, $"Rate limiting not enabled for server.");
             }
         }
 

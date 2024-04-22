@@ -6,6 +6,7 @@ using System.Security;
 using Microsoft.UI;
 using Microsoft.Windows.DevHome.SDK;
 using Octokit;
+using Serilog;
 using Windows.Foundation;
 using Windows.Security.Credentials;
 
@@ -13,6 +14,10 @@ namespace GitHubExtension.DeveloperId;
 
 public class DeveloperIdProvider : IDeveloperIdProviderInternal
 {
+    private static readonly Lazy<ILogger> _log = new(() => Serilog.Log.ForContext("SourceContext", nameof(DeveloperIdProvider)));
+
+    private static readonly ILogger Log = _log.Value;
+
     // Locks to control access to Singleton class members.
     private static readonly object _developerIdsLock = new();
 
@@ -49,7 +54,7 @@ public class DeveloperIdProvider : IDeveloperIdProviderInternal
     // Private constructor for Singleton class.
     private DeveloperIdProvider()
     {
-        Log.Logger()?.ReportInfo($"Creating DeveloperIdProvider singleton instance");
+        Log.Information($"Creating DeveloperIdProvider singleton instance");
 
         _credentialVault = new(() => new CredentialVault());
 
@@ -70,7 +75,7 @@ public class DeveloperIdProvider : IDeveloperIdProviderInternal
         }
         catch (Exception ex)
         {
-            Log.Logger()?.ReportError($"Error while restoring DeveloperIds: {ex.Message}. Proceeding without restoring.", ex);
+            Log.Error(ex, $"Error while restoring DeveloperIds: {ex.Message}. Proceeding without restoring.");
         }
     }
 
@@ -94,7 +99,7 @@ public class DeveloperIdProvider : IDeveloperIdProviderInternal
             var oauthRequest = LoginNewDeveloperId();
             if (oauthRequest is null)
             {
-                Log.Logger()?.ReportError($"Invalid OAuthRequest");
+                Log.Error($"Invalid OAuthRequest");
                 throw new InvalidOperationException();
             }
 
@@ -103,7 +108,7 @@ public class DeveloperIdProvider : IDeveloperIdProviderInternal
             var devId = CreateOrUpdateDeveloperIdFromOauthRequest(oauthRequest);
             oauthRequest.Dispose();
 
-            Log.Logger()?.ReportInfo($"New DeveloperId logged in");
+            Log.Information($"New DeveloperId logged in");
 
             return devId as IDeveloperId;
         }).AsAsyncOperation();
@@ -120,13 +125,13 @@ public class DeveloperIdProvider : IDeveloperIdProviderInternal
             DeveloperId developerId = new(newUser.Login, newUser.Name, newUser.Email, newUser.Url, gitHubClient);
             SaveOrOverwriteDeveloperId(developerId, personalAccessToken);
 
-            Log.Logger()?.ReportInfo($"{developerId.LoginId} logged in with PAT flow to {developerId.GetHostAddress()}");
+            Log.Information($"{developerId.LoginId} logged in with PAT flow to {developerId.GetHostAddress()}");
 
             return developerId;
         }
         catch (Exception ex)
         {
-            Log.Logger()?.ReportError($"Error while logging in with PAT to {hostAddress.AbsoluteUri} : ", ex);
+            Log.Error(ex, $"Error while logging in with PAT to {hostAddress.AbsoluteUri} : ");
             throw;
         }
     }
@@ -146,7 +151,7 @@ public class DeveloperIdProvider : IDeveloperIdProviderInternal
             catch (Exception ex)
             {
                 OAuthRequests.Remove(oauthRequest);
-                Log.Logger()?.ReportError($"Unable to complete OAuth request: ", ex);
+                Log.Error(ex, $"Unable to complete OAuth request: ");
             }
         }
 
@@ -161,7 +166,7 @@ public class DeveloperIdProvider : IDeveloperIdProviderInternal
             developerIdToLogout = DeveloperIds?.Find(e => e.LoginId == developerId.LoginId);
             if (developerIdToLogout == null)
             {
-                Log.Logger()?.ReportError($"Unable to find DeveloperId to logout");
+                Log.Error($"Unable to find DeveloperId to logout");
                 return new ProviderOperationResult(ProviderOperationStatus.Failure, new ArgumentNullException(nameof(developerId)), "The developer account to log out does not exist", "Unable to find DeveloperId to logout");
             }
 
@@ -175,7 +180,7 @@ public class DeveloperIdProvider : IDeveloperIdProviderInternal
         }
         catch (Exception ex)
         {
-            Log.Logger()?.ReportError($"LoggedOut event signaling failed: ", ex);
+            Log.Error(ex, $"LoggedOut event signaling failed: ");
         }
 
         return new ProviderOperationResult(ProviderOperationStatus.Success, null, "The developer account has been logged out successfully", "LogoutDeveloperId succeeded");
@@ -196,7 +201,7 @@ public class DeveloperIdProvider : IDeveloperIdProviderInternal
             {
                 // This could happen if the user refreshes the redirected browser window
                 // causing the OAuth response to be received again.
-                Log.Logger()?.ReportWarn($"No saved OAuth requests to match OAuth response");
+                Log.Warning($"No saved OAuth requests to match OAuth response");
                 return;
             }
 
@@ -208,7 +213,7 @@ public class DeveloperIdProvider : IDeveloperIdProviderInternal
             {
                 // This could happen if the user refreshes a previously redirected browser window instead of using
                 // the new browser window for the response. Log the warning and return.
-                Log.Logger()?.ReportWarn($"Unable to find valid request for received OAuth response");
+                Log.Warning($"Unable to find valid request for received OAuth response");
                 return;
             }
             else
@@ -247,7 +252,7 @@ public class DeveloperIdProvider : IDeveloperIdProviderInternal
 
         if (duplicateDeveloperIds.Any())
         {
-            Log.Logger()?.ReportInfo($"DeveloperID already exists! Updating accessToken");
+            Log.Information($"DeveloperID already exists! Updating accessToken");
             try
             {
                 // Save the credential to Credential Vault.
@@ -259,12 +264,12 @@ public class DeveloperIdProvider : IDeveloperIdProviderInternal
                 }
                 catch (Exception ex)
                 {
-                    Log.Logger()?.ReportError($"Updated event signaling failed: ", ex);
+                    Log.Error(ex, $"Updated event signaling failed: ");
                 }
             }
             catch (InvalidOperationException)
             {
-                Log.Logger()?.ReportWarn($"Multiple copies of same DeveloperID already exists");
+                Log.Warning($"Multiple copies of same DeveloperID already exists");
                 throw new InvalidOperationException("Multiple copies of same DeveloperID already exists");
             }
         }
@@ -283,7 +288,7 @@ public class DeveloperIdProvider : IDeveloperIdProviderInternal
             }
             catch (Exception ex)
             {
-                Log.Logger()?.ReportError($"LoggedIn event signaling failed: ", ex);
+                Log.Error(ex, $"LoggedIn event signaling failed: ");
             }
         }
     }
@@ -295,13 +300,13 @@ public class DeveloperIdProvider : IDeveloperIdProviderInternal
         var accessToken = oauthRequest.AccessToken;
         if (accessToken is null)
         {
-            Log.Logger()?.ReportError($"Invalid AccessToken");
+            Log.Error($"Invalid AccessToken");
             throw new InvalidOperationException();
         }
 
         SaveOrOverwriteDeveloperId(newDeveloperId, accessToken);
 
-        Log.Logger()?.ReportInfo($"{newDeveloperId.LoginId} logged in with OAuth flow to {newDeveloperId.GetHostAddress()}");
+        Log.Information($"{newDeveloperId.LoginId} logged in with OAuth flow to {newDeveloperId.GetHostAddress()}");
 
         return newDeveloperId;
     }
@@ -335,7 +340,7 @@ public class DeveloperIdProvider : IDeveloperIdProviderInternal
                     DeveloperIds.Add(developerId);
                 }
 
-                Log.Logger()?.ReportInfo($"Restored DeveloperId {user.Url}");
+                Log.Information($"Restored DeveloperId {user.Url}");
 
                 // If loginId is currently used to save credential, remove it, and use URL instead.
                 if (!isUrl)
@@ -345,7 +350,7 @@ public class DeveloperIdProvider : IDeveloperIdProviderInternal
             }
             catch (Exception ex)
             {
-                Log.Logger()?.ReportError($"Error while restoring DeveloperId {loginIdOrUrl} : ", ex);
+                Log.Error(ex, $"Error while restoring DeveloperId {loginIdOrUrl} : ");
 
                 // If we are unable to restore a DeveloperId, remove it from CredentialManager to avoid
                 // the same error next time, and to force the user to login again
@@ -364,11 +369,11 @@ public class DeveloperIdProvider : IDeveloperIdProviderInternal
                 developerId.Url,
                 new NetworkCredential(string.Empty, _credentialVault.Value.GetCredentials(developerId.LoginId)?.Password).SecurePassword);
             _credentialVault.Value.RemoveCredentials(developerId.LoginId);
-            Log.Logger()?.ReportInfo($"Replaced {developerId.LoginId} with {developerId.Url} in CredentialManager");
+            Log.Information($"Replaced {developerId.LoginId} with {developerId.Url} in CredentialManager");
         }
         catch (Exception ex)
         {
-            Log.Logger()?.ReportError($"Error while replacing {developerId.LoginId} with {developerId.Url} in CredentialManager: ", ex);
+            Log.Error(ex, $"Error while replacing {developerId.LoginId} with {developerId.Url} in CredentialManager: ");
         }
     }
 
@@ -384,7 +389,7 @@ public class DeveloperIdProvider : IDeveloperIdProviderInternal
 
     public AdaptiveCardSessionResult GetLoginAdaptiveCardSession()
     {
-        Log.Logger()?.ReportInfo($"GetAdaptiveCardController");
+        Log.Information($"GetAdaptiveCardController");
         return new AdaptiveCardSessionResult(new LoginUIController(this));
     }
 

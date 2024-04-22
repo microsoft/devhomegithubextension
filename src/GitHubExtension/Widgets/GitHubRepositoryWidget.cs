@@ -13,8 +13,6 @@ namespace GitHubExtension.Widgets;
 
 public abstract class GitHubRepositoryWidget : GitHubWidget
 {
-    protected static readonly new string Name = nameof(GitHubRepositoryWidget);
-
     protected string RepositoryUrl { get; set; } = string.Empty;
 
     public GitHubRepositoryWidget()
@@ -51,12 +49,17 @@ public abstract class GitHubRepositoryWidget : GitHubWidget
     public override void OnActionInvoked(WidgetActionInvokedArgs actionInvokedArgs)
     {
         var verb = GetWidgetActionForVerb(actionInvokedArgs.Verb);
-        Log.Logger()?.ReportDebug(Name, ShortId, $"ActionInvoked: {verb}");
+        Log.Debug($"ActionInvoked: {verb}");
 
         switch (verb)
         {
             case WidgetAction.CheckUrl:
                 HandleCheckUrl(actionInvokedArgs);
+                break;
+
+            case WidgetAction.Save:
+                UpdateTitle(JsonNode.Parse(actionInvokedArgs.Data));
+                base.OnActionInvoked(actionInvokedArgs);
                 break;
 
             default:
@@ -88,22 +91,22 @@ public abstract class GitHubRepositoryWidget : GitHubWidget
                 {
                     case Octokit.NotFoundException:
                         // A private repository will come back as "not found" by the GitHub API when an unauthorized account cannot even view it.
-                        Log.Logger()?.ReportDebug(Name, $"DeveloperId {devId.LoginId} did not find {ownerName}/{repositoryName}");
+                        Log.Debug($"DeveloperId {devId.LoginId} did not find {ownerName}/{repositoryName}");
                         continue;
 
                     case Octokit.RateLimitExceededException:
-                        Log.Logger()?.ReportDebug(Name, $"DeveloperId {devId.LoginId} rate limit exceeded.");
+                        Log.Debug($"DeveloperId {devId.LoginId} rate limit exceeded.");
                         throw ex.InnerException;
 
                     case Octokit.ForbiddenException:
                         // This can happen most commonly with SAML-enabled organizations.
                         // The user may have access but the org blocked the application.
-                        Log.Logger()?.ReportDebug(Name, $"DeveloperId {devId.LoginId} was forbidden access to {ownerName}/{repositoryName}");
+                        Log.Debug($"DeveloperId {devId.LoginId} was forbidden access to {ownerName}/{repositoryName}");
                         throw ex.InnerException;
 
                     default:
                         // If it's some other error like abuse detection, abort and do not continue.
-                        Log.Logger()?.ReportDebug(Name, $"Unhandled Octokit API error for {devId.LoginId} and {ownerName}/{repositoryName}");
+                        Log.Debug($"Unhandled Octokit API error for {devId.LoginId} and {ownerName}/{repositoryName}");
                         throw ex.InnerException;
                 }
             }
@@ -117,6 +120,20 @@ public abstract class GitHubRepositoryWidget : GitHubWidget
         return repository;
     }
 
+    private void UpdateTitle(JsonNode? dataObj)
+    {
+        if (dataObj == null)
+        {
+            return;
+        }
+
+        GetTitleFromDataObject(dataObj);
+        if (string.IsNullOrEmpty(WidgetTitle))
+        {
+            WidgetTitle = GetRepositoryFromUrl(RepositoryUrl).FullName;
+        }
+    }
+
     protected override void ResetWidgetInfoFromState()
     {
         JsonNode? dataObject = null;
@@ -127,8 +144,8 @@ public abstract class GitHubRepositoryWidget : GitHubWidget
         }
         catch (JsonException e)
         {
-            Log.Logger()?.ReportWarn(Name, ShortId, $"Failed to parse ConfigurationData; attempting migration. {e.Message}");
-            Log.Logger()?.ReportDebug(Name, ShortId, $"Json parse failure.", e);
+            Log.Warning($"Failed to parse ConfigurationData; attempting migration. {e.Message}");
+            Log.Debug($"Json parse failure.", e);
 
             try
             {
@@ -136,7 +153,7 @@ public abstract class GitHubRepositoryWidget : GitHubWidget
                 // and we get a failure, check if it is the old version.
                 if (!string.IsNullOrEmpty(ConfigurationData))
                 {
-                    Log.Logger()?.ReportInfo(Name, ShortId, $"Found string data format, migrating to JSON format. Data: {ConfigurationData}");
+                    Log.Information($"Found string data format, migrating to JSON format. Data: {ConfigurationData}");
                     var migratedState = new JsonObject
                     {
                         { "url", ConfigurationData },
@@ -151,7 +168,7 @@ public abstract class GitHubRepositoryWidget : GitHubWidget
             catch (Exception ex)
             {
                 // Adding for abundance of caution because we have seen crashes in this space.
-                Log.Logger()?.ReportError(Name, ShortId, $"Unexpected failure during migration.", ex);
+                Log.Error(ex, $"Unexpected failure during migration.");
             }
         }
 
@@ -159,13 +176,14 @@ public abstract class GitHubRepositoryWidget : GitHubWidget
         {
             dataObject ??= JsonNode.Parse(ConfigurationData);
             RepositoryUrl = dataObject!["url"]?.GetValue<string>() ?? string.Empty;
+            UpdateTitle(dataObject);
         }
         catch (Exception e)
         {
             // If we fail to parse configuration data, do nothing, report the failure, and don't
             // crash the entire extension.
             RepositoryUrl = string.Empty;
-            Log.Logger()?.ReportError(Name, ShortId, $"Unexpected error while resetting state: {e.Message}", e);
+            Log.Error(e, $"Unexpected error while resetting state: {e.Message}");
         }
     }
 
@@ -189,6 +207,7 @@ public abstract class GitHubRepositoryWidget : GitHubWidget
         if (dataObject != null && dataObject["url"] != null)
         {
             RepositoryUrl = dataObject["url"]?.GetValue<string>() ?? string.Empty;
+            UpdateTitle(dataObject);
 
             ConfigurationData = data;
 
@@ -208,6 +227,7 @@ public abstract class GitHubRepositoryWidget : GitHubWidget
         var configurationData = new JsonObject
         {
             { "submitIcon", IconLoader.GetIconAsBase64("arrow.png") },
+            { "widgetTitle", WidgetTitle },
         };
 
         if (dataUrl == string.Empty)
@@ -247,7 +267,7 @@ public abstract class GitHubRepositoryWidget : GitHubWidget
             }
             catch (Exception ex)
             {
-                Log.Logger()?.ReportError(Name, ShortId, $"Failed getting configuration information for input url: {dataUrl}", ex);
+                Log.Error(ex, $"Failed getting configuration information for input url: {dataUrl}");
                 configurationData.Add("hasConfiguration", false);
 
                 var repositoryData = new JsonObject

@@ -1,32 +1,26 @@
 ﻿// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-using GitHubExtension;
+using Microsoft.Extensions.Configuration;
+using Serilog;
+using Windows.Storage;
 
 internal class Program
 {
     private static void Main(string[] args)
     {
-        using var dataManager = GitHubDataManager.CreateInstance();
-        Task.Run(async () =>
-        {
-            var parameters = new RequestOptions
-            {
-                SearchIssuesRequest = new Octokit.SearchIssuesRequest(args[0]),
-            };
-            await dataManager!.UpdateIssuesForRepositoryAsync("microsoft", "devhome", parameters);
-        }).Wait();
+        // Test console is set up with logging to test any component manually.
+        Environment.SetEnvironmentVariable("DEVHOME_LOGS_ROOT", ApplicationData.Current.TemporaryFolder.Path);
+        var configuration = new ConfigurationBuilder()
+            .AddJsonFile("appsettings.json")
+            .Build();
 
-        var repository = dataManager!.GetRepository("microsoft/devhome");
-        if (repository == null)
-        {
-            Console.WriteLine("No results");
-            return;
-        }
+        Log.Logger = new LoggerConfiguration()
+            .ReadFrom.Configuration(configuration)
+            .CreateLogger();
 
-        foreach (var issue in repository.GetIssuesForQuery(args[0]))
-        {
-            Console.WriteLine($"  Issue: {issue.Number} {issue.Author.Login} {issue.Title}");
-        }
+        Log.Information("Hello GitHub!");
+
+        Log.CloseAndFlush();
     }
 }

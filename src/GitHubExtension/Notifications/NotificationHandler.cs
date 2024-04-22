@@ -6,18 +6,23 @@ using System.Globalization;
 using System.Text;
 using GitHubExtension.Client;
 using Microsoft.Windows.AppNotifications;
+using Serilog;
 
 namespace GitHubExtension.Notifications;
 
 public class NotificationHandler
 {
+    private static readonly Lazy<ILogger> _log = new(() => Serilog.Log.ForContext("SourceContext", nameof(NotificationHandler)));
+
+    private static readonly ILogger Log = _log.Value;
+
 #pragma warning disable IDE0060 // Remove unused parameter
     public static void OnNotificationInvoked(object sender, AppNotificationActivatedEventArgs args) => NotificationActivation(args);
 #pragma warning restore IDE0060 // Remove unused parameter
 
     public static void NotificationActivation(AppNotificationActivatedEventArgs args)
     {
-        Log.Logger()?.ReportInfo($"Notification Activated with args: {NotificationArgsToString(args)}");
+        Log.Information($"Notification Activated with args: {NotificationArgsToString(args)}");
 
         if (args.Arguments.ContainsKey("htmlurl"))
         {
@@ -31,7 +36,7 @@ public class NotificationHandler
                     throw new InvalidGitHubUrlException($"{urlString} is invalid.");
                 }
 
-                Log.Logger()?.ReportInfo($"Launching Uri: {urlString}");
+                Log.Information($"Launching Uri: {urlString}");
                 var processStartInfo = new ProcessStartInfo
                 {
                     UseShellExecute = true,
@@ -42,7 +47,7 @@ public class NotificationHandler
             }
             catch (Exception ex)
             {
-                Log.Logger()?.ReportError($"Failed launching Uri for {args.Arguments["htmlurl"]}", ex);
+                Log.Error(ex, $"Failed launching Uri for {args.Arguments["htmlurl"]}");
             }
 
             return;

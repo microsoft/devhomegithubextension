@@ -14,15 +14,15 @@ public class GitHubDataStoreSchema : IDataStoreSchema
     }
 
     // Update this anytime incompatible changes happen with a released version.
-    private const long SchemaVersionValue = 0x0007;
+    private const long SchemaVersionValue = 0x0008;
 
-    private static readonly string Metadata =
-    @"CREATE TABLE Metadata (" +
+    private static readonly string MetaData =
+    @"CREATE TABLE MetaData (" +
         "Id INTEGER PRIMARY KEY NOT NULL," +
         "Key TEXT NOT NULL COLLATE NOCASE," +
         "Value TEXT NULL COLLATE NOCASE" +
     ");" +
-    "CREATE UNIQUE INDEX IDX_Metadata_Key ON Metadata (Key);";
+    "CREATE UNIQUE INDEX IDX_MetaData_Key ON MetaData (Key);";
 
     private static readonly string User =
     @"CREATE TABLE User (" +
@@ -266,7 +266,7 @@ public class GitHubDataStoreSchema : IDataStoreSchema
     // All Sqls together.
     private static readonly List<string> SchemaSqlsValue = new()
     {
-        Metadata,
+        MetaData,
         User,
         Repository,
         Label,

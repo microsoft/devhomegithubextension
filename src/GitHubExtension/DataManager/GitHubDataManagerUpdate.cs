@@ -27,7 +27,7 @@ public partial class GitHubDataManager
         }
         catch (Exception ex)
         {
-            Log.Logger()?.ReportError(Name, "Update", "Update failed unexpectedly.", ex);
+            Log.Error(ex, "Update failed unexpectedly.");
         }
 
         lastUpdateTime = DateTime.Now;
@@ -35,7 +35,7 @@ public partial class GitHubDataManager
 
     private static async Task UpdateDeveloperPullRequests()
     {
-        Log.Logger()?.ReportDebug(Name, "Update", $"Executing UpdateDeveloperPullRequests");
+        Log.Debug($"Executing UpdateDeveloperPullRequests");
         using var dataManager = CreateInstance() ?? throw new DataStoreInaccessibleException("GitHubDataManager is null.");
         await dataManager.UpdatePullRequestsForLoggedInDeveloperIdsAsync();
 
@@ -73,7 +73,7 @@ public partial class GitHubDataManager
         {
             info ??= string.Empty;
             context ??= Array.Empty<string>();
-            Log.Logger()?.ReportInfo(Name, $"Sending Update Event: {kind}  Info: {info}  Context: {string.Join(",", context)}");
+            Log.Information($"Sending Update Event: {kind}  Info: {info}  Context: {string.Join(",", context)}");
             OnUpdate.Invoke(source, new DataManagerUpdateEventArgs(kind, info, context));
         }
     }

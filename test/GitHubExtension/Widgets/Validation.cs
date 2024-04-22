@@ -1,8 +1,6 @@
 ﻿// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-using DevHome.Logging;
-
 namespace GitHubExtension.Test;
 
 public partial class WidgetTests
@@ -11,11 +9,6 @@ public partial class WidgetTests
     [TestCategory("Unit")]
     public void UriParsingValidation()
     {
-        using var log = new Logger("TestStore", TestOptions.LogOptions);
-        var testListener = new TestListener("TestListener", TestContext!);
-        log.AddListener(testListener);
-        DataModel.Log.Attach(log);
-
         var testUrisValid = new List<string>
         {
             "https://github.com/owner/repo",
@@ -79,8 +72,5 @@ public partial class WidgetTests
             Assert.IsFalse(Client.Validation.IsValidGitHubIssueQueryURL(uriString));
             TestContext?.WriteLine($"Is not query URL: {uriString}");
         }
-
-        testListener.PrintEventCounts();
-        Assert.AreEqual(false, testListener.FoundErrors());
     }
 }

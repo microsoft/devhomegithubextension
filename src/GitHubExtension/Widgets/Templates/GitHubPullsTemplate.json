@@ -24,7 +24,7 @@
           "items": [
             {
               "type": "TextBlock",
-              "text": "${selected_repo}",
+              "text": "${widgetTitle}",
               "size": "large",
               "style": "heading",
               "wrap": true
