@@ -222,6 +222,7 @@ public class RepositoryProvider : IRepositoryProvider
             var cloneOptions = new LibGit2Sharp.CloneOptions
             {
                 Checkout = true,
+                RecurseSubmodules = true,
             };
 
             if (developerId != null)
