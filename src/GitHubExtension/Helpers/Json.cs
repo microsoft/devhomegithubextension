@@ -9,6 +9,13 @@ namespace GitHubExtension.Helpers;
 
 public static class Json
 {
+    private static readonly JsonSerializerOptions Options = new()
+    {
+        PropertyNameCaseInsensitive = true,
+        DefaultIgnoreCondition = JsonIgnoreCondition.Never,
+        IncludeFields = true,
+    };
+
     public static async Task<T> ToObjectAsync<T>(string value)
     {
         if (typeof(T) == typeof(bool))
@@ -42,14 +49,7 @@ public static class Json
             return value!.ToString()!.ToLowerInvariant();
         }
 
-        return System.Text.Json.JsonSerializer.Serialize(
-            value,
-            new JsonSerializerOptions
-            {
-                PropertyNameCaseInsensitive = true,
-                DefaultIgnoreCondition = JsonIgnoreCondition.Never,
-                IncludeFields = true,
-            });
+        return System.Text.Json.JsonSerializer.Serialize(value, Options);
     }
 
     public static T? ToObject<T>(string json)
@@ -59,11 +59,6 @@ public static class Json
             return (T)(object)bool.Parse(json);
         }
 
-        return System.Text.Json.JsonSerializer.Deserialize<T>(json, new JsonSerializerOptions
-        {
-            PropertyNameCaseInsensitive = true,
-            DefaultIgnoreCondition = JsonIgnoreCondition.Never,
-            IncludeFields = true,
-        });
+        return System.Text.Json.JsonSerializer.Deserialize<T>(json, Options);
     }
 }

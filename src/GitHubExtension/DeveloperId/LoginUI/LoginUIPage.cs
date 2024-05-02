@@ -31,10 +31,7 @@ internal class LoginUIPage
 
     public ProviderOperationResult UpdateExtensionAdaptiveCard(IExtensionAdaptiveCard adaptiveCard)
     {
-        if (adaptiveCard == null)
-        {
-            throw new ArgumentNullException(nameof(adaptiveCard));
-        }
+        ArgumentNullException.ThrowIfNull(adaptiveCard);
 
         return adaptiveCard.Update(_template, _data?.GetJson(), Enum.GetName(typeof(LoginUIState), _state));
     }

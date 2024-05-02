@@ -79,7 +79,7 @@ public abstract class GitHubWidget : WidgetImpl
 
         // If there is a state, it is being retrieved from the widget service, so
         // this widget was pinned before.
-        if (state.Any())
+        if (state.Length != 0)
         {
             ResetWidgetInfoFromState();
             Saved = true;
@@ -205,7 +205,7 @@ public abstract class GitHubWidget : WidgetImpl
 
     public bool IsUserLoggedIn()
     {
-        IDeveloperIdProvider authProvider = DeveloperIdProvider.GetInstance();
+        DeveloperIdProvider authProvider = DeveloperIdProvider.GetInstance();
         return authProvider.GetLoggedInDeveloperIds().DeveloperIds.Any();
     }
 
@@ -259,10 +259,10 @@ public abstract class GitHubWidget : WidgetImpl
 
     protected string GetTemplateForPage(WidgetPageState page)
     {
-        if (Template.ContainsKey(page))
+        if (Template.TryGetValue(page, out var pageTemplate))
         {
             Log.Debug($"Using cached template for {page}");
-            return Template[page];
+            return pageTemplate;
         }
 
         try
