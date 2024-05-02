@@ -32,6 +32,8 @@ public sealed class GitHubExtension : IExtension
                 return new RepositoryProvider();
             case ProviderType.Settings:
                 return new SettingsProvider();
+            case ProviderType.ComputeSystem:
+                return new ComputeSystemProvider();
             case ProviderType.FeaturedApplications:
                 return new object();
             default:

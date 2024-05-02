@@ -44,6 +44,7 @@
                   <DeveloperId />
                   <Repository />
                   <Settings />
+                  <ComputeSystem />
                 </SupportedInterfaces>
               </DevHomeProvider>
             </uap3:Properties>
