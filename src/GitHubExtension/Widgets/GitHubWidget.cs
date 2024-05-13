@@ -130,6 +130,8 @@ public abstract class GitHubWidget : WidgetImpl
                 // It might take some time to get the new data, so
                 // set data state to "unknown" so that loading page is shown.
                 DataState = WidgetDataState.Unknown;
+
+                ConfigurationData = actionInvokedArgs.Data;
                 UpdateWidget();
 
                 SavedConfigurationData = string.Empty;
