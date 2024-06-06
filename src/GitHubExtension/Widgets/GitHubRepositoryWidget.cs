@@ -256,7 +256,7 @@ public abstract class GitHubRepositoryWidget : GitHubWidget
                     { "owner", repository.Owner.Login },
                     { "milestone", string.Empty },
                     { "project", repository.Description },
-                    { "url", repository.HtmlUrl },
+                    { "url", RepositoryUrl },
                     { "query", GetUnescapedIssueQuery() },
                 };
 
