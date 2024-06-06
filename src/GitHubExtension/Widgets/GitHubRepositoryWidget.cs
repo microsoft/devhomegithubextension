@@ -46,6 +46,18 @@ public abstract class GitHubRepositoryWidget : GitHubWidget
         return Uri.UnescapeDataString(GetIssueQuery()).Replace('+', ' ');
     }
 
+    // If the user changed the URL after clicking submit and clicked
+    // saved just after, we change it back to what was before to not corrupt our saved data.
+    private void CorrectUrl()
+    {
+        var configurationData = JsonNode.Parse(ConfigurationData);
+        if (configurationData != null)
+        {
+            configurationData["url"] = RepositoryUrl;
+            ConfigurationData = configurationData.ToJsonString();
+        }
+    }
+
     public override void OnActionInvoked(WidgetActionInvokedArgs actionInvokedArgs)
     {
         var verb = GetWidgetActionForVerb(actionInvokedArgs.Verb);
@@ -60,6 +72,7 @@ public abstract class GitHubRepositoryWidget : GitHubWidget
             case WidgetAction.Save:
                 UpdateTitle(JsonNode.Parse(actionInvokedArgs.Data));
                 base.OnActionInvoked(actionInvokedArgs);
+                CorrectUrl();
                 break;
 
             default:
