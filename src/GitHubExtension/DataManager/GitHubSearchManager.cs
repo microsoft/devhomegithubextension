@@ -4,7 +4,6 @@
 using GitHubExtension.Client;
 using GitHubExtension.DataManager;
 using Microsoft.Windows.DevHome.SDK;
-using Octokit;
 using Serilog;
 
 namespace GitHubExtension;
@@ -53,7 +52,7 @@ public partial class GitHubSearchManager : IGitHubSearchManager, IDisposable
         await SearchForGitHubIssuesOrPRs(request, initiator, category, client, options);
     }
 
-    private async Task SearchForGitHubIssuesOrPRs(Octokit.SearchIssuesRequest request, string initiator, SearchCategory category, GitHubClient client, RequestOptions? options = null)
+    private async Task SearchForGitHubIssuesOrPRs(Octokit.SearchIssuesRequest request, string initiator, SearchCategory category, Octokit.GitHubClient client, RequestOptions? options = null)
     {
         Log.Information(Name, $"Searching for issues or pull requests for widget {initiator}");
         request.State = Octokit.ItemState.Open;
