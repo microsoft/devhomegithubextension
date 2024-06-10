@@ -55,6 +55,7 @@ public abstract class GitHubRepositoryWidget : GitHubWidget
         {
             configurationData["url"] = RepositoryUrl;
             ConfigurationData = configurationData.ToJsonString();
+            UpdateWidget();
         }
     }
 
