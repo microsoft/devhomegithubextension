@@ -9,7 +9,7 @@ using GitHubExtension.Widgets.Enums;
 
 namespace GitHubExtension.Widgets;
 
-internal class GitHubReleasesWidget : GitHubRepositoryWidget
+internal sealed class GitHubReleasesWidget : GitHubRepositoryWidget
 {
     private readonly string _releasesIconData = IconLoader.GetIconAsBase64("releases.png");
 

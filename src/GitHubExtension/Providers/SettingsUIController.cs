@@ -9,7 +9,7 @@ using Windows.Foundation;
 
 namespace GitHubExtension.Providers;
 
-internal class SettingsUIController : IExtensionAdaptiveCardSession
+internal sealed class SettingsUIController : IExtensionAdaptiveCardSession
 {
     private static readonly Lazy<ILogger> _log = new(() => Serilog.Log.ForContext("SourceContext", nameof(RepositoryProvider)));
 
@@ -68,7 +68,7 @@ internal class SettingsUIController : IExtensionAdaptiveCardSession
     }
 
     // Adaptive Card Templates for SettingsUI.
-    private class SettingsUITemplate
+    private sealed class SettingsUITemplate
     {
         internal string GetSettingsUITemplate()
         {

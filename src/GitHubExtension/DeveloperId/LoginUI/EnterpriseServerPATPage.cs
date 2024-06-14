@@ -6,7 +6,7 @@ using GitHubExtension.Helpers;
 
 namespace GitHubExtension.DeveloperId.LoginUI;
 
-internal class EnterpriseServerPATPage : LoginUIPage
+internal sealed class EnterpriseServerPATPage : LoginUIPage
 {
     public EnterpriseServerPATPage(Uri hostAddress, string errorText, SecureString inputPAT)
         : base(LoginUIState.EnterpriseServerPATPage)
@@ -21,7 +21,7 @@ internal class EnterpriseServerPATPage : LoginUIPage
         };
     }
 
-    internal class PageData : ILoginUIPageData
+    internal sealed class PageData : ILoginUIPageData
     {
         public string EnterpriseServerPATPageInputValue { get; set; } = string.Empty;
 
@@ -39,7 +39,7 @@ internal class EnterpriseServerPATPage : LoginUIPage
         }
     }
 
-    internal class ActionPayload : SubmitActionPayload
+    internal sealed class ActionPayload : SubmitActionPayload
     {
         public string? URL
         {
@@ -47,7 +47,7 @@ internal class EnterpriseServerPATPage : LoginUIPage
         }
     }
 
-    internal class InputPayload
+    internal sealed class InputPayload
     {
         public string? PAT
         {

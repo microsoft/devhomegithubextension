@@ -5,7 +5,7 @@ using GitHubExtension.Helpers;
 
 namespace GitHubExtension.DeveloperId.LoginUI;
 
-internal class LoginPage : LoginUIPage
+internal sealed class LoginPage : LoginUIPage
 {
     public LoginPage()
         : base(LoginUIState.LoginPage)
@@ -13,7 +13,7 @@ internal class LoginPage : LoginUIPage
         Data = new PageData();
     }
 
-    internal class PageData : ILoginUIPageData
+    internal sealed class PageData : ILoginUIPageData
     {
         public string GetJson()
         {
@@ -21,7 +21,7 @@ internal class LoginPage : LoginUIPage
         }
     }
 
-    internal class ActionPayload : SubmitActionPayload
+    internal sealed class ActionPayload : SubmitActionPayload
     {
         public bool IsEnterprise()
         {

@@ -6,7 +6,7 @@ using Microsoft.Windows.DevHome.SDK;
 
 namespace GitHubExtension.DeveloperId.LoginUI;
 
-internal class LoginSucceededPage : LoginUIPage
+internal sealed class LoginSucceededPage : LoginUIPage
 {
     public LoginSucceededPage(IDeveloperId developerId)
         : base(LoginUIState.LoginSucceededPage)
@@ -17,7 +17,7 @@ internal class LoginSucceededPage : LoginUIPage
         };
     }
 
-    internal class LoginSucceededPageData : ILoginUIPageData
+    internal sealed class LoginSucceededPageData : ILoginUIPageData
     {
         public string? Message { get; set; } = string.Empty;
 

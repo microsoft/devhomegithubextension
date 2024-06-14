@@ -3,7 +3,7 @@
 
 namespace GitHubExtension.DeveloperId.LoginUI;
 
-internal class EndPage : LoginUIPage
+internal sealed class EndPage : LoginUIPage
 {
     public EndPage()
         : base(LoginUIState.End)

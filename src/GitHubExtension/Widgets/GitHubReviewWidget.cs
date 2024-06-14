@@ -9,7 +9,7 @@ using Octokit;
 
 namespace GitHubExtension.Widgets;
 
-internal class GitHubReviewWidget : GitHubUserWidget
+internal sealed class GitHubReviewWidget : GitHubUserWidget
 {
     public GitHubReviewWidget()
         : base()

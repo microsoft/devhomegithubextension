@@ -274,7 +274,7 @@ public class Repository
 
     public static Repository? Get(DataStore dataStore, string fullName)
     {
-        var nameSplit = fullName.Split(new[] { '/' }, 2);
+        var nameSplit = fullName.Split(['/'], 2);
         if (nameSplit.Length != 2)
         {
             Log.Warning($"Invalid fullName input into Repository.Get: {fullName}");
