@@ -11,7 +11,7 @@ using Serilog;
 
 namespace GitHubExtension.DeveloperId;
 
-internal class OAuthRequest : IDisposable
+internal sealed class OAuthRequest : IDisposable
 {
     private static readonly Lazy<ILogger> _log = new(() => Serilog.Log.ForContext("SourceContext", nameof(OAuthRequest)));
 
@@ -33,7 +33,7 @@ internal class OAuthRequest : IDisposable
         State = string.Empty;
     }
 
-    protected virtual void Dispose(bool disposing)
+    private void Dispose(bool disposing)
     {
         if (disposing)
         {
@@ -58,7 +58,7 @@ internal class OAuthRequest : IDisposable
 
         var request = new OauthLoginRequest(OauthConfiguration.GetClientId())
         {
-            Scopes = { "read:user", "notifications", "repo", "read:org" },
+            Scopes = { "read:user", "notifications", "repo", "write:org", "codespace", "codespaces_metadata:read" },
             State = State,
             RedirectUri = new Uri(OauthConfiguration.RedirectUri),
         };
