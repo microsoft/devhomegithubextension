@@ -11,9 +11,9 @@ namespace GitHubExtension.DataModel;
 [Table("SearchIssue")]
 public class SearchIssue
 {
-    private static readonly Lazy<ILogger> _log = new(() => Serilog.Log.ForContext("SourceContext", $"DataModel/{nameof(SearchIssue)}"));
+    private static readonly Lazy<ILogger> _logger = new(() => Serilog.Log.ForContext("SourceContext", $"DataModel/{nameof(SearchIssue)}"));
 
-    private static readonly ILogger Log = _log.Value;
+    private static readonly ILogger _log = _logger.Value;
 
     [Key]
     public long Id { get; set; } = DataStore.NoForeignKey;
@@ -68,9 +68,9 @@ public class SearchIssue
         var sql = @"DELETE FROM SearchIssue WHERE (Search NOT IN (SELECT Id FROM Search)) OR (Issue NOT IN (SELECT Id FROM Issue))";
         var command = dataStore.Connection!.CreateCommand();
         command.CommandText = sql;
-        Log.Verbose(DataStore.GetCommandLogMessage(sql, command));
+        _log.Verbose(DataStore.GetCommandLogMessage(sql, command));
         var rowsDeleted = command.ExecuteNonQuery();
-        Log.Verbose(DataStore.GetDeletedLogMessage(rowsDeleted));
+        _log.Verbose(DataStore.GetDeletedLogMessage(rowsDeleted));
     }
 
     public static void DeleteBefore(DataStore dataStore, Search search, DateTime date)
@@ -81,8 +81,8 @@ public class SearchIssue
         command.CommandText = sql;
         command.Parameters.AddWithValue("$Time", date.ToDataStoreInteger());
         command.Parameters.AddWithValue("$SearchId", search.Id);
-        Log.Verbose(DataStore.GetCommandLogMessage(sql, command));
+        _log.Verbose(DataStore.GetCommandLogMessage(sql, command));
         var rowsDeleted = command.ExecuteNonQuery();
-        Log.Verbose(DataStore.GetDeletedLogMessage(rowsDeleted));
+        _log.Verbose(DataStore.GetDeletedLogMessage(rowsDeleted));
     }
 }

@@ -12,9 +12,9 @@ namespace GitHubExtension.DeveloperId;
 
 public class CredentialVault : ICredentialVault
 {
-    private static readonly Lazy<ILogger> _log = new(() => Serilog.Log.ForContext("SourceContext", nameof(CredentialVault)));
+    private static readonly Lazy<ILogger> _logger = new(() => Serilog.Log.ForContext("SourceContext", nameof(CredentialVault)));
 
-    private static readonly ILogger Log = _log.Value;
+    private static readonly ILogger _log = _logger.Value;
 
     private readonly string _credentialResourceName;
 
@@ -56,7 +56,7 @@ public class CredentialVault : ICredentialVault
             }
             else
             {
-                Log.Information($"The access token is null for the loginId provided");
+                _log.Information($"The access token is null for the loginId provided");
                 throw new ArgumentNullException(nameof(accessToken));
             }
 
@@ -64,7 +64,7 @@ public class CredentialVault : ICredentialVault
             var isCredentialSaved = CredWrite(credential, 0);
             if (!isCredentialSaved)
             {
-                Log.Information($"Writing credentials to Credential Manager has failed");
+                _log.Information($"Writing credentials to Credential Manager has failed");
                 throw new Win32Exception(Marshal.GetLastWin32Error());
             }
         }
@@ -88,7 +88,7 @@ public class CredentialVault : ICredentialVault
             if (!isCredentialRetrieved)
             {
                 var error = Marshal.GetLastWin32Error();
-                Log.Error($"Retrieving credentials from Credential Manager has failed for {loginId} with {error}");
+                _log.Error($"Retrieving credentials from Credential Manager has failed for {loginId} with {error}");
 
                 // NotFound is expected and can be ignored.
                 if (error == Win32ErrorNotFound)
@@ -109,7 +109,7 @@ public class CredentialVault : ICredentialVault
             }
             else
             {
-                Log.Error($"No credentials found for this DeveloperId : {loginId}");
+                _log.Error($"No credentials found for this DeveloperId : {loginId}");
                 return null;
             }
 
@@ -130,7 +130,7 @@ public class CredentialVault : ICredentialVault
         }
         catch (Exception ex)
         {
-            Log.Error(ex, $"Retrieving credentials from Credential Manager has failed unexpectedly: {loginId} : ");
+            _log.Error(ex, $"Retrieving credentials from Credential Manager has failed unexpectedly: {loginId} : ");
             throw;
         }
         finally
@@ -148,7 +148,7 @@ public class CredentialVault : ICredentialVault
         var isCredentialDeleted = CredDelete(targetCredentialToDelete, CRED_TYPE.GENERIC, 0);
         if (!isCredentialDeleted)
         {
-            Log.Error($"Deleting credentials from Credential Manager has failed for {loginId}");
+            _log.Error($"Deleting credentials from Credential Manager has failed for {loginId}");
         }
     }
 
@@ -217,7 +217,7 @@ public class CredentialVault : ICredentialVault
             }
             catch (Exception ex)
             {
-                Log.Error(ex, $"Deleting credentials from Credential Manager has failed unexpectedly: {credential} : ");
+                _log.Error(ex, $"Deleting credentials from Credential Manager has failed unexpectedly: {credential} : ");
             }
         }
     }

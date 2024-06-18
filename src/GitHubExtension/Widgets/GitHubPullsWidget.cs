@@ -12,9 +12,7 @@ namespace GitHubExtension.Widgets;
 
 internal class GitHubPullsWidget : GitHubRepositoryWidget
 {
-    private readonly string pullsIconData = IconLoader.GetIconAsBase64("pulls.png");
-
-    private static Dictionary<string, string> Templates { get; set; } = new();
+    private readonly string _pullsIconData = IconLoader.GetIconAsBase64("pulls.png");
 
     public override void DeleteWidget(string widgetId, string customState)
     {
@@ -102,7 +100,7 @@ internal class GitHubPullsWidget : GitHubRepositoryWidget
                     { "date", TimeSpanHelper.DateTimeOffsetToDisplayString(pullItem.UpdatedAt, Log) },
                     { "user", pullItem.Author.Login },
                     { "avatar", pullItem.Author.AvatarUrl },
-                    { "icon", pullsIconData },
+                    { "icon", _pullsIconData },
                 };
 
                 var labels = pullItem.Labels.ToList();
@@ -127,7 +125,7 @@ internal class GitHubPullsWidget : GitHubRepositoryWidget
             pullsData.Add("selected_repo", repository?.FullName ?? string.Empty);
             pullsData.Add("widgetTitle", WidgetTitle);
             pullsData.Add("is_loading_data", DataState == WidgetDataState.Unknown);
-            pullsData.Add("pulls_icon_data", pullsIconData);
+            pullsData.Add("pulls_icon_data", _pullsIconData);
 
             LastUpdated = DateTime.Now;
             DataState = WidgetDataState.Okay;

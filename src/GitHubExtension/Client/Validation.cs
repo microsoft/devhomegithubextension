@@ -9,9 +9,9 @@ namespace GitHubExtension.Client;
 // Validation layer to help parsing GitHub URL.
 public static class Validation
 {
-    private static readonly Lazy<ILogger> _log = new(() => Serilog.Log.ForContext("SourceContext", nameof(Validation)));
+    private static readonly Lazy<ILogger> _logger = new(() => Serilog.Log.ForContext("SourceContext", nameof(Validation)));
 
-    private static readonly ILogger Log = _log.Value;
+    private static readonly ILogger _log = _logger.Value;
 
     private static bool IsValidHttpUri(string uriString, out Uri? uri)
     {
@@ -29,7 +29,7 @@ public static class Validation
         // Valid GitHub URL has three segments.  The first is '/'.
         if (uri.Segments.Length < 3 || (!uri.Host.Equals("github.com", StringComparison.OrdinalIgnoreCase) && !uri.Host.Equals("www.github.com", StringComparison.OrdinalIgnoreCase)))
         {
-            Log.Debug($"{uri.OriginalString} is not a valid GitHub uri");
+            _log.Debug($"{uri.OriginalString} is not a valid GitHub uri");
             return false;
         }
 
@@ -43,7 +43,7 @@ public static class Validation
         // https://docs.github.com/en/enterprise-server@3.10/admin/configuration/configuring-network-settings/configuring-the-hostname-for-your-instance
         if (server.Segments.Length < 3)
         {
-            Log.Debug($"{server.OriginalString} is not a valid GHES repo uri");
+            _log.Debug($"{server.OriginalString} is not a valid GHES repo uri");
             return false;
         }
 
@@ -60,7 +60,7 @@ public static class Validation
         // Above link shows a work around.
         if (!IsValidHttpUri(url, out parsedUri) || url == null || parsedUri == null)
         {
-            Log.Debug($"{url} is not a valid http uri");
+            _log.Debug($"{url} is not a valid http uri");
             return false;
         }
 
@@ -231,13 +231,13 @@ public static class Validation
             var probeResult = await new EnterpriseProbe(new ProductHeaderValue(Constants.DEV_HOME_APPLICATION_NAME)).Probe(server);
             if (probeResult != EnterpriseProbeResult.Ok)
             {
-                Log.Error($"EnterpriseServer {server.AbsoluteUri} is not reachable");
+                _log.Error($"EnterpriseServer {server.AbsoluteUri} is not reachable");
                 return false;
             }
         }
         catch (Exception ex)
         {
-            Log.Error(ex, $"EnterpriseServer {server.AbsoluteUri} could not be probed.");
+            _log.Error(ex, $"EnterpriseServer {server.AbsoluteUri} could not be probed.");
             return false;
         }
 

@@ -11,12 +11,12 @@ namespace GitHubExtension.DataModel;
 [Table("Search")]
 public class Search
 {
-    private static readonly Lazy<ILogger> _log = new(() => Serilog.Log.ForContext("SourceContext", $"DataModel/{nameof(Search)}"));
+    private static readonly Lazy<ILogger> _logger = new(() => Serilog.Log.ForContext("SourceContext", $"DataModel/{nameof(Search)}"));
 
-    private static readonly ILogger Log = _log.Value;
+    private static readonly ILogger _log = _logger.Value;
 
     // This is the time between seeing a search and updating it's TimeUpdated.
-    private static readonly long UpdateThreshold = TimeSpan.FromMinutes(2).Ticks;
+    private static readonly long _updateThreshold = TimeSpan.FromMinutes(2).Ticks;
 
     [Key]
     public long Id { get; set; } = DataStore.NoForeignKey;
@@ -50,7 +50,7 @@ public class Search
         {
             // The Search time updated is for identifying stale data for deletion later.
             // If it's been recently updated, don't repeatedly update it for every item in a search.
-            if ((search.TimeUpdated - existing.TimeUpdated) > UpdateThreshold)
+            if ((search.TimeUpdated - existing.TimeUpdated) > _updateThreshold)
             {
                 search.Id = existing.Id;
                 dataStore.Connection!.Update(search);
@@ -97,8 +97,8 @@ public class Search
         var command = dataStore.Connection!.CreateCommand();
         command.CommandText = sql;
         command.Parameters.AddWithValue("$Time", date.ToDataStoreInteger());
-        Log.Verbose(DataStore.GetCommandLogMessage(sql, command));
+        _log.Verbose(DataStore.GetCommandLogMessage(sql, command));
         var rowsDeleted = command.ExecuteNonQuery();
-        Log.Verbose(DataStore.GetDeletedLogMessage(rowsDeleted));
+        _log.Verbose(DataStore.GetDeletedLogMessage(rowsDeleted));
     }
 }
