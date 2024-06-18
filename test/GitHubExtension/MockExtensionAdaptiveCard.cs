@@ -7,12 +7,12 @@ namespace GitHubExtension.Test;
 
 public class MockExtensionAdaptiveCard : IExtensionAdaptiveCard
 {
-    private int updateCount;
+    private int _updateCount;
 
     public int UpdateCount
     {
-        get => updateCount;
-        set => updateCount = value;
+        get => _updateCount;
+        set => _updateCount = value;
     }
 
     public MockExtensionAdaptiveCard(string templateJson, string dataJson, string state)
