@@ -8,7 +8,7 @@ namespace GitHubExtension.DataManager;
 public class DataUpdater : IDisposable
 {
     // This is the default interval the timer will run. It is not the interval that we necessarily do work.
-    private static readonly TimeSpan TimerUpdateInterval = TimeSpan.FromSeconds(5);
+    private static readonly TimeSpan _timerUpdateInterval = TimeSpan.FromSeconds(5);
 
     private readonly ILogger _logger;
     private readonly PeriodicTimer _timer;
@@ -28,7 +28,7 @@ public class DataUpdater : IDisposable
     }
 
     public DataUpdater(Func<Task> action)
-        : this(TimerUpdateInterval, action)
+        : this(_timerUpdateInterval, action)
     {
     }
 
@@ -62,11 +62,11 @@ public class DataUpdater : IDisposable
 
     public override string ToString() => "DataUpdater";
 
-    private bool disposed; // To detect redundant calls.
+    private bool _disposed; // To detect redundant calls.
 
     protected virtual void Dispose(bool disposing)
     {
-        if (!disposed)
+        if (!_disposed)
         {
             _logger.Debug("Disposing of all updater resources.");
 
@@ -75,7 +75,7 @@ public class DataUpdater : IDisposable
                 _timer.Dispose();
             }
 
-            disposed = true;
+            _disposed = true;
         }
     }
 

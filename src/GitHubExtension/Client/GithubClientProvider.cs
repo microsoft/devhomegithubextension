@@ -10,13 +10,13 @@ namespace GitHubExtension.Client;
 
 public class GitHubClientProvider
 {
-    private static readonly Lazy<ILogger> _log = new(() => Serilog.Log.ForContext("SourceContext", nameof(GitHubClientProvider)));
+    private static readonly Lazy<ILogger> _logger = new(() => Serilog.Log.ForContext("SourceContext", nameof(GitHubClientProvider)));
 
-    private static readonly ILogger Log = _log.Value;
+    private static readonly ILogger _log = _logger.Value;
 
-    private readonly GitHubClient publicRepoClient;
+    private readonly GitHubClient _publicRepoClient;
 
-    private static readonly object InstanceLock = new();
+    private static readonly object _instanceLock = new();
 
     private static GitHubClientProvider? _instance;
 
@@ -26,7 +26,7 @@ public class GitHubClientProvider
         {
             if (_instance == null)
             {
-                lock (InstanceLock)
+                lock (_instanceLock)
                 {
                     _instance = new GitHubClientProvider();
                 }
@@ -38,7 +38,7 @@ public class GitHubClientProvider
 
     public GitHubClientProvider()
     {
-        publicRepoClient = new GitHubClient(new ProductHeaderValue(Constants.DEV_HOME_APPLICATION_NAME));
+        _publicRepoClient = new GitHubClient(new ProductHeaderValue(Constants.DEV_HOME_APPLICATION_NAME));
     }
 
     public GitHubClient? GetClient(IDeveloperId devId)
@@ -52,7 +52,7 @@ public class GitHubClientProvider
         var devIdInternal = DeveloperIdProvider.GetInstance().GetLoggedInDeveloperIdsInternal().Where(i => i.Url.Equals(url, StringComparison.OrdinalIgnoreCase)).FirstOrDefault();
         if (devIdInternal == null)
         {
-            return publicRepoClient;
+            return _publicRepoClient;
         }
 
         return devIdInternal.GitHubClient;
@@ -60,7 +60,7 @@ public class GitHubClientProvider
 
     public GitHubClient GetClient()
     {
-        return publicRepoClient;
+        return _publicRepoClient;
     }
 
     public async Task<GitHubClient> GetClientForLoggedInDeveloper(bool logRateLimit = false)
@@ -70,18 +70,18 @@ public class GitHubClientProvider
         GitHubClient client;
         if (devIds == null || !devIds.Any())
         {
-            Log.Information($"No logged in developer, using public GitHub client.");
+            _log.Information($"No logged in developer, using public GitHub client.");
             client = Instance.GetClient();
         }
         else
         {
-            Log.Information($"Using authenticated user: {devIds.First().LoginId}");
+            _log.Information($"Using authenticated user: {devIds.First().LoginId}");
             client = devIds.First().GitHubClient;
         }
 
         if (client == null)
         {
-            Log.Error($"Failed creating GitHubClient.");
+            _log.Error($"Failed creating GitHubClient.");
             return client!;
         }
 
@@ -90,11 +90,11 @@ public class GitHubClientProvider
             try
             {
                 var miscRateLimit = await client.RateLimit.GetRateLimits();
-                Log.Information($"Rate Limit:  Remaining: {miscRateLimit.Resources.Core.Remaining}  Total: {miscRateLimit.Resources.Core.Limit}  Resets: {miscRateLimit.Resources.Core.Reset}");
+                _log.Information($"Rate Limit:  Remaining: {miscRateLimit.Resources.Core.Remaining}  Total: {miscRateLimit.Resources.Core.Limit}  Resets: {miscRateLimit.Resources.Core.Reset}");
             }
             catch (Exception ex)
             {
-                Log.Error(ex, $"Rate limiting not enabled for server.");
+                _log.Error(ex, $"Rate limiting not enabled for server.");
             }
         }
 

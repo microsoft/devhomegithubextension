@@ -8,18 +8,18 @@ namespace GitHubExtension.Notifications;
 
 public class NotificationManager
 {
-    private static readonly Lazy<ILogger> _log = new(() => Serilog.Log.ForContext("SourceContext", nameof(NotificationManager)));
+    private static readonly Lazy<ILogger> _logger = new(() => Serilog.Log.ForContext("SourceContext", nameof(NotificationManager)));
 
-    private static readonly ILogger Log = _log.Value;
+    private static readonly ILogger _log = _logger.Value;
 
-    private bool isRegistered;
+    private bool _isRegistered;
 
     public NotificationManager(Windows.Foundation.TypedEventHandler<AppNotificationManager, AppNotificationActivatedEventArgs> handler)
     {
         AppNotificationManager.Default.NotificationInvoked += handler;
         AppNotificationManager.Default.Register();
-        isRegistered = true;
-        Log.Information($"NotificationManager created and registered.");
+        _isRegistered = true;
+        _log.Information($"NotificationManager created and registered.");
     }
 
     ~NotificationManager()
@@ -29,11 +29,11 @@ public class NotificationManager
 
     public void Unregister()
     {
-        if (isRegistered)
+        if (_isRegistered)
         {
             AppNotificationManager.Default.Unregister();
-            isRegistered = false;
-            Log.Information($"NotificationManager unregistered.");
+            _isRegistered = false;
+            _log.Information($"NotificationManager unregistered.");
         }
     }
 }

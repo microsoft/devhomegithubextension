@@ -9,14 +9,14 @@ namespace GitHubExtension;
 public partial class GitHubDataManager
 {
     // This is how frequently the DataStore update occurs.
-    private static readonly TimeSpan UpdateInterval = TimeSpan.FromMinutes(5);
-    private static DateTime lastUpdateTime = DateTime.MinValue;
+    private static readonly TimeSpan _updateInterval = TimeSpan.FromMinutes(5);
+    private static DateTime _lastUpdateTime = DateTime.MinValue;
 
     public static async Task Update()
     {
         // Only update per the update interval.
         // This is intended to be dynamic in the future.
-        if (DateTime.Now - lastUpdateTime < UpdateInterval)
+        if (DateTime.Now - _lastUpdateTime < _updateInterval)
         {
             return;
         }
@@ -27,15 +27,15 @@ public partial class GitHubDataManager
         }
         catch (Exception ex)
         {
-            Log.Error(ex, "Update failed unexpectedly.");
+            _log.Error(ex, "Update failed unexpectedly.");
         }
 
-        lastUpdateTime = DateTime.Now;
+        _lastUpdateTime = DateTime.Now;
     }
 
     private static async Task UpdateDeveloperPullRequests()
     {
-        Log.Debug($"Executing UpdateDeveloperPullRequests");
+        _log.Debug($"Executing UpdateDeveloperPullRequests");
         using var dataManager = CreateInstance() ?? throw new DataStoreInaccessibleException("GitHubDataManager is null.");
         await dataManager.UpdatePullRequestsForLoggedInDeveloperIdsAsync();
 
@@ -73,7 +73,7 @@ public partial class GitHubDataManager
         {
             info ??= string.Empty;
             context ??= Array.Empty<string>();
-            Log.Information($"Sending Update Event: {kind}  Info: {info}  Context: {string.Join(",", context)}");
+            _log.Information($"Sending Update Event: {kind}  Info: {info}  Context: {string.Join(",", context)}");
             OnUpdate.Invoke(source, new DataManagerUpdateEventArgs(kind, info, context));
         }
     }

@@ -12,14 +12,14 @@ namespace GitHubExtension.DataModel;
 [Table("User")]
 public class User
 {
-    private static readonly Lazy<ILogger> _log = new(() => Serilog.Log.ForContext("SourceContext", $"DataModel/{nameof(User)}"));
+    private static readonly Lazy<ILogger> _logger = new(() => Serilog.Log.ForContext("SourceContext", $"DataModel/{nameof(User)}"));
 
-    private static readonly ILogger Log = _log.Value;
+    private static readonly ILogger _log = _logger.Value;
 
     // This is the time between seeing a potential updated user record and updating it.
     // This value / 2 is the average time between user updating their user data and having
     // it reflected in the datastore.
-    private static readonly long UpdateThreshold = TimeSpan.FromHours(4).Ticks;
+    private static readonly long _updateThreshold = TimeSpan.FromHours(4).Ticks;
 
     [Key]
     public long Id { get; set; } = DataStore.NoForeignKey;
@@ -82,7 +82,7 @@ public class User
             // avoid unnecessary updating and database operations for data that
             // is extremely unlikely to have changed in any significant way, we
             // will only update every UpdateThreshold amount of time.
-            if ((user.TimeUpdated - existingUser.TimeUpdated) > UpdateThreshold)
+            if ((user.TimeUpdated - existingUser.TimeUpdated) > _updateThreshold)
             {
                 user.Id = existingUser.Id;
                 dataStore.Connection!.Update(user);
@@ -156,7 +156,7 @@ public class User
             DeveloperIds = GetDeveloperLoginIds(),
         };
 
-        Log.Verbose(DataStore.GetSqlLogMessage(sql, param));
+        _log.Verbose(DataStore.GetSqlLogMessage(sql, param));
         var users = dataStore.Connection!.Query<User>(sql, param) ?? Enumerable.Empty<User>();
         foreach (var user in users)
         {

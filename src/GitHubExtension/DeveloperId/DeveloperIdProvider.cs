@@ -14,9 +14,9 @@ namespace GitHubExtension.DeveloperId;
 
 public class DeveloperIdProvider : IDeveloperIdProviderInternal
 {
-    private static readonly Lazy<ILogger> _log = new(() => Serilog.Log.ForContext("SourceContext", nameof(DeveloperIdProvider)));
+    private static readonly Lazy<ILogger> _logger = new(() => Serilog.Log.ForContext("SourceContext", nameof(DeveloperIdProvider)));
 
-    private static readonly ILogger Log = _log.Value;
+    private static readonly ILogger _log = _logger.Value;
 
     // Locks to control access to Singleton class members.
     private static readonly object _developerIdsLock = new();
@@ -39,7 +39,7 @@ public class DeveloperIdProvider : IDeveloperIdProviderInternal
 
     public event TypedEventHandler<IDeveloperIdProvider, IDeveloperId>? Changed;
 
-    private readonly AuthenticationExperienceKind authenticationExperienceForGitHubExtension = AuthenticationExperienceKind.CardSession;
+    private readonly AuthenticationExperienceKind _authenticationExperienceForGitHubExtension = AuthenticationExperienceKind.CardSession;
 
     public string DisplayName => "GitHub";
 
@@ -54,7 +54,7 @@ public class DeveloperIdProvider : IDeveloperIdProviderInternal
     // Private constructor for Singleton class.
     private DeveloperIdProvider()
     {
-        Log.Information($"Creating DeveloperIdProvider singleton instance");
+        _log.Information($"Creating DeveloperIdProvider singleton instance");
 
         _credentialVault = new(() => new CredentialVault());
 
@@ -75,7 +75,7 @@ public class DeveloperIdProvider : IDeveloperIdProviderInternal
         }
         catch (Exception ex)
         {
-            Log.Error(ex, $"Error while restoring DeveloperIds: {ex.Message}. Proceeding without restoring.");
+            _log.Error(ex, $"Error while restoring DeveloperIds: {ex.Message}. Proceeding without restoring.");
         }
     }
 
@@ -99,7 +99,7 @@ public class DeveloperIdProvider : IDeveloperIdProviderInternal
             var oauthRequest = LoginNewDeveloperId();
             if (oauthRequest is null)
             {
-                Log.Error($"Invalid OAuthRequest");
+                _log.Error($"Invalid OAuthRequest");
                 throw new InvalidOperationException();
             }
 
@@ -108,7 +108,7 @@ public class DeveloperIdProvider : IDeveloperIdProviderInternal
             var devId = CreateOrUpdateDeveloperIdFromOauthRequest(oauthRequest);
             oauthRequest.Dispose();
 
-            Log.Information($"New DeveloperId logged in");
+            _log.Information($"New DeveloperId logged in");
 
             return devId as IDeveloperId;
         }).AsAsyncOperation();
@@ -125,13 +125,13 @@ public class DeveloperIdProvider : IDeveloperIdProviderInternal
             DeveloperId developerId = new(newUser.Login, newUser.Name, newUser.Email, newUser.Url, gitHubClient);
             SaveOrOverwriteDeveloperId(developerId, personalAccessToken);
 
-            Log.Information($"{developerId.LoginId} logged in with PAT flow to {developerId.GetHostAddress()}");
+            _log.Information($"{developerId.LoginId} logged in with PAT flow to {developerId.GetHostAddress()}");
 
             return developerId;
         }
         catch (Exception ex)
         {
-            Log.Error(ex, $"Error while logging in with PAT to {hostAddress.AbsoluteUri} : ");
+            _log.Error(ex, $"Error while logging in with PAT to {hostAddress.AbsoluteUri} : ");
             throw;
         }
     }
@@ -151,7 +151,7 @@ public class DeveloperIdProvider : IDeveloperIdProviderInternal
             catch (Exception ex)
             {
                 OAuthRequests.Remove(oauthRequest);
-                Log.Error(ex, $"Unable to complete OAuth request: ");
+                _log.Error(ex, $"Unable to complete OAuth request: ");
             }
         }
 
@@ -166,7 +166,7 @@ public class DeveloperIdProvider : IDeveloperIdProviderInternal
             developerIdToLogout = DeveloperIds?.Find(e => e.LoginId == developerId.LoginId);
             if (developerIdToLogout == null)
             {
-                Log.Error($"Unable to find DeveloperId to logout");
+                _log.Error($"Unable to find DeveloperId to logout");
                 return new ProviderOperationResult(ProviderOperationStatus.Failure, new ArgumentNullException(nameof(developerId)), "The developer account to log out does not exist", "Unable to find DeveloperId to logout");
             }
 
@@ -180,7 +180,7 @@ public class DeveloperIdProvider : IDeveloperIdProviderInternal
         }
         catch (Exception ex)
         {
-            Log.Error(ex, $"LoggedOut event signaling failed: ");
+            _log.Error(ex, $"LoggedOut event signaling failed: ");
         }
 
         return new ProviderOperationResult(ProviderOperationStatus.Success, null, "The developer account has been logged out successfully", "LogoutDeveloperId succeeded");
@@ -201,7 +201,7 @@ public class DeveloperIdProvider : IDeveloperIdProviderInternal
             {
                 // This could happen if the user refreshes the redirected browser window
                 // causing the OAuth response to be received again.
-                Log.Warning($"No saved OAuth requests to match OAuth response");
+                _log.Warning($"No saved OAuth requests to match OAuth response");
                 return;
             }
 
@@ -213,7 +213,7 @@ public class DeveloperIdProvider : IDeveloperIdProviderInternal
             {
                 // This could happen if the user refreshes a previously redirected browser window instead of using
                 // the new browser window for the response. Log the warning and return.
-                Log.Warning($"Unable to find valid request for received OAuth response");
+                _log.Warning($"Unable to find valid request for received OAuth response");
                 return;
             }
             else
@@ -252,7 +252,7 @@ public class DeveloperIdProvider : IDeveloperIdProviderInternal
 
         if (duplicateDeveloperIds.Any())
         {
-            Log.Information($"DeveloperID already exists! Updating accessToken");
+            _log.Information($"DeveloperID already exists! Updating accessToken");
             try
             {
                 // Save the credential to Credential Vault.
@@ -264,12 +264,12 @@ public class DeveloperIdProvider : IDeveloperIdProviderInternal
                 }
                 catch (Exception ex)
                 {
-                    Log.Error(ex, $"Updated event signaling failed: ");
+                    _log.Error(ex, $"Updated event signaling failed: ");
                 }
             }
             catch (InvalidOperationException)
             {
-                Log.Warning($"Multiple copies of same DeveloperID already exists");
+                _log.Warning($"Multiple copies of same DeveloperID already exists");
                 throw new InvalidOperationException("Multiple copies of same DeveloperID already exists");
             }
         }
@@ -288,7 +288,7 @@ public class DeveloperIdProvider : IDeveloperIdProviderInternal
             }
             catch (Exception ex)
             {
-                Log.Error(ex, $"LoggedIn event signaling failed: ");
+                _log.Error(ex, $"LoggedIn event signaling failed: ");
             }
         }
     }
@@ -300,13 +300,13 @@ public class DeveloperIdProvider : IDeveloperIdProviderInternal
         var accessToken = oauthRequest.AccessToken;
         if (accessToken is null)
         {
-            Log.Error($"Invalid AccessToken");
+            _log.Error($"Invalid AccessToken");
             throw new InvalidOperationException();
         }
 
         SaveOrOverwriteDeveloperId(newDeveloperId, accessToken);
 
-        Log.Information($"{newDeveloperId.LoginId} logged in with OAuth flow to {newDeveloperId.GetHostAddress()}");
+        _log.Information($"{newDeveloperId.LoginId} logged in with OAuth flow to {newDeveloperId.GetHostAddress()}");
 
         return newDeveloperId;
     }
@@ -340,7 +340,7 @@ public class DeveloperIdProvider : IDeveloperIdProviderInternal
                     DeveloperIds.Add(developerId);
                 }
 
-                Log.Information($"Restored DeveloperId {user.Url}");
+                _log.Information($"Restored DeveloperId {user.Url}");
 
                 // If loginId is currently used to save credential, remove it, and use URL instead.
                 if (!isUrl)
@@ -350,7 +350,7 @@ public class DeveloperIdProvider : IDeveloperIdProviderInternal
             }
             catch (Exception ex)
             {
-                Log.Error(ex, $"Error while restoring DeveloperId {loginIdOrUrl} : ");
+                _log.Error(ex, $"Error while restoring DeveloperId {loginIdOrUrl} : ");
 
                 // If we are unable to restore a DeveloperId, remove it from CredentialManager to avoid
                 // the same error next time, and to force the user to login again
@@ -369,11 +369,11 @@ public class DeveloperIdProvider : IDeveloperIdProviderInternal
                 developerId.Url,
                 new NetworkCredential(string.Empty, _credentialVault.Value.GetCredentials(developerId.LoginId)?.Password).SecurePassword);
             _credentialVault.Value.RemoveCredentials(developerId.LoginId);
-            Log.Information($"Replaced {developerId.LoginId} with {developerId.Url} in CredentialManager");
+            _log.Information($"Replaced {developerId.LoginId} with {developerId.Url} in CredentialManager");
         }
         catch (Exception ex)
         {
-            Log.Error(ex, $"Error while replacing {developerId.LoginId} with {developerId.Url} in CredentialManager: ");
+            _log.Error(ex, $"Error while replacing {developerId.LoginId} with {developerId.Url} in CredentialManager: ");
         }
     }
 
@@ -384,12 +384,12 @@ public class DeveloperIdProvider : IDeveloperIdProviderInternal
 
     public AuthenticationExperienceKind GetAuthenticationExperienceKind()
     {
-        return authenticationExperienceForGitHubExtension;
+        return _authenticationExperienceForGitHubExtension;
     }
 
     public AdaptiveCardSessionResult GetLoginAdaptiveCardSession()
     {
-        Log.Information($"GetAdaptiveCardController");
+        _log.Information($"GetAdaptiveCardController");
         return new AdaptiveCardSessionResult(new LoginUIController(this));
     }
 
