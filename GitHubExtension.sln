@@ -49,7 +49,9 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{864DD9CD-9F45-47E8-847F-B72ED182626B}"
 	ProjectSection(SolutionItems) = preProject
 		.editorconfig = .editorconfig
+		Directory.Build.props = Directory.Build.props
 		exclusion.dic = exclusion.dic
+		ToolingVersions.props = ToolingVersions.props
 	EndProjectSection
 EndProject
 Global

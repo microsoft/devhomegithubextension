@@ -5,7 +5,7 @@ using GitHubExtension.Helpers;
 
 namespace GitHubExtension.DeveloperId.LoginUI;
 
-internal class EnterpriseServerPage : LoginUIPage
+internal sealed class EnterpriseServerPage : LoginUIPage
 {
     public EnterpriseServerPage(Uri? hostAddress, string errorText)
         : base(LoginUIState.EnterpriseServerPage)
@@ -29,7 +29,7 @@ internal class EnterpriseServerPage : LoginUIPage
         };
     }
 
-    internal class PageData : ILoginUIPageData
+    internal sealed class PageData : ILoginUIPageData
     {
         public string EnterpriseServerInputValue { get; set; } = string.Empty;
 
@@ -44,11 +44,11 @@ internal class EnterpriseServerPage : LoginUIPage
         }
     }
 
-    internal class ActionPayload : SubmitActionPayload
+    internal sealed class ActionPayload : SubmitActionPayload
     {
     }
 
-    internal class InputPayload
+    internal sealed class InputPayload
     {
         public string? EnterpriseServer
         {

@@ -15,7 +15,7 @@ jobs:
         configuration: [Release, Debug]
         platform: [x64, x86, arm64]
         os: [windows-latest]
-        dotnet-version: ['6.0.x']
+        dotnet-version: ['8.0.x']
         exclude:
         - configuration: Debug
           platform: x64

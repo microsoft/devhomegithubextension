@@ -11,7 +11,7 @@ public static class LocalSettings
     private static readonly string _applicationDataFolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "DevHome/ApplicationData");
     private static readonly string _localSettingsFile = "LocalSettings.json";
 
-    private static IDictionary<string, object>? _settings;
+    private static Dictionary<string, object>? _settings;
 
     private static async Task InitializeAsync()
     {
@@ -23,7 +23,7 @@ public static class LocalSettings
             }
             else
             {
-                _settings = await Task.Run(() => FileHelper.Read<IDictionary<string, object>>(_applicationDataFolder, _localSettingsFile)) ?? new Dictionary<string, object>();
+                _settings = await Task.Run(() => FileHelper.Read<Dictionary<string, object>>(_applicationDataFolder, _localSettingsFile)) ?? new Dictionary<string, object>();
             }
         }
     }

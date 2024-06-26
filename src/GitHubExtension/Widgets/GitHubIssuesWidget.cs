@@ -10,7 +10,7 @@ using Octokit;
 
 namespace GitHubExtension.Widgets;
 
-internal class GitHubIssuesWidget : GitHubRepositoryWidget
+internal sealed class GitHubIssuesWidget : GitHubRepositoryWidget
 {
     private readonly string _issuesIconData = IconLoader.GetIconAsBase64("issues.png");
 

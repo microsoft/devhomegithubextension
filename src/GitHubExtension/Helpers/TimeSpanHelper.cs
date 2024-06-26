@@ -6,7 +6,7 @@ using Serilog;
 
 namespace GitHubExtension.Helpers;
 
-internal class TimeSpanHelper
+internal sealed class TimeSpanHelper
 {
     public static string TimeSpanToDisplayString(TimeSpan timeSpan, ILogger? log = null)
     {

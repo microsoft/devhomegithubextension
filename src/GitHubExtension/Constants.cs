@@ -3,7 +3,7 @@
 
 namespace GitHubExtension;
 
-internal class Constants
+internal sealed class Constants
 {
 #pragma warning disable SA1310 // Field names should not contain underscore
     public const string DEV_HOME_APPLICATION_NAME = "DevHome";
