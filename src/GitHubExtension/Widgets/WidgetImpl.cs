@@ -12,12 +12,12 @@ public abstract class WidgetImpl
 
     public WidgetImpl()
     {
-        _log = new(() => Serilog.Log.ForContext("SourceContext", SourceName));
+        _logger = new(() => Serilog.Log.ForContext("SourceContext", SourceName));
     }
 
-    private readonly Lazy<ILogger> _log;
+    private readonly Lazy<ILogger> _logger;
 
-    protected ILogger Log => _log.Value;
+    protected ILogger Log => _logger.Value;
 
     protected string Name => GetType().Name;
 

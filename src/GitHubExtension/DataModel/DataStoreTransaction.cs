@@ -7,7 +7,7 @@ namespace GitHubExtension.DataModel;
 
 public class DataStoreTransaction : IDataStoreTransaction
 {
-    private SqliteTransaction? transaction;
+    private SqliteTransaction? _transaction;
 
     public static IDataStoreTransaction BeginTransaction(DataStore dataStore)
     {
@@ -24,32 +24,32 @@ public class DataStoreTransaction : IDataStoreTransaction
 
     private DataStoreTransaction(SqliteTransaction? tx)
     {
-        transaction = tx;
+        _transaction = tx;
     }
 
     public void Commit()
     {
-        transaction?.Commit();
+        _transaction?.Commit();
     }
 
     public void Rollback()
     {
-        transaction?.Rollback();
+        _transaction?.Rollback();
     }
 
-    private bool disposed; // To detect redundant calls.
+    private bool _disposed; // To detect redundant calls.
 
     protected virtual void Dispose(bool disposing)
     {
-        if (!disposed)
+        if (!_disposed)
         {
             if (disposing)
             {
-                transaction?.Dispose();
-                transaction = null;
+                _transaction?.Dispose();
+                _transaction = null;
             }
 
-            disposed = true;
+            _disposed = true;
         }
     }
 

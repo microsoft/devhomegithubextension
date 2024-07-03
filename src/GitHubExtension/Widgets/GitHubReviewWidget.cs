@@ -20,7 +20,7 @@ internal class GitHubReviewWidget : GitHubUserWidget
 
     public override void RequestContentData()
     {
-        SearchIssuesRequest request = new SearchIssuesRequest($"review-requested:{UserName}");
+        var request = new SearchIssuesRequest($"review-requested:{UserName}");
 
         RequestContentData(request);
     }

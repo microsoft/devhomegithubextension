@@ -18,7 +18,7 @@ public abstract class GitHubWidget : WidgetImpl
     protected static readonly TimeSpan WidgetRefreshRate = TimeSpan.FromMinutes(5);
     protected static readonly string EmptyJson = new JsonObject().ToJsonString();
 
-    private DateTime lastUpdateRequest = DateTime.MinValue;
+    private DateTime _lastUpdateRequest = DateTime.MinValue;
 
     protected WidgetActivityState ActivityState { get; set; } = WidgetActivityState.Unknown;
 
@@ -331,7 +331,7 @@ public abstract class GitHubWidget : WidgetImpl
         // If moving to configure, reset the throttle so when we update to Active, the first update
         // will not get throttled.
         DataUpdater.Stop();
-        lastUpdateRequest = DateTime.MinValue;
+        _lastUpdateRequest = DateTime.MinValue;
         ActivityState = WidgetActivityState.Configure;
         Page = WidgetPageState.Configure;
         LogCurrentState();
@@ -362,7 +362,7 @@ public abstract class GitHubWidget : WidgetImpl
     {
         // Only update per the update interval.
         // This is intended to be dynamic in the future.
-        if (DateTime.Now - lastUpdateRequest < WidgetRefreshRate)
+        if (DateTime.Now - _lastUpdateRequest < WidgetRefreshRate)
         {
             return;
         }
@@ -381,7 +381,7 @@ public abstract class GitHubWidget : WidgetImpl
             Log.Error(ex, "Failed Requesting Update");
         }
 
-        lastUpdateRequest = DateTime.Now;
+        _lastUpdateRequest = DateTime.Now;
     }
 
     private void HandleDeveloperIdChange(object? sender, IDeveloperId e)

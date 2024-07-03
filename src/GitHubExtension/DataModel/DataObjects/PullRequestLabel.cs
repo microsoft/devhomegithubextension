@@ -10,9 +10,9 @@ namespace GitHubExtension.DataModel;
 [Table("PullRequestLabel")]
 public class PullRequestLabel
 {
-    private static readonly Lazy<ILogger> _log = new(() => Serilog.Log.ForContext("SourceContext", $"DataModel/{nameof(PullRequestLabel)}"));
+    private static readonly Lazy<ILogger> _logger = new(() => Serilog.Log.ForContext("SourceContext", $"DataModel/{nameof(PullRequestLabel)}"));
 
-    private static readonly ILogger Log = _log.Value;
+    private static readonly ILogger _log = _logger.Value;
 
     [Key]
     public long Id { get; set; } = DataStore.NoForeignKey;
@@ -60,7 +60,7 @@ public class PullRequestLabel
             PullId = pull.Id,
         };
 
-        Log.Verbose(DataStore.GetSqlLogMessage(sql, param));
+        _log.Verbose(DataStore.GetSqlLogMessage(sql, param));
         return dataStore.Connection!.Query<Label>(sql, param, null) ?? Enumerable.Empty<Label>();
     }
 

@@ -11,7 +11,7 @@ namespace GitHubExtension.Widgets;
 
 public sealed class WidgetServer : IDisposable
 {
-    private readonly HashSet<int> registrationCookies = new();
+    private readonly HashSet<int> _registrationCookies = new();
 
     [UnconditionalSuppressMessage(
         "ReflectionAnalysis",
@@ -39,7 +39,7 @@ public sealed class WidgetServer : IDisposable
             Marshal.ThrowExceptionForHR(hr);
         }
 
-        registrationCookies.Add(cookie);
+        _registrationCookies.Add(cookie);
         log.Debug($"Cookie: {cookie}");
         hr = Ole32.CoResumeClassObjects();
         if (hr < 0)
@@ -57,7 +57,7 @@ public sealed class WidgetServer : IDisposable
     {
         var log = Log.ForContext("SourceContext", nameof(WidgetServer));
         log.Debug($"Revoking class object registrations:");
-        foreach (var cookie in registrationCookies)
+        foreach (var cookie in _registrationCookies)
         {
             log.Debug($"Cookie: {cookie}");
             var hr = Ole32.CoRevokeClassObject(cookie);

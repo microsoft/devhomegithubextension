@@ -12,7 +12,7 @@ namespace GitHubExtension.Test.Mocks;
 
 public class MockDeveloperIdProvider : IDeveloperIdProviderInternal
 {
-    private static MockDeveloperIdProvider? instance;
+    private static MockDeveloperIdProvider? _instance;
 
     public string DisplayName => throw new NotImplementedException();
 
@@ -63,8 +63,8 @@ public class MockDeveloperIdProvider : IDeveloperIdProviderInternal
 
     public static MockDeveloperIdProvider GetInstance()
     {
-        instance ??= new MockDeveloperIdProvider();
-        return instance;
+        _instance ??= new MockDeveloperIdProvider();
+        return _instance;
     }
 
     public IEnumerable<DeveloperId.DeveloperId> GetLoggedInDeveloperIdsInternal() => new List<DeveloperId.DeveloperId>();
