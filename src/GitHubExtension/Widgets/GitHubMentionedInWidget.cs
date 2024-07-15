@@ -6,7 +6,7 @@ using Octokit;
 
 namespace GitHubExtension.Widgets;
 
-internal class GitHubMentionedInWidget : GitHubUserWidget
+internal sealed class GitHubMentionedInWidget : GitHubUserWidget
 {
     protected override string GetTitleIconData()
     {

@@ -13,9 +13,8 @@ public class IconLoader
     {
         var log = Log.ForContext("SourceContext", nameof(IconLoader));
         log.Verbose($"Asking for icon: {filename}");
-        if (!_base64ImageRegistry.ContainsKey(filename))
+        if (!_base64ImageRegistry.TryAdd(filename, ConvertIconToDataString(filename)))
         {
-            _base64ImageRegistry.Add(filename, ConvertIconToDataString(filename));
             log.Verbose($"The icon {filename} was converted and is now stored.");
         }
 
