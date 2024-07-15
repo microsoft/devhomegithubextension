@@ -41,9 +41,11 @@ public partial class TestHelpers
         // test locations in one data object to simplify test variables we are tracking and
         // to be consistent in test setup/cleanup.
         var path = GetUniqueFolderPath("GHPT");
-        var options = new TestOptions();
-        options.LogFileFolderRoot = path;
-        options.LogFileName = LogFileName;
+        var options = new TestOptions
+        {
+            LogFileFolderRoot = path,
+            LogFileName = LogFileName,
+        };
         options.DataStoreOptions.DataStoreFileName = DataBaseFileName;
         options.DataStoreOptions.DataStoreFolderPath = path;
         options.DataStoreOptions.DataStoreSchema = new GitHubDataStoreSchema();

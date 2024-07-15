@@ -42,12 +42,12 @@ public partial class DeveloperIdTests
         set;
     }
 
-    private TestOptions testOptions = new();
+    private TestOptions _testOptions = new();
 
     private TestOptions TestOptions
     {
-        get => testOptions;
-        set => testOptions = value;
+        get => _testOptions;
+        set => _testOptions = value;
     }
 
     [TestInitialize]

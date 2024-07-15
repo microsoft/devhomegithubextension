@@ -12,7 +12,7 @@ namespace GitHubExtension.Widgets;
 
 internal class GitHubIssuesWidget : GitHubRepositoryWidget
 {
-    private readonly string issuesIconData = IconLoader.GetIconAsBase64("issues.png");
+    private readonly string _issuesIconData = IconLoader.GetIconAsBase64("issues.png");
 
     public override void DeleteWidget(string widgetId, string customState)
     {
@@ -129,7 +129,7 @@ internal class GitHubIssuesWidget : GitHubRepositoryWidget
                     { "date", TimeSpanHelper.DateTimeOffsetToDisplayString(issueItem.CreatedAt, Log) },
                     { "user", issueItem.Author.Login },
                     { "avatar", issueItem.Author.AvatarUrl },
-                    { "icon", issuesIconData },
+                    { "icon", _issuesIconData },
                 };
 
                 var labels = issueItem.Labels.ToList();
@@ -154,7 +154,7 @@ internal class GitHubIssuesWidget : GitHubRepositoryWidget
             issuesData.Add("selected_repo", repository?.FullName ?? string.Empty);
             issuesData.Add("widgetTitle", WidgetTitle);
             issuesData.Add("is_loading_data", DataState == WidgetDataState.Unknown);
-            issuesData.Add("issues_icon_data", issuesIconData);
+            issuesData.Add("issues_icon_data", _issuesIconData);
 
             LastUpdated = DateTime.Now;
             DataState = WidgetDataState.Okay;
