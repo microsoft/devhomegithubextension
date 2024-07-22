@@ -22,14 +22,14 @@
         <com:Extension Category="windows.comServer">
           <com:ComServer>
             <com:ExeServer Executable="DevHomeGitHubExtension.exe" Arguments="-RegisterProcessAsComServer" DisplayName="GitHub Extension Widget">
-              <com:Class Id="F23870B0-B391-4466-84E2-42A991078613" DisplayName="GitHub Extension Widget" />
+              <com:Class Id="3AF3462E-0CCE-4200-887B-FB41872A4EFB" DisplayName="GitHub Extension Widget" />
             </com:ExeServer>
           </com:ComServer>
         </com:Extension>
         <com:Extension Category="windows.comServer">
           <com:ComServer>
             <com:ExeServer Executable="DevHomeGitHubExtension.exe" Arguments="-RegisterProcessAsComServer" DisplayName="GitHub Extension">
-              <com:Class Id="6B5F1179-B2AE-4D5E-94FC-E5E119D1B8F0" DisplayName="GitHub Extension" />
+              <com:Class Id="190B5CB2-BBAC-424E-92F8-98C7C41C1039" DisplayName="GitHub Extension" />
             </com:ExeServer>
           </com:ComServer>
         </com:Extension>

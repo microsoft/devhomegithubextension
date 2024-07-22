@@ -9,7 +9,13 @@ namespace GitHubExtension.Widgets;
 
 [ComVisible(true)]
 [ClassInterface(ClassInterfaceType.None)]
+#if CANARY_BUILD
+[Guid("E8778523-0D5F-478F-8AC3-1467928BDEF7")]
+#elif STABLE_BUILD
 [Guid("F23870B0-B391-4466-84E2-42A991078613")]
+#else
+[Guid("3AF3462E-0CCE-4200-887B-FB41872A4EFB")]
+#endif
 public sealed class WidgetProvider : IWidgetProvider, IWidgetProvider2
 {
     private readonly ILogger _log = Log.ForContext("SourceContext", nameof(WidgetProvider));
