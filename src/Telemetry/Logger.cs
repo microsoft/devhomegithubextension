@@ -12,7 +12,7 @@ using Microsoft.Diagnostics.Telemetry;
 
 namespace GitHubExtension.Telemetry;
 
-internal class Logger : ILogger
+internal sealed class Logger : ILogger
 {
     private const string ProviderName = "Microsoft.GitHubExtension";
 

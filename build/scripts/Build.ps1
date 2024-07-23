@@ -86,63 +86,22 @@ $ErrorActionPreference = "Stop"
 Try {
   if (($BuildStep -ieq "all") -Or ($BuildStep -ieq "msix")) {
     $buildRing = "Dev"
-    $newPackageName = $null
-    $newPackageDisplayName = $null
-    $newAppDisplayNameResource = $null
-    $newWidgetProviderDisplayName = $null
+    $appxmanifestPath = (Join-Path $env:Build_RootDirectory "src\GitHubExtensionServer\Package-Dev.appxmanifest")
 
     if ($AzureBuildingBranch -ieq "release") {
       $buildRing = "Stable"
-      $newPackageName = "Microsoft.Windows.DevHomeGitHubExtension"
-      $newPackageDisplayName = "Dev Home GitHub Extension (Preview)"
-      $newAppDisplayNameResource = "ms-resource:AppDisplayNameStable"
-      $newWidgetProviderDisplayName = "ms-resource:WidgetProviderDisplayNameStable"
+          $appxmanifestPath = (Join-Path $env:Build_RootDirectory "src\GitHubExtensionServer\Package.appxmanifest")
     } elseif ($AzureBuildingBranch -ieq "staging") {
       $buildRing = "Canary"
-      $newPackageName = "Microsoft.Windows.DevHomeGitHubExtension.Canary"
-      $newPackageDisplayName = "Dev Home GitHub Extension (Canary)"
-      $newAppDisplayNameResource = "ms-resource:AppDisplayNameCanary"
-      $newWidgetProviderDisplayName = "ms-resource:WidgetProviderDisplayNameCanary"
+          $appxmanifestPath = (Join-Path $env:Build_RootDirectory "src\GitHubExtensionServer\Package-Can.appxmanifest")
     }
 
     [Reflection.Assembly]::LoadWithPartialName("System.Xml.Linq")
     $xIdentity = [System.Xml.Linq.XName]::Get("{http://schemas.microsoft.com/appx/manifest/foundation/windows10}Identity");
-    $xProperties = [System.Xml.Linq.XName]::Get("{http://schemas.microsoft.com/appx/manifest/foundation/windows10}Properties");
-    $xDisplayName = [System.Xml.Linq.XName]::Get("{http://schemas.microsoft.com/appx/manifest/foundation/windows10}DisplayName");
-    $xApplications = [System.Xml.Linq.XName]::Get("{http://schemas.microsoft.com/appx/manifest/foundation/windows10}Applications");
-    $xApplication = [System.Xml.Linq.XName]::Get("{http://schemas.microsoft.com/appx/manifest/foundation/windows10}Application");
-    $uapVisualElements = [System.Xml.Linq.XName]::Get("{http://schemas.microsoft.com/appx/manifest/uap/windows10}VisualElements");
-    $xExtensions = [System.Xml.Linq.XName]::Get("{http://schemas.microsoft.com/appx/manifest/foundation/windows10}Extensions");
-    $uapExtension = [System.Xml.Linq.XName]::Get("{http://schemas.microsoft.com/appx/manifest/uap/windows10/3}Extension");
-    $uapAppExtension = [System.Xml.Linq.XName]::Get("{http://schemas.microsoft.com/appx/manifest/uap/windows10/3}AppExtension");
 
     # Update the appxmanifest
-    $appxmanifestPath = (Join-Path $env:Build_RootDirectory "src\GitHubExtensionServer\Package.appxmanifest")
     $appxmanifest = [System.Xml.Linq.XDocument]::Load($appxmanifestPath)
     $appxmanifest.Root.Element($xIdentity).Attribute("Version").Value = $env:msix_version
-    if (-not ([string]::IsNullOrEmpty($newPackageName))) {
-      $appxmanifest.Root.Element($xIdentity).Attribute("Name").Value = $newPackageName
-    } 
-    if (-not ([string]::IsNullOrEmpty($newPackageDisplayName))) {
-      $appxmanifest.Root.Element($xProperties).Element($xDisplayName).Value = $newPackageDisplayName
-    }
-    if (-not ([string]::IsNullOrEmpty($newAppDisplayNameResource))) {
-      $appxmanifest.Root.Element($xApplications).Element($xApplication).Element($uapVisualElements).Attribute("DisplayName").Value = $newAppDisplayNameResource
-      $extensions = $appxmanifest.Root.Element($xApplications).Element($xApplication).Element($xExtensions).Elements($uapExtension)
-      foreach ($extension in $extensions) {
-        if ($extension.Attribute("Category").Value -eq "windows.appExtension") {
-          $appExtension = $extension.Element($uapAppExtension)
-          switch ($appExtension.Attribute("Name").Value) {
-            "com.microsoft.devhome" {
-              $appExtension.Attribute("DisplayName").Value = $newAppDisplayNameResource
-            }
-            "com.microsoft.windows.widgets" {
-              $appExtension.Attribute("DisplayName").Value = $newWidgetProviderDisplayName
-            }
-          }
-        }
-      }
-    }
     $appxmanifest.Save($appxmanifestPath)
 
     foreach ($platform in $env:Build_Platform.Split(",")) {
@@ -171,23 +130,6 @@ Try {
     # Reset the appxmanifest to prevent unnecessary code changes
     $appxmanifest = [System.Xml.Linq.XDocument]::Load($appxmanifestPath)
     $appxmanifest.Root.Element($xIdentity).Attribute("Version").Value = "0.0.0.0"
-    $appxmanifest.Root.Element($xIdentity).Attribute("Name").Value = "Microsoft.Windows.DevHomeGitHubExtension.Dev"
-    $appxmanifest.Root.Element($xProperties).Element($xDisplayName).Value = "Dev Home GitHub Extension (Dev)"
-    $appxmanifest.Root.Element($xApplications).Element($xApplication).Element($uapVisualElements).Attribute("DisplayName").Value = "ms-resource:AppDisplayNameDev"
-    $extensions = $appxmanifest.Root.Element($xApplications).Element($xApplication).Element($xExtensions).Elements($uapExtension)
-    foreach ($extension in $extensions) {
-      if ($extension.Attribute("Category").Value -eq "windows.appExtension") {
-        $appExtension = $extension.Element($uapAppExtension)
-        switch ($appExtension.Attribute("Name").Value) {
-          "com.microsoft.devhome" {
-            $appExtension.Attribute("DisplayName").Value = "ms-resource:AppDisplayNameDev"
-          }
-          "com.microsoft.windows.widgets" {
-            $appExtension.Attribute("DisplayName").Value = "ms-resource:WidgetProviderDisplayNameDev"
-          }
-        }
-      }
-    }
     $appxmanifest.Save($appxmanifestPath)
   }
 

@@ -6,10 +6,8 @@ using Octokit;
 
 namespace GitHubExtension.Widgets;
 
-internal class GitHubAssignedWidget : GitHubUserWidget
+internal sealed class GitHubAssignedWidget : GitHubUserWidget
 {
-    protected static readonly new string Name = nameof(GitHubAssignedWidget);
-
     protected override string GetTitleIconData()
     {
         return IconData.AssignedWidgetTitleIconData;

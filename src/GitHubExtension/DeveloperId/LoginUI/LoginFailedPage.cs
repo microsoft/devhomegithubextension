@@ -5,7 +5,7 @@ using GitHubExtension.Helpers;
 
 namespace GitHubExtension.DeveloperId.LoginUI;
 
-internal class LoginFailedPage : LoginUIPage
+internal sealed class LoginFailedPage : LoginUIPage
 {
     public LoginFailedPage()
         : base(LoginUIState.LoginFailedPage)
@@ -13,7 +13,7 @@ internal class LoginFailedPage : LoginUIPage
         Data = new LoginFailedPageData();
     }
 
-    internal class LoginFailedPageData : ILoginUIPageData
+    internal sealed class LoginFailedPageData : ILoginUIPageData
     {
         public string GetJson()
         {

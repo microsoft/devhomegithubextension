@@ -3,7 +3,7 @@
 
 namespace GitHubExtension.Helpers;
 
-internal class IconData
+internal sealed class IconData
 {
     public const string AssignedWidgetTitleIconData =
         "iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAABGdBTUEAALGPC/xhBQAAAAlwS" +

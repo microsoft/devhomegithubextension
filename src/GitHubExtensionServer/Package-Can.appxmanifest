@@ -1,8 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Package xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10" xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10" xmlns:uap3="http://schemas.microsoft.com/appx/manifest/uap/windows10/3" xmlns:rescap="http://schemas.microsoft.com/appx/manifest/foundation/windows10/restrictedcapabilities" xmlns:genTemplate="http://schemas.microsoft.com/appx/developer/templatestudio" xmlns:com="http://schemas.microsoft.com/appx/manifest/com/windows10" xmlns:desktop="http://schemas.microsoft.com/appx/manifest/desktop/windows10" IgnorableNamespaces="uap uap3 rescap genTemplate">
-  <Identity Name="Microsoft.Windows.DevHomeGitHubExtension" Publisher="CN=Microsoft Corporation, O=Microsoft Corporation, L=Redmond, S=Washington, C=US" Version="0.0.0.0" />
+  <Identity Name="Microsoft.Windows.DevHomeGitHubExtension.Can" Publisher="CN=Microsoft Corporation, O=Microsoft Corporation, L=Redmond, S=Washington, C=US" Version="0.0.0.0" />
   <Properties>
-    <DisplayName>Dev Home GitHub Extension</DisplayName>
+    <DisplayName>Dev Home GitHub Extension (Can)</DisplayName>
     <PublisherDisplayName>Microsoft Corporation</PublisherDisplayName>
     <Logo>Assets\StoreLogo.png</Logo>
   </Properties>
@@ -14,7 +14,7 @@
   </Resources>
   <Applications>
     <Application Id="App" Executable="DevHomeGitHubExtension.exe" EntryPoint="$targetentrypoint$">
-      <uap:VisualElements DisplayName="ms-resource:AppDisplayNameStable" Description="ms-resource:AppDescription" AppListEntry="none" BackgroundColor="transparent" Square150x150Logo="Assets\MedTile.png" Square44x44Logo="Assets\AppList.png">
+      <uap:VisualElements DisplayName="ms-resource:AppDisplayNameCanary" Description="ms-resource:AppDescription" AppListEntry="none" BackgroundColor="transparent" Square150x150Logo="Assets\MedTile.png" Square44x44Logo="Assets\AppList.png">
         <uap:DefaultTile Wide310x150Logo="Assets\WideTile.png" />
         <uap:SplashScreen Image="Assets\SplashScreen.png" />
       </uap:VisualElements>
@@ -22,23 +22,23 @@
         <com:Extension Category="windows.comServer">
           <com:ComServer>
             <com:ExeServer Executable="DevHomeGitHubExtension.exe" Arguments="-RegisterProcessAsComServer" DisplayName="GitHub Extension Widget">
-              <com:Class Id="F23870B0-B391-4466-84E2-42A991078613" DisplayName="GitHub Extension Widget" />
+              <com:Class Id="E8778523-0D5F-478F-8AC3-1467928BDEF7" DisplayName="GitHub Extension Widget" />
             </com:ExeServer>
           </com:ComServer>
         </com:Extension>
         <com:Extension Category="windows.comServer">
           <com:ComServer>
             <com:ExeServer Executable="DevHomeGitHubExtension.exe" Arguments="-RegisterProcessAsComServer" DisplayName="GitHub Extension">
-              <com:Class Id="6B5F1179-B2AE-4D5E-94FC-E5E119D1B8F0" DisplayName="GitHub Extension" />
+              <com:Class Id="7AB70F8F-3644-495C-B473-A6750AE1D547" DisplayName="GitHub Extension" />
             </com:ExeServer>
           </com:ComServer>
         </com:Extension>
         <uap3:Extension Category="windows.appExtension">
-          <uap3:AppExtension Name="com.microsoft.devhome" Id="PG-SP-ID" PublicFolder="Public" DisplayName="ms-resource:AppDisplayNameStable" Description="ms-resource:AppDescription">
+          <uap3:AppExtension Name="com.microsoft.devhome" Id="PG-SP-ID" PublicFolder="Public" DisplayName="ms-resource:AppDisplayNameCanary" Description="ms-resource:AppDescription">
             <uap3:Properties>
               <DevHomeProvider>
                 <Activation>
-                  <CreateInstance ClassId="6B5F1179-B2AE-4D5E-94FC-E5E119D1B8F0" />
+                  <CreateInstance ClassId="7AB70F8F-3644-495C-B473-A6750AE1D547" />
                 </Activation>
                 <SupportedInterfaces>
                   <DeveloperId />
@@ -65,7 +65,7 @@
           </com:ComServer>
         </com:Extension>
         <uap3:Extension Category="windows.appExtension">
-          <uap3:AppExtension Name="com.microsoft.windows.widgets" DisplayName="ms-resource:WidgetProviderDisplayNameStable" Id="01" PublicFolder="Public">
+          <uap3:AppExtension Name="com.microsoft.windows.widgets" DisplayName="ms-resource:WidgetProviderDisplayNameCanary" Id="01" PublicFolder="Public">
             <uap3:Properties>
               <WidgetProvider>
                 <ProviderIcons>
@@ -73,7 +73,7 @@
                 </ProviderIcons>
                 <Activation>
                   <!-- Apps exports COM interface which implements IWidgetProvider -->
-                  <CreateInstance ClassId="F23870B0-B391-4466-84E2-42A991078613" />
+                  <CreateInstance ClassId="E8778523-0D5F-478F-8AC3-1467928BDEF7" />
                 </Activation>
                 <Definitions>
                   <Definition Id="GitHub_Issues" DisplayName="Issues" Description="List of issues in a GitHub repository." IsCustomizable="true">
