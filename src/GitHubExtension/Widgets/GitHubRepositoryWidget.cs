@@ -15,6 +15,8 @@ public abstract class GitHubRepositoryWidget : GitHubWidget
 {
     protected string RepositoryUrl { get; set; } = string.Empty;
 
+    private string? _message;
+
     public GitHubRepositoryWidget()
         : base()
     {
@@ -66,14 +68,14 @@ public abstract class GitHubRepositoryWidget : GitHubWidget
 
         switch (verb)
         {
-            case WidgetAction.CheckUrl:
-                HandleCheckUrl(actionInvokedArgs);
-                break;
-
             case WidgetAction.Save:
-                UpdateTitle(JsonNode.Parse(actionInvokedArgs.Data));
-                base.OnActionInvoked(actionInvokedArgs);
-                CorrectUrl();
+                if (HandleCheckUrl(actionInvokedArgs))
+                {
+                    UpdateTitle(JsonNode.Parse(actionInvokedArgs.Data));
+                    base.OnActionInvoked(actionInvokedArgs);
+                    CorrectUrl();
+                }
+
                 break;
 
             default:
@@ -207,7 +209,7 @@ public abstract class GitHubRepositoryWidget : GitHubWidget
         base.OnCustomizationRequested(customizationRequestedArgs);
     }
 
-    private void HandleCheckUrl(WidgetActionInvokedArgs args)
+    private bool HandleCheckUrl(WidgetActionInvokedArgs args)
     {
         // Set loading page while we fetch data from GitHub.
         Page = WidgetPageState.Loading;
@@ -224,6 +226,18 @@ public abstract class GitHubRepositoryWidget : GitHubWidget
             UpdateTitle(dataObject);
 
             ConfigurationData = data;
+            var isGoodToSave = true;
+
+            try
+            {
+                _message = null;
+                GetRepositoryFromUrl(RepositoryUrl);
+            }
+            catch (Exception ex)
+            {
+                _message = ex.Message;
+                isGoodToSave = false;
+            }
 
             var updateRequestOptions = new WidgetUpdateRequestOptions(Id)
             {
@@ -233,7 +247,14 @@ public abstract class GitHubRepositoryWidget : GitHubWidget
             };
 
             WidgetManager.GetDefault().UpdateWidget(updateRequestOptions);
+
+            // Already shown error message while updatind above,
+            // can reset it to null here.
+            _message = null;
+            return isGoodToSave;
         }
+
+        return false;
     }
 
     public string GetConfiguration(string dataUrl)
@@ -244,60 +265,43 @@ public abstract class GitHubRepositoryWidget : GitHubWidget
             { "widgetTitle", WidgetTitle },
         };
 
-        if (dataUrl == string.Empty)
+        var knownRepositories = GetKnownRepositories();
+        var knownRepositoriesJson = new JsonArray();
+
+        foreach (var repoName in knownRepositories)
         {
-            configurationData.Add("hasConfiguration", false);
-            var repositoryData = new JsonObject
+            var repositoryJson = new JsonObject
             {
-                { "url", string.Empty },
+                { "name", repoName },
             };
-
-            configurationData.Add("configuration", repositoryData);
-            configurationData.Add("savedRepositoryUrl", SavedConfigurationData);
-            configurationData.Add("saveEnabled", false);
-
-            return configurationData.ToString();
+            knownRepositoriesJson.Add(repositoryJson);
         }
-        else
+
+        configurationData.Add("knownRepositories", knownRepositoriesJson);
+        configurationData.Add("url", RepositoryUrl);
+        configurationData.Add("savedRepositoryUrl", SavedConfigurationData);
+        configurationData.Add("errorMessage", _message);
+
+        return configurationData.ToJsonString();
+    }
+
+    public List<string> GetKnownRepositories()
+    {
+        var res = new List<string>();
+        var dataManager = GitHubDataManager.CreateInstance();
+        var repositories = dataManager?.GetRepositories();
+
+        if (repositories != null)
         {
-            try
+            foreach (var repository in repositories)
             {
-                var repository = GetRepositoryFromUrl(dataUrl);
-                var repositoryData = new JsonObject
-                {
-                    { "name", repository.FullName },
-                    { "label", repository.Name },
-                    { "owner", repository.Owner.Login },
-                    { "milestone", string.Empty },
-                    { "project", repository.Description },
-                    { "url", RepositoryUrl },
-                    { "query", GetUnescapedIssueQuery() },
-                };
-
-                configurationData.Add("hasConfiguration", true);
-                configurationData.Add("configuration", repositoryData);
-                configurationData.Add("savedRepositoryUrl", SavedConfigurationData);
-                configurationData.Add("saveEnabled", true);
+                res.Add(repository.FullName);
             }
-            catch (Exception ex)
-            {
-                Log.Error(ex, $"Failed getting configuration information for input url: {dataUrl}");
-                configurationData.Add("hasConfiguration", false);
-
-                var repositoryData = new JsonObject
-                {
-                    { "url", RepositoryUrl },
-                };
-
-                configurationData.Add("errorMessage", ex.Message);
-                configurationData.Add("configuration", repositoryData);
-                configurationData.Add("saveEnabled", false);
-
-                return configurationData.ToString();
-            }
-
-            return configurationData.ToJsonString();
         }
+
+        res.Sort();
+
+        return res;
     }
 
     public override string GetData(WidgetPageState page)
