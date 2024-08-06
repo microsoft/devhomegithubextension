@@ -17,6 +17,7 @@
       "id": "knownrepo",
       "label": "Known repositories",
       "placeholder": "Select a repository",
+      "value":  "test",
       "choices": [
         {
           "$data": "${knownRepositories}",

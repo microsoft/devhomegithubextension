@@ -1,12 +1,15 @@
 ﻿// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
+using System.Diagnostics;
 using System.Text.Json;
 using System.Text.Json.Nodes;
 using GitHubExtension.Client;
 using GitHubExtension.DataManager;
 using GitHubExtension.Helpers;
+using GitHubExtension.Providers;
 using GitHubExtension.Widgets.Enums;
+using Microsoft.Windows.DevHome.SDK;
 using Microsoft.Windows.Widgets.Providers;
 
 namespace GitHubExtension.Widgets;
@@ -146,7 +149,14 @@ public abstract class GitHubRepositoryWidget : GitHubWidget
         GetTitleFromDataObject(dataObj);
         if (string.IsNullOrEmpty(WidgetTitle))
         {
-            WidgetTitle = GetRepositoryFromUrl(RepositoryUrl).FullName;
+            try
+            {
+                WidgetTitle = GetRepositoryFromUrl(RepositoryUrl).FullName;
+            }
+            catch
+            {
+                WidgetTitle = string.Empty;
+            }
         }
     }
 
@@ -225,13 +235,13 @@ public abstract class GitHubRepositoryWidget : GitHubWidget
             RepositoryUrl = dataObject["url"]?.GetValue<string>() ?? string.Empty;
             UpdateTitle(dataObject);
 
-            ConfigurationData = data;
             var isGoodToSave = true;
 
             try
             {
-                _message = null;
                 GetRepositoryFromUrl(RepositoryUrl);
+                ConfigurationData = data;
+                _message = null;
             }
             catch (Exception ex)
             {
@@ -253,6 +263,8 @@ public abstract class GitHubRepositoryWidget : GitHubWidget
             _message = null;
             return isGoodToSave;
         }
+
+        UpdateWidget();
 
         return false;
     }
@@ -278,7 +290,7 @@ public abstract class GitHubRepositoryWidget : GitHubWidget
         }
 
         configurationData.Add("knownRepositories", knownRepositoriesJson);
-        configurationData.Add("url", RepositoryUrl);
+        configurationData.Add("url", dataUrl);
         configurationData.Add("savedRepositoryUrl", SavedConfigurationData);
         configurationData.Add("errorMessage", _message);
 
@@ -288,20 +300,54 @@ public abstract class GitHubRepositoryWidget : GitHubWidget
     public List<string> GetKnownRepositories()
     {
         var res = new List<string>();
-        var dataManager = GitHubDataManager.CreateInstance();
-        var repositories = dataManager?.GetRepositories();
 
-        if (repositories != null)
+        try
         {
-            foreach (var repository in repositories)
+            var dataManager = GitHubDataManager.CreateInstance();
+            var repositories = dataManager?.GetRepositories();
+
+            if (repositories != null)
             {
-                res.Add(repository.FullName);
+                foreach (var repository in repositories)
+                {
+                    res.Add(repository.FullName);
+                }
             }
         }
+        catch (Exception ex)
+        {
+            Log.Error(ex, "Failed to get known repositories from data store.");
+        }
 
-        res.Sort();
+        try
+        {
+            var devIds = DeveloperId.DeveloperIdProvider.GetInstance().GetLoggedInDeveloperIdsInternal();
 
-        return res;
+            IRepositoryProvider repositoryProvider = new RepositoryProvider();
+
+            foreach (var devId in devIds)
+            {
+                var userRepositoriesAsync = repositoryProvider.GetRepositoriesAsync(devId);
+
+                userRepositoriesAsync.AsTask().Wait();
+
+                var userRepositories = userRepositoriesAsync.AsTask().Result.Repositories;
+
+                foreach (var userRepository in userRepositories)
+                {
+                    var localPath = userRepository.RepoUri.LocalPath;
+                    res.Add(localPath.Substring(1, localPath.Length - 5)); // remove initial "/" and final ".git"
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            Log.Error(ex, "Failed to get known repositories from GitHub API.");
+        }
+
+        // res.Sort();
+        // Removing repeated entries
+        return res.Distinct().ToList();
     }
 
     public override string GetData(WidgetPageState page)
