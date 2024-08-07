@@ -7,16 +7,10 @@
       "type": "Input.Text",
       "id": "url",
       "label": "%Widget_Template_Label/Url%",
-      "inlineAction": {
-        "type": "Action.Execute",
-        "tooltip": "%Widget_Template_Tooltip/Submit%",
-        "verb": "CheckUrl",
-        "iconUrl": "data:image/png;base64,${submitIcon}"
-      },
       "spacing": "Medium",
       "style": "Url",
       "placeholder": "%Widget_Template_Input/UrlPlaceholder%",
-      "value": "${$root.configuration.url}"
+      "value": "${url}"
     },
     {
       "type": "Input.Text",
@@ -115,8 +109,7 @@
                       "type": "Action.Execute",
                       "title": "%Widget_Template_Button/Save%",
                       "verb": "Save",
-                      "tooltip": "%Widget_Template_Tooltip/Save%",
-                      "isEnabled": "${$root.saveEnabled}"
+                      "tooltip": "%Widget_Template_Tooltip/Save%"
                     },
                     {
                       "type": "Action.Execute",
