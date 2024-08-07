@@ -1,15 +1,11 @@
 ﻿// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-using System.Diagnostics;
 using System.Text.Json;
 using System.Text.Json.Nodes;
 using GitHubExtension.Client;
 using GitHubExtension.DataManager;
-using GitHubExtension.Helpers;
-using GitHubExtension.Providers;
 using GitHubExtension.Widgets.Enums;
-using Microsoft.Windows.DevHome.SDK;
 using Microsoft.Windows.Widgets.Providers;
 
 namespace GitHubExtension.Widgets;
@@ -258,7 +254,7 @@ public abstract class GitHubRepositoryWidget : GitHubWidget
 
             WidgetManager.GetDefault().UpdateWidget(updateRequestOptions);
 
-            // Already shown error message while updatind above,
+            // Already shown error message while updating above,
             // can reset it to null here.
             _message = null;
             return isGoodToSave;
