@@ -273,81 +273,13 @@ public abstract class GitHubRepositoryWidget : GitHubWidget
     {
         var configurationData = new JsonObject
         {
-            { "submitIcon", IconLoader.GetIconAsBase64("arrow.png") },
             { "widgetTitle", WidgetTitle },
+            { "url", dataUrl },
+            { "savedRepositoryUrl", SavedConfigurationData },
+            { "errorMessage", _message },
         };
 
-        var knownRepositories = GetKnownRepositories();
-        var knownRepositoriesJson = new JsonArray();
-
-        foreach (var repoName in knownRepositories)
-        {
-            var repositoryJson = new JsonObject
-            {
-                { "name", repoName },
-            };
-            knownRepositoriesJson.Add(repositoryJson);
-        }
-
-        configurationData.Add("knownRepositories", knownRepositoriesJson);
-        configurationData.Add("url", dataUrl);
-        configurationData.Add("savedRepositoryUrl", SavedConfigurationData);
-        configurationData.Add("errorMessage", _message);
-
         return configurationData.ToJsonString();
-    }
-
-    public List<string> GetKnownRepositories()
-    {
-        var res = new List<string>();
-
-        try
-        {
-            var dataManager = GitHubDataManager.CreateInstance();
-            var repositories = dataManager?.GetRepositories();
-
-            if (repositories != null)
-            {
-                foreach (var repository in repositories)
-                {
-                    res.Add(repository.FullName);
-                }
-            }
-        }
-        catch (Exception ex)
-        {
-            Log.Error(ex, "Failed to get known repositories from data store.");
-        }
-
-        try
-        {
-            var devIds = DeveloperId.DeveloperIdProvider.GetInstance().GetLoggedInDeveloperIdsInternal();
-
-            IRepositoryProvider repositoryProvider = new RepositoryProvider();
-
-            foreach (var devId in devIds)
-            {
-                var userRepositoriesAsync = repositoryProvider.GetRepositoriesAsync(devId);
-
-                userRepositoriesAsync.AsTask().Wait();
-
-                var userRepositories = userRepositoriesAsync.AsTask().Result.Repositories;
-
-                foreach (var userRepository in userRepositories)
-                {
-                    var localPath = userRepository.RepoUri.LocalPath;
-                    res.Add(localPath.Substring(1, localPath.Length - 5)); // remove initial "/" and final ".git"
-                }
-            }
-        }
-        catch (Exception ex)
-        {
-            Log.Error(ex, "Failed to get known repositories from GitHub API.");
-        }
-
-        // res.Sort();
-        // Removing repeated entries
-        return res.Distinct().ToList();
     }
 
     public override string GetData(WidgetPageState page)
