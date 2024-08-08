@@ -45,8 +45,6 @@ internal sealed class SettingsUIController : IExtensionAdaptiveCardSession
             {
                 case "SettingsPage":
                     {
-                        _log.Debug($"inputs: {inputs}");
-
                         var currentNotificationsEnabled = LocalSettings.ReadSettingAsync<string>(_notificationsEnabledString).Result ?? "true";
                         await LocalSettings.SaveSettingAsync(_notificationsEnabledString, currentNotificationsEnabled == "true" ? "false" : "true");
 

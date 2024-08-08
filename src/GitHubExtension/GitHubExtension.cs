@@ -26,6 +26,8 @@ public sealed class GitHubExtension : IExtension, IDisposable
 
     private readonly WebServer.WebServer _webServer;
 
+    private readonly string _url = string.Empty;
+
     public GitHubExtension(ManualResetEvent extensionDisposedEvent)
     {
         _extensionDisposedEvent = extensionDisposedEvent;
@@ -36,12 +38,13 @@ public sealed class GitHubExtension : IExtension, IDisposable
         _webServer.RegisterRouteHandler("/api/test", HandleRequest);
 
         Console.WriteLine($"GitHubExtension is running on port {_webServer.Port}");
-        var url = $"http://localhost:{_webServer.Port}/HelloWorld.html";
-        Console.WriteLine($"Navigate to: {url}");
+        _url = $"http://localhost:{_webServer.Port}/HelloWorld.html";
+        Console.WriteLine($"Navigate to: {_url}");
     }
 
     public object? GetProvider(ProviderType providerType)
     {
+        Console.WriteLine($"GetProvider called. URL = {_url}");
         switch (providerType)
         {
             case ProviderType.DeveloperId:
@@ -49,7 +52,7 @@ public sealed class GitHubExtension : IExtension, IDisposable
             case ProviderType.Repository:
                 return new RepositoryProvider();
             case ProviderType.Settings:
-                return new SettingsProvider();
+                return new SettingsProvider2(_url);
             case ProviderType.FeaturedApplications:
                 return new object();
             default:
