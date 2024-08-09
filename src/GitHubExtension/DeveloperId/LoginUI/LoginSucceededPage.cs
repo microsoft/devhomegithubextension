@@ -23,7 +23,7 @@ internal sealed class LoginSucceededPage : LoginUIPage
 
         public string GetJson()
         {
-            return Json.Stringify(this);
+            return Json.Stringify(this, _optionsWithContext);
         }
     }
 }

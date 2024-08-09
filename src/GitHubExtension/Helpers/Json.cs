@@ -42,14 +42,14 @@ public static class Json
         });
     }
 
-    public static string Stringify<T>(T value)
+    public static string Stringify<T>(T value, JsonSerializerOptions? options = null)
     {
         if (typeof(T) == typeof(bool))
         {
             return value!.ToString()!.ToLowerInvariant();
         }
 
-        return System.Text.Json.JsonSerializer.Serialize(value, _options);
+        return System.Text.Json.JsonSerializer.Serialize(value, options ?? _options);
     }
 
     public static T? ToObject<T>(string json)
