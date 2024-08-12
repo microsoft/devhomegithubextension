@@ -10,14 +10,14 @@ internal sealed class LoginPage : LoginUIPage
     public LoginPage()
         : base(LoginUIState.LoginPage)
     {
-        Data = new PageData();
+        Data = new LoginPageData();
     }
 
-    internal sealed class PageData : ILoginUIPageData
+    internal sealed class LoginPageData : ILoginUIPageData
     {
         public string GetJson()
         {
-            return Json.Stringify(this);
+            return Json.Stringify(this, _optionsWithContext);
         }
     }
 
