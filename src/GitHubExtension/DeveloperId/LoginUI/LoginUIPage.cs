@@ -1,6 +1,8 @@
 ﻿// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using GitHubExtension.Helpers;
 using Microsoft.Windows.DevHome.SDK;
 
@@ -11,6 +13,14 @@ internal class LoginUIPage
     private readonly string _template;
     private readonly LoginUIState _state;
     private ILoginUIPageData? _data;
+
+    public static readonly JsonSerializerOptions _optionsWithContext = new()
+    {
+        PropertyNameCaseInsensitive = true,
+        DefaultIgnoreCondition = JsonIgnoreCondition.Never,
+        IncludeFields = true,
+        TypeInfoResolver = JsonSourceGenerationContext.Default,
+    };
 
     public interface ILoginUIPageData
     {

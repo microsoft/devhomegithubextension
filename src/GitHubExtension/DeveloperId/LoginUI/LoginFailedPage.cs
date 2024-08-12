@@ -17,7 +17,7 @@ internal sealed class LoginFailedPage : LoginUIPage
     {
         public string GetJson()
         {
-            return Json.Stringify(this);
+            return Json.Stringify(this, _optionsWithContext);
         }
     }
 }
