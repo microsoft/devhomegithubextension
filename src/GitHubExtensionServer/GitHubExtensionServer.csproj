@@ -27,6 +27,7 @@
     <BuiltInComInteropSupport>true</BuiltInComInteropSupport>
     <BuildRing Condition="'$(BuildRing)'==''">Dev</BuildRing>
     <DebugType>portable</DebugType>
+    <IsTrimmable>true</IsTrimmable>
   </PropertyGroup>
 
   <ItemDefinitionGroup>
