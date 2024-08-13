@@ -4,7 +4,7 @@
 using System.Text;
 using Newtonsoft.Json;
 
-namespace DevHome.Common.Services;
+namespace GitHubExtension.Helpers;
 
 public static class FileHelper
 {

@@ -1,7 +1,6 @@
 ﻿// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-using DevHome.Common.Services;
 using Windows.Storage;
 
 namespace GitHubExtension.Helpers;
