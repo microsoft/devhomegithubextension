@@ -30,6 +30,7 @@ public class WebServer : IDisposable
         _listener = new HttpListener();
         _listener.Prefixes.Add($"http://localhost:{_port}/");
         _listener.Start();
+
         Receive();
     }
 
@@ -79,6 +80,10 @@ public class WebServer : IDisposable
                 Receive();
                 return;
             }
+
+            // Set the Content-Type header based on the file extension
+            var contentType = GetContentType(filePath);
+            response.ContentType = contentType;
 
             var buffer = File.ReadAllBytes(filePath);
             response.ContentLength64 = buffer.Length;
@@ -135,5 +140,24 @@ public class WebServer : IDisposable
     public void RegisterRouteHandler(string route, Func<HttpListenerRequest, HttpListenerResponse, bool> function)
     {
         _routeHandlers.Add(route, function);
+    }
+
+    // Helper method to determine the Content-Type based on the file extension
+    private string GetContentType(string filePath)
+    {
+        var extension = Path.GetExtension(filePath).ToLowerInvariant();
+        return extension switch
+        {
+            ".html" => "text/html",
+            ".css" => "text/css",
+            ".js" => "application/javascript",
+            ".json" => "application/json",
+            ".png" => "image/png",
+            ".jpg" => "image/jpeg",
+            ".gif" => "image/gif",
+            ".svg" => "image/svg+xml",
+            ".ico" => "image/x-icon",
+            _ => "application/octet-stream",
+        };
     }
 }
