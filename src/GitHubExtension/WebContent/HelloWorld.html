@@ -1,6 +1,25 @@
+<!DOCTYPE html>
 <html>
     <head>
-        <script type="text/javascript" src="HelloWorld.js"></script>
+        <title>Hello World</title>
+        <style>
+            h1 {
+                background-color: #0080ff
+            }
+            h2 {
+                background-color: #00ff80
+            }
+        </style>
+        <script>
+            "use strict";
+
+            function LoadPage() {
+                var contentWrapper = document.getElementById("contentWrapper");
+                var h1 = document.createElement("h1");
+                h1.innerHTML = "Hello World";
+                contentWrapper.appendChild(h1);
+            }
+        </script>
     </head>
     <body onload="LoadPage()">
         <div id="contentWrapper"></div>

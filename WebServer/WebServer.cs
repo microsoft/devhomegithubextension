@@ -56,6 +56,7 @@ public class WebServer : IDisposable
             var response = context.Response;
 
             var filePath = PathCombine(_webcontentPath, request.RawUrl!).Replace("%20", " ");
+            Debug.WriteLine($"Requested file path: {filePath}");
 
             if (_routeHandlers.TryGetValue(request.RawUrl!, out var value))
             {
@@ -84,6 +85,7 @@ public class WebServer : IDisposable
             // Set the Content-Type header based on the file extension
             var contentType = GetContentType(filePath);
             response.ContentType = contentType;
+            Debug.WriteLine($"Content-Type set to: {contentType}");
 
             var buffer = File.ReadAllBytes(filePath);
             response.ContentLength64 = buffer.Length;
