@@ -34,6 +34,15 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Include="WebContent\cat.jpg">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="WebContent\dog.jpg">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
     <Content Include="Widgets\Templates\GitHubAssignedConfigurationTemplate.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

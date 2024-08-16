@@ -33,9 +33,10 @@ public sealed class GitHubExtension : IExtension, IDisposable
         _extensionDisposedEvent = extensionDisposedEvent;
 
         var webcontentPath = Path.Combine(AppContext.BaseDirectory, "WebContent");
+        Console.WriteLine($"Web content path: {webcontentPath}");
         _webServer = new WebServer.WebServer(webcontentPath);
         _webServer.RegisterRouteHandler("/api/test", HandleRequest);
-        string extensionSettingsWebPage = "Page3.html";
+        string extensionSettingsWebPage = "Page2.html";
 
         Console.WriteLine($"GitHubExtension is running on port {_webServer.Port}");
         _url = $"http://localhost:{_webServer.Port}/{extensionSettingsWebPage}";

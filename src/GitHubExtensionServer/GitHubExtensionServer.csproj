@@ -78,6 +78,12 @@
     </None>
   </ItemGroup>
 
+	<ItemGroup>
+		<None Update="..\GitHubExtension\WebContent\**\*">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+	</ItemGroup>
+
   <PropertyGroup>
     <DefineConstants Condition="'$(BuildRing)'=='Canary'">$(DefineConstants);CANARY_BUILD</DefineConstants>
     <DefineConstants Condition="'$(BuildRing)'=='Stable'">$(DefineConstants);STABLE_BUILD</DefineConstants>
