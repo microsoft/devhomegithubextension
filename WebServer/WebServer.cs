@@ -85,7 +85,6 @@ public class WebServer : IDisposable
             // Set the Content-Type header based on the file extension
             var contentType = GetContentType(filePath);
             response.ContentType = contentType;
-            Debug.WriteLine($"Content-Type set to: {contentType}");
 
             var buffer = File.ReadAllBytes(filePath);
             response.ContentLength64 = buffer.Length;

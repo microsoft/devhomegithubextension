@@ -17,6 +17,11 @@
   </ItemDefinitionGroup>
 
   <ItemGroup>
+    <Content Remove="WebContent\cat.jpg" />
+    <Content Remove="WebContent\dog.jpg" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Remove="Widgets\Templates\GitHubAssignedConfigurationTemplate.json" />
     <None Remove="Widgets\Templates\GitHubAssignedTemplate.json" />
     <None Remove="Widgets\Templates\GitHubIssuesConfigurationTemplate.json" />
@@ -31,15 +36,6 @@
     <None Remove="Widgets\Templates\GitHubReviewConfigurationTemplate.json" />
     <None Remove="Widgets\Templates\GitHubReviewTemplate.json" />
     <None Remove="Widgets\Templates\GitHubSignInTemplate.json" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Include="WebContent\cat.jpg">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="WebContent\dog.jpg">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
   </ItemGroup>
 
   <ItemGroup>
@@ -120,6 +116,11 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Include="WebContent\cat.jpg" />
+    <None Include="WebContent\dog.jpg" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Content Update="Widgets\Assets\arrow.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -186,6 +187,12 @@
 		<None Update="WebContent\*">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <None Update="WebContent\dog.jpg">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </None>
 	</ItemGroup>
 
   <PropertyGroup>

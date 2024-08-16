@@ -1,17 +1,25 @@
 ﻿<!DOCTYPE html>
 <html>
 <head>
-    <title>Page 1</title>
-    <style>
-    h1 {
-        background-color: #0080ff
-    }
-    h2 {
-        background-color: #00ff80
-    }
-    </style>
+    <title>Extension Settings Page Demo</title>
     <script>
         "use strict";
+
+        var lightMode = "rgb(243, 243, 243)";
+        var darkMode = "rgb(32, 32, 32)";
+
+        function changeTheme() {
+            var body = document.getElementById("body");
+            console.log(body.style.backgroundColor);
+
+            if (body.style.backgroundColor == lightMode) {
+                body.style.backgroundColor = darkMode;
+                document.getElementsByTagName("h1")[0].style.color = lightMode;
+            } else {
+                body.style.backgroundColor = lightMode;
+                document.getElementsByTagName("h1")[0].style.color = darkMode;
+            }
+        };
 
         function doPostMessage(message) {
             // Do different things in WebView2 vs the browser, so neither gets an error
@@ -39,7 +47,7 @@
         };
 
         function navigateToNextPage() {
-            window.location.assign('Page2.html');
+            window.location.assign('Woof.html');
         };
 
         function devHomeGetNumberOfPages() {
@@ -54,10 +62,10 @@
         };
     </script>
 </head>
-<body id="body" onload="devHomeGetNumberOfPages()">
-    <h1> Page 1 </h1>
-    <div id="rectangle" style="width:100px; height:100px; background-color:#ff8000"></div>
+<body id="body" onload="devHomeGetNumberOfPages()" style="background:rgb(243, 243, 243)">
+    <h1> Extension Settings Page Demo </h1>
     <img id="cat" src="cat.jpg" style="width:500px; height:500px" />
-    <input id="b1B" type="submit" name="button" onclick="navigateToNextPage()" value="Navigate Locally" />
+    <input id="b1A" type="submit" name="button" onclick="changeTheme()" value="Change Theme" />
+    <input id="b1B" type="submit" name="button" onclick="navigateToNextPage()" value="Check out a cute dog" />
 </body>
 </html>

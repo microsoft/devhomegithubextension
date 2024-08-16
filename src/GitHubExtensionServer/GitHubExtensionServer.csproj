@@ -77,7 +77,7 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
-
+	
 	<ItemGroup>
 		<None Update="..\GitHubExtension\WebContent\**\*">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
