@@ -7,7 +7,7 @@ public class GitHubDataStoreSchema : IDataStoreSchema
 {
     public long SchemaVersion => SchemaVersionValue;
 
-    public List<string> SchemaSqls => SchemaSqlsValue;
+    public List<string> SchemaSqls => _schemaSqlsValue;
 
     public GitHubDataStoreSchema()
     {
@@ -16,7 +16,7 @@ public class GitHubDataStoreSchema : IDataStoreSchema
     // Update this anytime incompatible changes happen with a released version.
     private const long SchemaVersionValue = 0x0008;
 
-    private static readonly string MetaData =
+    private const string MetaData =
     @"CREATE TABLE MetaData (" +
         "Id INTEGER PRIMARY KEY NOT NULL," +
         "Key TEXT NOT NULL COLLATE NOCASE," +
@@ -24,7 +24,7 @@ public class GitHubDataStoreSchema : IDataStoreSchema
     ");" +
     "CREATE UNIQUE INDEX IDX_MetaData_Key ON MetaData (Key);";
 
-    private static readonly string User =
+    private const string User =
     @"CREATE TABLE User (" +
         "Id INTEGER PRIMARY KEY NOT NULL," +
         "Login TEXT NOT NULL COLLATE NOCASE," +
@@ -35,7 +35,7 @@ public class GitHubDataStoreSchema : IDataStoreSchema
     ");" +
     "CREATE UNIQUE INDEX IDX_User_InternalId ON User (InternalId);";
 
-    private static readonly string Repository =
+    private const string Repository =
     @"CREATE TABLE Repository (" +
         "Id INTEGER PRIMARY KEY NOT NULL," +
         "OwnerId INTEGER NOT NULL," +
@@ -55,7 +55,7 @@ public class GitHubDataStoreSchema : IDataStoreSchema
     "CREATE UNIQUE INDEX IDX_Repository_OwnerIdName ON Repository (OwnerId, Name);" +
     "CREATE UNIQUE INDEX IDX_Repository_InternalId ON Repository (InternalId);";
 
-    private static readonly string Label =
+    private const string Label =
     @"CREATE TABLE Label (" +
         "Id INTEGER PRIMARY KEY NOT NULL," +
         "InternalId INTEGER NOT NULL," +
@@ -67,7 +67,7 @@ public class GitHubDataStoreSchema : IDataStoreSchema
     ");" +
     "CREATE UNIQUE INDEX IDX_Label_InternalId ON Label (InternalId);";
 
-    private static readonly string Issue =
+    private const string Issue =
     @"CREATE TABLE Issue (" +
         "Id INTEGER PRIMARY KEY NOT NULL," +
         "InternalId INTEGER NOT NULL," +
@@ -88,7 +88,7 @@ public class GitHubDataStoreSchema : IDataStoreSchema
     ");" +
     "CREATE UNIQUE INDEX IDX_Issue_InternalId ON Issue (InternalId);";
 
-    private static readonly string IssueLabel =
+    private const string IssueLabel =
     @"CREATE TABLE IssueLabel (" +
         "Id INTEGER PRIMARY KEY NOT NULL," +
         "Issue INTEGER NOT NULL," +
@@ -96,7 +96,7 @@ public class GitHubDataStoreSchema : IDataStoreSchema
     ");" +
     "CREATE UNIQUE INDEX IDX_IssueLabel_IssueLabel ON IssueLabel (Issue,Label);";
 
-    private static readonly string IssueAssign =
+    private const string IssueAssign =
     @"CREATE TABLE IssueAssign (" +
         "Id INTEGER PRIMARY KEY NOT NULL," +
         "Issue INTEGER NOT NULL," +
@@ -104,7 +104,7 @@ public class GitHubDataStoreSchema : IDataStoreSchema
     ");" +
     "CREATE UNIQUE INDEX IDX_IssueAssign_IssueUser ON IssueAssign (Issue,User);";
 
-    private static readonly string PullRequest =
+    private const string PullRequest =
     @"CREATE TABLE PullRequest (" +
         "Id INTEGER PRIMARY KEY NOT NULL," +
         "InternalId INTEGER NOT NULL," +
@@ -132,7 +132,7 @@ public class GitHubDataStoreSchema : IDataStoreSchema
     ");" +
     "CREATE UNIQUE INDEX IDX_PullRequest_InternalId ON PullRequest (InternalId);";
 
-    private static readonly string PullRequestAssign =
+    private const string PullRequestAssign =
     @"CREATE TABLE PullRequestAssign (" +
         "Id INTEGER PRIMARY KEY NOT NULL," +
         "PullRequest INTEGER NOT NULL," +
@@ -140,7 +140,7 @@ public class GitHubDataStoreSchema : IDataStoreSchema
     ");" +
     "CREATE UNIQUE INDEX IDX_PullRequestAssign_PullRequestUser ON PullRequestAssign (PullRequest,User);";
 
-    private static readonly string PullRequestLabel =
+    private const string PullRequestLabel =
     @"CREATE TABLE PullRequestLabel (" +
         "Id INTEGER PRIMARY KEY NOT NULL," +
         "PullRequest INTEGER NOT NULL," +
@@ -148,7 +148,7 @@ public class GitHubDataStoreSchema : IDataStoreSchema
     ");" +
     "CREATE UNIQUE INDEX IDX_PullRequestLabel_PullRequestLabel ON PullRequestLabel (PullRequest,Label);";
 
-    private static readonly string CheckRun =
+    private const string CheckRun =
     @"CREATE TABLE CheckRun (" +
         "Id INTEGER PRIMARY KEY NOT NULL," +
         "InternalId INTEGER NOT NULL," +
@@ -164,7 +164,7 @@ public class GitHubDataStoreSchema : IDataStoreSchema
     ");" +
     "CREATE UNIQUE INDEX IDX_CheckRun_InternalId ON CheckRun (InternalId);";
 
-    private static readonly string CheckSuite =
+    private const string CheckSuite =
     @"CREATE TABLE CheckSuite (" +
         "Id INTEGER PRIMARY KEY NOT NULL," +
         "InternalId INTEGER NOT NULL," +
@@ -176,7 +176,7 @@ public class GitHubDataStoreSchema : IDataStoreSchema
     ");" +
     "CREATE UNIQUE INDEX IDX_CheckSuite_InternalId ON CheckSuite (InternalId);";
 
-    private static readonly string CommitCombinedStatus =
+    private const string CommitCombinedStatus =
     @"CREATE TABLE CommitCombinedStatus (" +
         "Id INTEGER PRIMARY KEY NOT NULL," +
         "StateId INTEGER NOT NULL," +
@@ -184,7 +184,7 @@ public class GitHubDataStoreSchema : IDataStoreSchema
     ");" +
     "CREATE UNIQUE INDEX IDX_CommitCombinedStatus_HeadSha ON CommitCombinedStatus (HeadSha);";
 
-    private static readonly string PullRequestStatus =
+    private const string PullRequestStatus =
     @"CREATE TABLE PullRequestStatus (" +
         "Id INTEGER PRIMARY KEY NOT NULL," +
         "PullRequestId INTEGER NOT NULL," +
@@ -199,7 +199,7 @@ public class GitHubDataStoreSchema : IDataStoreSchema
         "TimeCreated INTEGER NOT NULL" +
     ");";
 
-    private static readonly string Notification =
+    private const string Notification =
     @"CREATE TABLE Notification (" +
         "Id INTEGER PRIMARY KEY NOT NULL," +
         "TypeId INTEGER NOT NULL," +
@@ -216,7 +216,7 @@ public class GitHubDataStoreSchema : IDataStoreSchema
         "TimeCreated INTEGER NOT NULL" +
     ");";
 
-    private static readonly string Search =
+    private const string Search =
     @"CREATE TABLE Search (" +
         "Id INTEGER PRIMARY KEY NOT NULL," +
         "RepositoryId INTEGER NOT NULL," +
@@ -225,7 +225,7 @@ public class GitHubDataStoreSchema : IDataStoreSchema
     ");" +
     "CREATE UNIQUE INDEX IDX_Search_RepositoryIdQuery ON Search (RepositoryId, Query);";
 
-    private static readonly string SearchIssue =
+    private const string SearchIssue =
     @"CREATE TABLE SearchIssue (" +
         "Id INTEGER PRIMARY KEY NOT NULL," +
         "TimeUpdated INTEGER NOT NULL," +
@@ -234,7 +234,7 @@ public class GitHubDataStoreSchema : IDataStoreSchema
     ");" +
     "CREATE UNIQUE INDEX IDX_SearchIssue_SearchIssue ON SearchIssue (Search, Issue);";
 
-    private static readonly string Review =
+    private const string Review =
     @"CREATE TABLE Review (" +
         "Id INTEGER PRIMARY KEY NOT NULL," +
         "InternalId INTEGER NOT NULL," +
@@ -248,7 +248,7 @@ public class GitHubDataStoreSchema : IDataStoreSchema
     ");" +
     "CREATE UNIQUE INDEX IDX_Review_InternalId ON Review (InternalId);";
 
-    private static readonly string Release =
+    private const string Release =
     @"CREATE TABLE Release (" +
         "Id INTEGER PRIMARY KEY NOT NULL," +
         "InternalId INTEGER NOT NULL," +
@@ -264,7 +264,7 @@ public class GitHubDataStoreSchema : IDataStoreSchema
     "CREATE UNIQUE INDEX IDX_Release_InternalId ON Release (InternalId);";
 
     // All Sqls together.
-    private static readonly List<string> SchemaSqlsValue = new()
+    private static readonly List<string> _schemaSqlsValue = new()
     {
         MetaData,
         User,

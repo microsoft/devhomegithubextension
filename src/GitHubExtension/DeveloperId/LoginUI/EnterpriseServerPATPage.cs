@@ -11,17 +11,18 @@ internal sealed class EnterpriseServerPATPage : LoginUIPage
     public EnterpriseServerPATPage(Uri hostAddress, string errorText, SecureString inputPAT)
         : base(LoginUIState.EnterpriseServerPATPage)
     {
-        Data = new PageData()
+        Data = new EnterpriseServerPATPageData()
         {
             EnterpriseServerPATPageInputValue = new System.Net.NetworkCredential(string.Empty, inputPAT).Password ?? string.Empty,
             EnterpriseServerPATPageErrorValue = errorText ?? string.Empty,
             EnterpriseServerPATPageErrorVisible = !string.IsNullOrEmpty(errorText),
-            EnterpriseServerPATPageCreatePATUrlValue = hostAddress?.GetComponents(UriComponents.SchemeAndServer, UriFormat.UriEscaped) + $"/settings/tokens/new?scopes=read:user,notifications,repo,read:org,codespaces:read&description=DevHomeGitHubExtension",
+            EnterpriseServerPATPageCreatePATUrlValue = hostAddress?.GetComponents(UriComponents.SchemeAndServer, UriFormat.UriEscaped)
+                                                       + $"/settings/tokens/new?scopes=read:user,notifications,repo,read:org&description=DevHomeGitHubExtension",
             EnterpriseServerPATPageServerUrlValue = hostAddress?.Host ?? string.Empty,
         };
     }
 
-    internal sealed class PageData : ILoginUIPageData
+    internal sealed class EnterpriseServerPATPageData : ILoginUIPageData
     {
         public string EnterpriseServerPATPageInputValue { get; set; } = string.Empty;
 
@@ -35,7 +36,7 @@ internal sealed class EnterpriseServerPATPage : LoginUIPage
 
         public string GetJson()
         {
-            return Json.Stringify(this);
+            return Json.Stringify(this, _optionsWithContext);
         }
     }
 

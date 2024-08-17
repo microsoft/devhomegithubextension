@@ -11,9 +11,9 @@ namespace GitHubExtension.DataModel;
 [Table("CheckSuite")]
 public class CheckSuite
 {
-    private static readonly Lazy<ILogger> _log = new(() => Serilog.Log.ForContext("SourceContext", $"DataModel/{nameof(CheckSuite)}"));
+    private static readonly Lazy<ILogger> _logger = new(() => Serilog.Log.ForContext("SourceContext", $"DataModel/{nameof(CheckSuite)}"));
 
-    private static readonly ILogger Log = _log.Value;
+    private static readonly ILogger _log = _logger.Value;
 
     [Key]
     public long Id { get; set; } = DataStore.NoForeignKey;
@@ -111,7 +111,7 @@ public class CheckSuite
         catch (Exception)
         {
             // This error means a programming error or Octokit added to or changed their enum.
-            Log.Error($"Found Unknown CheckConclusion value: {octoCheckConclusion.Value.Value}");
+            _log.Error($"Found Unknown CheckConclusion value: {octoCheckConclusion.Value.Value}");
             return CheckConclusion.Unknown;
         }
 
@@ -131,7 +131,7 @@ public class CheckSuite
         catch (Exception)
         {
             // This error means a programming error or Octokit added to or changed their enum.
-            Log.Error($"Found Unknown CheckStatus value: {octoCheckStatus.Value}");
+            _log.Error($"Found Unknown CheckStatus value: {octoCheckStatus.Value}");
             return CheckStatus.Unknown;
         }
 
@@ -184,7 +184,7 @@ public class CheckSuite
             pullRequest.HeadSha,
         };
 
-        Log.Verbose(DataStore.GetSqlLogMessage(sql, param));
+        _log.Verbose(DataStore.GetSqlLogMessage(sql, param));
 
         // Query results in NULL if there are no entries, and QueryFirstOrDefault will throw trying
         // to assign null to an integer. In this instance we catch it and return the None type.
@@ -214,7 +214,7 @@ public class CheckSuite
             StatusId = (long)CheckStatus.Completed,
         };
 
-        Log.Verbose(DataStore.GetSqlLogMessage(sql, param));
+        _log.Verbose(DataStore.GetSqlLogMessage(sql, param));
 
         // Query results in NULL if there are no entries, and QueryFirstOrDefault will throw trying
         // to assign null to an integer. In this instance we catch it and return the None type.
@@ -235,9 +235,9 @@ public class CheckSuite
         var command = dataStore.Connection!.CreateCommand();
         command.CommandText = sql;
         command.Parameters.AddWithValue("$HeadSha", pullRequest.HeadSha);
-        Log.Verbose(DataStore.GetCommandLogMessage(sql, command));
+        _log.Verbose(DataStore.GetCommandLogMessage(sql, command));
         var rowsDeleted = command.ExecuteNonQuery();
-        Log.Verbose(DataStore.GetDeletedLogMessage(rowsDeleted));
+        _log.Verbose(DataStore.GetDeletedLogMessage(rowsDeleted));
     }
 
     public static void DeleteUnreferenced(DataStore dataStore)
@@ -246,7 +246,7 @@ public class CheckSuite
         var sql = @"DELETE FROM CheckSuite WHERE HeadSha NOT IN (SELECT HeadSha FROM PullRequest)";
         var command = dataStore.Connection!.CreateCommand();
         command.CommandText = sql;
-        Log.Verbose(DataStore.GetCommandLogMessage(sql, command));
+        _log.Verbose(DataStore.GetCommandLogMessage(sql, command));
         command.ExecuteNonQuery();
     }
 }

@@ -10,7 +10,7 @@ internal sealed class EnterpriseServerPage : LoginUIPage
     public EnterpriseServerPage(Uri? hostAddress, string errorText)
         : base(LoginUIState.EnterpriseServerPage)
     {
-        Data = new PageData()
+        Data = new EnterpriseServerPageData()
         {
             EnterpriseServerInputValue = hostAddress?.ToString() ?? string.Empty,
             EnterpriseServerPageErrorValue = errorText ?? string.Empty,
@@ -21,7 +21,7 @@ internal sealed class EnterpriseServerPage : LoginUIPage
     public EnterpriseServerPage(string hostAddress, string errorText)
         : base(LoginUIState.EnterpriseServerPage)
     {
-        Data = new PageData()
+        Data = new EnterpriseServerPageData()
         {
             EnterpriseServerInputValue = hostAddress,
             EnterpriseServerPageErrorValue = errorText ?? string.Empty,
@@ -29,7 +29,7 @@ internal sealed class EnterpriseServerPage : LoginUIPage
         };
     }
 
-    internal sealed class PageData : ILoginUIPageData
+    internal sealed class EnterpriseServerPageData : ILoginUIPageData
     {
         public string EnterpriseServerInputValue { get; set; } = string.Empty;
 
@@ -40,7 +40,7 @@ internal sealed class EnterpriseServerPage : LoginUIPage
 
         public string GetJson()
         {
-            return Json.Stringify(this);
+            return Json.Stringify(this, _optionsWithContext);
         }
     }
 

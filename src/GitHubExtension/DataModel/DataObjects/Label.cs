@@ -11,14 +11,14 @@ namespace GitHubExtension.DataModel;
 [Table("Label")]
 public class Label
 {
-    private static readonly Lazy<ILogger> _log = new(() => Serilog.Log.ForContext("SourceContext", $"DataModel/{nameof(Label)}"));
+    private static readonly Lazy<ILogger> _logger = new(() => Serilog.Log.ForContext("SourceContext", $"DataModel/{nameof(Label)}"));
 
-    private static readonly ILogger Log = _log.Value;
+    private static readonly ILogger _log = _logger.Value;
 
     // This is the time between seeing a potential updated label record and updating it.
     // This value / 2 is the average time between label changing on GitHub and having
     // it reflected in the datastore.
-    private static readonly long UpdateThreshold = TimeSpan.FromHours(4).Ticks;
+    private static readonly long _updateThreshold = TimeSpan.FromHours(4).Ticks;
 
     [Key]
     public long Id { get; set; } = DataStore.NoForeignKey;
@@ -60,7 +60,7 @@ public class Label
             // avoid unnecessary updating and database operations for data that
             // is extremely unlikely to have changed in any significant way, we
             // will only update every UpdateThreshold amount of time.
-            if ((label.TimeUpdated - existing.TimeUpdated) > UpdateThreshold)
+            if ((label.TimeUpdated - existing.TimeUpdated) > _updateThreshold)
             {
                 label.Id = existing.Id;
                 dataStore.Connection!.Update(label);

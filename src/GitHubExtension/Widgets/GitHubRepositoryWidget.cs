@@ -5,7 +5,6 @@ using System.Text.Json;
 using System.Text.Json.Nodes;
 using GitHubExtension.Client;
 using GitHubExtension.DataManager;
-using GitHubExtension.Helpers;
 using GitHubExtension.Widgets.Enums;
 using Microsoft.Windows.Widgets.Providers;
 
@@ -14,6 +13,8 @@ namespace GitHubExtension.Widgets;
 public abstract class GitHubRepositoryWidget : GitHubWidget
 {
     protected string RepositoryUrl { get; set; } = string.Empty;
+
+    private string? _message;
 
     public GitHubRepositoryWidget()
         : base()
@@ -46,6 +47,19 @@ public abstract class GitHubRepositoryWidget : GitHubWidget
         return Uri.UnescapeDataString(GetIssueQuery()).Replace('+', ' ');
     }
 
+    // If the user changed the URL after clicking submit and clicked
+    // saved just after, we change it back to what was before to not corrupt our saved data.
+    private void CorrectUrl()
+    {
+        var configurationData = JsonNode.Parse(ConfigurationData);
+        if (configurationData != null)
+        {
+            configurationData["url"] = RepositoryUrl;
+            ConfigurationData = configurationData.ToJsonString();
+            UpdateWidget();
+        }
+    }
+
     public override void OnActionInvoked(WidgetActionInvokedArgs actionInvokedArgs)
     {
         var verb = GetWidgetActionForVerb(actionInvokedArgs.Verb);
@@ -53,13 +67,14 @@ public abstract class GitHubRepositoryWidget : GitHubWidget
 
         switch (verb)
         {
-            case WidgetAction.CheckUrl:
-                HandleCheckUrl(actionInvokedArgs);
-                break;
-
             case WidgetAction.Save:
-                UpdateTitle(JsonNode.Parse(actionInvokedArgs.Data));
-                base.OnActionInvoked(actionInvokedArgs);
+                if (HandleCheckUrl(actionInvokedArgs))
+                {
+                    UpdateTitle(JsonNode.Parse(actionInvokedArgs.Data));
+                    base.OnActionInvoked(actionInvokedArgs);
+                    CorrectUrl();
+                }
+
                 break;
 
             default:
@@ -130,7 +145,14 @@ public abstract class GitHubRepositoryWidget : GitHubWidget
         GetTitleFromDataObject(dataObj);
         if (string.IsNullOrEmpty(WidgetTitle))
         {
-            WidgetTitle = GetRepositoryFromUrl(RepositoryUrl).FullName;
+            try
+            {
+                WidgetTitle = GetRepositoryFromUrl(RepositoryUrl).FullName;
+            }
+            catch
+            {
+                WidgetTitle = string.Empty;
+            }
         }
     }
 
@@ -193,7 +215,7 @@ public abstract class GitHubRepositoryWidget : GitHubWidget
         base.OnCustomizationRequested(customizationRequestedArgs);
     }
 
-    private void HandleCheckUrl(WidgetActionInvokedArgs args)
+    private bool HandleCheckUrl(WidgetActionInvokedArgs args)
     {
         // Set loading page while we fetch data from GitHub.
         Page = WidgetPageState.Loading;
@@ -209,7 +231,19 @@ public abstract class GitHubRepositoryWidget : GitHubWidget
             RepositoryUrl = dataObject["url"]?.GetValue<string>() ?? string.Empty;
             UpdateTitle(dataObject);
 
-            ConfigurationData = data;
+            var isGoodToSave = true;
+
+            try
+            {
+                GetRepositoryFromUrl(RepositoryUrl);
+                ConfigurationData = data;
+                _message = null;
+            }
+            catch (Exception ex)
+            {
+                _message = ex.Message;
+                isGoodToSave = false;
+            }
 
             var updateRequestOptions = new WidgetUpdateRequestOptions(Id)
             {
@@ -219,71 +253,29 @@ public abstract class GitHubRepositoryWidget : GitHubWidget
             };
 
             WidgetManager.GetDefault().UpdateWidget(updateRequestOptions);
+
+            // Already shown error message while updating above,
+            // can reset it to null here.
+            _message = null;
+            return isGoodToSave;
         }
+
+        UpdateWidget();
+
+        return false;
     }
 
     public string GetConfiguration(string dataUrl)
     {
         var configurationData = new JsonObject
         {
-            { "submitIcon", IconLoader.GetIconAsBase64("arrow.png") },
             { "widgetTitle", WidgetTitle },
+            { "url", dataUrl },
+            { "savedRepositoryUrl", SavedConfigurationData },
+            { "errorMessage", _message },
         };
 
-        if (dataUrl == string.Empty)
-        {
-            configurationData.Add("hasConfiguration", false);
-            var repositoryData = new JsonObject
-            {
-                { "url", string.Empty },
-            };
-
-            configurationData.Add("configuration", repositoryData);
-            configurationData.Add("savedRepositoryUrl", SavedConfigurationData);
-            configurationData.Add("saveEnabled", false);
-
-            return configurationData.ToString();
-        }
-        else
-        {
-            try
-            {
-                var repository = GetRepositoryFromUrl(dataUrl);
-                var repositoryData = new JsonObject
-                {
-                    { "name", repository.FullName },
-                    { "label", repository.Name },
-                    { "owner", repository.Owner.Login },
-                    { "milestone", string.Empty },
-                    { "project", repository.Description },
-                    { "url", repository.HtmlUrl },
-                    { "query", GetUnescapedIssueQuery() },
-                };
-
-                configurationData.Add("hasConfiguration", true);
-                configurationData.Add("configuration", repositoryData);
-                configurationData.Add("savedRepositoryUrl", SavedConfigurationData);
-                configurationData.Add("saveEnabled", true);
-            }
-            catch (Exception ex)
-            {
-                Log.Error(ex, $"Failed getting configuration information for input url: {dataUrl}");
-                configurationData.Add("hasConfiguration", false);
-
-                var repositoryData = new JsonObject
-                {
-                    { "url", RepositoryUrl },
-                };
-
-                configurationData.Add("errorMessage", ex.Message);
-                configurationData.Add("configuration", repositoryData);
-                configurationData.Add("saveEnabled", false);
-
-                return configurationData.ToString();
-            }
-
-            return configurationData.ToJsonString();
-        }
+        return configurationData.ToJsonString();
     }
 
     public override string GetData(WidgetPageState page)

@@ -13,9 +13,9 @@ namespace GitHubExtension.DeveloperId;
 
 internal sealed class OAuthRequest : IDisposable
 {
-    private static readonly Lazy<ILogger> _log = new(() => Serilog.Log.ForContext("SourceContext", nameof(OAuthRequest)));
+    private static readonly Lazy<ILogger> _logger = new(() => Serilog.Log.ForContext("SourceContext", nameof(OAuthRequest)));
 
-    private static readonly ILogger Log = _log.Value;
+    private static readonly ILogger _log = _logger.Value;
 
     internal string State { get; private set; }
 
@@ -28,8 +28,8 @@ internal sealed class OAuthRequest : IDisposable
 
     internal OAuthRequest()
     {
-        gitHubClient = new(new ProductHeaderValue(Constants.DEV_HOME_APPLICATION_NAME));
-        oAuthCompleted = new(0);
+        _gitHubClient = new(new ProductHeaderValue(Constants.DEV_HOME_APPLICATION_NAME));
+        _oAuthCompleted = new(0);
         State = string.Empty;
     }
 
@@ -37,7 +37,7 @@ internal sealed class OAuthRequest : IDisposable
     {
         if (disposing)
         {
-            oAuthCompleted.Dispose();
+            _oAuthCompleted.Dispose();
         }
     }
 
@@ -49,7 +49,7 @@ internal sealed class OAuthRequest : IDisposable
 
     public void AwaitCompletion()
     {
-        oAuthCompleted?.Wait();
+        _oAuthCompleted?.Wait();
     }
 
     private Uri CreateOauthRequestUri()
@@ -63,7 +63,7 @@ internal sealed class OAuthRequest : IDisposable
             RedirectUri = new Uri(OauthConfiguration.RedirectUri),
         };
 
-        return gitHubClient.Oauth.GetGitHubLoginUrl(request);
+        return _gitHubClient.Oauth.GetGitHubLoginUrl(request);
     }
 
     internal void BeginOAuthRequest()
@@ -80,11 +80,11 @@ internal sealed class OAuthRequest : IDisposable
 
             if (browserLaunch)
             {
-                Log.Information($"Uri Launched - Check browser");
+                _log.Information($"Uri Launched - Check browser");
             }
             else
             {
-                Log.Error($"Uri Launch failed");
+                _log.Error($"Uri Launch failed");
             }
         });
     }
@@ -99,13 +99,13 @@ internal sealed class OAuthRequest : IDisposable
 
         if (!string.IsNullOrEmpty(queryStringCollection.Get("error")))
         {
-            Log.Error($"OAuth authorization error: {queryStringCollection.Get("error")}");
+            _log.Error($"OAuth authorization error: {queryStringCollection.Get("error")}");
             throw new UriFormatException();
         }
 
         if (string.IsNullOrEmpty(queryStringCollection.Get("code")))
         {
-            Log.Error($"Malformed authorization response: {queryString}");
+            _log.Error($"Malformed authorization response: {queryString}");
             throw new UriFormatException();
         }
 
@@ -115,30 +115,30 @@ internal sealed class OAuthRequest : IDisposable
         try
         {
             var request = new OauthTokenRequest(OauthConfiguration.GetClientId(), OauthConfiguration.GetClientSecret(), code);
-            var token = await gitHubClient.Oauth.CreateAccessToken(request);
+            var token = await _gitHubClient.Oauth.CreateAccessToken(request);
             AccessToken = new NetworkCredential(string.Empty, token.AccessToken).SecurePassword;
-            gitHubClient.Credentials = new Credentials(token.AccessToken);
+            _gitHubClient.Credentials = new Credentials(token.AccessToken);
         }
         catch (Exception ex)
         {
-            Log.Error($"Authorization code exchange failed: {ex}");
+            _log.Error($"Authorization code exchange failed: {ex}");
             throw;
         }
 
-        Log.Information($"Authorization code exchange completed");
-        oAuthCompleted.Release();
+        _log.Information($"Authorization code exchange completed");
+        _oAuthCompleted.Release();
     }
 
     internal DeveloperId RetrieveDeveloperId()
     {
         if (AccessToken is null)
         {
-            Log.Error($"RetrieveDeveloperIdData called before AccessToken is set");
+            _log.Error($"RetrieveDeveloperIdData called before AccessToken is set");
             throw new InvalidOperationException("RetrieveDeveloperIdData called before AccessToken is set");
         }
 
-        var newUser = gitHubClient.User.Current().Result;
-        DeveloperId developerId = new(newUser.Login, newUser.Name, newUser.Email, newUser.Url, gitHubClient);
+        var newUser = _gitHubClient.User.Current().Result;
+        DeveloperId developerId = new(newUser.Login, newUser.Name, newUser.Email, newUser.Url, _gitHubClient);
 
         return developerId;
     }
@@ -155,7 +155,7 @@ internal sealed class OAuthRequest : IDisposable
 
         if (string.IsNullOrEmpty(state))
         {
-            Log.Error($"Authorization code exchange failed: ResponseString:{queryString}");
+            _log.Error($"Authorization code exchange failed: ResponseString:{queryString}");
             throw new UriFormatException();
         }
 
@@ -168,6 +168,6 @@ internal sealed class OAuthRequest : IDisposable
         return randomNumber.ToStringInvariant();
     }
 
-    private readonly SemaphoreSlim oAuthCompleted;
-    private readonly GitHubClient gitHubClient;
+    private readonly SemaphoreSlim _oAuthCompleted;
+    private readonly GitHubClient _gitHubClient;
 }

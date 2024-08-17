@@ -9,7 +9,13 @@ namespace GitHubExtension.Widgets;
 
 [ComVisible(true)]
 [ClassInterface(ClassInterfaceType.None)]
+#if CANARY_BUILD
+[Guid("E8778523-0D5F-478F-8AC3-1467928BDEF7")]
+#elif STABLE_BUILD
 [Guid("F23870B0-B391-4466-84E2-42A991078613")]
+#else
+[Guid("3AF3462E-0CCE-4200-887B-FB41872A4EFB")]
+#endif
 public sealed class WidgetProvider : IWidgetProvider, IWidgetProvider2
 {
     private readonly ILogger _log = Log.ForContext("SourceContext", nameof(WidgetProvider));
@@ -17,30 +23,30 @@ public sealed class WidgetProvider : IWidgetProvider, IWidgetProvider2
     public WidgetProvider()
     {
         _log.Verbose("Provider Constructed");
-        widgetDefinitionRegistry.Add("GitHub_Issues", new WidgetImplFactory<GitHubIssuesWidget>());
-        widgetDefinitionRegistry.Add("GitHub_PullRequests", new WidgetImplFactory<GitHubPullsWidget>());
-        widgetDefinitionRegistry.Add("GitHub_MentionedIns", new WidgetImplFactory<GitHubMentionedInWidget>());
-        widgetDefinitionRegistry.Add("GitHub_Assigneds", new WidgetImplFactory<GitHubAssignedWidget>());
-        widgetDefinitionRegistry.Add("GitHub_Reviews", new WidgetImplFactory<GitHubReviewWidget>());
-        widgetDefinitionRegistry.Add("GitHub_Releases", new WidgetImplFactory<GitHubReleasesWidget>());
+        _widgetDefinitionRegistry.Add("GitHub_Issues", new WidgetImplFactory<GitHubIssuesWidget>());
+        _widgetDefinitionRegistry.Add("GitHub_PullRequests", new WidgetImplFactory<GitHubPullsWidget>());
+        _widgetDefinitionRegistry.Add("GitHub_MentionedIns", new WidgetImplFactory<GitHubMentionedInWidget>());
+        _widgetDefinitionRegistry.Add("GitHub_Assigneds", new WidgetImplFactory<GitHubAssignedWidget>());
+        _widgetDefinitionRegistry.Add("GitHub_Reviews", new WidgetImplFactory<GitHubReviewWidget>());
+        _widgetDefinitionRegistry.Add("GitHub_Releases", new WidgetImplFactory<GitHubReleasesWidget>());
         RecoverRunningWidgets();
     }
 
-    private readonly Dictionary<string, IWidgetImplFactory> widgetDefinitionRegistry = new();
-    private readonly Dictionary<string, WidgetImpl> runningWidgets = new();
+    private readonly Dictionary<string, IWidgetImplFactory> _widgetDefinitionRegistry = new();
+    private readonly Dictionary<string, WidgetImpl> _runningWidgets = new();
 
     private void InitializeWidget(WidgetContext widgetContext, string state)
     {
         var widgetId = widgetContext.Id;
         var widgetDefinitionId = widgetContext.DefinitionId;
         _log.Verbose($"Calling Initialize for Widget Id: {widgetId} - {widgetDefinitionId}");
-        if (widgetDefinitionRegistry.TryGetValue(widgetDefinitionId, out var widgetDefinition))
+        if (_widgetDefinitionRegistry.TryGetValue(widgetDefinitionId, out var widgetDefinition))
         {
-            if (!runningWidgets.ContainsKey(widgetId))
+            if (!_runningWidgets.ContainsKey(widgetId))
             {
                 var factory = widgetDefinition;
                 var widgetImpl = factory.Create(widgetContext, state);
-                runningWidgets.Add(widgetId, widgetImpl);
+                _runningWidgets.Add(widgetId, widgetImpl);
             }
             else
             {
@@ -74,7 +80,7 @@ public sealed class WidgetProvider : IWidgetProvider, IWidgetProvider2
 
         foreach (var widgetInfo in runningWidgets)
         {
-            if (!this.runningWidgets.ContainsKey(widgetInfo.WidgetContext.Id))
+            if (!_runningWidgets.ContainsKey(widgetInfo.WidgetContext.Id))
             {
                 InitializeWidget(widgetInfo.WidgetContext, widgetInfo.CustomState);
             }
@@ -93,7 +99,7 @@ public sealed class WidgetProvider : IWidgetProvider, IWidgetProvider2
     {
         _log.Verbose($"Activate id: {widgetContext.Id} definitionId: {widgetContext.DefinitionId}");
         var widgetId = widgetContext.Id;
-        if (runningWidgets.TryGetValue(widgetId, out var widget))
+        if (runningWidgets.ContainsKey(widgetId))
         {
             widget.Activate(widgetContext);
         }
@@ -102,7 +108,7 @@ public sealed class WidgetProvider : IWidgetProvider, IWidgetProvider2
             // Called to activate a widget that we don't know about, which is unexpected. Try to recover by creating it.
             _log.Warning($"Found WidgetId that was not known: {widgetContext.Id}, attempting to recover by creating it.");
             CreateWidget(widgetContext);
-            if (runningWidgets.TryGetValue(widgetId, out var newWidget))
+            if (runningWidgets.ContainsKey(widgetId))
             {
                 newWidget.Activate(widgetContext);
             }
@@ -112,7 +118,7 @@ public sealed class WidgetProvider : IWidgetProvider, IWidgetProvider2
     public void Deactivate(string widgetId)
     {
         _log.Verbose($"Deactivate id: {widgetId}");
-        if (runningWidgets.TryGetValue(widgetId, out var widget))
+        if (runningWidgets.ContainsKey(widgetId))
         {
             widget.Deactivate(widgetId);
         }
@@ -121,9 +127,9 @@ public sealed class WidgetProvider : IWidgetProvider, IWidgetProvider2
     public void DeleteWidget(string widgetId, string customState)
     {
         _log.Information($"DeleteWidget id: {widgetId}");
-        if (runningWidgets.TryGetValue(widgetId, out var widget))
+        if (runningWidgets.ContainsKey(widgetId))
         {
-            widget.DeleteWidget(widgetId, customState);
+            runningWidgets[widgetId].DeleteWidget(widgetId, customState);
             runningWidgets.Remove(widgetId);
         }
     }
@@ -133,7 +139,7 @@ public sealed class WidgetProvider : IWidgetProvider, IWidgetProvider2
         _log.Debug($"OnActionInvoked id: {actionInvokedArgs.WidgetContext.Id} definitionId: {actionInvokedArgs.WidgetContext.DefinitionId}");
         var widgetContext = actionInvokedArgs.WidgetContext;
         var widgetId = widgetContext.Id;
-        if (runningWidgets.TryGetValue(widgetId, out var widget))
+        if (runningWidgets.ContainsKey(widgetId))
         {
             widget.OnActionInvoked(actionInvokedArgs);
         }
@@ -144,7 +150,7 @@ public sealed class WidgetProvider : IWidgetProvider, IWidgetProvider2
         _log.Debug($"OnCustomizationRequested id: {customizationRequestedArgs.WidgetContext.Id} definitionId: {customizationRequestedArgs.WidgetContext.DefinitionId}");
         var widgetContext = customizationRequestedArgs.WidgetContext;
         var widgetId = widgetContext.Id;
-        if (runningWidgets.TryGetValue(widgetId, out var widget))
+        if (runningWidgets.ContainsKey(widgetId))
         {
             widget.OnCustomizationRequested(customizationRequestedArgs);
         }
@@ -155,7 +161,7 @@ public sealed class WidgetProvider : IWidgetProvider, IWidgetProvider2
         _log.Debug($"OnWidgetContextChanged id: {contextChangedArgs.WidgetContext.Id} definitionId: {contextChangedArgs.WidgetContext.DefinitionId}");
         var widgetContext = contextChangedArgs.WidgetContext;
         var widgetId = widgetContext.Id;
-        if (runningWidgets.TryGetValue(widgetId, out var widget))
+        if (runningWidgets.ContainsKey(widgetId))
         {
             widget.OnWidgetContextChanged(contextChangedArgs);
         }

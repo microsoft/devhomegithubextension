@@ -13,15 +13,15 @@ public partial class DataStoreOptions
     // If we directly put in the ApplicationData folder, it would fail anytime the program was not packaged.
     // For use with packaged application, set in Options to:
     //     ApplicationData.Current.LocalFolder.Path
-    private readonly string dataStoreFolderPathDefault = Path.Combine(Path.GetTempPath(), "GitHubExtension");
+    private readonly string _dataStoreFolderPathDefault = Path.Combine(Path.GetTempPath(), "GitHubExtension");
 
     // ApplicationData is not static, using a static folder for initialization.
-    private string? dataStoreFolderPath;
+    private string? _dataStoreFolderPath;
 
     public string DataStoreFolderPath
     {
-        get => dataStoreFolderPath is null ? dataStoreFolderPathDefault : dataStoreFolderPath;
-        set => dataStoreFolderPath = string.IsNullOrEmpty(value) ? dataStoreFolderPathDefault : value;
+        get => _dataStoreFolderPath is null ? _dataStoreFolderPathDefault : _dataStoreFolderPath;
+        set => _dataStoreFolderPath = string.IsNullOrEmpty(value) ? _dataStoreFolderPathDefault : value;
     }
 
     public IDataStoreSchema? DataStoreSchema { get; set; }

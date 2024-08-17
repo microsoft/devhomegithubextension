@@ -11,9 +11,9 @@ namespace GitHubExtension.DataModel;
 [Table("Issue")]
 public class Issue
 {
-    private static readonly Lazy<ILogger> _log = new(() => Serilog.Log.ForContext("SourceContext", $"DataModel/{nameof(Issue)}"));
+    private static readonly Lazy<ILogger> _logger = new(() => Serilog.Log.ForContext("SourceContext", $"DataModel/{nameof(Issue)}"));
 
-    private static readonly ILogger Log = _log.Value;
+    private static readonly ILogger _log = _logger.Value;
 
     [Key]
     public long Id { get; set; } = DataStore.NoForeignKey;
@@ -191,7 +191,7 @@ public class Issue
 
         issue.AssigneeIds = string.Join(",", assignees);
 
-        // Owner is a rowid in the User table
+        // Owner is a row id in the User table
         var author = User.GetOrCreateByOctokitUser(dataStore, okitIssue.User);
         issue.AuthorId = author.Id;
 
@@ -291,7 +291,7 @@ public class Issue
             RepositoryId = repository.Id,
         };
 
-        Log.Verbose(DataStore.GetSqlLogMessage(sql, param));
+        _log.Verbose(DataStore.GetSqlLogMessage(sql, param));
         var issues = dataStore.Connection!.Query<Issue>(sql, param, null) ?? Enumerable.Empty<Issue>();
         foreach (var issue in issues)
         {
@@ -315,7 +315,7 @@ public class Issue
             SearchId = search.Id,
         };
 
-        Log.Verbose(DataStore.GetSqlLogMessage(sql, param));
+        _log.Verbose(DataStore.GetSqlLogMessage(sql, param));
         var issues = dataStore.Connection!.Query<Issue>(sql, param, null) ?? Enumerable.Empty<Issue>();
         foreach (var issue in issues)
         {
@@ -370,8 +370,8 @@ public class Issue
         command.CommandText = sql;
         command.Parameters.AddWithValue("$Time", date.ToDataStoreInteger());
         command.Parameters.AddWithValue("$RepositoryId", repositoryId);
-        Log.Verbose(DataStore.GetCommandLogMessage(sql, command));
+        _log.Verbose(DataStore.GetCommandLogMessage(sql, command));
         var rowsDeleted = command.ExecuteNonQuery();
-        Log.Verbose(DataStore.GetDeletedLogMessage(rowsDeleted));
+        _log.Verbose(DataStore.GetDeletedLogMessage(rowsDeleted));
     }
 }

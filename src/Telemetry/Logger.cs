@@ -26,69 +26,69 @@ internal sealed class Logger : ILogger
     /// </summary>
     private const string ExceptionThrownEventName = "ExceptionThrown";
 
-    private static readonly Guid DefaultRelatedActivityId = Guid.Empty;
+    private static readonly Guid _defaultRelatedActivityId = Guid.Empty;
 
     /// <summary>
     /// Can only have one EventSource alive per process, so just create one statically.
     /// </summary>
-    private static readonly EventSource TelemetryEventSourceInstance = new TelemetryEventSource(ProviderName);
+    private static readonly EventSource _telemetryEventSourceInstance = new TelemetryEventSource(ProviderName);
 
     /// <summary>
     /// Logs telemetry locally, but shouldn't upload it.  Similar to an ETW event.
     /// Should be the same as EventSourceOptions(), as Verbose is the default level.
     /// </summary>
-    private static readonly EventSourceOptions LocalOption = new() { Level = EventLevel.Verbose };
+    private static readonly EventSourceOptions _localOption = new() { Level = EventLevel.Verbose };
 
     /// <summary>
     /// Logs error telemetry locally, but shouldn't upload it.  Similar to an ETW event.
     /// </summary>
-    private static readonly EventSourceOptions LocalErrorOption = new() { Level = EventLevel.Error };
+    private static readonly EventSourceOptions _localErrorOption = new() { Level = EventLevel.Error };
 
     /// <summary>
     /// Logs telemetry.
     /// Currently this is at 0% sampling for both internal and external retail devices.
     /// </summary>
-    private static readonly EventSourceOptions InfoOption = new() { Keywords = TelemetryEventSource.TelemetryKeyword };
+    private static readonly EventSourceOptions _infoOption = new() { Keywords = TelemetryEventSource.TelemetryKeyword };
 
     /// <summary>
     /// Logs error telemetry.
     /// Currently this is at 0% sampling for both internal and external retail devices.
     /// </summary>
-    private static readonly EventSourceOptions InfoErrorOption = new() { Level = EventLevel.Error, Keywords = TelemetryEventSource.TelemetryKeyword };
+    private static readonly EventSourceOptions _infoErrorOption = new() { Level = EventLevel.Error, Keywords = TelemetryEventSource.TelemetryKeyword };
 
     /// <summary>
     /// Logs measure telemetry.
     /// This should be sent back on internal devices, and a small, sampled % of external retail devices.
     /// </summary>
-    private static readonly EventSourceOptions MeasureOption = new() { Keywords = TelemetryEventSource.MeasuresKeyword };
+    private static readonly EventSourceOptions _measureOption = new() { Keywords = TelemetryEventSource.MeasuresKeyword };
 
     /// <summary>
     /// Logs measure error telemetry.
     /// This should be sent back on internal devices, and a small, sampled % of external retail devices.
     /// </summary>
-    private static readonly EventSourceOptions MeasureErrorOption = new() { Level = EventLevel.Error, Keywords = TelemetryEventSource.MeasuresKeyword };
+    private static readonly EventSourceOptions _measureErrorOption = new() { Level = EventLevel.Error, Keywords = TelemetryEventSource.MeasuresKeyword };
 
     /// <summary>
     /// Logs critical telemetry.
     /// This should be sent back on all devices sampled at 100%.
     /// </summary>
-    private static readonly EventSourceOptions CriticalDataOption = new() { Keywords = TelemetryEventSource.CriticalDataKeyword };
+    private static readonly EventSourceOptions _criticalDataOption = new() { Keywords = TelemetryEventSource.CriticalDataKeyword };
 
     /// <summary>
     /// Logs critical error telemetry.
     /// This should be sent back on all devices sampled at 100%.
     /// </summary>
-    private static readonly EventSourceOptions CriticalDataErrorOption = new() { Level = EventLevel.Error, Keywords = TelemetryEventSource.CriticalDataKeyword };
+    private static readonly EventSourceOptions _criticalDataErrorOption = new() { Level = EventLevel.Error, Keywords = TelemetryEventSource.CriticalDataKeyword };
 
     /// <summary>
     /// ActivityId so we can correlate all events in the same run
     /// </summary>
-    private static Guid activityId = Guid.NewGuid();
+    private static Guid _activityId = Guid.NewGuid();
 
     /// <summary>
     /// List of strings we should try removing for sensitivity reasons.
     /// </summary>
-    private readonly List<KeyValuePair<string, string>> sensitiveStrings = new();
+    private readonly List<KeyValuePair<string, string>> _sensitiveStrings = new();
 
     /// <summary>
     /// Initializes a new instance of the <see cref="Logger"/> class.
@@ -116,9 +116,9 @@ internal sealed class Logger : ILogger
     {
         // Make sure the name isn't blank, hasn't already been added, and is greater than three characters.
         // Otherwise they could name their VM "a", and then we would end up replacing every "a" with another string.
-        if (!string.IsNullOrWhiteSpace(name) && name.Length > 3 && !sensitiveStrings.Exists(item => name.Equals(item.Key, StringComparison.Ordinal)))
+        if (!string.IsNullOrWhiteSpace(name) && name.Length > 3 && !_sensitiveStrings.Exists(item => name.Equals(item.Key, StringComparison.Ordinal)))
         {
-            sensitiveStrings.Add(new KeyValuePair<string, string>(name, replaceWith ?? string.Empty));
+            _sensitiveStrings.Add(new KeyValuePair<string, string>(name, replaceWith ?? string.Empty));
         }
     }
 
@@ -156,7 +156,7 @@ internal sealed class Logger : ILogger
                 innerStackTrace = innerStackTrace.ToString(),
                 message = ReplaceSensitiveStrings(e.Message),
             },
-            relatedActivityId ?? DefaultRelatedActivityId);
+            relatedActivityId ?? _defaultRelatedActivityId);
     }
 
     /// <summary>
@@ -175,7 +175,7 @@ internal sealed class Logger : ILogger
                 eventName,
                 timeTakenMilliseconds,
             },
-            relatedActivityId ?? DefaultRelatedActivityId);
+            relatedActivityId ?? _defaultRelatedActivityId);
     }
 
     /// <summary>
@@ -188,7 +188,7 @@ internal sealed class Logger : ILogger
     /// <typeparam name="T">Anonymous type.</typeparam>
     public void Log<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)] T>(string eventName, LogLevel level, T data, Guid? relatedActivityId = null)
     {
-        WriteTelemetryEvent(eventName, level, relatedActivityId ?? DefaultRelatedActivityId, false, data);
+        WriteTelemetryEvent(eventName, level, relatedActivityId ?? _defaultRelatedActivityId, false, data);
     }
 
     /// <summary>
@@ -201,7 +201,7 @@ internal sealed class Logger : ILogger
     /// <typeparam name="T">Anonymous type.</typeparam>
     public void LogError<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)] T>(string eventName, LogLevel level, T data, Guid? relatedActivityId = null)
     {
-        WriteTelemetryEvent(eventName, level, relatedActivityId ?? DefaultRelatedActivityId, true, data);
+        WriteTelemetryEvent(eventName, level, relatedActivityId ?? _defaultRelatedActivityId, true, data);
     }
 
     /// <summary>
@@ -213,7 +213,7 @@ internal sealed class Logger : ILogger
     {
         if (message != null)
         {
-            foreach (var pair in sensitiveStrings)
+            foreach (var pair in _sensitiveStrings)
             {
                 // There's no String.Replace() with case insensitivity.
                 // We could use Regular Expressions here for searching for case-insensitive string matches,
@@ -263,19 +263,19 @@ internal sealed class Logger : ILogger
         {
             telemetryOptions = level switch
             {
-                LogLevel.Critical => isError ? Logger.CriticalDataErrorOption : Logger.CriticalDataOption,
-                LogLevel.Measure => isError ? Logger.MeasureErrorOption : Logger.MeasureOption,
-                LogLevel.Info => isError ? Logger.InfoErrorOption : Logger.InfoOption,
-                _ => isError ? Logger.LocalErrorOption : Logger.LocalOption,
+                LogLevel.Critical => isError ? Logger._criticalDataErrorOption : Logger._criticalDataOption,
+                LogLevel.Measure => isError ? Logger._measureErrorOption : Logger._measureOption,
+                LogLevel.Info => isError ? Logger._infoErrorOption : Logger._infoOption,
+                _ => isError ? Logger._localErrorOption : Logger._localOption,
             };
         }
         else
         {
             // The telemetry is not turned on, downgrade to local telemetry
-            telemetryOptions = isError ? Logger.LocalErrorOption : Logger.LocalOption;
+            telemetryOptions = isError ? Logger._localErrorOption : Logger._localOption;
         }
 
-        TelemetryEventSourceInstance.Write(eventName, ref telemetryOptions, ref activityId, ref relatedActivityId, ref data);
+        _telemetryEventSourceInstance.Write(eventName, ref telemetryOptions, ref _activityId, ref relatedActivityId, ref data);
     }
 
     internal void AddWellKnownSensitiveStrings()

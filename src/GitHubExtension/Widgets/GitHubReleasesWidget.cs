@@ -6,7 +6,6 @@ using GitHubExtension.Client;
 using GitHubExtension.DataManager;
 using GitHubExtension.Helpers;
 using GitHubExtension.Widgets.Enums;
-using Octokit;
 
 namespace GitHubExtension.Widgets;
 

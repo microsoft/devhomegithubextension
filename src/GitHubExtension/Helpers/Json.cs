@@ -9,7 +9,7 @@ namespace GitHubExtension.Helpers;
 
 public static class Json
 {
-    private static readonly JsonSerializerOptions Options = new()
+    private static readonly JsonSerializerOptions _options = new()
     {
         PropertyNameCaseInsensitive = true,
         DefaultIgnoreCondition = JsonIgnoreCondition.Never,
@@ -42,14 +42,14 @@ public static class Json
         });
     }
 
-    public static string Stringify<T>(T value)
+    public static string Stringify<T>(T value, JsonSerializerOptions? options = null)
     {
         if (typeof(T) == typeof(bool))
         {
             return value!.ToString()!.ToLowerInvariant();
         }
 
-        return System.Text.Json.JsonSerializer.Serialize(value, Options);
+        return System.Text.Json.JsonSerializer.Serialize(value, options ?? _options);
     }
 
     public static T? ToObject<T>(string json)
@@ -59,6 +59,6 @@ public static class Json
             return (T)(object)bool.Parse(json);
         }
 
-        return System.Text.Json.JsonSerializer.Deserialize<T>(json, Options);
+        return System.Text.Json.JsonSerializer.Deserialize<T>(json, _options);
     }
 }

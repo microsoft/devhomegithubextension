@@ -24,7 +24,7 @@ public class GitHubExtensionSession
         {
             // Create a new session to bring up an instance of the Dev Home application
             // Note: Multiple calculator windows (instances) share the same process Id.
-            AppiumOptions options = new AppiumOptions();
+            var options = new AppiumOptions();
             options.AddAdditionalCapability("deviceName", "WindowsPC");
             options.AddAdditionalCapability("platformName", "Windows");
             options.AddAdditionalCapability("app", GitHubExtensionAppId);

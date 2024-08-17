@@ -25,9 +25,9 @@ namespace GitHubExtension.DataModel;
 [Table("Notification")]
 public class Notification
 {
-    private static readonly Lazy<ILogger> _log = new(() => Serilog.Log.ForContext("SourceContext", $"DataModel/{nameof(Notification)}"));
+    private static readonly Lazy<ILogger> _logger = new(() => Serilog.Log.ForContext("SourceContext", $"DataModel/{nameof(Notification)}"));
 
-    private static readonly ILogger Log = _log.Value;
+    private static readonly ILogger _log = _logger.Value;
 
     [Key]
     public long Id { get; set; } = DataStore.NoForeignKey;
@@ -98,7 +98,7 @@ public class Notification
                     // Catch errors so we do not throw for something like this. The local ToastState
                     // will still be set even if the datastore update fails. This could result in a
                     // toast later being shown twice, however, so report it as an error.
-                    Log.Error(ex, "Failed setting Notification ToastState for Notification Id = {Id}");
+                    _log.Error(ex, "Failed setting Notification ToastState for Notification Id = {Id}");
                 }
             }
         }
@@ -175,7 +175,7 @@ public class Notification
     {
         try
         {
-            Log.Information($"Showing Notification for {this}");
+            _log.Information($"Showing Notification for {this}");
             var resLoader = new ResourceLoader(ResourceLoader.GetDefaultResourceFilePath(), "GitHubExtension/Resources");
             var nb = new AppNotificationBuilder();
             nb.SetDuration(AppNotificationDuration.Long);
@@ -194,7 +194,7 @@ public class Notification
         }
         catch (Exception ex)
         {
-            Log.Error(ex, $"Failed creating the Notification for {this}");
+            _log.Error(ex, $"Failed creating the Notification for {this}");
             return false;
         }
 
@@ -205,7 +205,7 @@ public class Notification
     {
         try
         {
-            Log.Information($"Showing Notification for {this}");
+            _log.Information($"Showing Notification for {this}");
             var resLoader = new ResourceLoader(ResourceLoader.GetDefaultResourceFilePath(), "GitHubExtension/Resources");
             var nb = new AppNotificationBuilder();
             nb.SetDuration(AppNotificationDuration.Long);
@@ -224,7 +224,7 @@ public class Notification
         }
         catch (Exception ex)
         {
-            Log.Error(ex, $"Failed creating the Notification for {this}");
+            _log.Error(ex, $"Failed creating the Notification for {this}");
             return false;
         }
 
@@ -235,7 +235,7 @@ public class Notification
     {
         try
         {
-            Log.Information($"Showing Notification for {this}");
+            _log.Information($"Showing Notification for {this}");
             var resLoader = new ResourceLoader(ResourceLoader.GetDefaultResourceFilePath(), "GitHubExtension/Resources");
             var nb = new AppNotificationBuilder();
             nb.SetDuration(AppNotificationDuration.Long);
@@ -267,7 +267,7 @@ public class Notification
         }
         catch (Exception ex)
         {
-            Log.Error(ex, $"Failed creating the Notification for {this}");
+            _log.Error(ex, $"Failed creating the Notification for {this}");
             return false;
         }
 
@@ -338,7 +338,7 @@ public class Notification
             ToastedCount = includeToasted ? 1 : 0,
         };
 
-        Log.Verbose(DataStore.GetSqlLogMessage(sql, param));
+        _log.Verbose(DataStore.GetSqlLogMessage(sql, param));
         var notifications = dataStore.Connection!.Query<Notification>(sql, param, null) ?? Enumerable.Empty<Notification>();
         foreach (var notification in notifications)
         {
@@ -362,13 +362,13 @@ public class Notification
             notification.TimeOccurred,
         };
 
-        Log.Verbose(DataStore.GetSqlLogMessage(sql, param));
+        _log.Verbose(DataStore.GetSqlLogMessage(sql, param));
         var outDatedNotifications = dataStore.Connection!.Query<Notification>(sql, param, null) ?? Enumerable.Empty<Notification>();
         foreach (var olderNotification in outDatedNotifications)
         {
             olderNotification.DataStore = dataStore;
             olderNotification.Toasted = true;
-            Log.Information($"Found older notification for {olderNotification.Identifier} with result {olderNotification.Result}, marking toasted.");
+            _log.Information($"Found older notification for {olderNotification.Identifier} with result {olderNotification.Result}, marking toasted.");
         }
     }
 
@@ -379,8 +379,8 @@ public class Notification
         var command = dataStore.Connection!.CreateCommand();
         command.CommandText = sql;
         command.Parameters.AddWithValue("$Time", date.ToDataStoreInteger());
-        Log.Verbose(DataStore.GetCommandLogMessage(sql, command));
+        _log.Verbose(DataStore.GetCommandLogMessage(sql, command));
         var rowsDeleted = command.ExecuteNonQuery();
-        Log.Verbose(DataStore.GetDeletedLogMessage(rowsDeleted));
+        _log.Verbose(DataStore.GetDeletedLogMessage(rowsDeleted));
     }
 }

@@ -17,7 +17,7 @@ internal sealed class WaitingPage : LoginUIPage
     {
         public string GetJson()
         {
-            return Json.Stringify(this);
+            return Json.Stringify(this, _optionsWithContext);
         }
     }
 }

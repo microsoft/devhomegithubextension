@@ -11,9 +11,9 @@ namespace GitHubExtension.DataModel;
 [Table("Review")]
 public class Review
 {
-    private static readonly Lazy<ILogger> _log = new(() => Serilog.Log.ForContext("SourceContext", $"DataModel/{nameof(Review)}"));
+    private static readonly Lazy<ILogger> _logger = new(() => Serilog.Log.ForContext("SourceContext", $"DataModel/{nameof(Review)}"));
 
-    private static readonly ILogger Log = _log.Value;
+    private static readonly ILogger _log = _logger.Value;
 
     [Key]
     public long Id { get; set; } = DataStore.NoForeignKey;
@@ -100,7 +100,7 @@ public class Review
             TimeLastObserved = DateTime.UtcNow.ToDataStoreInteger(),
         };
 
-        // Author is a rowid in the User table
+        // Author is a row id in the User table
         var author = User.GetOrCreateByOctokitUser(dataStore, okitReview.User);
         review.AuthorId = author.Id;
 
@@ -177,7 +177,7 @@ public class Review
             PullRequestId = pullRequest.Id,
         };
 
-        Log.Verbose(DataStore.GetSqlLogMessage(sql, param));
+        _log.Verbose(DataStore.GetSqlLogMessage(sql, param));
         var reviews = dataStore.Connection!.Query<Review>(sql, param, null) ?? Enumerable.Empty<Review>();
         foreach (var review in reviews)
         {
@@ -195,7 +195,7 @@ public class Review
             AuthorId = user.Id,
         };
 
-        Log.Verbose(DataStore.GetSqlLogMessage(sql, param));
+        _log.Verbose(DataStore.GetSqlLogMessage(sql, param));
         var reviews = dataStore.Connection!.Query<Review>(sql, param, null) ?? Enumerable.Empty<Review>();
         foreach (var review in reviews)
         {
@@ -211,8 +211,8 @@ public class Review
         var sql = @"DELETE FROM Review WHERE PullRequestId NOT IN (SELECT Id FROM PullRequest)";
         var command = dataStore.Connection!.CreateCommand();
         command.CommandText = sql;
-        Log.Verbose(DataStore.GetCommandLogMessage(sql, command));
+        _log.Verbose(DataStore.GetCommandLogMessage(sql, command));
         var rowsDeleted = command.ExecuteNonQuery();
-        Log.Verbose(DataStore.GetDeletedLogMessage(rowsDeleted));
+        _log.Verbose(DataStore.GetDeletedLogMessage(rowsDeleted));
     }
 }
