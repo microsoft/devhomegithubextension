@@ -10,9 +10,11 @@ using Octokit;
 
 namespace GitHubExtension.Widgets;
 
-internal sealed class GitHubPullsWidget : GitHubRepositoryWidget
+internal class GitHubPullsWidget : GitHubRepositoryWidget
 {
-    private readonly string _pullsIconData = IconLoader.GetIconAsBase64("pulls.png");
+    private readonly string pullsIconData = IconLoader.GetIconAsBase64("pulls.png");
+
+    private static Dictionary<string, string> Templates { get; set; } = new();
 
     public override void DeleteWidget(string widgetId, string customState)
     {
@@ -100,7 +102,7 @@ internal sealed class GitHubPullsWidget : GitHubRepositoryWidget
                     { "date", TimeSpanHelper.DateTimeOffsetToDisplayString(pullItem.UpdatedAt, Log) },
                     { "user", pullItem.Author.Login },
                     { "avatar", pullItem.Author.AvatarUrl },
-                    { "icon", _pullsIconData },
+                    { "icon", pullsIconData },
                 };
 
                 var labels = pullItem.Labels.ToList();
@@ -125,7 +127,7 @@ internal sealed class GitHubPullsWidget : GitHubRepositoryWidget
             pullsData.Add("selected_repo", repository?.FullName ?? string.Empty);
             pullsData.Add("widgetTitle", WidgetTitle);
             pullsData.Add("is_loading_data", DataState == WidgetDataState.Unknown);
-            pullsData.Add("pulls_icon_data", _pullsIconData);
+            pullsData.Add("pulls_icon_data", pullsIconData);
 
             LastUpdated = DateTime.Now;
             DataState = WidgetDataState.Okay;

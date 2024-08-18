@@ -9,7 +9,7 @@ using Octokit;
 
 namespace GitHubExtension.Widgets;
 
-internal sealed class GitHubReviewWidget : GitHubUserWidget
+internal class GitHubReviewWidget : GitHubUserWidget
 {
     public GitHubReviewWidget()
         : base()
@@ -20,7 +20,7 @@ internal sealed class GitHubReviewWidget : GitHubUserWidget
 
     public override void RequestContentData()
     {
-        var request = new SearchIssuesRequest($"review-requested:{UserName}");
+        SearchIssuesRequest request = new SearchIssuesRequest($"review-requested:{UserName}");
 
         RequestContentData(request);
     }

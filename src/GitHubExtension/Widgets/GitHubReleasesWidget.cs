@@ -6,10 +6,11 @@ using GitHubExtension.Client;
 using GitHubExtension.DataManager;
 using GitHubExtension.Helpers;
 using GitHubExtension.Widgets.Enums;
+using Octokit;
 
 namespace GitHubExtension.Widgets;
 
-internal sealed class GitHubReleasesWidget : GitHubRepositoryWidget
+internal class GitHubReleasesWidget : GitHubRepositoryWidget
 {
     private readonly string _releasesIconData = IconLoader.GetIconAsBase64("releases.png");
 

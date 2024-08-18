@@ -18,7 +18,7 @@ public abstract class GitHubWidget : WidgetImpl
     protected static readonly TimeSpan WidgetRefreshRate = TimeSpan.FromMinutes(5);
     protected static readonly string EmptyJson = new JsonObject().ToJsonString();
 
-    private DateTime _lastUpdateRequest = DateTime.MinValue;
+    private DateTime lastUpdateRequest = DateTime.MinValue;
 
     protected WidgetActivityState ActivityState { get; set; } = WidgetActivityState.Unknown;
 
@@ -79,7 +79,7 @@ public abstract class GitHubWidget : WidgetImpl
 
         // If there is a state, it is being retrieved from the widget service, so
         // this widget was pinned before.
-        if (state.Length != 0)
+        if (state.Any())
         {
             ResetWidgetInfoFromState();
             Saved = true;
@@ -130,8 +130,6 @@ public abstract class GitHubWidget : WidgetImpl
                 // It might take some time to get the new data, so
                 // set data state to "unknown" so that loading page is shown.
                 DataState = WidgetDataState.Unknown;
-
-                ConfigurationData = actionInvokedArgs.Data;
                 UpdateWidget();
 
                 SavedConfigurationData = string.Empty;
@@ -207,7 +205,7 @@ public abstract class GitHubWidget : WidgetImpl
 
     public bool IsUserLoggedIn()
     {
-        var authProvider = DeveloperIdProvider.GetInstance();
+        IDeveloperIdProvider authProvider = DeveloperIdProvider.GetInstance();
         return authProvider.GetLoggedInDeveloperIds().DeveloperIds.Any();
     }
 
@@ -261,10 +259,10 @@ public abstract class GitHubWidget : WidgetImpl
 
     protected string GetTemplateForPage(WidgetPageState page)
     {
-        if (Template.TryGetValue(page, out var pageTemplate))
+        if (Template.ContainsKey(page))
         {
             Log.Debug($"Using cached template for {page}");
-            return pageTemplate;
+            return Template[page];
         }
 
         try
@@ -331,7 +329,7 @@ public abstract class GitHubWidget : WidgetImpl
         // If moving to configure, reset the throttle so when we update to Active, the first update
         // will not get throttled.
         DataUpdater.Stop();
-        _lastUpdateRequest = DateTime.MinValue;
+        lastUpdateRequest = DateTime.MinValue;
         ActivityState = WidgetActivityState.Configure;
         Page = WidgetPageState.Configure;
         LogCurrentState();
@@ -362,7 +360,7 @@ public abstract class GitHubWidget : WidgetImpl
     {
         // Only update per the update interval.
         // This is intended to be dynamic in the future.
-        if (DateTime.Now - _lastUpdateRequest < WidgetRefreshRate)
+        if (DateTime.Now - lastUpdateRequest < WidgetRefreshRate)
         {
             return;
         }
@@ -381,7 +379,7 @@ public abstract class GitHubWidget : WidgetImpl
             Log.Error(ex, "Failed Requesting Update");
         }
 
-        _lastUpdateRequest = DateTime.Now;
+        lastUpdateRequest = DateTime.Now;
     }
 
     private void HandleDeveloperIdChange(object? sender, IDeveloperId e)

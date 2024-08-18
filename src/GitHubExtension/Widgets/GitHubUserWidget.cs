@@ -19,12 +19,12 @@ internal abstract class GitHubUserWidget : GitHubWidget
 
     protected SearchCategory ShowCategory { get; set; } = SearchCategory.Unknown;
 
-    private string _userName = string.Empty;
+    private string userName = string.Empty;
 
     protected string UserName
     {
-        get => _userName = DeveloperLoginId;
-        set => _userName = value;
+        get => userName = DeveloperLoginId;
+        set => userName = value;
     }
 
     public GitHubUserWidget()
