@@ -24,7 +24,7 @@ public sealed class Codespace(Octokit.Codespace codespace) : IComputeSystem2
 
     public string SupplementalDisplayName => codespace.Repository.FullName;
 
-    public ComputeSystemOperations SupportedOperations => ComputeSystemOperations.Start | ComputeSystemOperations.Terminate;
+    public ComputeSystemOperations SupportedOperations => ComputeSystemOperations.Start | ComputeSystemOperations.Terminate | ComputeSystemOperations.Restart;
 
 #pragma warning disable CS0067
     public event TypedEventHandler<IComputeSystem, ComputeSystemState>? StateChanged;
@@ -99,13 +99,13 @@ public sealed class Codespace(Octokit.Codespace codespace) : IComputeSystem2
         throw new NotImplementedException();
     }
 
-    public IAsyncOperation<ComputeSystemPinnedResult> GetIsPinnedToStartMenuAsync() => throw new NotImplementedException();
+    public IAsyncOperation<ComputeSystemPinnedResult> GetIsPinnedToStartMenuAsync() => Task.Run(() => new ComputeSystemPinnedResult(false)).AsAsyncOperation();
 
-    public IAsyncOperation<ComputeSystemPinnedResult> GetIsPinnedToTaskbarAsync() => throw new NotImplementedException();
+    public IAsyncOperation<ComputeSystemPinnedResult> GetIsPinnedToTaskbarAsync() => Task.Run(() => new ComputeSystemPinnedResult(false)).AsAsyncOperation();
 
     public IAsyncOperation<ComputeSystemStateResult> GetStateAsync()
     {
-        return Task<ComputeSystemStateResult>.Run(() =>
+        return Task.Run(() =>
         {
             if (!codespace.State.TryParse(out CodespaceState state))
             {
@@ -144,17 +144,41 @@ public sealed class Codespace(Octokit.Codespace codespace) : IComputeSystem2
 
     public IAsyncOperation<ComputeSystemOperationResult> PinToTaskbarAsync() => throw new InvalidOperationException();
 
-    public IAsyncOperation<ComputeSystemOperationResult> RestartAsync(string options) => throw new InvalidOperationException();
+    public IAsyncOperation<ComputeSystemOperationResult> RestartAsync(string options)
+    {
+        ArgumentNullException.ThrowIfNull(AssociatedDeveloperId);
 
-    public IAsyncOperation<ComputeSystemOperationResult> ResumeAsync(string options) => throw new NotImplementedException();
+        return Task.Run(async () =>
+        {
+            StateChanged?.Invoke(this, ComputeSystemState.Restarting);
+            await StopAsync();
+            StateChanged?.Invoke(this, ComputeSystemState.Stopped);
+            await StartAsync();
+            StateChanged?.Invoke(this, ComputeSystemState.Running);
+            return new ComputeSystemOperationResult();
+        }).AsAsyncOperation();
+    }
 
-    public IAsyncOperation<ComputeSystemOperationResult> RevertSnapshotAsync(string options) => throw new NotImplementedException();
+    public IAsyncOperation<ComputeSystemOperationResult> ResumeAsync(string options) => throw new InvalidOperationException();
 
-    public IAsyncOperation<ComputeSystemOperationResult> SaveAsync(string options) => throw new NotImplementedException();
+    public IAsyncOperation<ComputeSystemOperationResult> RevertSnapshotAsync(string options) => throw new InvalidOperationException();
 
-    public IAsyncOperation<ComputeSystemOperationResult> ShutDownAsync(string options) => throw new NotImplementedException();
+    public IAsyncOperation<ComputeSystemOperationResult> SaveAsync(string options) => throw new InvalidOperationException();
 
-    public IAsyncOperation<ComputeSystemOperationResult> StartAsync(string options) => throw new NotImplementedException();
+    public IAsyncOperation<ComputeSystemOperationResult> ShutDownAsync(string options) => throw new InvalidOperationException();
+
+    public IAsyncOperation<ComputeSystemOperationResult> StartAsync(string options)
+    {
+        ArgumentNullException.ThrowIfNull(AssociatedDeveloperId);
+
+        return Task.Run(async () =>
+        {
+            StateChanged?.Invoke(this, ComputeSystemState.Starting);
+            await StartAsync();
+            StateChanged?.Invoke(this, ComputeSystemState.Running);
+            return new ComputeSystemOperationResult();
+        }).AsAsyncOperation();
+    }
 
     public IAsyncOperation<ComputeSystemOperationResult> TerminateAsync(string options)
     {
@@ -168,7 +192,7 @@ public sealed class Codespace(Octokit.Codespace codespace) : IComputeSystem2
         }).AsAsyncOperation();
     }
 
-    public IAsyncOperation<ComputeSystemOperationResult> UnpinFromStartMenuAsync() => throw new NotImplementedException();
+    public IAsyncOperation<ComputeSystemOperationResult> UnpinFromStartMenuAsync() => throw new InvalidOperationException();
 
-    public IAsyncOperation<ComputeSystemOperationResult> UnpinFromTaskbarAsync() => throw new NotImplementedException();
+    public IAsyncOperation<ComputeSystemOperationResult> UnpinFromTaskbarAsync() => throw new InvalidOperationException();
 }

@@ -846,7 +846,6 @@ public partial class GitHubDataManager : IGitHubDataManager, IDisposable
     private static readonly string[] _PRs = new string[] { "PullRequests" };
     private static readonly string[] _Issues = new string[] { "Issues" };
     private static readonly string[] _Releases = new string[] { "Releases" };
-    private static readonly string[] _Releases = new string[] { "Releases" };
 
     protected virtual void Dispose(bool disposing)
     {
