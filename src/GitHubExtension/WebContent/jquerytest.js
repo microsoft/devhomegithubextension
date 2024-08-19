@@ -14,3 +14,7 @@
         }
     );
 });
+
+function navigateToPage(webPage) {
+    window.location.assign(webPage);
+};

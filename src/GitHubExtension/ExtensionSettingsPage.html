@@ -46,8 +46,8 @@
             }
         };
 
-        function navigateToPage(webPage) {
-            window.location.assign(webPage);
+        function navigateToNextPage() {
+            window.location.assign('ExtensionSettingsPage2');
         };
 
         function devHomeGetNumberOfPages() {
@@ -63,13 +63,9 @@
     </script>
 </head>
 <body id="body" onload="devHomeGetNumberOfPages()" style="background:rgb(243, 243, 243)">
-    <h1> Extension Settings Main Page </h1>
+    <h1> Extension Settings Page Demo </h1>
     <img id="cat" src="cat.jpg" style="width:500px; height:500px" />
-    <div>
-        <input id="b1A" type="submit" name="button" onclick="changeTheme()" value="Change Theme" />
-        <input id="b1B" type="submit" name="button" onclick="navigateToPage('ExtensionSettingsPage2.html')" value="Check out a cute dog" />
-        <input id="b1B" type="submit" name="button" onclick="navigateToPage('TestCss.html')" value="CSS styled page example" />
-        <input id="b1B" type="submit" name="button" onclick="navigateToPage('TestJQuery.html')" value="jquery page example" />
-    </div>
+    <input id="b1A" type="submit" name="button" onclick="changeTheme()" value="Change Theme" />
+    <input id="b1B" type="submit" name="button" onclick="navigateToNextPage()" value="Check out a cute dog" />
 </body>
 </html>
