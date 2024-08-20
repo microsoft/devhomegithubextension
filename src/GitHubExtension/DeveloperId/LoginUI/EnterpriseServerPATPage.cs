@@ -6,12 +6,12 @@ using GitHubExtension.Helpers;
 
 namespace GitHubExtension.DeveloperId.LoginUI;
 
-internal class EnterpriseServerPATPage : LoginUIPage
+internal sealed class EnterpriseServerPATPage : LoginUIPage
 {
     public EnterpriseServerPATPage(Uri hostAddress, string errorText, SecureString inputPAT)
         : base(LoginUIState.EnterpriseServerPATPage)
     {
-        Data = new PageData()
+        Data = new EnterpriseServerPATPageData()
         {
             EnterpriseServerPATPageInputValue = new System.Net.NetworkCredential(string.Empty, inputPAT).Password ?? string.Empty,
             EnterpriseServerPATPageErrorValue = errorText ?? string.Empty,
@@ -22,7 +22,7 @@ internal class EnterpriseServerPATPage : LoginUIPage
         };
     }
 
-    internal class PageData : ILoginUIPageData
+    internal sealed class EnterpriseServerPATPageData : ILoginUIPageData
     {
         public string EnterpriseServerPATPageInputValue { get; set; } = string.Empty;
 
@@ -36,11 +36,11 @@ internal class EnterpriseServerPATPage : LoginUIPage
 
         public string GetJson()
         {
-            return Json.Stringify(this);
+            return Json.Stringify(this, _optionsWithContext);
         }
     }
 
-    internal class ActionPayload : SubmitActionPayload
+    internal sealed class ActionPayload : SubmitActionPayload
     {
         public string? URL
         {
@@ -48,7 +48,7 @@ internal class EnterpriseServerPATPage : LoginUIPage
         }
     }
 
-    internal class InputPayload
+    internal sealed class InputPayload
     {
         public string? PAT
         {

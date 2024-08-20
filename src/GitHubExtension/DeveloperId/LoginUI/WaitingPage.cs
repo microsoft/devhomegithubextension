@@ -5,7 +5,7 @@ using GitHubExtension.Helpers;
 
 namespace GitHubExtension.DeveloperId.LoginUI;
 
-internal class WaitingPage : LoginUIPage
+internal sealed class WaitingPage : LoginUIPage
 {
     public WaitingPage()
         : base(LoginUIState.WaitingPage)
@@ -13,11 +13,11 @@ internal class WaitingPage : LoginUIPage
         Data = new WaitingPageData();
     }
 
-    internal class WaitingPageData : ILoginUIPageData
+    internal sealed class WaitingPageData : ILoginUIPageData
     {
         public string GetJson()
         {
-            return Json.Stringify(this);
+            return Json.Stringify(this, _optionsWithContext);
         }
     }
 }

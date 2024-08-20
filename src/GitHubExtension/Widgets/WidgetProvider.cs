@@ -9,7 +9,13 @@ namespace GitHubExtension.Widgets;
 
 [ComVisible(true)]
 [ClassInterface(ClassInterfaceType.None)]
+#if CANARY_BUILD
+[Guid("E8778523-0D5F-478F-8AC3-1467928BDEF7")]
+#elif STABLE_BUILD
 [Guid("F23870B0-B391-4466-84E2-42A991078613")]
+#else
+[Guid("3AF3462E-0CCE-4200-887B-FB41872A4EFB")]
+#endif
 public sealed class WidgetProvider : IWidgetProvider, IWidgetProvider2
 {
     private readonly ILogger _log = Log.ForContext("SourceContext", nameof(WidgetProvider));
@@ -34,11 +40,11 @@ public sealed class WidgetProvider : IWidgetProvider, IWidgetProvider2
         var widgetId = widgetContext.Id;
         var widgetDefinitionId = widgetContext.DefinitionId;
         _log.Verbose($"Calling Initialize for Widget Id: {widgetId} - {widgetDefinitionId}");
-        if (_widgetDefinitionRegistry.ContainsKey(widgetDefinitionId))
+        if (_widgetDefinitionRegistry.TryGetValue(widgetDefinitionId, out var widgetDefinition))
         {
             if (!_runningWidgets.ContainsKey(widgetId))
             {
-                var factory = _widgetDefinitionRegistry[widgetDefinitionId];
+                var factory = widgetDefinition;
                 var widgetImpl = factory.Create(widgetContext, state);
                 _runningWidgets.Add(widgetId, widgetImpl);
             }
@@ -93,18 +99,18 @@ public sealed class WidgetProvider : IWidgetProvider, IWidgetProvider2
     {
         _log.Verbose($"Activate id: {widgetContext.Id} definitionId: {widgetContext.DefinitionId}");
         var widgetId = widgetContext.Id;
-        if (_runningWidgets.ContainsKey(widgetId))
+        if (_runningWidgets.TryGetValue(widgetId, out var widget))
         {
-            _runningWidgets[widgetId].Activate(widgetContext);
+            widget.Activate(widgetContext);
         }
         else
         {
             // Called to activate a widget that we don't know about, which is unexpected. Try to recover by creating it.
             _log.Warning($"Found WidgetId that was not known: {widgetContext.Id}, attempting to recover by creating it.");
             CreateWidget(widgetContext);
-            if (_runningWidgets.ContainsKey(widgetId))
+            if (_runningWidgets.TryGetValue(widgetId, out var newWidget))
             {
-                _runningWidgets[widgetId].Activate(widgetContext);
+                newWidget.Activate(widgetContext);
             }
         }
     }
@@ -112,18 +118,18 @@ public sealed class WidgetProvider : IWidgetProvider, IWidgetProvider2
     public void Deactivate(string widgetId)
     {
         _log.Verbose($"Deactivate id: {widgetId}");
-        if (_runningWidgets.ContainsKey(widgetId))
+        if (_runningWidgets.TryGetValue(widgetId, out var widget))
         {
-            _runningWidgets[widgetId].Deactivate(widgetId);
+            widget.Deactivate(widgetId);
         }
     }
 
     public void DeleteWidget(string widgetId, string customState)
     {
         _log.Information($"DeleteWidget id: {widgetId}");
-        if (_runningWidgets.ContainsKey(widgetId))
+        if (_runningWidgets.TryGetValue(widgetId, out var widget))
         {
-            _runningWidgets[widgetId].DeleteWidget(widgetId, customState);
+            widget.DeleteWidget(widgetId, customState);
             _runningWidgets.Remove(widgetId);
         }
     }
@@ -133,9 +139,9 @@ public sealed class WidgetProvider : IWidgetProvider, IWidgetProvider2
         _log.Debug($"OnActionInvoked id: {actionInvokedArgs.WidgetContext.Id} definitionId: {actionInvokedArgs.WidgetContext.DefinitionId}");
         var widgetContext = actionInvokedArgs.WidgetContext;
         var widgetId = widgetContext.Id;
-        if (_runningWidgets.ContainsKey(widgetId))
+        if (_runningWidgets.TryGetValue(widgetId, out var widget))
         {
-            _runningWidgets[widgetId].OnActionInvoked(actionInvokedArgs);
+            widget.OnActionInvoked(actionInvokedArgs);
         }
     }
 
@@ -144,9 +150,9 @@ public sealed class WidgetProvider : IWidgetProvider, IWidgetProvider2
         _log.Debug($"OnCustomizationRequested id: {customizationRequestedArgs.WidgetContext.Id} definitionId: {customizationRequestedArgs.WidgetContext.DefinitionId}");
         var widgetContext = customizationRequestedArgs.WidgetContext;
         var widgetId = widgetContext.Id;
-        if (_runningWidgets.ContainsKey(widgetId))
+        if (_runningWidgets.TryGetValue(widgetId, out var widget))
         {
-            _runningWidgets[widgetId].OnCustomizationRequested(customizationRequestedArgs);
+            widget.OnCustomizationRequested(customizationRequestedArgs);
         }
     }
 
@@ -155,9 +161,9 @@ public sealed class WidgetProvider : IWidgetProvider, IWidgetProvider2
         _log.Debug($"OnWidgetContextChanged id: {contextChangedArgs.WidgetContext.Id} definitionId: {contextChangedArgs.WidgetContext.DefinitionId}");
         var widgetContext = contextChangedArgs.WidgetContext;
         var widgetId = widgetContext.Id;
-        if (_runningWidgets.ContainsKey(widgetId))
+        if (_runningWidgets.TryGetValue(widgetId, out var widget))
         {
-            _runningWidgets[widgetId].OnWidgetContextChanged(contextChangedArgs);
+            widget.OnWidgetContextChanged(contextChangedArgs);
         }
     }
 }

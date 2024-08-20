@@ -104,7 +104,7 @@ public partial class GitHubDataManager : IGitHubDataManager, IDisposable
                 await UpdatePullRequestsAsync(repository, devId.GitHubClient, parameters.RequestOptions);
             });
 
-        SendRepositoryUpdateEvent(this, GetFullNameFromOwnerAndRepository(owner, name), new string[] { "Issues", "PullRequests" });
+        SendRepositoryUpdateEvent(this, GetFullNameFromOwnerAndRepository(owner, name), ["Issues", "PullRequests"]);
     }
 
     public async Task UpdateAllDataForRepositoryAsync(string fullName, RequestOptions? options = null)
@@ -133,7 +133,7 @@ public partial class GitHubDataManager : IGitHubDataManager, IDisposable
                 await UpdatePullRequestsAsync(repository, devId.GitHubClient, parameters.RequestOptions);
             });
 
-        SendRepositoryUpdateEvent(this, GetFullNameFromOwnerAndRepository(owner, name), new string[] { "PullRequests" });
+        SendRepositoryUpdateEvent(this, GetFullNameFromOwnerAndRepository(owner, name), ["PullRequests"]);
     }
 
     public async Task UpdatePullRequestsForRepositoryAsync(string fullName, RequestOptions? options = null)
@@ -162,7 +162,7 @@ public partial class GitHubDataManager : IGitHubDataManager, IDisposable
                 await UpdateIssuesAsync(repository, devId.GitHubClient, parameters.RequestOptions);
             });
 
-        SendRepositoryUpdateEvent(this, GetFullNameFromOwnerAndRepository(owner, name), new string[] { "Issues" });
+        SendRepositoryUpdateEvent(this, GetFullNameFromOwnerAndRepository(owner, name), ["Issues"]);
     }
 
     public async Task UpdateIssuesForRepositoryAsync(string fullName, RequestOptions? options = null)
@@ -202,7 +202,7 @@ public partial class GitHubDataManager : IGitHubDataManager, IDisposable
                 await UpdateReleasesAsync(repository, devId.GitHubClient, parameters.RequestOptions);
             });
 
-        SendRepositoryUpdateEvent(this, GetFullNameFromOwnerAndRepository(owner, name), new string[] { "Releases" });
+        SendRepositoryUpdateEvent(this, GetFullNameFromOwnerAndRepository(owner, name), ["Releases"]);
     }
 
     public IEnumerable<Repository> GetRepositories()
@@ -788,7 +788,7 @@ public partial class GitHubDataManager : IGitHubDataManager, IDisposable
     // Converts fullName -> owner, name.
     private string[] GetOwnerAndRepositoryNameFromFullName(string fullName)
     {
-        var nameSplit = fullName.Split(new[] { '/' });
+        var nameSplit = fullName.Split(['/']);
         if (nameSplit.Length != 2 || string.IsNullOrEmpty(nameSplit[0]) || string.IsNullOrEmpty(nameSplit[1]))
         {
             _log.Error($"Invalid repository full name: {fullName}");

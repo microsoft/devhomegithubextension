@@ -5,23 +5,23 @@ using GitHubExtension.Helpers;
 
 namespace GitHubExtension.DeveloperId.LoginUI;
 
-internal class LoginPage : LoginUIPage
+internal sealed class LoginPage : LoginUIPage
 {
     public LoginPage()
         : base(LoginUIState.LoginPage)
     {
-        Data = new PageData();
+        Data = new LoginPageData();
     }
 
-    internal class PageData : ILoginUIPageData
+    internal sealed class LoginPageData : ILoginUIPageData
     {
         public string GetJson()
         {
-            return Json.Stringify(this);
+            return Json.Stringify(this, _optionsWithContext);
         }
     }
 
-    internal class ActionPayload : SubmitActionPayload
+    internal sealed class ActionPayload : SubmitActionPayload
     {
         public bool IsEnterprise()
         {
