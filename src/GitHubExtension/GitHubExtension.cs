@@ -27,6 +27,7 @@ public sealed class GitHubExtension : IExtension, IDisposable
     private readonly WebServer.WebServer _webServer;
 
     private readonly string _url = string.Empty;
+    private readonly WebViewResult _webViewResult;
 
     public GitHubExtension(ManualResetEvent extensionDisposedEvent)
     {
@@ -41,6 +42,7 @@ public sealed class GitHubExtension : IExtension, IDisposable
         Console.WriteLine($"GitHubExtension is running on port {_webServer.Port}");
         _url = $"http://localhost:{_webServer.Port}/{extensionSettingsWebPage}";
         Console.WriteLine($"Navigate to: {_url}");
+        _webViewResult = new WebViewResult(_url);
     }
 
     public object? GetProvider(ProviderType providerType)
@@ -53,7 +55,7 @@ public sealed class GitHubExtension : IExtension, IDisposable
             case ProviderType.Repository:
                 return new RepositoryProvider();
             case ProviderType.Settings:
-                return new SettingsProvider2(_url);
+                return new SettingsProvider2(_webViewResult);
             case ProviderType.FeaturedApplications:
                 return new object();
             default:

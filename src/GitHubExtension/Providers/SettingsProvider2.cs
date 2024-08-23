@@ -12,20 +12,19 @@ public class SettingsProvider2 : ISettingsProvider2
     private static readonly Lazy<ILogger> _logger = new(() => Serilog.Log.ForContext("SourceContext", nameof(SettingsProvider)));
 
     private static readonly ILogger _log = _logger.Value;
+    private readonly WebViewResult _webViewResult;
 
     string ISettingsProvider.DisplayName => Resources.GetResource(@"SettingsProviderDisplayName");
 
-    private readonly string _url;
-
     public SettingsProvider2()
     {
-        _url = string.Empty;
+        _webViewResult = new WebViewResult(string.Empty);
     }
 
-    public SettingsProvider2(string url)
+    public SettingsProvider2(WebViewResult webViewResult)
     {
-        _log.Information($"SettingsProvider2 URL: {url}");
-        _url = url;
+        _webViewResult = webViewResult;
+        _log.Information($"SettingsProvider2 URL: {webViewResult.Url}");
     }
 
     public AdaptiveCardSessionResult GetSettingsAdaptiveCardSession()
@@ -41,7 +40,6 @@ public class SettingsProvider2 : ISettingsProvider2
 
     public WebViewResult GetSettingsWebView()
     {
-        _log.Information($"GetSettingsWebView");
-        return new WebViewResult(_url);
+        return _webViewResult;
     }
 }
