@@ -143,17 +143,11 @@ public abstract class GitHubRepositoryWidget : GitHubWidget
         }
 
         GetTitleFromDataObject(dataObj);
-        if (string.IsNullOrEmpty(WidgetTitle))
-        {
-            try
-            {
-                WidgetTitle = GetRepositoryFromUrl(RepositoryUrl).FullName;
-            }
-            catch
-            {
-                WidgetTitle = string.Empty;
-            }
-        }
+    }
+
+    protected string GetActualTitle()
+    {
+        return string.IsNullOrEmpty(WidgetTitle) ? GetRepositoryFromUrl(RepositoryUrl).FullName : WidgetTitle;
     }
 
     protected override void ResetWidgetInfoFromState()
