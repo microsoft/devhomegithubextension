@@ -24,19 +24,6 @@
       "value": "${widgetTitle}"
     },
     {
-      "type": "Input.ChoiceSet",
-      "id": "showCategory",
-      "isMultiSelect": false,
-      "isVisible": false,
-      "value": "PullRequests",
-      "choices": [
-        {
-          "title": "%Widget_Template/PullRequests%",
-          "value": "PullRequests"
-        }
-      ]
-    },
-    {
       "type": "ColumnSet",
       "columns": [
         {

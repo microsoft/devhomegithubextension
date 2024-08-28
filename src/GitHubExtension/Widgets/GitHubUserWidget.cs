@@ -19,6 +19,8 @@ internal abstract class GitHubUserWidget : GitHubWidget
 
     protected SearchCategory ShowCategory { get; set; } = SearchCategory.Unknown;
 
+    protected virtual string DefaultShowCategory => string.Empty;
+
     private string _userName = string.Empty;
 
     protected string UserName
@@ -115,7 +117,7 @@ internal abstract class GitHubUserWidget : GitHubWidget
         try
         {
             dataObject ??= JsonNode.Parse(ConfigurationData);
-            ShowCategory = EnumHelper.StringToSearchCategory(dataObject!["showCategory"]?.GetValue<string>() ?? string.Empty);
+            ShowCategory = EnumHelper.StringToSearchCategory(dataObject!["showCategory"]?.GetValue<string>() ?? DefaultShowCategory);
             DeveloperLoginId = dataObject!["account"]?.GetValue<string>() ?? string.Empty;
             UpdateTitle(dataObject);
         }
@@ -147,7 +149,7 @@ internal abstract class GitHubUserWidget : GitHubWidget
                 return;
             }
 
-            ShowCategory = EnumHelper.StringToSearchCategory(dataObject["showCategory"]?.GetValue<string>() ?? string.Empty);
+            ShowCategory = EnumHelper.StringToSearchCategory(dataObject["showCategory"]?.GetValue<string>() ?? DefaultShowCategory);
             DeveloperLoginId = dataObject["account"]?.GetValue<string>() ?? string.Empty;
             UpdateTitle(dataObject);
 

@@ -1,16 +1,15 @@
 ﻿// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-using System.Text.Json.Nodes;
-using GitHubExtension.DataManager;
 using GitHubExtension.Helpers;
-using Microsoft.Windows.Widgets.Providers;
 using Octokit;
 
 namespace GitHubExtension.Widgets;
 
 internal sealed class GitHubReviewWidget : GitHubUserWidget
 {
+    protected override string DefaultShowCategory => "PullRequests";
+
     protected override string GetTitleIconData()
     {
         return IconLoader.GetIconAsBase64("pulls.png");
