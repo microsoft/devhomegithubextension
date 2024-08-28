@@ -23,28 +23,6 @@ internal sealed class GitHubReviewWidget : GitHubUserWidget
         RequestContentData(request);
     }
 
-    public override void OnActionInvoked(WidgetActionInvokedArgs actionInvokedArgs)
-    {
-        // This widget does not have the ShowCategory
-        // property for the user to input,
-        // so we always put it to PullRequest here.
-        if (actionInvokedArgs.Verb == "Submit")
-        {
-            var data = actionInvokedArgs.Data;
-            var dataObject = JsonNode.Parse(data);
-
-            if (dataObject != null)
-            {
-                dataObject["showCategory"] = "PullRequests";
-                SubmitAction(dataObject.ToString());
-            }
-        }
-        else
-        {
-            base.OnActionInvoked(actionInvokedArgs);
-        }
-    }
-
     public override string GetTemplatePath(WidgetPageState page)
     {
         return page switch
