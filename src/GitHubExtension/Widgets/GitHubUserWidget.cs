@@ -57,11 +57,17 @@ internal abstract class GitHubUserWidget : GitHubWidget
 
     protected void UpdateTitle(JsonNode dataObj)
     {
-        GetTitleFromDataObject(dataObj);
-        if (string.IsNullOrEmpty(WidgetTitle))
+        if (dataObj == null)
         {
-            WidgetTitle = UserName;
+            return;
         }
+
+        GetTitleFromDataObject(dataObj);
+    }
+
+    protected string GetActualTitle()
+    {
+        return string.IsNullOrEmpty(WidgetTitle) ? UserName : WidgetTitle;
     }
 
     protected override void ResetWidgetInfoFromState()
@@ -249,7 +255,7 @@ internal abstract class GitHubUserWidget : GitHubWidget
             { "openCount", 0 },
             { "items", new JsonArray() },
             { "userName", UserName },
-            { "widgetTitle", WidgetTitle },
+            { "widgetTitle", GetActualTitle() },
             { "titleIconUrl", GetTitleIconData() },
             { "is_loading_data", true },
         };
@@ -302,7 +308,7 @@ internal abstract class GitHubUserWidget : GitHubWidget
             issuesData.Add("items", issuesArray);
             issuesData.Add("userName", UserName);
             issuesData.Add("titleIconUrl", GetTitleIconData());
-            issuesData.Add("widgetTitle", WidgetTitle);
+            issuesData.Add("widgetTitle", GetActualTitle());
 
             LastUpdated = DateTime.Now;
             ContentData = issuesData.ToJsonString();
