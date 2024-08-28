@@ -11,11 +11,9 @@ namespace GitHubExtension.Widgets;
 
 internal sealed class GitHubReviewWidget : GitHubUserWidget
 {
-    public GitHubReviewWidget()
-        : base()
+    protected override string GetTitleIconData()
     {
-        // This widget does not allow customization, so this value will not change.
-        ShowCategory = SearchCategory.PullRequests;
+        return IconLoader.GetIconAsBase64("pulls.png");
     }
 
     public override void RequestContentData()
@@ -25,41 +23,21 @@ internal sealed class GitHubReviewWidget : GitHubUserWidget
         RequestContentData(request);
     }
 
-    protected override string GetTitleIconData()
-    {
-        return IconLoader.GetIconAsBase64("pulls.png");
-    }
-
-    // This widget does not have "ShowCategory" as a variable.
-    // So we override this method to not care about this data.
-    protected override void ResetWidgetInfoFromState()
-    {
-        base.ResetWidgetInfoFromState();
-        ShowCategory = SearchCategory.PullRequests;
-    }
-
-    // Overriding this method because this widget only cares about the account.
     public override void OnActionInvoked(WidgetActionInvokedArgs actionInvokedArgs)
     {
+        // This widget does not have the ShowCategory
+        // property for the user to input,
+        // so we always put it to PullRequest here.
         if (actionInvokedArgs.Verb == "Submit")
         {
             var data = actionInvokedArgs.Data;
             var dataObject = JsonNode.Parse(data);
 
-            if (dataObject == null)
+            if (dataObject != null)
             {
-                return;
+                dataObject["showCategory"] = "PullRequests";
+                SubmitAction(dataObject.ToString());
             }
-
-            DeveloperLoginId = dataObject["account"]?.GetValue<string>() ?? string.Empty;
-            UpdateTitle(dataObject);
-
-            ConfigurationData = data;
-
-            // If we got here during the customization flow, we need to LoadContentData again
-            // so we can show the loading page rather than stale data.
-            LoadContentData();
-            UpdateActivityState();
         }
         else
         {

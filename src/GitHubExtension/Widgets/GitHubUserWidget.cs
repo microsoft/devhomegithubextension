@@ -135,28 +135,33 @@ internal abstract class GitHubUserWidget : GitHubWidget
         base.OnCustomizationRequested(customizationRequestedArgs);
     }
 
+    protected void SubmitAction(string data)
+    {
+        var dataObject = JsonNode.Parse(data);
+
+        if (dataObject == null)
+        {
+            return;
+        }
+
+        ShowCategory = EnumHelper.StringToSearchCategory(dataObject["showCategory"]?.GetValue<string>() ?? string.Empty);
+        DeveloperLoginId = dataObject["account"]?.GetValue<string>() ?? string.Empty;
+        UpdateTitle(dataObject);
+
+        ConfigurationData = data;
+
+        // If we got here during the customization flow, we need to LoadContentData again
+        // so we can show the loading page rather than stale data.
+        LoadContentData();
+        UpdateActivityState();
+    }
+
     public override void OnActionInvoked(WidgetActionInvokedArgs actionInvokedArgs)
     {
         if (actionInvokedArgs.Verb == "Submit")
         {
             var data = actionInvokedArgs.Data;
-            var dataObject = JsonNode.Parse(data);
-
-            if (dataObject == null)
-            {
-                return;
-            }
-
-            ShowCategory = EnumHelper.StringToSearchCategory(dataObject["showCategory"]?.GetValue<string>() ?? string.Empty);
-            DeveloperLoginId = dataObject["account"]?.GetValue<string>() ?? string.Empty;
-            UpdateTitle(dataObject);
-
-            ConfigurationData = data;
-
-            // If we got here during the customization flow, we need to LoadContentData again
-            // so we can show the loading page rather than stale data.
-            LoadContentData();
-            UpdateActivityState();
+            SubmitAction(data);
         }
         else
         {
