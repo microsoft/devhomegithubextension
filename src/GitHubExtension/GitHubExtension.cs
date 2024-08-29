@@ -47,7 +47,8 @@ public sealed class GitHubExtension : IExtension, IDisposable
         // using file path:
         string filePath = Path.Combine(webcontentPath, "HelloWorld.html");
         Console.WriteLine($"filePath: {filePath}");
-        _url = filePath;
+
+        // _url = filePath;
     }
 
     public object? GetProvider(ProviderType providerType)
