@@ -17,11 +17,6 @@
   </ItemDefinitionGroup>
 
   <ItemGroup>
-    <Content Remove="WebContent\cat.jpg" />
-    <Content Remove="WebContent\dog.jpg" />
-  </ItemGroup>
-
-  <ItemGroup>
     <None Remove="Widgets\Templates\GitHubAssignedConfigurationTemplate.json" />
     <None Remove="Widgets\Templates\GitHubAssignedTemplate.json" />
     <None Remove="Widgets\Templates\GitHubIssuesConfigurationTemplate.json" />

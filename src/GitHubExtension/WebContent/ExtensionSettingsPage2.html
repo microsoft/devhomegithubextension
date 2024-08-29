@@ -2,31 +2,46 @@
 <html>
 <head>
     <title>Woof</title>
-    <style>
-    h1 {
-        background-color: #0080ff
-    }
-    h2 {
-        background-color: #00ff80
-    }
-    </style>
     <script>
         "use strict";
+
+        var lightMode = "rgb(243, 243, 243)";
+        var darkMode = "rgb(32, 32, 32)";
 
         function doPostMessage(message) {
             // Do different things in WebView2 vs the browser, so neither gets an error
             try {
                 window.chrome.webview.postMessage(message);
+                console.log("window.chrome");
+
             }
             catch {
                 window.postMessage(message);
             }
         };
 
+        if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+            document.documentElement.setAttribute('data-theme', 'dark');
+        } else {
+            document.documentElement.setAttribute('data-theme', 'light');
+        }
+
         function navigateToPreviousPage() {
             window.location.assign('ExtensionSettingsPage.html');
         };
     </script>
+    <meta name="color-scheme" content="dark light">
+    <style>
+        /* Default styles (light mode) */
+        body {
+            color: rgb(32, 32, 32);
+        }
+
+        /* Dark mode styles */
+        [data-theme="dark"] body {
+            color: rgb(243, 243, 243);
+        }
+    </style>
 </head>
 <body id="body">
     <h1> Woof </h1>
