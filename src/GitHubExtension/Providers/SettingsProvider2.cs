@@ -4,6 +4,7 @@
 using GitHubExtension.Helpers;
 using Microsoft.Windows.DevHome.SDK;
 using Serilog;
+using Windows.Media.Protection;
 
 namespace GitHubExtension.Providers;
 
@@ -18,18 +19,26 @@ public class SettingsProvider2 : ISettingsProvider2
 
     public SettingsProvider2()
     {
-        _webViewResult = new WebViewResult(string.Empty);
+        _webViewResult = new WebViewResult(new NotImplementedException(), "No WebView was provided for the SettingsProvider2");
     }
 
     public SettingsProvider2(WebViewResult webViewResult)
     {
         _webViewResult = webViewResult;
-        _log.Information($"SettingsProvider2 URL: {webViewResult.Url}");
+        if (!string.IsNullOrEmpty(webViewResult.Url))
+        {
+            _log.Information($"SettingsProvider2 URL: {webViewResult.Url}");
+        }
+        else
+        {
+            _webViewResult = new WebViewResult(new NotImplementedException(), "WebView URL was null or empty");
+        }
     }
 
     public AdaptiveCardSessionResult GetSettingsAdaptiveCardSession()
     {
         _log.Information($"GetSettingsAdaptiveCardSession");
+
         return new AdaptiveCardSessionResult(new SettingsUIController());
     }
 
@@ -42,4 +51,6 @@ public class SettingsProvider2 : ISettingsProvider2
     {
         return _webViewResult;
     }
+
+    public SupportedResults GetSupportedResults() => throw new NotImplementedException();
 }
