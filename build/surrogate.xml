@@ -1,0 +1,1335 @@
+<?xml version="1.0" encoding="utf-8"?>
+<APIScanSurrogates xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+    <Mappings>
+         <Mapping>
+            <SurrogateSet>
+                <BinarySet>
+                    <SymbolLocations>
+                        <SymbolLocation>.</SymbolLocation>
+                        <SymbolLocation>SRV*https://symweb</SymbolLocation>
+                    </SymbolLocations>
+                    <Binary path="GitHubExtensionServer\linked\DevHomeGitHubExtension.dll" />
+                </BinarySet>
+            </SurrogateSet>
+            <Targets>
+                <Binary path=".*\\DevHomeGitHubExtension.dll" pathType="Regex" />
+            </Targets>
+        </Mapping>
+         <Mapping>
+            <SurrogateSet>
+                <BinarySet>
+                    <SymbolLocations>
+                        <SymbolLocation>.</SymbolLocation>
+                        <SymbolLocation>SRV*https://symweb</SymbolLocation>
+                    </SymbolLocations>
+                    <Binary path="GitHubExtensionServer\linked\GitHubExtension.dll" />
+                </BinarySet>
+            </SurrogateSet>
+            <Targets>
+                <Binary path=".*\\GitHubExtension.dll" pathType="Regex" />
+            </Targets>
+        </Mapping>
+         <Mapping>
+            <SurrogateSet>
+                <BinarySet>
+                    <SymbolLocations>
+                        <SymbolLocation>.</SymbolLocation>
+                        <SymbolLocation>SRV*https://symweb</SymbolLocation>
+                    </SymbolLocations>
+                    <Binary path="GitHubExtensionServer\linked\GitHubExtension.Telemetry.dll" />
+                </BinarySet>
+            </SurrogateSet>
+            <Targets>
+                <Binary path=".*\\GitHubExtension.Telemetry.dll" pathType="Regex" />
+            </Targets>
+        </Mapping>
+         <Mapping>
+            <SurrogateSet>
+                <BinarySet>
+                    <SymbolLocations>
+                        <SymbolLocation>.</SymbolLocation>
+                        <SymbolLocation>SRV*https://symweb</SymbolLocation>
+                    </SymbolLocations>
+                    <Binary path="GitHubExtensionServer\linked\Microsoft.Extensions.Configuration.Abstractions.dll" />
+                </BinarySet>
+            </SurrogateSet>
+            <Targets>
+                <Binary path=".*\\Microsoft.Extensions.Configuration.Abstractions.dll" pathType="Regex" />
+            </Targets>
+        </Mapping>
+         <Mapping>
+            <SurrogateSet>
+                <BinarySet>
+                    <SymbolLocations>
+                        <SymbolLocation>.</SymbolLocation>
+                        <SymbolLocation>SRV*https://symweb</SymbolLocation>
+                    </SymbolLocations>
+                    <Binary path="GitHubExtensionServer\linked\Microsoft.Extensions.Configuration.Binder.dll" />
+                </BinarySet>
+            </SurrogateSet>
+            <Targets>
+                <Binary path=".*\\Microsoft.Extensions.Configuration.Binder.dll" pathType="Regex" />
+            </Targets>
+        </Mapping>
+         <Mapping>
+            <SurrogateSet>
+                <BinarySet>
+                    <SymbolLocations>
+                        <SymbolLocation>.</SymbolLocation>
+                        <SymbolLocation>SRV*https://symweb</SymbolLocation>
+                    </SymbolLocations>
+                    <Binary path="GitHubExtensionServer\linked\Microsoft.Extensions.Configuration.CommandLine.dll" />
+                </BinarySet>
+            </SurrogateSet>
+            <Targets>
+                <Binary path=".*\\Microsoft.Extensions.Configuration.CommandLine.dll" pathType="Regex" />
+            </Targets>
+        </Mapping>
+         <Mapping>
+            <SurrogateSet>
+                <BinarySet>
+                    <SymbolLocations>
+                        <SymbolLocation>.</SymbolLocation>
+                        <SymbolLocation>SRV*https://symweb</SymbolLocation>
+                    </SymbolLocations>
+                    <Binary path="GitHubExtensionServer\linked\Microsoft.Extensions.Configuration.dll" />
+                </BinarySet>
+            </SurrogateSet>
+            <Targets>
+                <Binary path=".*\\Microsoft.Extensions.Configuration.dll" pathType="Regex" />
+            </Targets>
+        </Mapping>
+         <Mapping>
+            <SurrogateSet>
+                <BinarySet>
+                    <SymbolLocations>
+                        <SymbolLocation>.</SymbolLocation>
+                        <SymbolLocation>SRV*https://symweb</SymbolLocation>
+                    </SymbolLocations>
+                    <Binary path="GitHubExtensionServer\linked\Microsoft.Extensions.Configuration.EnvironmentVariables.dll" />
+                </BinarySet>
+            </SurrogateSet>
+            <Targets>
+                <Binary path=".*\\Microsoft.Extensions.Configuration.EnvironmentVariables.dll" pathType="Regex" />
+            </Targets>
+        </Mapping>
+         <Mapping>
+            <SurrogateSet>
+                <BinarySet>
+                    <SymbolLocations>
+                        <SymbolLocation>.</SymbolLocation>
+                        <SymbolLocation>SRV*https://symweb</SymbolLocation>
+                    </SymbolLocations>
+                    <Binary path="GitHubExtensionServer\linked\Microsoft.Extensions.Configuration.FileExtensions.dll" />
+                </BinarySet>
+            </SurrogateSet>
+            <Targets>
+                <Binary path=".*\\Microsoft.Extensions.Configuration.FileExtensions.dll" pathType="Regex" />
+            </Targets>
+        </Mapping>
+         <Mapping>
+            <SurrogateSet>
+                <BinarySet>
+                    <SymbolLocations>
+                        <SymbolLocation>.</SymbolLocation>
+                        <SymbolLocation>SRV*https://symweb</SymbolLocation>
+                    </SymbolLocations>
+                    <Binary path="GitHubExtensionServer\linked\Microsoft.Extensions.Configuration.Json.dll" />
+                </BinarySet>
+            </SurrogateSet>
+            <Targets>
+                <Binary path=".*\\Microsoft.Extensions.Configuration.Json.dll" pathType="Regex" />
+            </Targets>
+        </Mapping>
+         <Mapping>
+            <SurrogateSet>
+                <BinarySet>
+                    <SymbolLocations>
+                        <SymbolLocation>.</SymbolLocation>
+                        <SymbolLocation>SRV*https://symweb</SymbolLocation>
+                    </SymbolLocations>
+                    <Binary path="GitHubExtensionServer\linked\Microsoft.Extensions.Configuration.UserSecrets.dll" />
+                </BinarySet>
+            </SurrogateSet>
+            <Targets>
+                <Binary path=".*\\Microsoft.Extensions.Configuration.UserSecrets.dll" pathType="Regex" />
+            </Targets>
+        </Mapping>
+         <Mapping>
+            <SurrogateSet>
+                <BinarySet>
+                    <SymbolLocations>
+                        <SymbolLocation>.</SymbolLocation>
+                        <SymbolLocation>SRV*https://symweb</SymbolLocation>
+                    </SymbolLocations>
+                    <Binary path="GitHubExtensionServer\linked\Microsoft.Extensions.DependencyInjection.Abstractions.dll" />
+                </BinarySet>
+            </SurrogateSet>
+            <Targets>
+                <Binary path=".*\\Microsoft.Extensions.DependencyInjection.Abstractions.dll" pathType="Regex" />
+            </Targets>
+        </Mapping>
+         <Mapping>
+            <SurrogateSet>
+                <BinarySet>
+                    <SymbolLocations>
+                        <SymbolLocation>.</SymbolLocation>
+                        <SymbolLocation>SRV*https://symweb</SymbolLocation>
+                    </SymbolLocations>
+                    <Binary path="GitHubExtensionServer\linked\Microsoft.Extensions.DependencyInjection.dll" />
+                </BinarySet>
+            </SurrogateSet>
+            <Targets>
+                <Binary path=".*\\Microsoft.Extensions.DependencyInjection.dll" pathType="Regex" />
+            </Targets>
+        </Mapping>
+         <Mapping>
+            <SurrogateSet>
+                <BinarySet>
+                    <SymbolLocations>
+                        <SymbolLocation>.</SymbolLocation>
+                        <SymbolLocation>SRV*https://symweb</SymbolLocation>
+                    </SymbolLocations>
+                    <Binary path="GitHubExtensionServer\linked\Microsoft.Extensions.DependencyModel.dll" />
+                </BinarySet>
+            </SurrogateSet>
+            <Targets>
+                <Binary path=".*\\Microsoft.Extensions.DependencyModel.dll" pathType="Regex" />
+            </Targets>
+        </Mapping>
+         <Mapping>
+            <SurrogateSet>
+                <BinarySet>
+                    <SymbolLocations>
+                        <SymbolLocation>.</SymbolLocation>
+                        <SymbolLocation>SRV*https://symweb</SymbolLocation>
+                    </SymbolLocations>
+                    <Binary path="GitHubExtensionServer\linked\Microsoft.Extensions.Diagnostics.Abstractions.dll" />
+                </BinarySet>
+            </SurrogateSet>
+            <Targets>
+                <Binary path=".*\\Microsoft.Extensions.Diagnostics.Abstractions.dll" pathType="Regex" />
+            </Targets>
+        </Mapping>
+         <Mapping>
+            <SurrogateSet>
+                <BinarySet>
+                    <SymbolLocations>
+                        <SymbolLocation>.</SymbolLocation>
+                        <SymbolLocation>SRV*https://symweb</SymbolLocation>
+                    </SymbolLocations>
+                    <Binary path="GitHubExtensionServer\linked\Microsoft.Extensions.Diagnostics.dll" />
+                </BinarySet>
+            </SurrogateSet>
+            <Targets>
+                <Binary path=".*\\Microsoft.Extensions.Diagnostics.dll" pathType="Regex" />
+            </Targets>
+        </Mapping>
+         <Mapping>
+            <SurrogateSet>
+                <BinarySet>
+                    <SymbolLocations>
+                        <SymbolLocation>.</SymbolLocation>
+                        <SymbolLocation>SRV*https://symweb</SymbolLocation>
+                    </SymbolLocations>
+                    <Binary path="GitHubExtensionServer\linked\Microsoft.Extensions.FileProviders.Abstractions.dll" />
+                </BinarySet>
+            </SurrogateSet>
+            <Targets>
+                <Binary path=".*\\Microsoft.Extensions.FileProviders.Abstractions.dll" pathType="Regex" />
+            </Targets>
+        </Mapping>
+         <Mapping>
+            <SurrogateSet>
+                <BinarySet>
+                    <SymbolLocations>
+                        <SymbolLocation>.</SymbolLocation>
+                        <SymbolLocation>SRV*https://symweb</SymbolLocation>
+                    </SymbolLocations>
+                    <Binary path="GitHubExtensionServer\linked\Microsoft.Extensions.FileProviders.Physical.dll" />
+                </BinarySet>
+            </SurrogateSet>
+            <Targets>
+                <Binary path=".*\\Microsoft.Extensions.FileProviders.Physical.dll" pathType="Regex" />
+            </Targets>
+        </Mapping>
+         <Mapping>
+            <SurrogateSet>
+                <BinarySet>
+                    <SymbolLocations>
+                        <SymbolLocation>.</SymbolLocation>
+                        <SymbolLocation>SRV*https://symweb</SymbolLocation>
+                    </SymbolLocations>
+                    <Binary path="GitHubExtensionServer\linked\Microsoft.Extensions.FileSystemGlobbing.dll" />
+                </BinarySet>
+            </SurrogateSet>
+            <Targets>
+                <Binary path=".*\\Microsoft.Extensions.FileSystemGlobbing.dll" pathType="Regex" />
+            </Targets>
+        </Mapping>
+         <Mapping>
+            <SurrogateSet>
+                <BinarySet>
+                    <SymbolLocations>
+                        <SymbolLocation>.</SymbolLocation>
+                        <SymbolLocation>SRV*https://symweb</SymbolLocation>
+                    </SymbolLocations>
+                    <Binary path="GitHubExtensionServer\linked\Microsoft.Extensions.Hosting.Abstractions.dll" />
+                </BinarySet>
+            </SurrogateSet>
+            <Targets>
+                <Binary path=".*\\Microsoft.Extensions.Hosting.Abstractions.dll" pathType="Regex" />
+            </Targets>
+        </Mapping>
+         <Mapping>
+            <SurrogateSet>
+                <BinarySet>
+                    <SymbolLocations>
+                        <SymbolLocation>.</SymbolLocation>
+                        <SymbolLocation>SRV*https://symweb</SymbolLocation>
+                    </SymbolLocations>
+                    <Binary path="GitHubExtensionServer\linked\Microsoft.Extensions.Hosting.dll" />
+                </BinarySet>
+            </SurrogateSet>
+            <Targets>
+                <Binary path=".*\\Microsoft.Extensions.Hosting.dll" pathType="Regex" />
+            </Targets>
+        </Mapping>
+         <Mapping>
+            <SurrogateSet>
+                <BinarySet>
+                    <SymbolLocations>
+                        <SymbolLocation>.</SymbolLocation>
+                        <SymbolLocation>SRV*https://symweb</SymbolLocation>
+                    </SymbolLocations>
+                    <Binary path="GitHubExtensionServer\linked\Microsoft.Extensions.Logging.Abstractions.dll" />
+                </BinarySet>
+            </SurrogateSet>
+            <Targets>
+                <Binary path=".*\\Microsoft.Extensions.Logging.Abstractions.dll" pathType="Regex" />
+            </Targets>
+        </Mapping>
+         <Mapping>
+            <SurrogateSet>
+                <BinarySet>
+                    <SymbolLocations>
+                        <SymbolLocation>.</SymbolLocation>
+                        <SymbolLocation>SRV*https://symweb</SymbolLocation>
+                    </SymbolLocations>
+                    <Binary path="GitHubExtensionServer\linked\Microsoft.Extensions.Logging.Configuration.dll" />
+                </BinarySet>
+            </SurrogateSet>
+            <Targets>
+                <Binary path=".*\\Microsoft.Extensions.Logging.Configuration.dll" pathType="Regex" />
+            </Targets>
+        </Mapping>
+         <Mapping>
+            <SurrogateSet>
+                <BinarySet>
+                    <SymbolLocations>
+                        <SymbolLocation>.</SymbolLocation>
+                        <SymbolLocation>SRV*https://symweb</SymbolLocation>
+                    </SymbolLocations>
+                    <Binary path="GitHubExtensionServer\linked\Microsoft.Extensions.Logging.Console.dll" />
+                </BinarySet>
+            </SurrogateSet>
+            <Targets>
+                <Binary path=".*\\Microsoft.Extensions.Logging.Console.dll" pathType="Regex" />
+            </Targets>
+        </Mapping>
+         <Mapping>
+            <SurrogateSet>
+                <BinarySet>
+                    <SymbolLocations>
+                        <SymbolLocation>.</SymbolLocation>
+                        <SymbolLocation>SRV*https://symweb</SymbolLocation>
+                    </SymbolLocations>
+                    <Binary path="GitHubExtensionServer\linked\Microsoft.Extensions.Logging.Debug.dll" />
+                </BinarySet>
+            </SurrogateSet>
+            <Targets>
+                <Binary path=".*\\Microsoft.Extensions.Logging.Debug.dll" pathType="Regex" />
+            </Targets>
+        </Mapping>
+         <Mapping>
+            <SurrogateSet>
+                <BinarySet>
+                    <SymbolLocations>
+                        <SymbolLocation>.</SymbolLocation>
+                        <SymbolLocation>SRV*https://symweb</SymbolLocation>
+                    </SymbolLocations>
+                    <Binary path="GitHubExtensionServer\linked\Microsoft.Extensions.Logging.dll" />
+                </BinarySet>
+            </SurrogateSet>
+            <Targets>
+                <Binary path=".*\\Microsoft.Extensions.Logging.dll" pathType="Regex" />
+            </Targets>
+        </Mapping>
+         <Mapping>
+            <SurrogateSet>
+                <BinarySet>
+                    <SymbolLocations>
+                        <SymbolLocation>.</SymbolLocation>
+                        <SymbolLocation>SRV*https://symweb</SymbolLocation>
+                    </SymbolLocations>
+                    <Binary path="GitHubExtensionServer\linked\Microsoft.Extensions.Logging.EventLog.dll" />
+                </BinarySet>
+            </SurrogateSet>
+            <Targets>
+                <Binary path=".*\\Microsoft.Extensions.Logging.EventLog.dll" pathType="Regex" />
+            </Targets>
+        </Mapping>
+         <Mapping>
+            <SurrogateSet>
+                <BinarySet>
+                    <SymbolLocations>
+                        <SymbolLocation>.</SymbolLocation>
+                        <SymbolLocation>SRV*https://symweb</SymbolLocation>
+                    </SymbolLocations>
+                    <Binary path="GitHubExtensionServer\linked\Microsoft.Extensions.Logging.EventSource.dll" />
+                </BinarySet>
+            </SurrogateSet>
+            <Targets>
+                <Binary path=".*\\Microsoft.Extensions.Logging.EventSource.dll" pathType="Regex" />
+            </Targets>
+        </Mapping>
+         <Mapping>
+            <SurrogateSet>
+                <BinarySet>
+                    <SymbolLocations>
+                        <SymbolLocation>.</SymbolLocation>
+                        <SymbolLocation>SRV*https://symweb</SymbolLocation>
+                    </SymbolLocations>
+                    <Binary path="GitHubExtensionServer\linked\Microsoft.Extensions.Options.ConfigurationExtensions.dll" />
+                </BinarySet>
+            </SurrogateSet>
+            <Targets>
+                <Binary path=".*\\Microsoft.Extensions.Options.ConfigurationExtensions.dll" pathType="Regex" />
+            </Targets>
+        </Mapping>
+         <Mapping>
+            <SurrogateSet>
+                <BinarySet>
+                    <SymbolLocations>
+                        <SymbolLocation>.</SymbolLocation>
+                        <SymbolLocation>SRV*https://symweb</SymbolLocation>
+                    </SymbolLocations>
+                    <Binary path="GitHubExtensionServer\linked\Microsoft.Extensions.Options.dll" />
+                </BinarySet>
+            </SurrogateSet>
+            <Targets>
+                <Binary path=".*\\Microsoft.Extensions.Options.dll" pathType="Regex" />
+            </Targets>
+        </Mapping>
+         <Mapping>
+            <SurrogateSet>
+                <BinarySet>
+                    <SymbolLocations>
+                        <SymbolLocation>.</SymbolLocation>
+                        <SymbolLocation>SRV*https://symweb</SymbolLocation>
+                    </SymbolLocations>
+                    <Binary path="GitHubExtensionServer\linked\Microsoft.Extensions.Primitives.dll" />
+                </BinarySet>
+            </SurrogateSet>
+            <Targets>
+                <Binary path=".*\\Microsoft.Extensions.Primitives.dll" pathType="Regex" />
+            </Targets>
+        </Mapping>
+         <Mapping>
+            <SurrogateSet>
+                <BinarySet>
+                    <SymbolLocations>
+                        <SymbolLocation>.</SymbolLocation>
+                        <SymbolLocation>SRV*https://symweb</SymbolLocation>
+                    </SymbolLocations>
+                    <Binary path="GitHubExtensionServer\linked\Microsoft.InteractiveExperiences.Projection.dll" />
+                </BinarySet>
+            </SurrogateSet>
+            <Targets>
+                <Binary path=".*\\Microsoft.InteractiveExperiences.Projection.dll" pathType="Regex" />
+            </Targets>
+        </Mapping>
+         <Mapping>
+            <SurrogateSet>
+                <BinarySet>
+                    <SymbolLocations>
+                        <SymbolLocation>.</SymbolLocation>
+                        <SymbolLocation>SRV*https://symweb</SymbolLocation>
+                    </SymbolLocations>
+                    <Binary path="GitHubExtensionServer\linked\Microsoft.VisualStudio.Setup.Configuration.Interop.dll" />
+                </BinarySet>
+            </SurrogateSet>
+            <Targets>
+                <Binary path=".*\\Microsoft.VisualStudio.Setup.Configuration.Interop.dll" pathType="Regex" />
+            </Targets>
+        </Mapping>
+         <Mapping>
+            <SurrogateSet>
+                <BinarySet>
+                    <SymbolLocations>
+                        <SymbolLocation>.</SymbolLocation>
+                        <SymbolLocation>SRV*https://symweb</SymbolLocation>
+                    </SymbolLocations>
+                    <Binary path="GitHubExtensionServer\linked\Microsoft.Win32.Registry.dll" />
+                </BinarySet>
+            </SurrogateSet>
+            <Targets>
+                <Binary path=".*\\Microsoft.Win32.Registry.dll" pathType="Regex" />
+            </Targets>
+        </Mapping>
+         <Mapping>
+            <SurrogateSet>
+                <BinarySet>
+                    <SymbolLocations>
+                        <SymbolLocation>.</SymbolLocation>
+                        <SymbolLocation>SRV*https://symweb</SymbolLocation>
+                    </SymbolLocations>
+                    <Binary path="GitHubExtensionServer\linked\Microsoft.Windows.ApplicationModel.DynamicDependency.Projection.dll" />
+                </BinarySet>
+            </SurrogateSet>
+            <Targets>
+                <Binary path=".*\\Microsoft.Windows.ApplicationModel.DynamicDependency.Projection.dll" pathType="Regex" />
+            </Targets>
+        </Mapping>
+         <Mapping>
+            <SurrogateSet>
+                <BinarySet>
+                    <SymbolLocations>
+                        <SymbolLocation>.</SymbolLocation>
+                        <SymbolLocation>SRV*https://symweb</SymbolLocation>
+                    </SymbolLocations>
+                    <Binary path="GitHubExtensionServer\linked\Microsoft.Windows.ApplicationModel.Resources.Projection.dll" />
+                </BinarySet>
+            </SurrogateSet>
+            <Targets>
+                <Binary path=".*\\Microsoft.Windows.ApplicationModel.Resources.Projection.dll" pathType="Regex" />
+            </Targets>
+        </Mapping>
+         <Mapping>
+            <SurrogateSet>
+                <BinarySet>
+                    <SymbolLocations>
+                        <SymbolLocation>.</SymbolLocation>
+                        <SymbolLocation>SRV*https://symweb</SymbolLocation>
+                    </SymbolLocations>
+                    <Binary path="GitHubExtensionServer\linked\Microsoft.Windows.ApplicationModel.WindowsAppRuntime.Projection.dll" />
+                </BinarySet>
+            </SurrogateSet>
+            <Targets>
+                <Binary path=".*\\Microsoft.Windows.ApplicationModel.WindowsAppRuntime.Projection.dll" pathType="Regex" />
+            </Targets>
+        </Mapping>
+         <Mapping>
+            <SurrogateSet>
+                <BinarySet>
+                    <SymbolLocations>
+                        <SymbolLocation>.</SymbolLocation>
+                        <SymbolLocation>SRV*https://symweb</SymbolLocation>
+                    </SymbolLocations>
+                    <Binary path="GitHubExtensionServer\linked\Microsoft.Windows.AppLifecycle.Projection.dll" />
+                </BinarySet>
+            </SurrogateSet>
+            <Targets>
+                <Binary path=".*\\Microsoft.Windows.AppLifecycle.Projection.dll" pathType="Regex" />
+            </Targets>
+        </Mapping>
+         <Mapping>
+            <SurrogateSet>
+                <BinarySet>
+                    <SymbolLocations>
+                        <SymbolLocation>.</SymbolLocation>
+                        <SymbolLocation>SRV*https://symweb</SymbolLocation>
+                    </SymbolLocations>
+                    <Binary path="GitHubExtensionServer\linked\Microsoft.Windows.AppNotifications.Builder.Projection.dll" />
+                </BinarySet>
+            </SurrogateSet>
+            <Targets>
+                <Binary path=".*\\Microsoft.Windows.AppNotifications.Builder.Projection.dll" pathType="Regex" />
+            </Targets>
+        </Mapping>
+         <Mapping>
+            <SurrogateSet>
+                <BinarySet>
+                    <SymbolLocations>
+                        <SymbolLocation>.</SymbolLocation>
+                        <SymbolLocation>SRV*https://symweb</SymbolLocation>
+                    </SymbolLocations>
+                    <Binary path="GitHubExtensionServer\linked\Microsoft.Windows.AppNotifications.Projection.dll" />
+                </BinarySet>
+            </SurrogateSet>
+            <Targets>
+                <Binary path=".*\\Microsoft.Windows.AppNotifications.Projection.dll" pathType="Regex" />
+            </Targets>
+        </Mapping>
+         <Mapping>
+            <SurrogateSet>
+                <BinarySet>
+                    <SymbolLocations>
+                        <SymbolLocation>.</SymbolLocation>
+                        <SymbolLocation>SRV*https://symweb</SymbolLocation>
+                    </SymbolLocations>
+                    <Binary path="GitHubExtensionServer\linked\Microsoft.Windows.DevHome.SDK.Lib.dll" />
+                </BinarySet>
+            </SurrogateSet>
+            <Targets>
+                <Binary path=".*\\Microsoft.Windows.DevHome.SDK.Lib.dll" pathType="Regex" />
+            </Targets>
+        </Mapping>
+         <Mapping>
+            <SurrogateSet>
+                <BinarySet>
+                    <SymbolLocations>
+                        <SymbolLocation>.</SymbolLocation>
+                        <SymbolLocation>SRV*https://symweb</SymbolLocation>
+                    </SymbolLocations>
+                    <Binary path="GitHubExtensionServer\linked\Microsoft.Windows.PushNotifications.Projection.dll" />
+                </BinarySet>
+            </SurrogateSet>
+            <Targets>
+                <Binary path=".*\\Microsoft.Windows.PushNotifications.Projection.dll" pathType="Regex" />
+            </Targets>
+        </Mapping>
+         <Mapping>
+            <SurrogateSet>
+                <BinarySet>
+                    <SymbolLocations>
+                        <SymbolLocation>.</SymbolLocation>
+                        <SymbolLocation>SRV*https://symweb</SymbolLocation>
+                    </SymbolLocations>
+                    <Binary path="GitHubExtensionServer\linked\Microsoft.Windows.SDK.NET.dll" />
+                </BinarySet>
+            </SurrogateSet>
+            <Targets>
+                <Binary path=".*\\Microsoft.Windows.SDK.NET.dll" pathType="Regex" />
+            </Targets>
+        </Mapping>
+         <Mapping>
+            <SurrogateSet>
+                <BinarySet>
+                    <SymbolLocations>
+                        <SymbolLocation>.</SymbolLocation>
+                        <SymbolLocation>SRV*https://symweb</SymbolLocation>
+                    </SymbolLocations>
+                    <Binary path="GitHubExtensionServer\linked\Microsoft.Windows.Security.AccessControl.Projection.dll" />
+                </BinarySet>
+            </SurrogateSet>
+            <Targets>
+                <Binary path=".*\\Microsoft.Windows.Security.AccessControl.Projection.dll" pathType="Regex" />
+            </Targets>
+        </Mapping>
+         <Mapping>
+            <SurrogateSet>
+                <BinarySet>
+                    <SymbolLocations>
+                        <SymbolLocation>.</SymbolLocation>
+                        <SymbolLocation>SRV*https://symweb</SymbolLocation>
+                    </SymbolLocations>
+                    <Binary path="GitHubExtensionServer\linked\Microsoft.Windows.System.Power.Projection.dll" />
+                </BinarySet>
+            </SurrogateSet>
+            <Targets>
+                <Binary path=".*\\Microsoft.Windows.System.Power.Projection.dll" pathType="Regex" />
+            </Targets>
+        </Mapping>
+         <Mapping>
+            <SurrogateSet>
+                <BinarySet>
+                    <SymbolLocations>
+                        <SymbolLocation>.</SymbolLocation>
+                        <SymbolLocation>SRV*https://symweb</SymbolLocation>
+                    </SymbolLocations>
+                    <Binary path="GitHubExtensionServer\linked\Microsoft.Windows.System.Projection.dll" />
+                </BinarySet>
+            </SurrogateSet>
+            <Targets>
+                <Binary path=".*\\Microsoft.Windows.System.Projection.dll" pathType="Regex" />
+            </Targets>
+        </Mapping>
+         <Mapping>
+            <SurrogateSet>
+                <BinarySet>
+                    <SymbolLocations>
+                        <SymbolLocation>.</SymbolLocation>
+                        <SymbolLocation>SRV*https://symweb</SymbolLocation>
+                    </SymbolLocations>
+                    <Binary path="GitHubExtensionServer\linked\Microsoft.Windows.Widgets.Providers.Projection.dll" />
+                </BinarySet>
+            </SurrogateSet>
+            <Targets>
+                <Binary path=".*\\Microsoft.Windows.Widgets.Providers.Projection.dll" pathType="Regex" />
+            </Targets>
+        </Mapping>
+         <Mapping>
+            <SurrogateSet>
+                <BinarySet>
+                    <SymbolLocations>
+                        <SymbolLocation>.</SymbolLocation>
+                        <SymbolLocation>SRV*https://symweb</SymbolLocation>
+                    </SymbolLocations>
+                    <Binary path="GitHubExtensionServer\linked\Microsoft.WindowsAppRuntime.Bootstrap.Net.dll" />
+                </BinarySet>
+            </SurrogateSet>
+            <Targets>
+                <Binary path=".*\\Microsoft.WindowsAppRuntime.Bootstrap.Net.dll" pathType="Regex" />
+            </Targets>
+        </Mapping>
+         <Mapping>
+            <SurrogateSet>
+                <BinarySet>
+                    <SymbolLocations>
+                        <SymbolLocation>.</SymbolLocation>
+                        <SymbolLocation>SRV*https://symweb</SymbolLocation>
+                    </SymbolLocations>
+                    <Binary path="GitHubExtensionServer\linked\netstandard.dll" />
+                </BinarySet>
+            </SurrogateSet>
+            <Targets>
+                <Binary path=".*\\netstandard.dll" pathType="Regex" />
+            </Targets>
+        </Mapping>
+         <Mapping>
+            <SurrogateSet>
+                <BinarySet>
+                    <SymbolLocations>
+                        <SymbolLocation>.</SymbolLocation>
+                        <SymbolLocation>SRV*https://symweb</SymbolLocation>
+                    </SymbolLocations>
+                    <Binary path="GitHubExtensionServer\linked\Serilog.dll" />
+                </BinarySet>
+            </SurrogateSet>
+            <Targets>
+                <Binary path=".*\\Serilog.dll" pathType="Regex" />
+            </Targets>
+        </Mapping>
+         <Mapping>
+            <SurrogateSet>
+                <BinarySet>
+                    <SymbolLocations>
+                        <SymbolLocation>.</SymbolLocation>
+                        <SymbolLocation>SRV*https://symweb</SymbolLocation>
+                    </SymbolLocations>
+                    <Binary path="GitHubExtensionServer\linked\Serilog.Extensions.Logging.dll" />
+                </BinarySet>
+            </SurrogateSet>
+            <Targets>
+                <Binary path=".*\\Serilog.Extensions.Logging.dll" pathType="Regex" />
+            </Targets>
+        </Mapping>
+         <Mapping>
+            <SurrogateSet>
+                <BinarySet>
+                    <SymbolLocations>
+                        <SymbolLocation>.</SymbolLocation>
+                        <SymbolLocation>SRV*https://symweb</SymbolLocation>
+                    </SymbolLocations>
+                    <Binary path="GitHubExtensionServer\linked\Serilog.Settings.Configuration.dll" />
+                </BinarySet>
+            </SurrogateSet>
+            <Targets>
+                <Binary path=".*\\Serilog.Settings.Configuration.dll" pathType="Regex" />
+            </Targets>
+        </Mapping>
+         <Mapping>
+            <SurrogateSet>
+                <BinarySet>
+                    <SymbolLocations>
+                        <SymbolLocation>.</SymbolLocation>
+                        <SymbolLocation>SRV*https://symweb</SymbolLocation>
+                    </SymbolLocations>
+                    <Binary path="GitHubExtensionServer\linked\Serilog.Sinks.Console.dll" />
+                </BinarySet>
+            </SurrogateSet>
+            <Targets>
+                <Binary path=".*\\Serilog.Sinks.Console.dll" pathType="Regex" />
+            </Targets>
+        </Mapping>
+         <Mapping>
+            <SurrogateSet>
+                <BinarySet>
+                    <SymbolLocations>
+                        <SymbolLocation>.</SymbolLocation>
+                        <SymbolLocation>SRV*https://symweb</SymbolLocation>
+                    </SymbolLocations>
+                    <Binary path="GitHubExtensionServer\linked\Serilog.Sinks.Debug.dll" />
+                </BinarySet>
+            </SurrogateSet>
+            <Targets>
+                <Binary path=".*\\Serilog.Sinks.Debug.dll" pathType="Regex" />
+            </Targets>
+        </Mapping>
+         <Mapping>
+            <SurrogateSet>
+                <BinarySet>
+                    <SymbolLocations>
+                        <SymbolLocation>.</SymbolLocation>
+                        <SymbolLocation>SRV*https://symweb</SymbolLocation>
+                    </SymbolLocations>
+                    <Binary path="GitHubExtensionServer\linked\Serilog.Sinks.File.dll" />
+                </BinarySet>
+            </SurrogateSet>
+            <Targets>
+                <Binary path=".*\\Serilog.Sinks.File.dll" pathType="Regex" />
+            </Targets>
+        </Mapping>
+         <Mapping>
+            <SurrogateSet>
+                <BinarySet>
+                    <SymbolLocations>
+                        <SymbolLocation>.</SymbolLocation>
+                        <SymbolLocation>SRV*https://symweb</SymbolLocation>
+                    </SymbolLocations>
+                    <Binary path="GitHubExtensionServer\linked\System.Collections.Concurrent.dll" />
+                </BinarySet>
+            </SurrogateSet>
+            <Targets>
+                <Binary path=".*\\System.Collections.Concurrent.dll" pathType="Regex" />
+            </Targets>
+        </Mapping>
+         <Mapping>
+            <SurrogateSet>
+                <BinarySet>
+                    <SymbolLocations>
+                        <SymbolLocation>.</SymbolLocation>
+                        <SymbolLocation>SRV*https://symweb</SymbolLocation>
+                    </SymbolLocations>
+                    <Binary path="GitHubExtensionServer\linked\System.Collections.dll" />
+                </BinarySet>
+            </SurrogateSet>
+            <Targets>
+                <Binary path=".*\\System.Collections.dll" pathType="Regex" />
+            </Targets>
+        </Mapping>
+         <Mapping>
+            <SurrogateSet>
+                <BinarySet>
+                    <SymbolLocations>
+                        <SymbolLocation>.</SymbolLocation>
+                        <SymbolLocation>SRV*https://symweb</SymbolLocation>
+                    </SymbolLocations>
+                    <Binary path="GitHubExtensionServer\linked\System.Collections.Immutable.dll" />
+                </BinarySet>
+            </SurrogateSet>
+            <Targets>
+                <Binary path=".*\\System.Collections.Immutable.dll" pathType="Regex" />
+            </Targets>
+        </Mapping>
+         <Mapping>
+            <SurrogateSet>
+                <BinarySet>
+                    <SymbolLocations>
+                        <SymbolLocation>.</SymbolLocation>
+                        <SymbolLocation>SRV*https://symweb</SymbolLocation>
+                    </SymbolLocations>
+                    <Binary path="GitHubExtensionServer\linked\System.Collections.NonGeneric.dll" />
+                </BinarySet>
+            </SurrogateSet>
+            <Targets>
+                <Binary path=".*\\System.Collections.NonGeneric.dll" pathType="Regex" />
+            </Targets>
+        </Mapping>
+         <Mapping>
+            <SurrogateSet>
+                <BinarySet>
+                    <SymbolLocations>
+                        <SymbolLocation>.</SymbolLocation>
+                        <SymbolLocation>SRV*https://symweb</SymbolLocation>
+                    </SymbolLocations>
+                    <Binary path="GitHubExtensionServer\linked\System.Collections.Specialized.dll" />
+                </BinarySet>
+            </SurrogateSet>
+            <Targets>
+                <Binary path=".*\\System.Collections.Specialized.dll" pathType="Regex" />
+            </Targets>
+        </Mapping>
+         <Mapping>
+            <SurrogateSet>
+                <BinarySet>
+                    <SymbolLocations>
+                        <SymbolLocation>.</SymbolLocation>
+                        <SymbolLocation>SRV*https://symweb</SymbolLocation>
+                    </SymbolLocations>
+                    <Binary path="GitHubExtensionServer\linked\System.ComponentModel.dll" />
+                </BinarySet>
+            </SurrogateSet>
+            <Targets>
+                <Binary path=".*\\System.ComponentModel.dll" pathType="Regex" />
+            </Targets>
+        </Mapping>
+         <Mapping>
+            <SurrogateSet>
+                <BinarySet>
+                    <SymbolLocations>
+                        <SymbolLocation>.</SymbolLocation>
+                        <SymbolLocation>SRV*https://symweb</SymbolLocation>
+                    </SymbolLocations>
+                    <Binary path="GitHubExtensionServer\linked\System.ComponentModel.Primitives.dll" />
+                </BinarySet>
+            </SurrogateSet>
+            <Targets>
+                <Binary path=".*\\System.ComponentModel.Primitives.dll" pathType="Regex" />
+            </Targets>
+        </Mapping>
+         <Mapping>
+            <SurrogateSet>
+                <BinarySet>
+                    <SymbolLocations>
+                        <SymbolLocation>.</SymbolLocation>
+                        <SymbolLocation>SRV*https://symweb</SymbolLocation>
+                    </SymbolLocations>
+                    <Binary path="GitHubExtensionServer\linked\System.ComponentModel.TypeConverter.dll" />
+                </BinarySet>
+            </SurrogateSet>
+            <Targets>
+                <Binary path=".*\\System.ComponentModel.TypeConverter.dll" pathType="Regex" />
+            </Targets>
+        </Mapping>
+         <Mapping>
+            <SurrogateSet>
+                <BinarySet>
+                    <SymbolLocations>
+                        <SymbolLocation>.</SymbolLocation>
+                        <SymbolLocation>SRV*https://symweb</SymbolLocation>
+                    </SymbolLocations>
+                    <Binary path="GitHubExtensionServer\linked\System.Console.dll" />
+                </BinarySet>
+            </SurrogateSet>
+            <Targets>
+                <Binary path=".*\\System.Console.dll" pathType="Regex" />
+            </Targets>
+        </Mapping>
+         <Mapping>
+            <SurrogateSet>
+                <BinarySet>
+                    <SymbolLocations>
+                        <SymbolLocation>.</SymbolLocation>
+                        <SymbolLocation>SRV*https://symweb</SymbolLocation>
+                    </SymbolLocations>
+                    <Binary path="GitHubExtensionServer\linked\System.Diagnostics.DiagnosticSource.dll" />
+                </BinarySet>
+            </SurrogateSet>
+            <Targets>
+                <Binary path=".*\\System.Diagnostics.DiagnosticSource.dll" pathType="Regex" />
+            </Targets>
+        </Mapping>
+         <Mapping>
+            <SurrogateSet>
+                <BinarySet>
+                    <SymbolLocations>
+                        <SymbolLocation>.</SymbolLocation>
+                        <SymbolLocation>SRV*https://symweb</SymbolLocation>
+                    </SymbolLocations>
+                    <Binary path="GitHubExtensionServer\linked\System.Diagnostics.EventLog.dll" />
+                </BinarySet>
+            </SurrogateSet>
+            <Targets>
+                <Binary path=".*\\System.Diagnostics.EventLog.dll" pathType="Regex" />
+            </Targets>
+        </Mapping>
+         <Mapping>
+            <SurrogateSet>
+                <BinarySet>
+                    <SymbolLocations>
+                        <SymbolLocation>.</SymbolLocation>
+                        <SymbolLocation>SRV*https://symweb</SymbolLocation>
+                    </SymbolLocations>
+                    <Binary path="GitHubExtensionServer\linked\System.Diagnostics.Process.dll" />
+                </BinarySet>
+            </SurrogateSet>
+            <Targets>
+                <Binary path=".*\\System.Diagnostics.Process.dll" pathType="Regex" />
+            </Targets>
+        </Mapping>
+         <Mapping>
+            <SurrogateSet>
+                <BinarySet>
+                    <SymbolLocations>
+                        <SymbolLocation>.</SymbolLocation>
+                        <SymbolLocation>SRV*https://symweb</SymbolLocation>
+                    </SymbolLocations>
+                    <Binary path="GitHubExtensionServer\linked\System.Diagnostics.StackTrace.dll" />
+                </BinarySet>
+            </SurrogateSet>
+            <Targets>
+                <Binary path=".*\\System.Diagnostics.StackTrace.dll" pathType="Regex" />
+            </Targets>
+        </Mapping>
+         <Mapping>
+            <SurrogateSet>
+                <BinarySet>
+                    <SymbolLocations>
+                        <SymbolLocation>.</SymbolLocation>
+                        <SymbolLocation>SRV*https://symweb</SymbolLocation>
+                    </SymbolLocations>
+                    <Binary path="GitHubExtensionServer\linked\System.Diagnostics.TraceSource.dll" />
+                </BinarySet>
+            </SurrogateSet>
+            <Targets>
+                <Binary path=".*\\System.Diagnostics.TraceSource.dll" pathType="Regex" />
+            </Targets>
+        </Mapping>
+         <Mapping>
+            <SurrogateSet>
+                <BinarySet>
+                    <SymbolLocations>
+                        <SymbolLocation>.</SymbolLocation>
+                        <SymbolLocation>SRV*https://symweb</SymbolLocation>
+                    </SymbolLocations>
+                    <Binary path="GitHubExtensionServer\linked\System.Diagnostics.Tracing.dll" />
+                </BinarySet>
+            </SurrogateSet>
+            <Targets>
+                <Binary path=".*\\System.Diagnostics.Tracing.dll" pathType="Regex" />
+            </Targets>
+        </Mapping>
+         <Mapping>
+            <SurrogateSet>
+                <BinarySet>
+                    <SymbolLocations>
+                        <SymbolLocation>.</SymbolLocation>
+                        <SymbolLocation>SRV*https://symweb</SymbolLocation>
+                    </SymbolLocations>
+                    <Binary path="GitHubExtensionServer\linked\System.dll" />
+                </BinarySet>
+            </SurrogateSet>
+            <Targets>
+                <Binary path=".*\\System.dll" pathType="Regex" />
+            </Targets>
+        </Mapping>
+         <Mapping>
+            <SurrogateSet>
+                <BinarySet>
+                    <SymbolLocations>
+                        <SymbolLocation>.</SymbolLocation>
+                        <SymbolLocation>SRV*https://symweb</SymbolLocation>
+                    </SymbolLocations>
+                    <Binary path="GitHubExtensionServer\linked\System.IO.Compression.dll" />
+                </BinarySet>
+            </SurrogateSet>
+            <Targets>
+                <Binary path=".*\\System.IO.Compression.dll" pathType="Regex" />
+            </Targets>
+        </Mapping>
+         <Mapping>
+            <SurrogateSet>
+                <BinarySet>
+                    <SymbolLocations>
+                        <SymbolLocation>.</SymbolLocation>
+                        <SymbolLocation>SRV*https://symweb</SymbolLocation>
+                    </SymbolLocations>
+                    <Binary path="GitHubExtensionServer\linked\System.IO.FileSystem.dll" />
+                </BinarySet>
+            </SurrogateSet>
+            <Targets>
+                <Binary path=".*\\System.IO.FileSystem.dll" pathType="Regex" />
+            </Targets>
+        </Mapping>
+         <Mapping>
+            <SurrogateSet>
+                <BinarySet>
+                    <SymbolLocations>
+                        <SymbolLocation>.</SymbolLocation>
+                        <SymbolLocation>SRV*https://symweb</SymbolLocation>
+                    </SymbolLocations>
+                    <Binary path="GitHubExtensionServer\linked\System.IO.FileSystem.Watcher.dll" />
+                </BinarySet>
+            </SurrogateSet>
+            <Targets>
+                <Binary path=".*\\System.IO.FileSystem.Watcher.dll" pathType="Regex" />
+            </Targets>
+        </Mapping>
+         <Mapping>
+            <SurrogateSet>
+                <BinarySet>
+                    <SymbolLocations>
+                        <SymbolLocation>.</SymbolLocation>
+                        <SymbolLocation>SRV*https://symweb</SymbolLocation>
+                    </SymbolLocations>
+                    <Binary path="GitHubExtensionServer\linked\System.IO.MemoryMappedFiles.dll" />
+                </BinarySet>
+            </SurrogateSet>
+            <Targets>
+                <Binary path=".*\\System.IO.MemoryMappedFiles.dll" pathType="Regex" />
+            </Targets>
+        </Mapping>
+         <Mapping>
+            <SurrogateSet>
+                <BinarySet>
+                    <SymbolLocations>
+                        <SymbolLocation>.</SymbolLocation>
+                        <SymbolLocation>SRV*https://symweb</SymbolLocation>
+                    </SymbolLocations>
+                    <Binary path="GitHubExtensionServer\linked\System.Linq.dll" />
+                </BinarySet>
+            </SurrogateSet>
+            <Targets>
+                <Binary path=".*\\System.Linq.dll" pathType="Regex" />
+            </Targets>
+        </Mapping>
+         <Mapping>
+            <SurrogateSet>
+                <BinarySet>
+                    <SymbolLocations>
+                        <SymbolLocation>.</SymbolLocation>
+                        <SymbolLocation>SRV*https://symweb</SymbolLocation>
+                    </SymbolLocations>
+                    <Binary path="GitHubExtensionServer\linked\System.Linq.Expressions.dll" />
+                </BinarySet>
+            </SurrogateSet>
+            <Targets>
+                <Binary path=".*\\System.Linq.Expressions.dll" pathType="Regex" />
+            </Targets>
+        </Mapping>
+         <Mapping>
+            <SurrogateSet>
+                <BinarySet>
+                    <SymbolLocations>
+                        <SymbolLocation>.</SymbolLocation>
+                        <SymbolLocation>SRV*https://symweb</SymbolLocation>
+                    </SymbolLocations>
+                    <Binary path="GitHubExtensionServer\linked\System.Memory.dll" />
+                </BinarySet>
+            </SurrogateSet>
+            <Targets>
+                <Binary path=".*\\System.Memory.dll" pathType="Regex" />
+            </Targets>
+        </Mapping>
+         <Mapping>
+            <SurrogateSet>
+                <BinarySet>
+                    <SymbolLocations>
+                        <SymbolLocation>.</SymbolLocation>
+                        <SymbolLocation>SRV*https://symweb</SymbolLocation>
+                    </SymbolLocations>
+                    <Binary path="GitHubExtensionServer\linked\System.ObjectModel.dll" />
+                </BinarySet>
+            </SurrogateSet>
+            <Targets>
+                <Binary path=".*\\System.ObjectModel.dll" pathType="Regex" />
+            </Targets>
+        </Mapping>
+         <Mapping>
+            <SurrogateSet>
+                <BinarySet>
+                    <SymbolLocations>
+                        <SymbolLocation>.</SymbolLocation>
+                        <SymbolLocation>SRV*https://symweb</SymbolLocation>
+                    </SymbolLocations>
+                    <Binary path="GitHubExtensionServer\linked\System.Private.CoreLib.dll" />
+                </BinarySet>
+            </SurrogateSet>
+            <Targets>
+                <Binary path=".*\\System.Private.CoreLib.dll" pathType="Regex" />
+            </Targets>
+        </Mapping>
+         <Mapping>
+            <SurrogateSet>
+                <BinarySet>
+                    <SymbolLocations>
+                        <SymbolLocation>.</SymbolLocation>
+                        <SymbolLocation>SRV*https://symweb</SymbolLocation>
+                    </SymbolLocations>
+                    <Binary path="GitHubExtensionServer\linked\System.Private.Uri.dll" />
+                </BinarySet>
+            </SurrogateSet>
+            <Targets>
+                <Binary path=".*\\System.Private.Uri.dll" pathType="Regex" />
+            </Targets>
+        </Mapping>
+         <Mapping>
+            <SurrogateSet>
+                <BinarySet>
+                    <SymbolLocations>
+                        <SymbolLocation>.</SymbolLocation>
+                        <SymbolLocation>SRV*https://symweb</SymbolLocation>
+                    </SymbolLocations>
+                    <Binary path="GitHubExtensionServer\linked\System.Reflection.Metadata.dll" />
+                </BinarySet>
+            </SurrogateSet>
+            <Targets>
+                <Binary path=".*\\System.Reflection.Metadata.dll" pathType="Regex" />
+            </Targets>
+        </Mapping>
+         <Mapping>
+            <SurrogateSet>
+                <BinarySet>
+                    <SymbolLocations>
+                        <SymbolLocation>.</SymbolLocation>
+                        <SymbolLocation>SRV*https://symweb</SymbolLocation>
+                    </SymbolLocations>
+                    <Binary path="GitHubExtensionServer\linked\System.Runtime.dll" />
+                </BinarySet>
+            </SurrogateSet>
+            <Targets>
+                <Binary path=".*\\System.Runtime.dll" pathType="Regex" />
+            </Targets>
+        </Mapping>
+         <Mapping>
+            <SurrogateSet>
+                <BinarySet>
+                    <SymbolLocations>
+                        <SymbolLocation>.</SymbolLocation>
+                        <SymbolLocation>SRV*https://symweb</SymbolLocation>
+                    </SymbolLocations>
+                    <Binary path="GitHubExtensionServer\linked\System.Runtime.InteropServices.dll" />
+                </BinarySet>
+            </SurrogateSet>
+            <Targets>
+                <Binary path=".*\\System.Runtime.InteropServices.dll" pathType="Regex" />
+            </Targets>
+        </Mapping>
+         <Mapping>
+            <SurrogateSet>
+                <BinarySet>
+                    <SymbolLocations>
+                        <SymbolLocation>.</SymbolLocation>
+                        <SymbolLocation>SRV*https://symweb</SymbolLocation>
+                    </SymbolLocations>
+                    <Binary path="GitHubExtensionServer\linked\System.Security.Claims.dll" />
+                </BinarySet>
+            </SurrogateSet>
+            <Targets>
+                <Binary path=".*\\System.Security.Claims.dll" pathType="Regex" />
+            </Targets>
+        </Mapping>
+         <Mapping>
+            <SurrogateSet>
+                <BinarySet>
+                    <SymbolLocations>
+                        <SymbolLocation>.</SymbolLocation>
+                        <SymbolLocation>SRV*https://symweb</SymbolLocation>
+                    </SymbolLocations>
+                    <Binary path="GitHubExtensionServer\linked\System.Security.Cryptography.dll" />
+                </BinarySet>
+            </SurrogateSet>
+            <Targets>
+                <Binary path=".*\\System.Security.Cryptography.dll" pathType="Regex" />
+            </Targets>
+        </Mapping>
+         <Mapping>
+            <SurrogateSet>
+                <BinarySet>
+                    <SymbolLocations>
+                        <SymbolLocation>.</SymbolLocation>
+                        <SymbolLocation>SRV*https://symweb</SymbolLocation>
+                    </SymbolLocations>
+                    <Binary path="GitHubExtensionServer\linked\System.Security.Principal.Windows.dll" />
+                </BinarySet>
+            </SurrogateSet>
+            <Targets>
+                <Binary path=".*\\System.Security.Principal.Windows.dll" pathType="Regex" />
+            </Targets>
+        </Mapping>
+         <Mapping>
+            <SurrogateSet>
+                <BinarySet>
+                    <SymbolLocations>
+                        <SymbolLocation>.</SymbolLocation>
+                        <SymbolLocation>SRV*https://symweb</SymbolLocation>
+                    </SymbolLocations>
+                    <Binary path="GitHubExtensionServer\linked\System.Text.Encoding.Extensions.dll" />
+                </BinarySet>
+            </SurrogateSet>
+            <Targets>
+                <Binary path=".*\\System.Text.Encoding.Extensions.dll" pathType="Regex" />
+            </Targets>
+        </Mapping>
+         <Mapping>
+            <SurrogateSet>
+                <BinarySet>
+                    <SymbolLocations>
+                        <SymbolLocation>.</SymbolLocation>
+                        <SymbolLocation>SRV*https://symweb</SymbolLocation>
+                    </SymbolLocations>
+                    <Binary path="GitHubExtensionServer\linked\System.Text.Encodings.Web.dll" />
+                </BinarySet>
+            </SurrogateSet>
+            <Targets>
+                <Binary path=".*\\System.Text.Encodings.Web.dll" pathType="Regex" />
+            </Targets>
+        </Mapping>
+         <Mapping>
+            <SurrogateSet>
+                <BinarySet>
+                    <SymbolLocations>
+                        <SymbolLocation>.</SymbolLocation>
+                        <SymbolLocation>SRV*https://symweb</SymbolLocation>
+                    </SymbolLocations>
+                    <Binary path="GitHubExtensionServer\linked\System.Text.Json.dll" />
+                </BinarySet>
+            </SurrogateSet>
+            <Targets>
+                <Binary path=".*\\System.Text.Json.dll" pathType="Regex" />
+            </Targets>
+        </Mapping>
+         <Mapping>
+            <SurrogateSet>
+                <BinarySet>
+                    <SymbolLocations>
+                        <SymbolLocation>.</SymbolLocation>
+                        <SymbolLocation>SRV*https://symweb</SymbolLocation>
+                    </SymbolLocations>
+                    <Binary path="GitHubExtensionServer\linked\System.Text.RegularExpressions.dll" />
+                </BinarySet>
+            </SurrogateSet>
+            <Targets>
+                <Binary path=".*\\System.Text.RegularExpressions.dll" pathType="Regex" />
+            </Targets>
+        </Mapping>
+         <Mapping>
+            <SurrogateSet>
+                <BinarySet>
+                    <SymbolLocations>
+                        <SymbolLocation>.</SymbolLocation>
+                        <SymbolLocation>SRV*https://symweb</SymbolLocation>
+                    </SymbolLocations>
+                    <Binary path="GitHubExtensionServer\linked\System.Threading.dll" />
+                </BinarySet>
+            </SurrogateSet>
+            <Targets>
+                <Binary path=".*\\System.Threading.dll" pathType="Regex" />
+            </Targets>
+        </Mapping>
+         <Mapping>
+            <SurrogateSet>
+                <BinarySet>
+                    <SymbolLocations>
+                        <SymbolLocation>.</SymbolLocation>
+                        <SymbolLocation>SRV*https://symweb</SymbolLocation>
+                    </SymbolLocations>
+                    <Binary path="GitHubExtensionServer\linked\System.Threading.Thread.dll" />
+                </BinarySet>
+            </SurrogateSet>
+            <Targets>
+                <Binary path=".*\\System.Threading.Thread.dll" pathType="Regex" />
+            </Targets>
+        </Mapping>
+         <Mapping>
+            <SurrogateSet>
+                <BinarySet>
+                    <SymbolLocations>
+                        <SymbolLocation>.</SymbolLocation>
+                        <SymbolLocation>SRV*https://symweb</SymbolLocation>
+                    </SymbolLocations>
+                    <Binary path="GitHubExtensionServer\linked\WinRT.Runtime.dll" />
+                </BinarySet>
+            </SurrogateSet>
+            <Targets>
+                <Binary path=".*\\WinRT.Runtime.dll" pathType="Regex" />
+            </Targets>
+        </Mapping>
+         <Mapping>
+            <SurrogateSet>
+                <BinarySet>
+                    <SymbolLocations>
+                        <SymbolLocation>.</SymbolLocation>
+                        <SymbolLocation>SRV*https://symweb</SymbolLocation>
+                    </SymbolLocations>
+                    <Binary path="GitHubExtensionServer\linked\DevHomeGitHubExtension.dll" />
+                </BinarySet>
+            </SurrogateSet>
+            <Targets>
+                <Binary path=".*\\DevHomeGitHubExtension.r2r.dll" pathType="Regex" />
+            </Targets>
+        </Mapping>
+</Mappings>
+</APIScanSurrogates>
