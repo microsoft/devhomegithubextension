@@ -25,6 +25,15 @@ public partial class GitHubDataManager
         {
             await UpdateDeveloperPullRequests();
         }
+        catch (HttpRequestException httpEx)
+        {
+            // HttpRequestExceptions can happen when internet connection is
+            // down or various other network issues unrelated to this update.
+            // This is not an error in the extension or anything we can
+            // address. Log a warning so it is understood why the update did
+            // not occur, but otherwise keep the log clean.
+            _log.Warning($"Http Request Exception: {httpEx.Message}");
+        }
         catch (Exception ex)
         {
             _log.Error(ex, "Update failed unexpectedly.");
