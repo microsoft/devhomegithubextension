@@ -251,6 +251,16 @@ public partial class GitHubDataManager : IGitHubDataManager, IDisposable
             PruneObsoleteData();
             SetLastUpdatedInMetaData();
         }
+        catch (HttpRequestException httpEx)
+        {
+            // HttpRequestExceptions can happen when internet connection is
+            // down or various other network issues.
+            _log.Warning($"Http Request Exception: {httpEx.Message}");
+            tx.Rollback();
+
+            // Rethrow so clients can catch/display appropriate UX.
+            throw;
+        }
         catch (Exception ex)
         {
             _log.Error(ex, $"Failed Updating DataStore for: {parameters}");
@@ -330,6 +340,12 @@ public partial class GitHubDataManager : IGitHubDataManager, IDisposable
             // Clean datastore and set last updated after updating.
             PruneObsoleteData();
             SetLastUpdatedInMetaData();
+        }
+        catch (HttpRequestException)
+        {
+            // Higher layer will catch and log this. Suppress logging an error for this to keep log clean.
+            tx.Rollback();
+            throw;
         }
         catch (Exception ex)
         {
