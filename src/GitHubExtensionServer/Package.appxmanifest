@@ -212,7 +212,7 @@
                       </LightMode>
                     </ThemeResources>
                   </Definition>
-                  <Definition Id="GitHub_Reviews" DisplayName="ms-resource:Widget_DisplayName_Reviews" Description="ms-resource:Widget_Description_Reviews" IsCustomizable="false">
+                  <Definition Id="GitHub_Reviews" DisplayName="ms-resource:Widget_DisplayName_Reviews" Description="ms-resource:Widget_Description_Reviews" IsCustomizable="true">
                     <Capabilities>
                       <Capability>
                         <Size Name="medium" />

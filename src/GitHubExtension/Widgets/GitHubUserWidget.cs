@@ -19,6 +19,8 @@ internal abstract class GitHubUserWidget : GitHubWidget
 
     protected SearchCategory ShowCategory { get; set; } = SearchCategory.Unknown;
 
+    protected virtual string DefaultShowCategory => string.Empty;
+
     private string _userName = string.Empty;
 
     protected string UserName
@@ -57,11 +59,17 @@ internal abstract class GitHubUserWidget : GitHubWidget
 
     protected void UpdateTitle(JsonNode dataObj)
     {
-        GetTitleFromDataObject(dataObj);
-        if (string.IsNullOrEmpty(WidgetTitle))
+        if (dataObj == null)
         {
-            WidgetTitle = UserName;
+            return;
         }
+
+        GetTitleFromDataObject(dataObj);
+    }
+
+    protected string GetActualTitle()
+    {
+        return string.IsNullOrEmpty(WidgetTitle) ? UserName : WidgetTitle;
     }
 
     protected override void ResetWidgetInfoFromState()
@@ -115,7 +123,7 @@ internal abstract class GitHubUserWidget : GitHubWidget
         try
         {
             dataObject ??= JsonNode.Parse(ConfigurationData);
-            ShowCategory = EnumHelper.StringToSearchCategory(dataObject!["showCategory"]?.GetValue<string>() ?? string.Empty);
+            ShowCategory = EnumHelper.StringToSearchCategory(dataObject!["showCategory"]?.GetValue<string>() ?? DefaultShowCategory);
             DeveloperLoginId = dataObject!["account"]?.GetValue<string>() ?? string.Empty;
             UpdateTitle(dataObject);
         }
@@ -147,7 +155,7 @@ internal abstract class GitHubUserWidget : GitHubWidget
                 return;
             }
 
-            ShowCategory = EnumHelper.StringToSearchCategory(dataObject["showCategory"]?.GetValue<string>() ?? string.Empty);
+            ShowCategory = EnumHelper.StringToSearchCategory(dataObject["showCategory"]?.GetValue<string>() ?? DefaultShowCategory);
             DeveloperLoginId = dataObject["account"]?.GetValue<string>() ?? string.Empty;
             UpdateTitle(dataObject);
 
@@ -249,7 +257,7 @@ internal abstract class GitHubUserWidget : GitHubWidget
             { "openCount", 0 },
             { "items", new JsonArray() },
             { "userName", UserName },
-            { "widgetTitle", WidgetTitle },
+            { "widgetTitle", GetActualTitle() },
             { "titleIconUrl", GetTitleIconData() },
             { "is_loading_data", true },
         };
@@ -302,7 +310,7 @@ internal abstract class GitHubUserWidget : GitHubWidget
             issuesData.Add("items", issuesArray);
             issuesData.Add("userName", UserName);
             issuesData.Add("titleIconUrl", GetTitleIconData());
-            issuesData.Add("widgetTitle", WidgetTitle);
+            issuesData.Add("widgetTitle", GetActualTitle());
 
             LastUpdated = DateTime.Now;
             ContentData = issuesData.ToJsonString();

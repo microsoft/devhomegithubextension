@@ -123,7 +123,7 @@ internal sealed class GitHubPullsWidget : GitHubRepositoryWidget
 
             pullsData.Add("pulls", pullsArray);
             pullsData.Add("selected_repo", repository?.FullName ?? string.Empty);
-            pullsData.Add("widgetTitle", WidgetTitle);
+            pullsData.Add("widgetTitle", GetActualTitle());
             pullsData.Add("is_loading_data", DataState == WidgetDataState.Unknown);
             pullsData.Add("pulls_icon_data", _pullsIconData);
 
