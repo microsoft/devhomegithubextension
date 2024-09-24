@@ -7,6 +7,10 @@ parameters:
   - name: SignOutput
     type: boolean
     default: False
+  - name: APIScanDisabled
+    displayName: "Disable API Scan"
+    type: boolean
+    default: false
   - name: Platforms
     type: object
     default:
@@ -24,6 +28,12 @@ variables:
   solution: '**/GitHubExtension.sln'
   appxPackageDir: 'AppxPackages'
   testOutputArtifactDir: 'TestResults'
+
+# APIScan only runs in release mode in the release branch
+  ${{ if eq(variables['Build.SourceBranchName'], 'release') }}:
+    apiscanMode: release
+  ${{ else }}:
+    apiscanMode: prerelease
 
 resources:
   repositories:
@@ -201,24 +211,6 @@ extends:
                       }
                     ]
 
-            # Commented out until our implementation is fixed
-            # - task: AzureKeyVault@1
-            #   inputs:
-            #     azureSubscription: 'DevHomeAzureServiceConnection'
-            #     KeyVaultName: 'DevHomeKeyVault'
-            #     SecretsFilter: 'ApiScanConnectionString'
-            #     RunAsPreJob: false
-
-            # - task: APIScan@2
-            #   inputs:
-            #     softwareFolder: '$(Build.StagingDirectory)'
-            #     softwareName: 'Dev Home GitHub Extension'
-            #     softwareVersionNum: '1.0'
-            #     softwareBuildNum: '$(Build.BuildId)'
-            #     symbolsFolder: 'SRV*http://symweb'
-            #   env:
-            #     AzureServicesAuthConnectionString: $(ApiScanConnectionString)
-
             - task: Windows Application Driver@0
               condition: and(always(), ne('${{ platform}}', 'arm64'))
               inputs:
@@ -260,6 +252,37 @@ extends:
                 IndexSources: true
                 SymbolServerType: TeamServices
                 SymbolsProduct: DevHomeGitHubExtension
+
+            # Only run APIScan for non-arm release to avoid duplicate results unless it is disabled.
+            # Copy surrogate file to binary directory to use relative paths which are not architecture dependent.
+            - task: CopyFiles@2
+              condition: and(ne('${{ platform }}', 'arm64'), eq('${{ configuration }}', 'release'), ne(${{ parameters.APIScanDisabled }}, true))
+              inputs:
+                 SourceFolder: '$(Build.SourcesDirectory)\build'
+                 Contents: 'surrogate.xml'
+                 TargetFolder: '$(Build.ArtifactStagingDirectory)\rawBinaries'
+
+            - task: APIScan@2
+              displayName: Run APIScan
+              condition: and(ne('${{ platform }}', 'arm64'), eq('${{ configuration }}', 'release'), ne(${{ parameters.APIScanDisabled }}, true))
+              inputs:
+                softwareFolder: '$(appxPackageDir)\${{ configuration }}'
+                softwareName: 'Dev Home GitHub Extension'
+                softwareVersionNum: '1.0'
+                softwareBuildNum: '$(Build.BuildId)'
+                isLargeApp: false
+                toolVersion: 'Latest'
+                # PAT required to get debug symbols on 1ES VM.
+                symbolsFolder: '$(Build.ArtifactStagingDirectory)\rawBinaries'
+                # Use surrogate.xml to map release binaries in the MSIX to debug binaries for APIScan.
+                # surrogate.xml can be created by using SurrogateGenerator.ps1 PowerShell script.
+                surrogateConfigurationFolder: '$(Build.ArtifactStagingDirectory)\rawBinaries'
+                modeType: '$(apiscanMode)'
+                preserveLogsFolder: true
+                azureSubscription: DevHomeAzureServiceConnection
+              env:
+                AzureServicesAuthConnectionString: RunAs=App;AppId=$(AppId);TenantId=$(TenantId);ServiceConnectionId=$(ServiceConnectionId);
+                SYSTEM_ACCESSTOKEN: $(System.AccessToken)
 
             templateContext:
               outputs:
