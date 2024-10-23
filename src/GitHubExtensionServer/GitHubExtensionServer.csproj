@@ -29,13 +29,6 @@
     <DebugType>portable</DebugType>
   </PropertyGroup>
 
-  <ItemDefinitionGroup>
-    <ClCompile>
-      <ControlFlowGuard>Guard</ControlFlowGuard>
-      <SpectreMitigation>Spectre</SpectreMitigation>
-    </ClCompile>
-  </ItemDefinitionGroup>
-
   <ItemGroup>
     <ProjectReference Include="..\GitHubExtension\GitHubExtension.csproj" />
   </ItemGroup>
