@@ -4,7 +4,8 @@
       "commandName": "MsixPackage",
       "commandLineArgs": "-RegisterProcessAsComServer",
       "doNotLaunchApp": false,
-      "alwaysReinstallApp": true
+      "alwaysReinstallApp": true,
+      "nativeDebugging": true
     },
     "UI App": {
       "commandName": "MsixPackage"
