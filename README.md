@@ -1,3 +1,5 @@
+# **⚠️ Dev Home will be going away in May 2025 and a subset of its features will be moved to new places. Stay tuned for more information in the following months. ⚠️**
+
 ![image](https://github.com/microsoft/devhomegithubextension/blob/main/src/GitHubExtensionServer/Assets/StoreDisplay-150.png)
 
 # Welcome to the Dev Home GitHub Extension repo
